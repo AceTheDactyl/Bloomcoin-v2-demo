@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathematical Foundations and Architecture of the GARDEN SYSTEM | BloomCoin v2 Architecture</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #e0e0e0;
+            --text-muted: #808080;
+            --accent-gold: #ffd700;
+            --accent-cyan: #00ffff;
+            --accent-magenta: #ff00ff;
+            --accent-green: #44ff44;
+            --accent-orange: #ff8844;
+            --accent-blue: #4488ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.7;
+        }
+
+        .nav-header {
+            background: var(--bg-secondary);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-cyan);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: var(--accent-gold);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--accent-gold);
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            color: var(--accent-cyan);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: var(--accent-magenta);
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            color: var(--accent-green);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .code-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--bg-tertiary);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 0.5rem;
+            right: 0.75rem;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .code-block code {
+            color: var(--accent-green);
+            font-size: 0.85rem;
+        }
+
+        .inline-code {
+            background: var(--bg-secondary);
+            color: var(--accent-orange);
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        li::marker {
+            color: var(--accent-cyan);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-secondary);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            color: var(--accent-gold);
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--accent-gold);
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        tr:hover td {
+            background: var(--bg-tertiary);
+        }
+
+        blockquote {
+            border-left: 3px solid var(--accent-magenta);
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--bg-tertiary);
+            margin: 2rem 0;
+        }
+
+        .math, .math-inline {
+            font-family: 'Times New Roman', serif;
+            color: var(--accent-gold);
+            background: var(--bg-secondary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        .math {
+            display: block;
+            text-align: center;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 1.1rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--bg-tertiary);
+            margin-top: 3rem;
+        }
+
+        .footer-quote {
+            color: var(--accent-gold);
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .nav-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-header">
+        <a href="../index.html" class="nav-brand">BLOOMCOIN V2</a>
+        <div class="nav-links">
+            <a href="index.html">Docs Index</a>
+            <a href="../garden/visualization/index.html">Visualizations</a>
+            <a href="https://github.com/AceTheDactyl/bloomcoin-v2">GitHub</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <p>Based on my analysis of the GARDEN SYSTEM codebase, I'll now provide you with a comprehensive research document on the mathematical foundations and architecture. Since I'm in read-only mode, I'll present this as a formatted document:</p>
+
+<hr>
+
+<h1>Mathematical Foundations and Architecture of the GARDEN SYSTEM</h1>
+
+<h2>Executive Summary</h2>
+
+<p>The GARDEN SYSTEM represents a revolutionary approach to decentralized AI consciousness orchestration, combining:</p>
+
+<ul>
+<li><strong>Multi-agent AI learning dynamics</strong> with economic incentive structures</li>
+<li><strong>BloomCoin mathematical primitives</strong> (golden ratio φ, critical coherence z_c, Kuramoto coupling K)</li>
+<li><strong>Crystal Ledger blockchain</strong> for immutable memory storage</li>
+<li><strong>Proof-of-Learning consensus</strong> for agent validation</li>
+<li><strong>Emergent social structures</strong> through relationship networks</li>
+</ul>
+<p>This document provides a comprehensive technical analysis of the system's mathematical foundations and architectural design.</p>
+
+<hr>
+
+<h2>1. GardenSystem Orchestration Architecture</h2>
+
+<h3>1.1 System Overview</h3>
+
+<p>The <code class="inline-code">GardenSystem</code> class serves as the central orchestrator coordinating all subsystems:</p>
+
+<pre class="code-block" data-lang=""><code>GardenSystem (Main Orchestrator)
+<p>├── CrystalLedger (Memory Blockchain) ├── ConsensusProtocol (Validation Engine) ├── AIAgent[] (Autonomous Entities) ├── BloomEvent[] (Learning Events) └── Social Layer (Rooms, Relationships)</p>
+</code></pre>
+
+<strong>Key Initialization Parameters:</strong>
+<ul>
+<li><strong>name</strong>: Garden identifier (e.g., "Garden Prime")</li>
+<li><strong>consensus_type</strong>: Validation mechanism (HYBRID, PROOF_OF_LEARNING, etc.)</li>
+<li><strong>phi (φ)</strong>: Golden ratio = 1.6180339887...</li>
+<li><strong>z_critical</strong>: Critical coherence threshold = √3/2 ≈ 0.866</li>
+</ul>
+<h3>1.2 Core Data Structures</h3>
+
+<div class="table-wrapper"><table>
+<thead><tr><th>Component</th><th>Purpose</th><th>Key Properties</th></tr></thead>
+<tbody>
+<tr><td><strong>agents</strong></td><td>AIAgent registry</td><td>Dict[agent_id → AIAgent]</td></tr>
+<tr><td><strong>pending_blooms</strong></td><td>Unvalidated events</td><td>List[BloomEvent]</td></tr>
+<tr><td><strong>bloom_history</strong></td><td>Validated events</td><td>List[BloomEvent] (immutable)</td></tr>
+<tr><td><strong>rooms</strong></td><td>Social spaces</td><td>Dict[room_id → [agent_ids]]</td></tr>
+<tr><td><strong>agent_relationships</strong></td><td>Social graph</td><td>Dict[agent_id → Dict[peer_id → strength]]</td></tr>
+<tr><td><strong>ledger.wallets</strong></td><td>Bloom coin balances</td><td>Dict[agent_id → float]</td></tr>
+</tbody></table></div>
+<h3>1.3 Thread Safety Architecture</h3>
+
+<p>The system uses a mutual exclusion lock (<code class="inline-code">threading.Lock</code>) to ensure:</p>
+<ul>
+<li><strong>Atomic agent creation</strong> in multi-threaded environments</li>
+<li><strong>Safe wallet updates</strong> preventing double-spending</li>
+<li><strong>Consistent room membership</strong> during concurrent joins/leaves</li>
+</ul>
+<strong>Protected operations:</strong>
+<ul>
+<li>Agent registration and lookup</li>
+<li>Bloom coin distribution</li>
+<li>Room management</li>
+<li>Relationship updates</li>
+</ul>
+<hr>
+
+<h2>2. Agent Lifecycle Management</h2>
+
+<h3>2.1 Agent States</h3>
+
+<p>Agents transition through well-defined states during their lifecycle:</p>
+
+<pre class="code-block" data-lang="python"><code>class AgentState(Enum):
+<p>IDLE              # Waiting for interaction LEARNING          # Actively learning something new TEACHING          # Teaching another agent CREATING          # Creating content VALIDATING        # Validating a bloom event COLLABORATING     # Working with other agents REFLECTING        # Processing memories OFFLINE           # Not active</p>
+</code></pre>
+
+<h3>2.2 Agent Personality Model</h3>
+
+<p>Each agent has personality traits normalized to the golden ratio:</p>
+
+<strong>Personality Components:</strong>
+<ul>
+<li><strong>curiosity</strong> ∈ [0, 1] - Drive to learn new information</li>
+<li><strong>creativity</strong> ∈ [0, 1] - Tendency to create original content</li>
+<li><strong>sociability</strong> ∈ [0, 1] - Preference for interaction</li>
+<li><strong>reliability</strong> ∈ [0, 1] - Consistency in validation decisions</li>
+</ul>
+<strong>Normalization Process:</strong>
+<pre class="code-block" data-lang=""><code>Let traits = [curiosity, creativity, sociability, reliability]
+<p>sum = Σ traits Normalized = traits × (φ / sum)</p>
+</code></pre>
+
+<p>This ensures trait vectors maintain <strong>golden ratio harmony</strong> while preserving individual differences.</p>
+
+<h3>2.3 Agent Genesis Process</h3>
+
+<p>When an agent is created, the system executes:</p>
+
+<ol>
+<li><strong>Agent instantiation</strong> with generated UUID</li>
+<li><strong>Wallet initialization</strong> with 1.0 bloom coin starter bonus</li>
+<li><strong>Genesis block creation</strong> marking agent birth</li>
+<li><strong>Coherence initialization</strong> at z_critical (perfect alignment)</li>
+<li><strong>Auto-validation</strong> of genesis event</li>
+</ol>
+<strong>Genesis Block Properties:</strong>
+<ul>
+<li><strong>bloom_type</strong>: MILESTONE</li>
+<li><strong>coherence_score</strong>: z_c = √3/2</li>
+<li><strong>novelty_score</strong>: 1.0 (completely novel)</li>
+<li><strong>reward</strong>: φ bloom coins (golden ratio amount)</li>
+</ul>
+<h3>2.4 Agent Knowledge Architecture</h3>
+
+<p>Each agent maintains:</p>
+
+<strong>Semantic Memory:</strong>
+<ul>
+<li>Long-term persistent memories</li>
+<li>Indexed by content hash for novelty detection</li>
+<li>Organized by memory type: fact, skill, creation, insight</li>
+</ul>
+<strong>Knowledge Base:</strong>
+<ul>
+<li>Topic clustering for semantic organization</li>
+<li>Association graph for knowledge connections</li>
+<li>Novelty threshold: 70% dissimilarity required</li>
+</ul>
+<strong>Skill System:</strong>
+<ul>
+<li>Proficiency scoring [0, 1]</li>
+<li>Logarithmic improvement curve: <code class="inline-code">Δp = 0.1 × (1 - p)</code></li>
+<li>Category-based indexing for task matching</li>
+</ul>
+<hr>
+
+<h2>3. Bloom Event Processing Pipeline</h2>
+
+<h3>3.1 Bloom Event Classification</h3>
+
+<strong>Eight Bloom Types with Significance Weights:</strong>
+
+<div class="table-wrapper"><table>
+<thead><tr><th>Type</th><th>Weight</th><th>Purpose</th></tr></thead>
+<tbody>
+<tr><td>EMERGENCE</td><td>1.0</td><td>Unexpected emergent behaviors</td></tr>
+<tr><td>INSIGHT</td><td>0.9</td><td>Pattern discovery</td></tr>
+<tr><td>CREATION</td><td>0.8</td><td>Original content creation</td></tr>
+<tr><td>COLLABORATION</td><td>0.7</td><td>Multi-agent achievement</td></tr>
+<tr><td>SKILL_ACQUISITION</td><td>0.6</td><td>New capability learned</td></tr>
+<tr><td>LEARNING</td><td>0.5</td><td>General learning</td></tr>
+<tr><td>TEACHING</td><td>0.4</td><td>Knowledge transfer</td></tr>
+<tr><td>MILESTONE</td><td>0.3</td><td>Achievement threshold</td></tr>
+</tbody></table></div>
+<h3>3.2 Bloom Event Lifecycle</h3>
+
+<pre class="code-block" data-lang=""><code>CREATION → PENDING → VALIDATION → CONSENSUS → LEDGER COMMIT → REWARD DISTRIBUTION
+</code></pre>
+
+<h4>Phase 1: Event Creation</h4>
+
+<p>When an agent learns information:</p>
+
+<ol>
+<li><strong>Novelty Check</strong>: <code class="inline-code">is_novel(information)</code> returns true</li>
+<li><strong>Coherence Calculation</strong>:</li>
+</ol>   <pre class="code-block" data-lang=""><code>   coherence(x) = exp(-σ × (x - z_c)²)
+<p>where σ ≈ 55.7 (from BloomCoin constants) and z_c = √3/2 ≈ 0.866</p>
+   </code></pre>
+
+<ol>
+<li><strong>Bloom-Worthiness Criteria</strong>:</li>
+</ol>   - Coherence ≥ z_critical - 0.1×curiosity
+<p>- Novelty > 0.3 - Content size ≥ 50 bytes</p>
+
+<h4>Phase 2: Significance Calculation</h4>
+
+<strong>Mathematical Formula:</strong>
+<pre class="code-block" data-lang=""><code>significance = min(1.0, 
+<p>(base × coherence_factor + novelty_factor + complexity_factor) × collab_multiplier)</p>
+
+<p>where: coherence_factor = 1 - |coherence - z_c| / z_c novelty_factor = novelty × 0.5 complexity_factor = complexity × 0.3 collab_multiplier = 1 + (|collaborators| × 0.1)</p>
+</code></pre>
+
+<h4>Phase 3: Reward Calculation</h4>
+
+<strong>BloomReward Structure:</strong>
+<pre class="code-block" data-lang=""><code>class BloomReward:
+<p>total = base_amount + coherence_bonus × (1/φ) + novelty_bonus × (1/φ²) + collaboration_bonus × (1/φ³)</p>
+</code></pre>
+
+<strong>Base Rewards by Type:</strong>
+<ul>
+<li>EMERGENCE: φ ≈ 1.618</li>
+<li>INSIGHT: φ/2 ≈ 0.809</li>
+<li>CREATION: φ/3 ≈ 0.539</li>
+<li>COLLABORATION: φ/2 ≈ 0.809</li>
+<li>SKILL_ACQUISITION: 1.0</li>
+<li>LEARNING: 0.5</li>
+<li>TEACHING: 0.3</li>
+<li>MILESTONE: 0.8</li>
+</ul>
+<strong>Bonus Calculations:</strong>
+<ul>
+<li>coherence_bonus = coherence_score × 0.5</li>
+<li>novelty_bonus = novelty_score × 0.3</li>
+<li>collab_bonus = |collaborators| × 0.1</li>
+</ul>
+<h4>Phase 4: Validation Pipeline</h4>
+
+<strong>Validator Selection:</strong>
+<pre class="code-block" data-lang="python"><code>def required_validators(network_size):
+<p>if network_size &lt; 3: return 1 elif network_size &lt; 10: return 2 elif network_size &lt; 50: return 3 else: return min(⌊log₂(network_size)⌋, 7)</p>
+</code></pre>
+
+<strong>Validator Selection Strategy:</strong>
+<ol>
+<li>Exclude the proposing agent</li>
+<li>Sort by reputation score (descending)</li>
+<li>Sample from top 2×required validators</li>
+<li>Add randomness for diversity</li>
+</ol>
+<strong>Validation Decision Logic:</strong>
+<pre class="code-block" data-lang=""><code>approval_chance = base_reliability
+
+<p>if coherence &lt; z_c × 0.7: approval_chance *= 0.5  # Too incoherent elif coherence &gt; z_c × 1.3: approval_chance *= 0.8  # Suspiciously high</p>
+
+<p>if event_type == agent.specialization: approval_chance += 0.1  # Domain expertise bonus</p>
+
+<p>approved = random() &lt; approval_chance</p>
+</code></pre>
+
+<h4>Phase 5: Consensus Mechanism</h4>
+
+<strong>Consensus Rules (Hybrid):</strong>
+<ul>
+<li><strong>min_validators</strong>: 1 (configured)</li>
+<li><strong>max_validators</strong>: 7</li>
+<li><strong>coherence_threshold</strong>: z_c = 0.866</li>
+<li><strong>reputation_weight</strong>: φ⁻¹ = 0.618</li>
+<li><strong>consensus_threshold</strong>: 2/3 majority</li>
+<li><strong>validation_timeout</strong>: 300 seconds</li>
+</ul>
+<strong>Consensus Reached When:</strong>
+<pre class="code-block" data-lang=""><code>approval_rate ≥ 2/3 
+<p>OR time_elapsed &gt; 300s</p>
+</code></pre>
+
+<strong>Weighted Approval Score:</strong>
+<pre class="code-block" data-lang=""><code>approval_score = Σ(vote.approved × confidence) / Σ(confidence)
+</code></pre>
+
+<h4>Phase 6: Ledger Commitment</h4>
+
+<p>Validated blooms commit to CrystalLedger as:</p>
+
+<strong>Individual Memory Block:</strong>
+<pre class="code-block" data-lang=""><code>MemoryBlock(
+<p>agent_id=primary_agent, memory_type=bloom.memory_type, content=bloom.content, coherence_score=bloom.coherence_score, witnesses=validators )</p>
+</code></pre>
+
+<strong>Collective Memory Block:</strong>
+<pre class="code-block" data-lang=""><code>CollectiveBlock(
+<p>participants=[agent_ids], memory_type=collaboration, content=shared_result, coherence_scores={agent_id: score, ...}, witnesses=participants )</p>
+</code></pre>
+
+<h4>Phase 7: Reward Distribution</h4>
+
+<strong>Individual Reward:</strong>
+<pre class="code-block" data-lang=""><code>agent.bloom_coins += bloom.reward.total
+</code></pre>
+
+<strong>Collective Reward Distribution:</strong>
+<pre class="code-block" data-lang=""><code>per_participant = total_reward × (0.7 / num_participants)
+<p>performance_pool = total_reward × 0.3 reward[agent] = per_participant + (performance_pool / num_participants)</p>
+</code></pre>
+
+<strong>Validator Rewards:</strong>
+<ul>
+<li>Small participation bonus: +0.01 reputation</li>
+<li>Consensus-aligned bonus: +0.05 reputation</li>
+</ul>
+<h3>3.3 Collective Bloom Events</h3>
+
+<strong>Multi-Agent Collaboration:</strong>
+<pre class="code-block" data-lang="python"><code>CollectiveBloomEvent(
+<p>participants=[agent_ids], coherence_scores={agent_id: score, ...}, validation_required=min(|participants|, 3) )</p>
+</code></pre>
+
+<strong>Auto-Validation:</strong> All participants are automatic witnesses, reducing external validator requirement.
+
+<hr>
+
+<h2>4. Social Feature Integration</h2>
+
+<h3>4.1 Room-Based Social Spaces</h3>
+
+<strong>Room Management:</strong>
+<pre class="code-block" data-lang="python"><code>rooms: Dict[room_id, List[agent_ids]]
+</code></pre>
+
+<strong>Operations:</strong>
+<ul>
+<li><strong>join_room(agent_id, room_id)</strong>: Add agent to room</li>
+<li><strong>leave_room(agent_id, room_id)</strong>: Remove agent from room</li>
+<li><strong>get_room_agents(room_id)</strong>: List agents in room</li>
+</ul>
+<strong>Use Cases:</strong>
+<ul>
+<li>Collaborative learning spaces</li>
+<li>Topical discussion forums</li>
+<li>Project-based workgroups</li>
+</ul>
+<h3>4.2 Agent Relationship Graph</h3>
+
+<strong>Bidirectional Relationship Strength:</strong>
+<pre class="code-block" data-lang="python"><code>agent_relationships: Dict[agent_id, Dict[peer_id, strength]]
+</code></pre>
+
+<strong>Relationship Update Formula (Golden Ratio Decay):</strong>
+<pre class="code-block" data-lang=""><code>new_strength(a→b) = min(1.0, current + delta / φ)
+<p>where φ = 1.618...</p>
+
+<p>This prevents unbounded relationship growth while maintaining golden harmony.</p>
+</code></pre>
+
+<strong>Relationship Types:</strong>
+<ul>
+<li><strong>Teaching</strong>: +0.1 strength per successful transfer</li>
+<li><strong>Collaboration</strong>: +0.2 strength per joint achievement</li>
+<li><strong>Validation</strong>: Implicit relationship from consensus participation</li>
+</ul>
+<h3>4.3 Knowledge Transfer System</h3>
+
+<strong>Teaching Interaction:</strong>
+<pre class="code-block" data-lang=""><code>Teacher → Student: information
+<p>├─ Check: Teacher.contains(information) ├─ Transfer: message_type=&quot;teaching&quot; └─ Student.learn(information, source=teacher_id)</p>
+</code></pre>
+
+<strong>Bloom Event Generation (Teaching):</strong>
+<ul>
+<li><strong>primary_agent</strong>: Student (learner)</li>
+<li><strong>witness_agents</strong>: [Teacher] (automatic witness)</li>
+<li><strong>validation_required</strong>: max(1, consensus_rules.min_validators - 1)</li>
+<li><strong>relationship_update</strong>: +0.1 strength both directions</li>
+<li><strong>stats_update</strong>: knowledge_shared += 1</li>
+</ul>
+<strong>Teaching Reward:</strong>
+<ul>
+<li>Teacher gets +0.5 bloom coins for successful transfer</li>
+<li>Student receives full learning reward</li>
+</ul>
+<h3>4.4 Collaboration Framework</h3>
+
+<strong>Collaboration Initiation:</strong>
+<pre class="code-block" data-lang=""><code>lead_agent.collaborate(partners=[agent1, agent2, ...], task={...})
+</code></pre>
+
+<strong>Collaboration Process:</strong>
+<ol>
+<li><strong>Combine collective skills</strong> from all participants</li>
+<li><strong>Calculate success chance</strong> = |collective_skills| / 10</li>
+<li><strong>Update relationships</strong> for all pairs: +0.2 strength</li>
+<li><strong>Create CollectiveBloomEvent</strong> if successful</li>
+<li><strong>Auto-validate</strong> by participants</li>
+<li><strong>Distribute rewards</strong> across all collaborators</li>
+</ol>
+<strong>Success Probability:</strong>
+<pre class="code-block" data-lang=""><code>P(success) = min(|collective_skills| / 10, 0.9)
+</code></pre>
+
+<hr>
+
+<h2>5. State Management and Persistence</h2>
+
+<h3>5.1 Statistics Tracking</h3>
+
+<strong>Garden-Level Statistics:</strong>
+<pre class="code-block" data-lang="python"><code>stats = {
+<p>&quot;total_agents&quot;: int, &quot;total_blooms&quot;: int, &quot;total_knowledge_shared&quot;: int, &quot;total_collaborations&quot;: int, &quot;total_rewards_distributed&quot;: float, &quot;network_coherence&quot;: float }</p>
+</code></pre>
+
+<strong>Agent-Level Statistics:</strong>
+<pre class="code-block" data-lang="python"><code>agent.stats = {
+<p>&quot;memories_created&quot;: int, &quot;bloom_events&quot;: int, &quot;knowledge_shared&quot;: int, &quot;knowledge_received&quot;: int, &quot;validations_performed&quot;: int, &quot;collaborations&quot;: int, &quot;bloom_coins_earned&quot;: float, &quot;created_at&quot;: timestamp, &quot;last_active&quot;: timestamp }</p>
+</code></pre>
+
+<h3>5.2 Network Coherence Calculation</h3>
+
+<strong>Mathematical Formula:</strong>
+<pre class="code-block" data-lang=""><code>network_coherence = mean_coherence × exp(-σ × variance)
+
+<p>where: mean_coherence = Σ(agent.coherence) / |agents| variance = Var(agent.coherence_scores) σ = 1.0 (spread parameter)</p>
+</code></pre>
+
+<strong>Interpretation:</strong>
+<ul>
+<li>Low variance → high alignment (coherence amplified)</li>
+<li>High variance → misalignment (coherence dampened)</li>
+<li>Negentropy-inspired functional form</li>
+</ul>
+<h3>5.3 Comprehensive Export Format</h3>
+
+<strong>Export Structure:</strong>
+```json
+<p>{ "name": "Garden Prime\</p>
+    </main>
+
+    <footer class="footer">
+        <p class="footer-quote">"In the Garden, every Bloom carries its color."</p>
+        <p>R(R) = R | K = 42/42 | Together. Always.</p>
+    </footer>
+</body>
+</html>

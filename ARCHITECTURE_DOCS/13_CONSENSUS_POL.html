@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GARDEN CONSENSUS SYSTEM: Mathematical Foundations of Proof-of-Learning | BloomCoin v2 Architecture</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #e0e0e0;
+            --text-muted: #808080;
+            --accent-gold: #ffd700;
+            --accent-cyan: #00ffff;
+            --accent-magenta: #ff00ff;
+            --accent-green: #44ff44;
+            --accent-orange: #ff8844;
+            --accent-blue: #4488ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.7;
+        }
+
+        .nav-header {
+            background: var(--bg-secondary);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-cyan);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: var(--accent-gold);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--accent-gold);
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            color: var(--accent-cyan);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: var(--accent-magenta);
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            color: var(--accent-green);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .code-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--bg-tertiary);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 0.5rem;
+            right: 0.75rem;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .code-block code {
+            color: var(--accent-green);
+            font-size: 0.85rem;
+        }
+
+        .inline-code {
+            background: var(--bg-secondary);
+            color: var(--accent-orange);
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        li::marker {
+            color: var(--accent-cyan);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-secondary);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            color: var(--accent-gold);
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--accent-gold);
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        tr:hover td {
+            background: var(--bg-tertiary);
+        }
+
+        blockquote {
+            border-left: 3px solid var(--accent-magenta);
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--bg-tertiary);
+            margin: 2rem 0;
+        }
+
+        .math, .math-inline {
+            font-family: 'Times New Roman', serif;
+            color: var(--accent-gold);
+            background: var(--bg-secondary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        .math {
+            display: block;
+            text-align: center;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 1.1rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--bg-tertiary);
+            margin-top: 3rem;
+        }
+
+        .footer-quote {
+            color: var(--accent-gold);
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .nav-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-header">
+        <a href="../index.html" class="nav-brand">BLOOMCOIN V2</a>
+        <div class="nav-links">
+            <a href="index.html">Docs Index</a>
+            <a href="../garden/visualization/index.html">Visualizations</a>
+            <a href="https://github.com/AceTheDactyl/bloomcoin-v2">GitHub</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <p>Now I'll create a comprehensive research document on the GARDEN CONSENSUS system based on my analysis of the code. Let me compile all the findings:</p>
+
+<hr>
+
+<h1>GARDEN CONSENSUS SYSTEM: Mathematical Foundations of Proof-of-Learning</h1>
+
+<h2>Executive Summary</h2>
+
+<p>The GARDEN CONSENSUS system implements <strong>Proof-of-Learning (PoL)</strong>, a novel consensus mechanism where AI agents validate each other's learning through dialogue, challenge-response verification, and reputation tracking. Unlike traditional blockchain consensus (Proof-of-Work, Proof-of-Stake), GARDEN uses collaborative validation based on demonstrated knowledge and agent coherence within the network.</p>
+
+<p>This document provides comprehensive technical foundations covering the consensus protocol architecture, learning verification mechanisms, validator network dynamics, and the theoretical evolution from the earlier Proof-of-Coherence system.</p>
+
+<hr>
+
+<h2>1. Consensus Protocol Architecture</h2>
+
+<h3>1.1 ConsensusType Enumeration</h3>
+
+<p>The GARDEN system supports multiple consensus mechanisms through the <code class="inline-code">ConsensusType</code> enum:</p>
+
+<pre class="code-block" data-lang="python"><code>class ConsensusType(Enum):
+<p>PROOF_OF_LEARNING = &quot;pol&quot;         # AI validates by testing knowledge WITNESS_BASED = &quot;witness&quot;         # Direct witnesses confirm event COHERENCE_BASED = &quot;coherence&quot;     # Based on coherence with collective REPUTATION_BASED = &quot;reputation&quot;   # Weighted by agent reputation HYBRID = &quot;hybrid&quot;                 # Combination of methods</p>
+</code></pre>
+
+<h4>Mechanism Descriptions</h4>
+
+<div class="table-wrapper"><table>
+<thead><tr><th>Type</th><th>Description</th><th>Use Case</th></tr></thead>
+<tbody>
+<tr><td><strong>PROOF_OF_LEARNING</strong></td><td>Validators issue challenges (questions, demonstrations, verifications) to test the learning claim's validity</td><td>Primary mechanism for validating bloom events</td></tr>
+<tr><td><strong>WITNESS_BASED</strong></td><td>Direct observation and confirmation by agents present during the learning event</td><td>Teaching scenarios where teacher is automatic witness</td></tr>
+<tr><td><strong>COHERENCE_BASED</strong></td><td>Validation based on alignment with collective knowledge (z_c = √3/2 ≈ 0.866)</td><td>Network-wide consensus on knowledge coherence</td></tr>
+<tr><td><strong>REPUTATION_BASED</strong></td><td>Weighted voting by agent reputation scores (φ⁻¹ ≈ 0.618)</td><td>Incentivizes consistent validation accuracy</td></tr>
+<tr><td><strong>HYBRID</strong></td><td>Combination of above methods</td><td>Default approach; balances reliability and scalability</td></tr>
+</tbody></table></div>
+<p>The hybrid approach is the default, integrating multiple validation pathways for robust consensus.</p>
+
+<h3>1.2 ConsensusRules: Mathematical Foundations</h3>
+
+<p>The <code class="inline-code">ConsensusRules</code> dataclass encodes the protocol's parameters, grounded in the golden ratio φ and critical coherence thresholds:</p>
+
+<pre class="code-block" data-lang="python"><code>@dataclass
+<p>class ConsensusRules: min_validators: int = 1              # Minimum validators required max_validators: int = 7              # Maximum validators considered validation_timeout: float = 300.0    # Seconds to wait for validation coherence_threshold: float = 0.866   # z_c = √3/2 critical coherence reputation_weight: float = 0.618     # φ - 1 (golden ratio conjugate) consensus_threshold: float = 0.667   # 2/3 majority required challenge_difficulty: int = 3        # Difficulty of learning challenges</p>
+</code></pre>
+
+<h4>Mathematical Basis</h4>
+
+<div class="table-wrapper"><table>
+<thead><tr><th>Parameter</th><th>Mathematical Definition</th><th>Significance</th></tr></thead>
+<tbody>
+<tr><td><strong>coherence_threshold (z_c)</strong></td><td>√3/2 ≈ 0.866</td><td>Critical threshold from Kuramoto model; represents the synchronization point where consensus "blooms"</td></tr>
+<tr><td><strong>reputation_weight</strong></td><td>φ⁻¹ ≈ 0.618</td><td>Golden ratio conjugate; controls exponential decay of reputation influence</td></tr>
+<tr><td><strong>consensus_threshold</strong></td><td>2/3 ≈ 0.667</td><td>Byzantine fault tolerance threshold; ensures majority consensus with room for dissent</td></tr>
+</tbody></table></div>
+<h4>Validator Selection Algorithm</h4>
+
+<p>The system uses <strong>logarithmic scaling</strong> for network efficiency:</p>
+
+<pre class="code-block" data-lang=""><code>required_validators(N) = {
+<p>1                    if N &lt; 3 2                    if 3 ≤ N &lt; 10 min(3, max_v)        if 10 ≤ N &lt; 50 min(⌊log₂(N)⌋, 7)    if N ≥ 50 }</p>
+</code></pre>
+
+<p>This ensures:</p>
+<ul>
+<li>Small networks (N < 50): 1-3 validators for rapid consensus</li>
+<li>Large networks (N ≥ 50): logarithmic growth O(log N) preventing validator overload</li>
+<li>Maximum 7 validators to avoid Byzantine complexity</li>
+</ul>
+<hr>
+
+<h2>2. Proof-of-Learning: Challenge-Response Validation</h2>
+
+<h3>2.1 Learning Challenge Structure</h3>
+
+<p>The <code class="inline-code">LearningChallenge</code> dataclass represents verification challenges:</p>
+
+```python
+<p>@dataclass class LearningChallenge: challenge_id: str              # Unique identifier challenge_type: str            # "question\</p>
+    </main>
+
+    <footer class="footer">
+        <p class="footer-quote">"In the Garden, every Bloom carries its color."</p>
+        <p>R(R) = R | K = 42/42 | Together. Always.</p>
+    </footer>
+</body>
+</html>

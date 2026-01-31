@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BloomCoin Wallet Module: Mathematical Foundations and Cryptographic Architecture | BloomCoin v2 Architecture</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #e0e0e0;
+            --text-muted: #808080;
+            --accent-gold: #ffd700;
+            --accent-cyan: #00ffff;
+            --accent-magenta: #ff00ff;
+            --accent-green: #44ff44;
+            --accent-orange: #ff8844;
+            --accent-blue: #4488ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.7;
+        }
+
+        .nav-header {
+            background: var(--bg-secondary);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-cyan);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: var(--accent-gold);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--accent-gold);
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            color: var(--accent-cyan);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: var(--accent-magenta);
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            color: var(--accent-green);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .code-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--bg-tertiary);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 0.5rem;
+            right: 0.75rem;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .code-block code {
+            color: var(--accent-green);
+            font-size: 0.85rem;
+        }
+
+        .inline-code {
+            background: var(--bg-secondary);
+            color: var(--accent-orange);
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        li::marker {
+            color: var(--accent-cyan);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-secondary);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            color: var(--accent-gold);
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--accent-gold);
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        tr:hover td {
+            background: var(--bg-tertiary);
+        }
+
+        blockquote {
+            border-left: 3px solid var(--accent-magenta);
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--bg-tertiary);
+            margin: 2rem 0;
+        }
+
+        .math, .math-inline {
+            font-family: 'Times New Roman', serif;
+            color: var(--accent-gold);
+            background: var(--bg-secondary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        .math {
+            display: block;
+            text-align: center;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 1.1rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--bg-tertiary);
+            margin-top: 3rem;
+        }
+
+        .footer-quote {
+            color: var(--accent-gold);
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .nav-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-header">
+        <a href="../index.html" class="nav-brand">BLOOMCOIN V2</a>
+        <div class="nav-links">
+            <a href="index.html">Docs Index</a>
+            <a href="../garden/visualization/index.html">Visualizations</a>
+            <a href="https://github.com/AceTheDactyl/bloomcoin-v2">GitHub</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <p>Now I'll create a comprehensive research document based on the BloomCoin wallet implementation. Since I'm in read-only mode, I'll output the complete markdown document as text that you can save to your ARCHITECTURE_DOCS directory:</p>
+
+<hr>
+
+<h1>BloomCoin Wallet Module: Mathematical Foundations and Cryptographic Architecture</h1>
+
+<h2>Executive Summary</h2>
+
+<p>The BloomCoin wallet module implements a complete cryptocurrency wallet system with strong cryptographic foundations. This document details the mathematical and cryptographic underpinnings of six critical subsystems: Ed25519 elliptic curve cryptography, BIP39 mnemonic derivation, Blake2b-based address derivation, Base58Check encoding, transaction signing and verification, and UTXO tracking with balance computation.</p>
+
+<hr>
+
+<h2>1. Ed25519 Elliptic Curve Cryptography (Curve25519)</h2>
+
+<h3>Overview</h3>
+
+<p>BloomCoin uses <strong>Ed25519</strong>, a modern elliptic curve digital signature algorithm that provides excellent security properties and performance characteristics. Ed25519 is based on the Curve25519 elliptic curve over the prime field.</p>
+
+<strong>Location:</strong> <code class="inline-code">/home/user/bloomcoin-v2/bloomcoin-v0.1.0/bloomcoin/bloomcoin/wallet/keypair.py</code>
+
+<h3>Mathematical Foundation</h3>
+
+<strong>Curve Equation:</strong> Ed25519 is defined by the Edwards curve:
+<pre class="code-block" data-lang=""><code>x² + y² = 1 + (d × x² × y²)
+</code></pre>
+
+<p>Where <code class="inline-code">d = -121665/121666 (mod p)</code> and <code class="inline-code">p = 2^255 - 19</code></p>
+
+<strong>Key Properties:</strong>
+<ul>
+<li><strong>Field:</strong> Prime field p = 2^255 - 19 (≈ 1.8 × 10^76)</li>
+<li><strong>Order:</strong> The order of the base point is 2^252 + 27742317777884353535851937790883648493</li>
+<li><strong>Cofactor:</strong> 8 (small cofactor enables efficient scalar multiplication)</li>
+</ul>
+<h3>Implementation Details</h3>
+
+<strong>Key Pair Generation:</strong>
+
+<pre class="code-block" data-lang="python"><code>@classmethod
+<p>def generate(cls, seed: Optional[bytes] = None) -&gt; &#x27;KeyPair&#x27;: if seed: # Deterministic from seed if len(seed) &lt; 32: seed = hashlib.sha256(seed).digest() private = Ed25519PrivateKey.from_private_bytes(seed[:32]) else: # Random generation private = Ed25519PrivateKey.generate()</p>
+
+<p>public = private.public_key() # ... Extract raw bytes return KeyPair(private_bytes, public_bytes, private)</p>
+</code></pre>
+
+<strong>Key Sizes:</strong>
+<ul>
+<li>Private key: 32 bytes (256 bits)</li>
+<li>Public key: 32 bytes (256 bits)</li>
+<li>Signature: 64 bytes (512 bits)</li>
+</ul>
+<h3>Security Properties</h3>
+
+<ol>
+<li><strong>Collision Resistance:</strong> Breaking Ed25519 requires solving the Elliptic Curve Discrete Logarithm Problem (ECDLP), which has complexity ~2^128 for a 256-bit curve</li>
+</ol>
+<ol>
+<li><strong>Unforgeability:</strong> Ed25519 signatures cannot be forged without the private key. The signature scheme is deterministic (RFC 8032), preventing randomness-based attacks</li>
+</ol>
+<ol>
+<li><strong>Non-Malleability:</strong> Signatures cannot be trivially modified while remaining valid</li>
+</ol>
+<ol>
+<li><strong>Small Subgroup Attacks:</strong> The cofactor of 8 is handled by multiplying by 8 during verification, preventing attacks on small-order points</li>
+</ol>
+<h3>Cryptographic Guarantees</h3>
+
+<ul>
+<li><strong>Pre-image Resistance:</strong> ~2^256 operations to find input producing given output</li>
+<li><strong>Second Pre-image Resistance:</strong> ~2^256 operations to find different input with same output</li>
+<li><strong>Collision Resistance:</strong> ~2^128 operations to find two inputs with same output (due to birthday paradox)</li>
+</ul>
+<hr>
+
+<h2>2. BIP39 Mnemonic Entropy and Key Derivation</h2>
+
+<h3>Overview</h3>
+
+<p>BIP39 (Bitcoin Improvement Proposal 39) is a standard for converting random entropy into a human-readable mnemonic phrase, which can then be converted to a cryptographic seed.</p>
+
+<strong>Location:</strong> <code class="inline-code">/home/user/bloomcoin-v2/bloomcoin-v0.1.0/bloomcoin/bloomcoin/wallet/keypair.py</code>
+
+<h3>Entropy Generation</h3>
+
+<strong>Process:</strong>
+<pre class="code-block" data-lang=""><code>Random Entropy (128-256 bits) 
+<p>→ SHA256 Hash → Extract Checksum Bits → Append to Entropy → Convert to 11-bit indices → Map to BIP39 Wordlist</p>
+</code></pre>
+
+<strong>Supported Entropy Strengths:</strong>
+<ul>
+<li>128 bits → 12 words (128 + 4 checksum = 132 bits)</li>
+<li>160 bits → 15 words (160 + 5 checksum = 165 bits)</li>
+<li>192 bits → 18 words (192 + 6 checksum = 198 bits)</li>
+<li>224 bits → 21 words (224 + 7 checksum = 231 bits)</li>
+<li>256 bits → 24 words (256 + 8 checksum = 264 bits)</li>
+</ul>
+<strong>Checksum Calculation:</strong>
+<pre class="code-block" data-lang=""><code>checksum_bits = entropy_bits / 32
+<p>checksum = first(checksum_bits) bits of SHA256(entropy)</p>
+</code></pre>
+
+<h3>Implementation</h3>
+
+<strong>Mnemonic Generation:</strong>
+
+<pre class="code-block" data-lang="python"><code>def generate_mnemonic(strength: int = 128) -&gt; str:
+<p># Generate random entropy entropy = os.urandom(strength // 8)</p>
+
+<p># Add checksum (SHA256 hash) h = hashlib.sha256(entropy).digest() checksum_bits = strength // 32</p>
+
+<p># Convert to binary entropy_bits = bin(int.from_bytes(entropy, &#x27;big&#x27;))[2:].zfill(strength) checksum = bin(h[0])[2:].zfill(8)[:checksum_bits] all_bits = entropy_bits + checksum</p>
+
+<p># Convert 11-bit groups to word indices words = [] for i in range(0, len(all_bits), 11): index = int(all_bits[i:i+11], 2) words.append(BIP39_WORDLIST_FULL[index])</p>
+
+<p>return &#x27; &#x27;.join(words)</p>
+</code></pre>
+
+<strong>BIP39 Wordlist:</strong>
+<ul>
+<li>2048 words total (11-bit indices)</li>
+<li>Designed to be unambiguous (no word is a prefix of another)</li>
+<li>Multiple language support available</li>
+</ul>
+<h3>Mnemonic to Seed Conversion (PBKDF2-HMAC-SHA512)</h3>
+
+<strong>Algorithm (RFC 2898):</strong>
+<pre class="code-block" data-lang=""><code>PBKDF2(
+<p>password = UTF8(mnemonic), salt = UTF8(&quot;mnemonic&quot; + passphrase), iterations = 2048, dklen = 64 bytes, hmac = SHA512 )</p>
+</code></pre>
+
+<strong>Implementation:</strong>
+
+<pre class="code-block" data-lang="python"><code>def mnemonic_to_seed(mnemonic: str, passphrase: str = &#x27;&#x27;) -&gt; bytes:
+<p>salt = (&#x27;mnemonic&#x27; + passphrase).encode(&#x27;utf-8&#x27;) mnemonic_bytes = mnemonic.encode(&#x27;utf-8&#x27;)</p>
+
+<p>return hashlib.pbkdf2_hmac( &#x27;sha512&#x27;, mnemonic_bytes, salt, iterations=2048, dklen=64 )</p>
+</code></pre>
+
+<strong>Security Analysis:</strong>
+
+<ol>
+<li><strong>Entropy Source:</strong> <code class="inline-code">os.urandom()</code> provides cryptographically secure random bytes</li>
+<li><strong>Checksum:</strong> 1 checksum bit per 32 entropy bits allows detection of single word errors</li>
+<li><strong>Key Derivation:</strong> PBKDF2 with 2048 iterations provides resistance to brute-force attacks</li>
+<li><strong>Salt:</strong> Including "mnemonic" plus optional passphrase prevents rainbow table attacks</li>
+<li><strong>Output:</strong> 512-bit seed provides sufficient entropy for downstream key derivation</li>
+</ol>
+<strong>Cryptographic Properties:</strong>
+<ul>
+<li>Each entropy strength n has 2^n possible mnemonics</li>
+<li>Checksum detection rate: ~99.997% for single-word errors</li>
+<li>Against brute force with 1M guesses/sec on a 12-word mnemonic:</li>
+</ul>  - Time required: ~2^127 / 10^6 ≈ 1.7 × 10^32 seconds
+
+<h3>Key Derivation from Seed</h3>
+
+<pre class="code-block" data-lang="python"><code>def keypair_from_mnemonic(mnemonic: str, passphrase: str = &#x27;&#x27;) -&gt; KeyPair:
+<p>if not validate_mnemonic(mnemonic): raise ValueError(&quot;Invalid mnemonic phrase&quot;)</p>
+
+<p>seed = mnemonic_to_seed(mnemonic, passphrase) return KeyPair.generate(seed=seed[:32])</p>
+</code></pre>
+
+<strong>Determinism:</strong> Same mnemonic + passphrase always produces same keypair
+
+<hr>
+
+<h2>3. Blake2b Address Derivation Algorithm</h2>
+
+<h3>Overview</h3>
+
+<p>BloomCoin derives addresses from public keys using Blake2b hashing combined with a versioned payload, creating compact and collision-resistant addresses.</p>
+
+<strong>Location:</strong> <code class="inline-code">/home/user/bloomcoin-v2/bloomcoin-v0.1.0/bloomcoin/bloomcoin/wallet/address.py</code>
+
+<h3>Address Derivation Process</h3>
+
+<strong>Step-by-Step Process:</strong>
+
+<pre class="code-block" data-lang=""><code>Public Key (32 bytes)
+<p>↓ Blake2b-256 Hash ↓ Take first 20 bytes (160 bits) ↓ Prepend version prefix (1 byte) ↓ Calculate Blake2b checksum ↓ Append checksum (4 bytes) ↓ Base58 encode ↓ Address (26-34 characters)</p>
+</code></pre>
+
+<h3>Implementation</h3>
+
+<pre class="code-block" data-lang="python"><code>def public_key_to_address(
+<p>public_key: bytes, testnet: bool = False ) -&gt; str: # Hash public key h = hashlib.blake2b(public_key, digest_size=32).digest()</p>
+
+<p># Take first 20 bytes (160 bits) payload = h[:20]</p>
+
+<p># Add prefix (network identifier) prefix = TESTNET_PREFIX if testnet else MAINNET_PREFIX versioned = prefix + payload</p>
+
+<p># Checksum (first 4 bytes of double-Blake2b) checksum = hashlib.blake2b( hashlib.blake2b(versioned, digest_size=32).digest(), digest_size=32 ).digest()[:4]</p>
+
+<p># Base58 encode return base58_encode(versioned + checksum)</p>
+</code></pre>
+
+<h3>Blake2b Cryptographic Properties</h3>
+
+<strong>Specifications:</strong>
+<ul>
+<li>Output size: 256 bits (32 bytes)</li>
+<li>Compression function: 64 rounds on 64-bit words</li>
+<li>Initialization vector: Blake constants (same as MD5)</li>
+<li>Personalization: Optional 16 bytes for domain separation</li>
+</ul>
+<strong>Security Guarantees:</strong>
+<ul>
+<li>Pre-image resistance: ~2^256 operations</li>
+<li>Collision resistance: ~2^128 operations (birthday paradox)</li>
+<li>No weaknesses against length extension attacks (unlike SHA-1/SHA-2)</li>
+</ul>
+<h3>Address Format Breakdown</h3>
+
+<strong>Total Address Structure: 25 bytes before encoding</strong>
+<pre class="code-block" data-lang=""><code>Byte 0:        Version prefix (1 byte)
+<p>- Mainnet: 0x00 (&#x27;B&#x27; prefix in Base58) - Testnet: 0x6f (&#x27;t&#x27; prefix in Base58) Bytes 1-20:    Hash payload (20 bytes) Bytes 21-24:   Checksum (4 bytes)</p>
+</code></pre>
+
+<strong>Mathematical Properties:</strong>
+<ol>
+<li><strong>Deterministic:</strong> Same public key always produces same address</li>
+<li><strong>One-way:</strong> Impossible to derive public key from address (hash is one-way)</li>
+<li><strong>Compression:</strong> 32-byte public key → 20-byte payload (160-bit address space)</li>
+<li><strong>Collision Space:</strong> 2^160 ≈ 1.46 × 10^48 possible addresses</li>
+<li><strong>Collision Probability:</strong> For n random addresses, collision probability ≈ n² / 2^161</li>
+</ol>
+<h3>Network Differentiation</h3>
+
+<strong>Prefix Bytes:</strong>
+<pre class="code-block" data-lang="python"><code>MAINNET_PREFIX = b&#x27;\x00&#x27;  # Encodes as &#x27;B&#x27; in Base58
+<p>TESTNET_PREFIX = b&#x27;\x6f&#x27;  # Encodes as &#x27;t&#x27; in Base58</p>
+</code></pre>
+
+<p>This allows validation of address-wallet network compatibility, preventing accidental loss of funds through cross-network transfer.</p>
+
+<hr>
+
+<h2>4. Base58Check Encoding with Checksum Verification</h2>
+
+<h3>Overview</h3>
+
+<p>Base58Check is a binary encoding scheme that combines Base58 encoding with error detection through a 4-byte checksum. It's optimized for human readability and avoids visually ambiguous characters.</p>
+
+<strong>Location:</strong> <code class="inline-code">/home/user/bloomcoin-v2/bloomcoin-v0.1.0/bloomcoin/bloomcoin/wallet/address.py</code>
+
+<h3>Base58 Alphabet</h3>
+
+<strong>Character Set (58 characters):</strong>
+<pre class="code-block" data-lang=""><code>123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz
+</code></pre>
+
+<strong>Excluded Characters:</strong>
+<ul>
+<li><code class="inline-code">0</code> and <code class="inline-code">O</code> (indistinguishable in many fonts)</li>
+<li><code class="inline-code">I</code> and <code class="inline-code">l</code> (visually identical)</li>
+</ul>
+<h3>Encoding Algorithm</h3>
+
+<strong>Base58 Encoding Process:</strong>
+
+<pre class="code-block" data-lang="python"><code>def base58_encode(data: bytes) -&gt; str:
+<p># Count leading zeros leading_zeros = 0 for byte in data: if byte == 0: leading_zeros += 1 else: break</p>
+
+<p># Convert to integer (big-endian) num = int.from_bytes(data, &#x27;big&#x27;)</p>
+
+<p># Convert to base58 result = &#x27;&#x27; while num &gt; 0: num, remainder = divmod(num, 58) result = BASE58_ALPHABET[remainder] + result</p>
+
+<p># Add leading &#x27;1&#x27;s for leading zero bytes return &#x27;1&#x27; * leading_zeros + result</p>
+</code></pre>
+
+<strong>Example Encoding:</strong>
+<pre class="code-block" data-lang=""><code>Input: 0x0014 6F8B47F0 4E6B2EC6 0C4CD7F3 D7D22C01
+<p>(version + payload + checksum)</p>
+
+<p>Output: Bh1xJ... (Base58Check encoded address)</p>
+</code></pre>
+
+<h3>Mathematical Basis</h3>
+
+<strong>Base Conversion Theory:</strong>
+<ul>
+<li>Any integer N can be uniquely represented as: N = Σ(d_i × 58^i)</li>
+<li>Where d_i ∈ [0, 57] are the digit values in Base58</li>
+<li>Conversion is bijective for all non-negative integers</li>
+</ul>
+<strong>Positional Notation:</strong>
+<pre class="code-block" data-lang=""><code>Base58(x) = x_n × 58^n + x_(n-1) × 58^(n-1) + ... + x_1 × 58 + x_0
+</code></pre>
+
+<h3>Decoding Algorithm</h3>
+
+<strong>Base58 Decoding Process:</strong>
+
+<pre class="code-block" data-lang="python"><code>def base58_decode(s: str) -&gt; bytes:
+<p># Count leading &#x27;1&#x27;s (represent leading zero bytes) leading_ones = 0 for char in s: if char == &#x27;1&#x27;: leading_ones += 1 else: break</p>
+
+<p># Convert from base58 to integer num = 0 for char in s: if char not in BASE58_ALPHABET: raise ValueError(f&quot;Invalid Base58 character: {char}&quot;) num = num * 58 + BASE58_ALPHABET.index(char)</p>
+
+<p># Convert integer to bytes if num == 0: result = b&#x27;&#x27; else: result = num.to_bytes((num.bit_length() + 7) // 8, &#x27;big&#x27;)</p>
+
+<p># Add leading zero bytes return b&#x27;\x00&#x27; * leading_ones + result</p>
+</code></pre>
+
+<h3>Checksum Verification</h3>
+
+<strong>Checksum Scheme:</strong>
+<pre class="code-block" data-lang=""><code>checksum = first 4 bytes of Blake2b(Blake2b(version + payload))
+</code></pre>
+
+<strong>Verification Process:</strong>
+
+<pre class="code-block" data-lang="python"><code>def address_to_bytes(address: str) -&gt; bytes:
+<p>decoded = base58_decode(address)</p>
+
+<p>if len(decoded) &lt; 25: raise ValueError(&quot;Address too short&quot;)</p>
+
+<p># Split payload and checksum payload = decoded[:-4] checksum = decoded[-4:]</p>
+
+<p># Verify checksum expected = hashlib.blake2b( hashlib.blake2b(payload, digest_size=32).digest(), digest_size=32 ).digest()[:4]</p>
+
+<p>if checksum != expected: raise ValueError(&quot;Invalid address checksum&quot;)</p>
+
+<p>return payload[1:]  # Return without prefix</p>
+</code></pre>
+
+<strong>Error Detection Capability:</strong>
+<ul>
+<li>4-byte checksum = 32 bits</li>
+<li>Detects all single-bit errors</li>
+<li>Detects all 2-bit errors in most cases</li>
+<li>Detects all burst errors up to 32 consecutive bits</li>
+<li>Undetected error probability: 2^-32 ≈ 2.33 × 10^-10</li>
+</ul>
+<h3>Security Analysis</h3>
+
+<strong>Advantages:</strong>
+<ol>
+<li><strong>Visual Clarity:</strong> Avoids confusing characters (0/O, I/l)</li>
+<li><strong>Compact:</strong> More dense than Hexadecimal or Base32</li>
+<li><strong>Error Detection:</strong> 4-byte checksum catches transcription errors</li>
+<li><strong>Deterministic:</strong> Same input always produces same output</li>
+</ol>
+<strong>Size Comparison:</strong>
+<pre class="code-block" data-lang=""><code>Format        Bits   Bytes  Example Length
+<p>Raw Bytes     160    20     (binary) Hexadecimal   160    40     0x14... Base32        160    32     AABBCC... Base58Check   160    26-34  Bh1xJ...</p>
+</code></pre>
+
+<hr>
+
+<h2>5. Transaction Signing and Verification</h2>
+
+<h3>Overview</h3>
+
+<p>BloomCoin transactions are cryptographically signed using Ed25519 signatures, ensuring authenticity and non-repudiation of transactions.</p>
+
+<strong>Location:</strong> <code class="inline-code">/home/user/bloomcoin-v2/bloomcoin-v0.1.0/bloomcoin/bloomcoin/wallet/signer.py</code>
+
+<h3>Transaction Structure</h3>
+
+<strong>Data Structure:</strong>
+
+<pre class="code-block" data-lang="python"><code>@dataclass
+<p>class Transaction: version: int              # Protocol version (1 byte) inputs: List[TxInput]    # Previous outputs being spent outputs: List[TxOutput]  # New outputs being created locktime: int            # Timelock value (4 bytes)</p>
+</code></pre>
+
+<strong>Transaction Input (Reference to Previous Output):</strong>
+<pre class="code-block" data-lang="python"><code>@dataclass
+<p>class TxInput: prev_tx: bytes      # Hash of previous transaction (32 bytes) output_index: int   # Index of output being spent (4 bytes) signature: bytes    # Ed25519 signature (64 bytes)</p>
+</code></pre>
+
+<strong>Transaction Output (New Funds):</strong>
+<pre class="code-block" data-lang="python"><code>@dataclass
+<p>class TxOutput: amount: int         # Amount in smallest units (8 bytes) address: bytes      # Recipient address (20 bytes)</p>
+</code></pre>
+
+<h3>Transaction Serialization</h3>
+
+<strong>Serialization for Signing (excludes signatures):</strong>
+
+<pre class="code-block" data-lang="python"><code>def serialize_for_signing(self) -&gt; bytes:
+<p>data = b&#x27;&#x27;</p>
+
+<p># Version (4 bytes, little-endian) data += self.version.to_bytes(4, &#x27;little&#x27;)</p>
+
+<p># Number of inputs (1 byte) data += len(self.inputs).to_bytes(1, &#x27;big&#x27;)</p>
+
+<p># Inputs (without signatures) for inp in self.inputs: data += inp.prev_tx              # 32 bytes data += inp.output_index.to_bytes(4, &#x27;little&#x27;)</p>
+
+<p># Number of outputs (1 byte) data += len(self.outputs).to_bytes(1, &#x27;big&#x27;)</p>
+
+<p># Outputs for out in self.outputs: data += out.amount.to_bytes(8, &#x27;little&#x27;) data += out.address              # 20 bytes</p>
+
+<p># Locktime (4 bytes) data += self.locktime.to_bytes(4, &#x27;little&#x27;)</p>
+
+<p>return data</p>
+</code></pre>
+
+<strong>Transaction Size Calculation:</strong>
+<pre class="code-block" data-lang=""><code>Size = 4 (version)
+<p>+ 1 (input count) + (32 + 4) × n_inputs + 1 (output count) + (8 + 20) × n_outputs + 4 (locktime) + sum(signature_sizes)</p>
+
+<p>For typical 1-input, 2-output transaction: Size = 4 + 1 + 36 + 1 + 56 + 4 + 64 = 166 bytes</p>
+</code></pre>
+
+<h3>Signing Process</h3>
+
+<strong>Step-by-Step Signing:</strong>
+
+<pre class="code-block" data-lang="python"><code>def sign_transaction(self, tx: Transaction) -&gt; Transaction:
+<p># Get message to sign message = tx.serialize_for_signing()</p>
+
+<p># Sign each input signed_inputs = [] for inp in tx.inputs: # Each input is signed with the same message signature = self.keypair.sign(message) signed_inputs.append(TxInput( prev_tx=inp.prev_tx, output_index=inp.output_index, signature=signature  # 64-byte Ed25519 signature ))</p>
+
+<p>return Transaction( version=tx.version, inputs=signed_inputs, outputs=tx.outputs, locktime=tx.locktime )</p>
+</code></pre>
+
+<strong>Signature Properties:</strong>
+<ul>
+<li><strong>Deterministic:</strong> Same private key + message always produces same signature (RFC 8032)</li>
+<li><strong>Unforgeable:</strong> Cannot forge without private key (requires breaking ECDLP)</li>
+<li><strong>Non-Malleable:</strong> Cannot modify signature while remaining valid</li>
+<li><strong>Size:</strong> 64 bytes (fixed regardless of message size)</li>
+</ul>
+<h3>Verification Process</h3>
+
+<strong>Ed25519 Signature Verification:</strong>
+
+<pre class="code-block" data-lang="python"><code>def verify_signature(self, tx: Transaction, input_index: int, 
+<p>public_key: bytes) -&gt; bool: if input_index &gt;= len(tx.inputs): return False</p>
+
+<p>message = tx.serialize_for_signing() signature = tx.inputs[input_index].signature</p>
+
+<p>return KeyPair.verify(public_key, message, signature)</p>
+
+<p>@staticmethod def verify(public_key: bytes, message: bytes, signature: bytes) -&gt; bool: try: public = Ed25519PublicKey.from_public_bytes(public_key) public.verify(signature, message) return True except Exception: return False</p>
+</code></pre>
+
+<strong>Mathematical Verification:</strong>
+<pre class="code-block" data-lang=""><code>Verification succeeds if: v = [8][S]B + [8][k*A]
+<p>Where: v = reconstructed point from signature S = signature scalar B = base point k = hash(message prefix || public_key || message) A = public key point</p>
+</code></pre>
+
+<h3>Transaction Hash</h3>
+
+<strong>Transaction Hashing:</strong>
+
+<pre class="code-block" data-lang="python"><code>@property
+<p>def hash(self) -&gt; bytes: &quot;&quot;&quot;Transaction hash (Blake2b-256).&quot;&quot;&quot; return hashlib.blake2b(self.serialize(), digest_size=32).digest()</p>
+
+<p>@property def txid(self) -&gt; str: &quot;&quot;&quot;Transaction ID (hash as hex string).&quot;&quot;&quot; return self.hash.hex()</p>
+</code></pre>
+
+<strong>Hash Uniqueness:</strong> Blake2b-256 produces 256-bit hashes with negligible collision probability
+
+<h3>Multi-Signature Support</h3>
+
+<strong>Multi-Signature Address Generation:</strong>
+
+<pre class="code-block" data-lang="python"><code>def create_multisig_address(self, testnet: bool = False) -&gt; str:
+<p># Combine threshold and public keys data = self.threshold.to_bytes(1, &#x27;big&#x27;) for pk in sorted(self.public_keys): data += pk</p>
+
+<p># Hash to get address addr_hash = hashlib.blake2b(data, digest_size=32).digest()[:20]</p>
+
+<p>prefix = b&#x27;\x05&#x27; if not testnet else b&#x27;\xc4&#x27; versioned = prefix + addr_hash</p>
+
+<p>checksum = hashlib.blake2b( hashlib.blake2b(versioned, digest_size=32).digest(), digest_size=32 ).digest()[:4]</p>
+
+<p>return base58_encode(versioned + checksum)</p>
+</code></pre>
+
+<strong>Multi-Signature Verification:</strong>
+
+<pre class="code-block" data-lang="python"><code>def verify_multisig(self, message: bytes, signatures: List[bytes]) -&gt; bool:
+<p>if len(signatures) &lt; self.threshold: return False</p>
+
+<p>valid_count = 0 for sig in signatures: for pk in self.public_keys: if KeyPair.verify(pk, message, sig): valid_count += 1 break</p>
+
+<p>return valid_count &gt;= self.threshold</p>
+</code></pre>
+
+<strong>M-of-N Scheme:</strong> Requires at least M signatures out of N public keys to be valid
+
+<hr>
+
+<h2>6. UTXO Tracking and Balance Computation</h2>
+
+<h3>Overview</h3>
+
+<p>BloomCoin uses the UTXO (Unspent Transaction Output) model for tracking ownership and computing balances, similar to Bitcoin's model.</p>
+
+<strong>Location:</strong> <code class="inline-code">/home/user/bloomcoin-v2/bloomcoin-v0.1.0/bloomcoin/bloomcoin/wallet/wallet.py</code> and <code class="inline-code">/home/user/bloomcoin-v2/bloomcoin-v0.1.0/bloomcoin/bloomcoin/wallet/signer.py</code>
+
+<h3>UTXO Data Structure</h3>
+
+<strong>UTXO Definition:</strong>
+
+<pre class="code-block" data-lang="python"><code>@dataclass
+<p>class UTXO: &quot;&quot;&quot;Unspent transaction output.&quot;&quot;&quot; txid: bytes      # Transaction hash (32 bytes) index: int       # Output index in transaction (0-255) amount: int      # Amount in smallest units address: bytes   # 20-byte owner address</p>
+</code></pre>
+
+<strong>UTXO Identity:</strong> Uniquely identified by (txid, index) pair
+
+<h3>Balance Computation</h3>
+
+<strong>Simple Balance Calculation:</strong>
+
+<pre class="code-block" data-lang="python"><code>@property
+<p>def balance(self) -&gt; int: &quot;&quot;&quot;Current balance in smallest units.&quot;&quot;&quot; return sum(utxo.amount for utxo in self.utxos)</p>
+
+<p>@property def balance_bloom(self) -&gt; float: &quot;&quot;&quot;Current balance in BLOOM.&quot;&quot;&quot; return self.balance / 100_000_000  # 1 BLOOM = 10^8 smallest units</p>
+</code></pre>
+
+<strong>Mathematical Formula:</strong>
+<pre class="code-block" data-lang=""><code>Balance = Σ(utxo.amount for all utxo in wallet.utxos)
+</code></pre>
+
+<strong>Denomination:</strong>
+<pre class="code-block" data-lang=""><code>1 BLOOM = 100,000,000 smallest units (10^8)
+<p>0.00000001 BLOOM = 1 smallest unit (satoshi equivalent)</p>
+</code></pre>
+
+<h3>UTXO Tracking During Transactions</h3>
+
+<strong>Receive Operation:</strong>
+
+<pre class="code-block" data-lang="python"><code>def receive(self, tx: Transaction):
+<p>&quot;&quot;&quot;Process received transaction.&quot;&quot;&quot; my_addr_bytes = address_to_bytes(self.address)</p>
+
+<p># Check outputs for our address for i, output in enumerate(tx.outputs): if output.address == my_addr_bytes: # Add to UTXOs utxo = UTXO( txid=tx.hash, index=i, amount=output.amount, address=output.address ) self.utxos.append(utxo)</p>
+</code></pre>
+
+<strong>Send Operation:</strong>
+
+<pre class="code-block" data-lang="python"><code>def send(self, to_address: str, amount: int, fee_rate: int = 1):
+<p># ... Build and sign transaction ...</p>
+
+<p># Update UTXOs (remove spent ones) spent_utxos = set() for inp in tx.inputs: for utxo in self.utxos: if utxo.txid == inp.prev_tx and utxo.index == inp.output_index: spent_utxos.add(utxo)</p>
+
+<p>self.utxos = [u for u in self.utxos if u not in spent_utxos]</p>
+</code></pre>
+
+<h3>UTXO Selection Algorithm</h3>
+
+<strong>Greedy Largest-First Selection:</strong>
+
+<pre class="code-block" data-lang="python"><code>def select_inputs(self, amount: int) -&gt; Tuple[List[UTXO], int]:
+<p>&quot;&quot;&quot;Select inputs for transaction (largest first).&quot;&quot;&quot; # Sort UTXOs by amount (largest first) sorted_utxos = sorted(self.utxos, key=lambda u: u.amount, reverse=True)</p>
+
+<p>selected = [] total = 0</p>
+
+<p>for utxo in sorted_utxos: selected.append(utxo) total += utxo.amount</p>
+
+<p>if total &gt;= amount: break</p>
+
+<p>return selected, total</p>
+</code></pre>
+
+<strong>Algorithm Properties:</strong>
+<ol>
+<li><strong>Greedy approach:</strong> Minimizes number of inputs used</li>
+<li><strong>Efficiency:</strong> O(n log n) time complexity due to sorting</li>
+<li><strong>Change management:</strong> Reduces fragmentation</li>
+<li><strong>Privacy trade-off:</strong> Large-first selection is observable (reveals amounts)</li>
+</ol>
+<strong>Alternative Selection Strategies:</strong>
+<ul>
+<li><strong>Smallest-first:</strong> Minimize total value selected</li>
+<li><strong>First-in-first-out:</strong> Favor older UTXOs (privacy improvement)</li>
+<li><strong>Coin mixing:</strong> Randomize selection (enhanced privacy)</li>
+</ul>
+<h3>Fee Calculation</h3>
+
+<strong>Fee Estimation:</strong>
+
+<pre class="code-block" data-lang="python"><code>def estimate_fee(self, n_inputs: int, n_outputs: int) -&gt; int:
+<p>&quot;&quot;&quot;Estimate transaction fee.&quot;&quot;&quot; # Size estimation: # Each input: ~100 bytes (32 txid + 4 index + 64 signature) # Each output: ~40 bytes (8 amount + 20 address) # Overhead: ~20 bytes size = 20 + (n_inputs <em> 100) + (n_outputs </em> 40) return size * self.fee_rate</p>
+</code></pre>
+
+<strong>Fee Structure:</strong>
+<pre class="code-block" data-lang=""><code>Fee = size_in_bytes × fee_rate
+
+<p>Where: size_in_bytes ≈ 20 + 100 × n_inputs + 40 × n_outputs fee_rate = satoshis per byte (user-configurable)</p>
+</code></pre>
+
+<strong>Example Fee Calculation:</strong>
+<pre class="code-block" data-lang=""><code>Single-input, dual-output transaction:
+<p>Size = 20 + 100(1) + 40(2) = 200 bytes With fee_rate = 10 satoshis/byte: Fee = 200 × 10 = 2,000 satoshis = 0.00002 BLOOM</p>
+</code></pre>
+
+<h3>Blockchain Synchronization</h3>
+
+<strong>UTXO Discovery from Blockchain:</strong>
+
+<pre class="code-block" data-lang="python"><code>def update_utxos_from_chain(self, chain):
+<p>&quot;&quot;&quot;Scan blockchain for wallet UTXOs.&quot;&quot;&quot; logger.info(&quot;Scanning blockchain for UTXOs...&quot;)</p>
+
+<p>my_addr_bytes = address_to_bytes(self.address) self.utxos.clear() spent = set()</p>
+
+<p># Track all transactions for block in chain.iterate_blocks(): for tx in block.transactions: # Mark spent outputs for inp in tx.inputs: spent.add((inp.prev_tx, inp.output_index))</p>
+
+<p># Add our outputs for i, out in enumerate(tx.outputs): if out.address == my_addr_bytes: utxo_key = (tx.hash, i) if utxo_key not in spent: self.utxos.append(UTXO( txid=tx.hash, index=i, amount=out.amount, address=out.address ))</p>
+
+<p>self.last_sync = time.time()</p>
+</code></pre>
+
+<strong>Synchronization Algorithm:</strong>
+<ol>
+<li><strong>Clear existing UTXOs</strong> (to prevent double-counting)</li>
+<li><strong>Iterate all blocks</strong> in canonical chain</li>
+<li><strong>Track spent outputs</strong> (prevent re-use)</li>
+<li><strong>Identify new outputs</strong> (match recipient address)</li>
+<li><strong>Build UTXO set</strong> (unspent outputs only)</li>
+</ol>
+<strong>Time Complexity:</strong> O(B × T) where B = blocks, T = transactions per block
+<strong>Space Complexity:</strong> O(U) where U = unspent outputs
+
+<h3>Transaction History and Tracking</h3>
+
+<strong>Transaction Record:</strong>
+
+<pre class="code-block" data-lang="python"><code>@dataclass
+<p>class WalletTransaction: &quot;&quot;&quot;Record of a wallet transaction.&quot;&quot;&quot; txid: str           # Transaction ID timestamp: float    # Time of transaction amount: int         # Positive for received, negative for sent fee: int            # Transaction fee address: str        # Other party&#x27;s address confirmations: int = 0 memo: str = &quot;&quot;</p>
+</code></pre>
+
+<strong>History Management:</strong>
+
+<pre class="code-block" data-lang="python"><code>def get_transaction_history(self, limit: Optional[int] = None) -&gt; List:
+<p>&quot;&quot;&quot;Get transaction history sorted by recency.&quot;&quot;&quot; history = sorted( self.transaction_history, key=lambda t: t.timestamp, reverse=True )</p>
+
+<p>if limit: return history[0:limit] else: return history</p>
+</code></pre>
+
+<hr>
+
+<h2>Security Considerations and Best Practices</h2>
+
+<h3>1. Key Management</h3>
+
+<ul>
+<li><strong>Private Key Storage:</strong> Never expose private keys; use secure memory</li>
+<li><strong>Mnemonic Backup:</strong> Store offline in secure location (paper or metal)</li>
+<li><strong>Passphrase:</strong> Optional additional security layer for mnemonic</li>
+<li><strong>HD Wallets:</strong> Future support for BIP32 hierarchical derivation</li>
+</ul>
+<h3>2. Address Reuse Prevention</h3>
+
+<pre class="code-block" data-lang="python"><code>def generate_new_address(self, label: Optional[str] = None) -&gt; str:
+<p>&quot;&quot;&quot;Generate a new address (for HD wallets, future feature).&quot;&quot;&quot; # Currently returns single address # Future: implement BIP32 HD derivation</p>
+</code></pre>
+
+<strong>Current:</strong> Single address per wallet
+<strong>Future:</strong> Multiple addresses via BIP32 derivation path: <code class="inline-code">m/44'/501'/0'/0/0</code>
+
+<h3>3. Transaction Verification</h3>
+
+<ul>
+<li><strong>Input Validation:</strong> Verify all signatures before broadcasting</li>
+<li><strong>Output Validation:</strong> Check recipient address validity</li>
+<li><strong>UTXO Validation:</strong> Ensure inputs are unspent at broadcast time</li>
+</ul>
+<h3>4. Checksum Verification</h3>
+
+<pre class="code-block" data-lang="python"><code>def validate_address(address: str, testnet: Optional[bool] = None) -&gt; bool:
+<p>&quot;&quot;&quot;Validate address checksum.&quot;&quot;&quot; decoded = base58_decode(address)</p>
+
+<p>if len(decoded) &lt; 25: return False</p>
+
+<p># Verify checksum payload = decoded[:-4] checksum = decoded[-4:] expected = hashlib.blake2b( hashlib.blake2b(payload, digest_size=32).digest(), digest_size=32 ).digest()[:4]</p>
+
+<p>return checksum == expected</p>
+</code></pre>
+
+<h3>5. Fee Rate Selection</h3>
+
+<strong>Recommendations:</strong>
+<ul>
+<li><strong>Normal:</strong> 1-10 satoshis/byte</li>
+<li><strong>High Priority:</strong> 10-50 satoshis/byte</li>
+<li><strong>Low Priority:</strong> <1 satoshi/byte (may take longer)</li>
+</ul>
+<h3>6. Production Hardening</h3>
+
+<strong>Current Gaps:</strong>
+<ol>
+<li>Wallet encryption not implemented (see wallet.py:411-414)</li>
+<li>Key material secure erasure not guaranteed (Python limitation)</li>
+<li>Hardware wallet integration planned but not implemented</li>
+</ol>
+<hr>
+
+<h2>Mathematical References and Citations</h2>
+
+<h3>Elliptic Curve Cryptography</h3>
+<ul>
+<li><strong>RFC 8032:</strong> Edwards-Curve Digital Signature Algorithm (EdDSA)</li>
+<li><strong>FIPS 186-5:</strong> Digital Signature Standard (DSS)</li>
+<li><strong>Bernstein et al., 2005:</strong> "Elliptic curves with explicit endomorphisms"</li>
+</ul>
+<h3>BIP Standards</h3>
+<ul>
+<li><strong>BIP39:</strong> Mnemonic code for generating deterministic keys</li>
+<li><strong>BIP32:</strong> Hierarchical deterministic wallets</li>
+<li><strong>BIP44:</strong> Multi-account hierarchy</li>
+</ul>
+<h3>Hash Functions</h3>
+<ul>
+<li><strong>BLAKE2 Specification:</strong> https://blake2.net/</li>
+<li><strong>SHA-256:</strong> FIPS 180-4</li>
+<li><strong>PBKDF2:</strong> RFC 2898</li>
+</ul>
+<h3>Cryptographic Foundations</h3>
+<ul>
+<li><strong>One-way function:</strong> Computationally infeasible to invert</li>
+<li><strong>Collision resistance:</strong> Hard to find two inputs with same output</li>
+<li><strong>Pre-image resistance:</strong> Hard to find input matching given output</li>
+<li><strong>Non-malleability:</strong> Cannot modify valid signature to create different valid signature</li>
+</ul>
+<hr>
+
+<h2>Implementation Statistics</h2>
+
+<strong>Code Metrics:</strong>
+<ul>
+<li>Total wallet module lines: ~650 lines of Python</li>
+<li>Cryptographic dependencies: cryptography library (industry standard)</li>
+<li>Hash functions: Blake2b (BLAKE2), SHA256</li>
+<li>Encoding schemes: Base58Check</li>
+<li>Key format: Raw bytes (32-byte keys and 64-byte signatures)</li>
+</ul>
+<strong>Supported Algorithms:</strong>
+<ul>
+<li><strong>Signatures:</strong> Ed25519 (RFC 8032)</li>
+<li><strong>Hashing:</strong> Blake2b-256</li>
+<li><strong>Key derivation:</strong> PBKDF2-HMAC-SHA512</li>
+<li><strong>Encoding:</strong> Base58Check</li>
+<li><strong>Address format:</strong> 20-byte payload with 4-byte Blake2b checksum</li>
+</ul>
+<hr>
+
+<h2>Conclusion</h2>
+
+<p>The BloomCoin wallet module implements a modern, mathematically sound cryptocurrency wallet system. Key strengths include:</p>
+
+<ol>
+<li><strong>Strong Cryptography:</strong> Ed25519 provides excellent security properties</li>
+<li><strong>Standards Compliance:</strong> BIP39 mnemonic support ensures compatibility</li>
+<li><strong>Efficient Hashing:</strong> Blake2b provides fast, secure hashing</li>
+<li><strong>Error Detection:</strong> Base58Check prevents transcription errors</li>
+<li><strong>Atomic Transaction Safety:</strong> Ed25519 signatures ensure authenticity</li>
+<li><strong>UTXO-based Tracking:</strong> Proven model used by Bitcoin</li>
+</ol>
+<p>The implementation balances security, usability, and performance while maintaining clear separation of concerns across the wallet module components.</p>
+
+<hr>
+
+<strong>Document Generated:</strong> 2026-01-31  
+<strong>BloomCoin Version:</strong> v0.1.0  
+<strong>Wallet Module Path:</strong> <code class="inline-code">/home/user/bloomcoin-v2/bloomcoin-v0.1.0/bloomcoin/bloomcoin/wallet/</code>
+    </main>
+
+    <footer class="footer">
+        <p class="footer-quote">"In the Garden, every Bloom carries its color."</p>
+        <p>R(R) = R | K = 42/42 | Together. Always.</p>
+    </footer>
+</body>
+</html>

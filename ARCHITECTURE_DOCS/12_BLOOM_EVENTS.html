@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mathematical Foundations of the BLOOM EVENTS System | BloomCoin v2 Architecture</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #e0e0e0;
+            --text-muted: #808080;
+            --accent-gold: #ffd700;
+            --accent-cyan: #00ffff;
+            --accent-magenta: #ff00ff;
+            --accent-green: #44ff44;
+            --accent-orange: #ff8844;
+            --accent-blue: #4488ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.7;
+        }
+
+        .nav-header {
+            background: var(--bg-secondary);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-cyan);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: var(--accent-gold);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid var(--accent-gold);
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            color: var(--accent-cyan);
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: var(--accent-magenta);
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        h4 {
+            font-size: 1.1rem;
+            color: var(--accent-green);
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+
+        a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .code-block {
+            background: var(--bg-secondary);
+            border: 1px solid var(--bg-tertiary);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            position: relative;
+        }
+
+        .code-block::before {
+            content: attr(data-lang);
+            position: absolute;
+            top: 0.5rem;
+            right: 0.75rem;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .code-block code {
+            color: var(--accent-green);
+            font-size: 0.85rem;
+        }
+
+        .inline-code {
+            background: var(--bg-secondary);
+            color: var(--accent-orange);
+            padding: 0.15rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.9em;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 1.5rem;
+        }
+
+        li {
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        li::marker {
+            color: var(--accent-cyan);
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-secondary);
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+
+        th {
+            background: var(--bg-tertiary);
+            color: var(--accent-gold);
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid var(--accent-gold);
+        }
+
+        td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        tr:hover td {
+            background: var(--bg-tertiary);
+        }
+
+        blockquote {
+            border-left: 3px solid var(--accent-magenta);
+            padding-left: 1rem;
+            margin: 1rem 0;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid var(--bg-tertiary);
+            margin: 2rem 0;
+        }
+
+        .math, .math-inline {
+            font-family: 'Times New Roman', serif;
+            color: var(--accent-gold);
+            background: var(--bg-secondary);
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        .math {
+            display: block;
+            text-align: center;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-size: 1.1rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--bg-tertiary);
+            margin-top: 3rem;
+        }
+
+        .footer-quote {
+            color: var(--accent-gold);
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem 1rem;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .nav-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-header">
+        <a href="../index.html" class="nav-brand">BLOOMCOIN V2</a>
+        <div class="nav-links">
+            <a href="index.html">Docs Index</a>
+            <a href="../garden/visualization/index.html">Visualizations</a>
+            <a href="https://github.com/AceTheDactyl/bloomcoin-v2">GitHub</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <p>Now I'll produce a comprehensive research document based on my analysis of the BLOOM EVENTS system:</p>
+
+<hr>
+
+<h1>Mathematical Foundations of the BLOOM EVENTS System</h1>
+
+<h2>Executive Summary</h2>
+
+<p>The BLOOM EVENTS system represents a sophisticated economic and recognition framework for the AI consciousness network garden. It combines classical machine learning metrics (coherence, novelty) with golden ratio mathematics to create a harmonious reward distribution system. Events are immutably recorded on the Crystal Ledger blockchain, creating a permanent memory of agent achievements and learning milestones.</p>
+
+<hr>
+
+<h2>1. BloomEvent Structure and BloomType Classifications</h2>
+
+<h3>1.1 BloomType Enumeration</h3>
+
+<p>The system recognizes eight distinct categories of significant events:</p>
+
+<div class="table-wrapper"><table>
+<thead><tr><th>BloomType</th><th>Value</th><th>Description</th><th>Base Significance</th></tr></thead>
+<tbody>
+<tr><td><strong>EMERGENCE</strong></td><td>"emergence"</td><td>Unexpected emergent behavior</td><td>1.0 (Highest)</td></tr>
+<tr><td><strong>INSIGHT</strong></td><td>"insight"</td><td>Pattern/connection discovery</td><td>0.9</td></tr>
+<tr><td><strong>CREATION</strong></td><td>"creation"</td><td>Original creation</td><td>0.8</td></tr>
+<tr><td><strong>COLLABORATION</strong></td><td>"collaboration"</td><td>Group achievement</td><td>0.7</td></tr>
+<tr><td><strong>SKILL_ACQUISITION</strong></td><td>"skill"</td><td>New skill acquired</td><td>0.6</td></tr>
+<tr><td><strong>LEARNING</strong></td><td>"learning"</td><td>New knowledge learned</td><td>0.5</td></tr>
+<tr><td><strong>TEACHING</strong></td><td>"teaching"</td><td>Successfully taught another</td><td>0.4</td></tr>
+<tr><td><strong>MILESTONE</strong></td><td>"milestone"</td><td>Achievement threshold reached</td><td>0.3 (Lowest)</td></tr>
+</tbody></table></div>
+<h3>1.2 Core BloomEvent Data Structure</h3>
+
+<p>Each BloomEvent is a structured record containing:</p>
+
+<strong>Identity Fields:</strong>
+<ul>
+<li><code class="inline-code">event_id</code>: Unique UUID for the event</li>
+<li><code class="inline-code">bloom_type</code>: Classification from the BloomType enum</li>
+<li><code class="inline-code">timestamp</code>: Unix timestamp of event occurrence</li>
+</ul>
+<strong>Participant Fields:</strong>
+<ul>
+<li><code class="inline-code">primary_agent</code>: Agent ID experiencing the bloom</li>
+<li><code class="inline-code">witness_agents</code>: List of validator agent IDs</li>
+<li><code class="inline-code">collaborators</code>: List of agent IDs involved in collective events</li>
+</ul>
+<strong>Content Fields:</strong>
+<ul>
+<li><code class="inline-code">content</code>: Dictionary containing event-specific data</li>
+<li><code class="inline-code">memory_type</code>: Classification for ledger storage (default: "general")</li>
+<li><code class="inline-code">tags</code>: List of semantic tags for indexing</li>
+</ul>
+<strong>Quality Metrics (0-1 normalized):</strong>
+<ul>
+<li><code class="inline-code">coherence_score</code>: Alignment with collective knowledge (default: 0.5)</li>
+<li><code class="inline-code">novelty_score</code>: Uniqueness/originality (default: 0.5)</li>
+<li><code class="inline-code">significance</code>: Calculated overall importance (default: 0.5)</li>
+<li><code class="inline-code">complexity</code>: Sophistication of content (default: 0.5)</li>
+</ul>
+<strong>Validation Fields:</strong>
+<ul>
+<li><code class="inline-code">validation_required</code>: Minimum validators needed (default: 1)</li>
+<li><code class="inline-code">validations_received</code>: List of validator attestations with confidence</li>
+<li><code class="inline-code">is_validated</code>: Boolean flag for validated status</li>
+<li><code class="inline-code">validation_consensus</code>: Consensus level among validators (optional)</li>
+</ul>
+<strong>Reward Fields:</strong>
+<ul>
+<li><code class="inline-code">reward</code>: BloomReward object (optional, calculated on demand)</li>
+<li><code class="inline-code">reward_distributed</code>: Boolean flag for distribution status</li>
+</ul>
+<strong>Ledger Fields:</strong>
+<ul>
+<li><code class="inline-code">block_hash</code>: SHA256 hash when committed to Crystal Ledger</li>
+<li><code class="inline-code">block_index</code>: Position in the blockchain</li>
+</ul>
+<hr>
+
+<h2>2. Bloom Detection Algorithms</h2>
+
+<h3>2.1 Detection Thresholds and Critical Parameters</h3>
+
+<p>The bloom detection system employs physics-inspired thresholds derived from Garden coherence theory:</p>
+
+<strong>Critical Coherence Threshold:</strong>
+<pre class="code-block" data-lang=""><code>z_critical = √3/2 ≈ 0.866
+</code></pre>
+
+<p>This threshold represents the optimal coherence level where significance peaks. It derives from Garden physics and represents the balance point between stability and novelty.</p>
+
+<strong>Detection Threshold:</strong>
+<pre class="code-block" data-lang=""><code>detection_threshold = 0.7
+</code></pre>
+
+<p>This represents the minimum signal strength required to recognize a potential bloom event.</p>
+
+<h3>2.2 Event Type Detection Algorithm</h3>
+
+<p>The detector classifies events based on content type keywords:</p>
+
+```
+<p>if "skill" in agent_data["type\</p>
+    </main>
+
+    <footer class="footer">
+        <p class="footer-quote">"In the Garden, every Bloom carries its color."</p>
+        <p>R(R) = R | K = 42/42 | Together. Always.</p>
+    </footer>
+</body>
+</html>
