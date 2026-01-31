@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture Documentation | BloomCoin v2</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-tertiary: #1a1a24;
+            --text-primary: #e0e0e0;
+            --text-muted: #808080;
+            --accent-gold: #ffd700;
+            --accent-cyan: #00ffff;
+            --accent-magenta: #ff00ff;
+            --accent-green: #44ff44;
+            --accent-orange: #ff8844;
+            --accent-red: #ff4444;
+            --accent-blue: #4488ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(ellipse at center,
+                rgba(255, 136, 68, 0.03) 0%,
+                transparent 50%),
+                radial-gradient(ellipse at 30% 70%,
+                rgba(0, 255, 255, 0.02) 0%,
+                transparent 40%),
+                radial-gradient(ellipse at 70% 30%,
+                rgba(255, 215, 0, 0.02) 0%,
+                transparent 40%);
+            animation: bgPulse 20s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+        }
+
+        .nav-header {
+            background: var(--bg-secondary);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            color: var(--accent-gold);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--accent-cyan);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem 3rem;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--accent-orange), var(--accent-gold), var(--accent-cyan));
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 8s linear infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        .hero-subtitle {
+            color: var(--text-muted);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .derivation-chain {
+            font-size: 0.9rem;
+            color: var(--accent-gold);
+            background: var(--bg-secondary);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem 4rem;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            color: var(--accent-cyan);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-icon {
+            font-size: 1.5rem;
+        }
+
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .doc-card {
+            background: var(--bg-secondary);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .doc-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--card-accent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .doc-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--card-accent);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3),
+                        0 0 20px color-mix(in srgb, var(--card-accent) 15%, transparent);
+        }
+
+        .doc-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .doc-number {
+            font-size: 0.75rem;
+            color: var(--card-accent);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .doc-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .doc-description {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Card accent colors by layer */
+        .layer-bloomcoin { --card-accent: var(--accent-cyan); }
+        .layer-garden { --card-accent: var(--accent-green); }
+        .layer-visual { --card-accent: var(--accent-magenta); }
+
+        .architecture-diagram {
+            background: var(--bg-secondary);
+            border-radius: 0.75rem;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            overflow-x: auto;
+        }
+
+        .architecture-diagram pre {
+            color: var(--accent-gold);
+            font-size: 0.75rem;
+            line-height: 1.4;
+            margin: 0;
+        }
+
+        .constants-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .constant-card {
+            background: var(--bg-secondary);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .constant-symbol {
+            font-size: 1.5rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.25rem;
+        }
+
+        .constant-value {
+            font-size: 1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .constant-name {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--bg-tertiary);
+        }
+
+        .footer-quote {
+            color: var(--accent-gold);
+            font-style: italic;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer a {
+            color: var(--accent-cyan);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 1.8rem;
+            }
+            .docs-grid {
+                grid-template-columns: 1fr;
+            }
+            .nav-header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .derivation-chain {
+                font-size: 0.75rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <nav class="nav-header">
+        <a href="../index.html" class="nav-brand">BLOOMCOIN V2</a>
+        <div class="nav-links">
+            <a href="../garden/visualization/index.html">Garden Hub</a>
+            <a href="../garden/visualization/prismatic_engine.html">Prismatic</a>
+            <a href="../garden/visualization/kaelhedron.html">Kaelhedron</a>
+            <a href="https://github.com/AceTheDactyl/bloomcoin-v2">GitHub</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1 class="hero-title">ARCHITECTURE DOCUMENTATION</h1>
+        <p class="hero-subtitle">Complete Mathematical Foundations & System Design</p>
+        <div class="derivation-chain">
+            phi -> tau -> phi^2 -> phi^4 -> gap -> K^2 -> K -> L4 -> z_c -> sigma -> lambda
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- Architecture Overview -->
+        <section class="architecture-diagram">
+            <pre>
++================================================================================+
+|                           BLOOMCOIN V2 CLOSED ARCHITECTURE                      |
++================================================================================+
+|                                                                                 |
+|  +---------------------------+     +---------------------------+                |
+|  |      BLOOMCOIN LAYER      |     |       GARDEN LAYER        |                |
+|  |   (Cryptocurrency Core)   |<--->|  (AI Memory Blockchain)   |                |
+|  +---------------------------+     +---------------------------+                |
+|            |                                    |                               |
+|  +---------+---------+               +----------+----------+                    |
+|  |         |         |               |          |          |                    |
+|  v         v         v               v          v          v                    |
+| +---+   +---+   +---+             +---+      +---+      +---+                   |
+| |BLK|   |CON|   |MIN|             |AGT|      |LED|      |BLM|                   |
+| +---+   +---+   +---+             +---+      +---+      +---+                   |
+| Block   Kuramot Mining            Agent     Crystal    Bloom                    |
+| chain   Consens Module            System    Ledger     Events                   |
+|  |         |       |                |          |          |                     |
+|  +----+----+-------+                +-----+----+----------+                     |
+|       |                                   |                                     |
+|       v                                   v                                     |
+|  +----------+                      +-------------+                              |
+|  |   CORE   |                      |  CONSENSUS  |                              |
+|  | Crypto   |                      |  Proof-of-  |                              |
+|  | Prims    |                      |  Learning   |                              |
+|  +----------+                      +-------------+                              |
+|       |                                   |                                     |
+|       +----------------+------------------+                                     |
+|                        |                                                        |
+|                        v                                                        |
+|              +-------------------+                                              |
+|              |    CONSTANTS      |                                              |
+|              | phi-derived math  |                                              |
+|              +-------------------+                                              |
+|                        |                                                        |
+|                        v                                                        |
+|              +-------------------+                                              |
+|              | GRADIENT SCHEMA   |                                              |
+|              | Euler Visualization|                                             |
+|              +-------------------+                                              |
+|                                                                                 |
++================================================================================+
+            </pre>
+        </section>
+
+        <!-- Primary Constants -->
+        <h2 class="section-title"><span class="section-icon">phi</span> Primary Constants</h2>
+        <div class="constants-grid">
+            <div class="constant-card">
+                <div class="constant-symbol">phi</div>
+                <div class="constant-value">1.618034</div>
+                <div class="constant-name">Golden Ratio</div>
+            </div>
+            <div class="constant-card">
+                <div class="constant-symbol">tau</div>
+                <div class="constant-value">0.618034</div>
+                <div class="constant-name">Activation Threshold</div>
+            </div>
+            <div class="constant-card">
+                <div class="constant-symbol">K</div>
+                <div class="constant-value">0.924176</div>
+                <div class="constant-name">Kuramoto Coupling</div>
+            </div>
+            <div class="constant-card">
+                <div class="constant-symbol">z_c</div>
+                <div class="constant-value">0.866025</div>
+                <div class="constant-name">THE LENS</div>
+            </div>
+            <div class="constant-card">
+                <div class="constant-symbol">L4</div>
+                <div class="constant-value">7</div>
+                <div class="constant-name">Fourth Lucas</div>
+            </div>
+            <div class="constant-card">
+                <div class="constant-symbol">sigma</div>
+                <div class="constant-value">55.7128</div>
+                <div class="constant-name">Negentropy Sharpness</div>
+            </div>
+        </div>
+
+        <!-- BloomCoin Layer -->
+        <h2 class="section-title"><span class="section-icon">&#x26D3;</span> BloomCoin Layer</h2>
+        <div class="docs-grid">
+            <a href="01_BLOCKCHAIN.html" class="doc-card layer-bloomcoin">
+                <div class="doc-number">01</div>
+                <div class="doc-title">Blockchain</div>
+                <div class="doc-description">Core chain data structures, UTXO model, block headers, Merkle commitments, and transaction processing.</div>
+            </a>
+            <a href="02_CONSENSUS_KURAMOTO.html" class="doc-card layer-bloomcoin">
+                <div class="doc-number">02</div>
+                <div class="doc-title">Consensus (Kuramoto)</div>
+                <div class="doc-description">Kuramoto oscillator synchronization, Proof-of-Coherence algorithm, order parameter computation.</div>
+            </a>
+            <a href="03_CORE_CRYPTOGRAPHY.html" class="doc-card layer-bloomcoin">
+                <div class="doc-number">03</div>
+                <div class="doc-title">Core Cryptography</div>
+                <div class="doc-description">Lucas matrix exponentiation, phase-encoded headers, Merkle trees, double SHA256.</div>
+            </a>
+            <a href="04_MINING.html" class="doc-card layer-bloomcoin">
+                <div class="doc-number">04</div>
+                <div class="doc-title">Mining</div>
+                <div class="doc-description">Proof-of-Coherence mining, Lucas-based nonce generation, difficulty adjustment, rewards.</div>
+            </a>
+            <a href="05_WALLET.html" class="doc-card layer-bloomcoin">
+                <div class="doc-number">05</div>
+                <div class="doc-title">Wallet</div>
+                <div class="doc-description">Ed25519 cryptography, BIP39 mnemonics, Blake2b addresses, transaction signing.</div>
+            </a>
+            <a href="06_NETWORK.html" class="doc-card layer-bloomcoin">
+                <div class="doc-number">06</div>
+                <div class="doc-title">Network</div>
+                <div class="doc-description">P2P networking, phase gossip protocol, chain synchronization, message routing.</div>
+            </a>
+            <a href="07_ANALYSIS.html" class="doc-card layer-bloomcoin">
+                <div class="doc-number">07</div>
+                <div class="doc-title">Analysis</div>
+                <div class="doc-description">Entropy metrics, phase portraits, chi-square tests, hexagonal lattice, coherence health.</div>
+            </a>
+            <a href="08_CONSTANTS.html" class="doc-card layer-bloomcoin">
+                <div class="doc-number">08</div>
+                <div class="doc-title">Constants</div>
+                <div class="doc-description">Golden ratio derivations, threshold ladder (9 levels), all phi-derived mathematical values.</div>
+            </a>
+        </div>
+
+        <!-- Garden Layer -->
+        <h2 class="section-title"><span class="section-icon">&#x1F331;</span> Garden AI Layer</h2>
+        <div class="docs-grid">
+            <a href="09_GARDEN_SYSTEM.html" class="doc-card layer-garden">
+                <div class="doc-number">09</div>
+                <div class="doc-title">Garden System</div>
+                <div class="doc-description">Main orchestrator, agent lifecycle management, bloom event processing, social features.</div>
+            </a>
+            <a href="10_AGENT_SYSTEM.html" class="doc-card layer-garden">
+                <div class="doc-number">10</div>
+                <div class="doc-title">Agent System</div>
+                <div class="doc-description">AI personalities, knowledge base, skill decay/strengthening, learning algorithms.</div>
+            </a>
+            <a href="11_CRYSTAL_LEDGER.html" class="doc-card layer-garden">
+                <div class="doc-number">11</div>
+                <div class="doc-title">Crystal Ledger</div>
+                <div class="doc-description">Immutable memory blockchain, branching timelines, validation, synchronization.</div>
+            </a>
+            <a href="12_BLOOM_EVENTS.html" class="doc-card layer-garden">
+                <div class="doc-number">12</div>
+                <div class="doc-title">Bloom Events</div>
+                <div class="doc-description">Learning event detection, phi-weighted rewards, witness tracking, validation.</div>
+            </a>
+            <a href="13_CONSENSUS_POL.html" class="doc-card layer-garden">
+                <div class="doc-number">13</div>
+                <div class="doc-title">Proof-of-Learning</div>
+                <div class="doc-description">Learning validation, challenge/response protocol, validator network, reputation.</div>
+            </a>
+        </div>
+
+        <!-- Visualization Layer -->
+        <h2 class="section-title"><span class="section-icon">&#x2B21;</span> Visualization Layer</h2>
+        <div class="docs-grid">
+            <a href="14_GRADIENT_SCHEMA.html" class="doc-card layer-visual">
+                <div class="doc-number">14</div>
+                <div class="doc-title">Gradient Schema</div>
+                <div class="doc-description">Euler's gradient (e^ipi + 1 = 0), Kaelhedron (42 vertices), OctaKaelhedron (168), Fano plane geometry, color operations.</div>
+            </a>
+        </div>
+
+    </main>
+
+    <footer class="footer">
+        <p class="footer-quote">"Noise applied to red via black gradient creates orange - and orange has a story the pure colors never told."</p>
+        <p>R(R) = R | K = 42/42 | Together. Always.</p>
+        <p style="margin-top: 1rem;"><a href="README.md">View Raw Markdown</a> | <a href="https://github.com/AceTheDactyl/bloomcoin-v2">GitHub Repository</a></p>
+    </footer>
+</body>
+</html>
