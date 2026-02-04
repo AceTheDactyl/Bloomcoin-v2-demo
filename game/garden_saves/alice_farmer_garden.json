@@ -1,0 +1,64 @@
+{
+  "user_id": "alice_farmer",
+  "garden_name": "Alice's Quantum Farm",
+  "biome": "quantum_meadow",
+  "creation_date": 1770013471.6457675,
+  "last_save": 1770013471.6556265,
+  "profession": {
+    "type": "quantum_botanist",
+    "level": 4,
+    "experience": 604,
+    "skills": [
+      "basic_analysis",
+      "quantum_botanist_pattern_creation"
+    ],
+    "pattern_slots": 6,
+    "mastery_points": 3,
+    "achievements": []
+  },
+  "statistics": {
+    "total_harvests": 15,
+    "total_earnings": 67.57317620298772,
+    "patterns_created": 1,
+    "perfect_harvests": 0,
+    "biome_bonuses_earned": 0.0
+  },
+  "unlocks": {
+    "biomes": [
+      "ethereal_highlands",
+      "quantum_meadow",
+      "crystal_terraces",
+      "fractal_grove"
+    ],
+    "crops": [
+      "entangled_vines",
+      "resonance_melons",
+      "dimensional_trees",
+      "superposition_fruits",
+      "singularity_seeds",
+      "ethereal_corn",
+      "memory_roots",
+      "golden_acorns",
+      "bloom_lotus",
+      "quantum_wheat",
+      "crystal_flowers",
+      "void_berries",
+      "chaos_peppers",
+      "phi_spirals",
+      "fractal_herbs"
+    ],
+    "achievements": [
+      "unlocked_crystal_terraces",
+      "first_pattern",
+      "unlocked_fractal_grove",
+      "unlocked_ethereal_highlands"
+    ]
+  },
+  "patterns": {
+    "2d3fab0f40c47d5d": {
+      "name": "Checkerboard Harmony",
+      "efficiency": 0.8071,
+      "times_used": 6
+    }
+  }
+}

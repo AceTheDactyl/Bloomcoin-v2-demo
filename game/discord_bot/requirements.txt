@@ -1,0 +1,99 @@
+# BloomQuest Discord Bot Requirements
+# Python 3.9+ required
+
+# Core Discord Bot
+discord.py>=2.3.0
+python-dotenv>=1.0.0
+
+# Database
+asyncpg>=0.28.0  # PostgreSQL async driver
+sqlalchemy>=2.0.0
+alembic>=1.12.0  # Database migrations
+
+# Caching
+aioredis>=2.0.1
+redis>=5.0.0
+
+# Async utilities
+aiohttp>=3.9.0
+aiofiles>=23.2.0
+asyncio>=3.4.3
+
+# Data processing
+numpy>=1.24.0
+pandas>=2.0.0
+
+# Utilities
+python-dateutil>=2.8.2
+pytz>=2023.3
+humanize>=4.8.0
+colorama>=0.4.6
+
+# Configuration
+pyyaml>=6.0
+configparser>=6.0.0
+
+# Logging
+colorlog>=6.7.0
+loguru>=0.7.0
+
+# Performance monitoring (optional)
+psutil>=5.9.0
+prometheus-client>=0.18.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+
+# Code quality
+black>=23.10.0
+flake8>=6.1.0
+pylint>=3.0.0
+mypy>=1.6.0
+
+# Documentation
+sphinx>=7.2.0
+sphinx-rtd-theme>=1.3.0
+
+# Security
+cryptography>=41.0.0
+pynacl>=1.5.0
+
+# Web dashboard (optional)
+flask>=3.0.0
+flask-socketio>=5.3.0
+flask-cors>=4.0.0
+flask-sqlalchemy>=3.1.0
+flask-login>=0.6.0
+
+# Image processing (for card images)
+pillow>=10.1.0
+matplotlib>=3.8.0
+
+# Scientific computing (for quantum calculations)
+scipy>=1.11.0
+
+# Rate limiting
+aiohttp-ratelimit>=1.0.0
+discord-py-interactions>=5.11.0
+
+# JSON handling
+orjson>=3.9.0
+ujson>=5.8.0
+
+# Task scheduling
+apscheduler>=3.10.0
+aiocron>=1.8
+
+# Command parsing
+click>=8.1.0
+argparse>=1.4.0
+
+# Environment management
+virtualenv>=20.24.0
+
+# Development dependencies
+ipython>=8.17.0
+jupyter>=1.0.0
+watchdog>=3.0.0  # File watching for auto-reload

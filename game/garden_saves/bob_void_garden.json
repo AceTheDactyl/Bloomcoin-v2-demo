@@ -1,0 +1,50 @@
+{
+  "user_id": "bob_void",
+  "garden_name": "Bob's Void Garden",
+  "biome": "void_sanctuary",
+  "creation_date": 1770013471.6463127,
+  "last_save": 1770013471.6463385,
+  "profession": {
+    "type": "void_cultivator",
+    "level": 1,
+    "experience": 0,
+    "skills": [
+      "void_sight"
+    ],
+    "pattern_slots": 3,
+    "mastery_points": 0,
+    "achievements": []
+  },
+  "statistics": {
+    "total_harvests": 0,
+    "total_earnings": 0.0,
+    "patterns_created": 0,
+    "perfect_harvests": 0,
+    "biome_bonuses_earned": 0.0
+  },
+  "unlocks": {
+    "biomes": [
+      "quantum_meadow",
+      "void_sanctuary"
+    ],
+    "crops": [
+      "entangled_vines",
+      "resonance_melons",
+      "dimensional_trees",
+      "superposition_fruits",
+      "singularity_seeds",
+      "ethereal_corn",
+      "memory_roots",
+      "golden_acorns",
+      "bloom_lotus",
+      "quantum_wheat",
+      "crystal_flowers",
+      "void_berries",
+      "chaos_peppers",
+      "phi_spirals",
+      "fractal_herbs"
+    ],
+    "achievements": []
+  },
+  "patterns": {}
+}

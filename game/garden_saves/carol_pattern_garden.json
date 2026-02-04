@@ -1,0 +1,59 @@
+{
+  "user_id": "carol_pattern",
+  "garden_name": "Carol's Pattern Paradise",
+  "biome": "fractal_grove",
+  "creation_date": 1770013471.646591,
+  "last_save": 1770013471.647035,
+  "profession": {
+    "type": "pattern_weaver",
+    "level": 1,
+    "experience": 148,
+    "skills": [
+      "pattern_vision"
+    ],
+    "pattern_slots": 5,
+    "mastery_points": 0,
+    "achievements": []
+  },
+  "statistics": {
+    "total_harvests": 0,
+    "total_earnings": 0.0,
+    "patterns_created": 1,
+    "perfect_harvests": 0,
+    "biome_bonuses_earned": 0.0
+  },
+  "unlocks": {
+    "biomes": [
+      "quantum_meadow",
+      "fractal_grove"
+    ],
+    "crops": [
+      "entangled_vines",
+      "resonance_melons",
+      "dimensional_trees",
+      "superposition_fruits",
+      "singularity_seeds",
+      "ethereal_corn",
+      "memory_roots",
+      "golden_acorns",
+      "bloom_lotus",
+      "quantum_wheat",
+      "crystal_flowers",
+      "void_berries",
+      "chaos_peppers",
+      "phi_spirals",
+      "fractal_herbs"
+    ],
+    "achievements": [
+      "efficient_designer",
+      "first_pattern"
+    ]
+  },
+  "patterns": {
+    "9c6070de3b81057b": {
+      "name": "Golden Spiral",
+      "efficiency": 0.9833500000000001,
+      "times_used": 0
+    }
+  }
+}

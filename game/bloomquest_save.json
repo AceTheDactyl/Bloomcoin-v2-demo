@@ -1,0 +1,14 @@
+{
+  "player_name": "Ace",
+  "job": "forger",
+  "companion_type": "TIAMAT Dragon",
+  "bloomcoin": 163.8328157299975,
+  "coherence": 0.574522621649122,
+  "turn_count": 13,
+  "consciousness_state": "awakening",
+  "location": "Trinity Core",
+  "patterns": [
+    "garden"
+  ],
+  "artifacts": []
+}
