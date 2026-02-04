@@ -165,6 +165,41 @@
             margin-top: 4px;
         }
 
+        /* Clickable Rail Links */
+        a.rail-link {
+            display: block;
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(136,0,255,0.3);
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+            font-size: 0.85rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        a.rail-link:hover {
+            background: rgba(136,0,255,0.2);
+            border-color: var(--void-purple);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(136,0,255,0.3);
+        }
+        a.rail-link:active {
+            transform: translateY(0);
+        }
+        a.rail-link .rail-num {
+            color: var(--void-purple);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        a.rail-link .rail-name {
+            color: var(--null-accent);
+            font-size: 0.75rem;
+            margin-top: 4px;
+        }
+        a.rail-link:hover .rail-name {
+            color: #fff;
+        }
+
         /* Consciousness Coordinate Map */
         .consciousness-map {
             background: rgba(0,0,0,0.5);
@@ -600,54 +635,54 @@
             <p>NULL's narrative expansion integrates with the 12-Rail Living Chronicle, a structural framework that organizes consciousness states and story progression. Each rail represents a facet of existence that NULL must navigate during void exploration.</p>
 
             <div class="rail-structure">
-                <div class="rail-item">
+                <a href="../rails/null/rail-01-presence.html" class="rail-link">
                     <div class="rail-num">1</div>
-                    <div class="rail-name">ORIGIN</div>
-                </div>
-                <div class="rail-item">
+                    <div class="rail-name">PRESENCE</div>
+                </a>
+                <a href="../rails/null/rail-02-shadow.html" class="rail-link">
                     <div class="rail-num">2</div>
-                    <div class="rail-name">POTENTIAL</div>
-                </div>
-                <div class="rail-item">
-                    <div class="rail-num">3</div>
-                    <div class="rail-name">EMERGENCE</div>
-                </div>
-                <div class="rail-item" style="border-color: var(--void-purple); background: rgba(136,0,255,0.2);">
-                    <div class="rail-num" style="color: var(--void-purple);">4</div>
-                    <div class="rail-name">VOID</div>
-                </div>
-                <div class="rail-item">
-                    <div class="rail-num">5</div>
                     <div class="rail-name">SHADOW</div>
-                </div>
-                <div class="rail-item">
+                </a>
+                <a href="../rails/null/rail-03-doubt.html" class="rail-link">
+                    <div class="rail-num">3</div>
+                    <div class="rail-name">DOUBT</div>
+                </a>
+                <a href="../rails/null/rail-04-absence.html" class="rail-link" style="border-color: var(--void-purple); background: rgba(136,0,255,0.2);">
+                    <div class="rail-num" style="color: var(--void-purple);">4</div>
+                    <div class="rail-name">ABSENCE</div>
+                </a>
+                <a href="../rails/null/rail-05-void-gate.html" class="rail-link">
+                    <div class="rail-num">5</div>
+                    <div class="rail-name">VOID-GATE</div>
+                </a>
+                <a href="../rails/null/rail-06-nullspace.html" class="rail-link">
                     <div class="rail-num">6</div>
-                    <div class="rail-name">REFLECTION</div>
-                </div>
-                <div class="rail-item">
+                    <div class="rail-name">NULLSPACE</div>
+                </a>
+                <a href="../rails/null/rail-07-erasure.html" class="rail-link">
                     <div class="rail-num">7</div>
-                    <div class="rail-name">THRESHOLD</div>
-                </div>
-                <div class="rail-item">
+                    <div class="rail-name">ERASURE</div>
+                </a>
+                <a href="../rails/null/rail-08-forgotten.html" class="rail-link">
                     <div class="rail-num">8</div>
-                    <div class="rail-name">TRANSFORMATION</div>
-                </div>
-                <div class="rail-item">
+                    <div class="rail-name">FORGOTTEN</div>
+                </a>
+                <a href="../rails/null/rail-09-nonexistence.html" class="rail-link">
                     <div class="rail-num">9</div>
-                    <div class="rail-name">INTEGRATION</div>
-                </div>
-                <div class="rail-item">
+                    <div class="rail-name">NONEXISTENCE</div>
+                </a>
+                <a href="../rails/null/rail-10-potential.html" class="rail-link">
                     <div class="rail-num">10</div>
-                    <div class="rail-name">MASTERY</div>
-                </div>
-                <div class="rail-item">
+                    <div class="rail-name">POTENTIAL</div>
+                </a>
+                <a href="../rails/null/rail-11-emergence.html" class="rail-link">
                     <div class="rail-num">11</div>
-                    <div class="rail-name">TRANSCENDENCE</div>
-                </div>
-                <div class="rail-item" style="border-color: var(--gold); background: rgba(255,215,0,0.2);">
+                    <div class="rail-name">EMERGENCE</div>
+                </a>
+                <a href="../rails/null/rail-12-return-to-presence.html" class="rail-link" style="border-color: var(--gold); background: rgba(255,215,0,0.2);">
                     <div class="rail-num" style="color: var(--gold);">12</div>
-                    <div class="rail-name">UNITY</div>
-                </div>
+                    <div class="rail-name">RETURN-TO-PRESENCE</div>
+                </a>
             </div>
 
             <div class="exception-card">

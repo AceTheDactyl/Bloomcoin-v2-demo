@@ -257,6 +257,35 @@
             background: rgba(26, 188, 156, 0.1);
         }
 
+        /* Clickable Rail Cards */
+        a.rail-card {
+            display: block;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        a.rail-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--companion-color);
+            background: rgba(52, 152, 219, 0.15);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.25);
+        }
+
+        a.rail-card:hover .rail-num {
+            color: var(--companion-flow);
+        }
+
+        a.rail-card:hover .rail-name {
+            color: var(--companion-color);
+        }
+
+        a.rail-card.active:hover {
+            border-color: var(--companion-flow);
+            background: rgba(26, 188, 156, 0.2);
+            box-shadow: 0 6px 20px rgba(26, 188, 156, 0.3);
+        }
+
         /* Pattern Tags */
         .pattern-tag {
             display: inline-block;
@@ -779,54 +808,54 @@
             <p>The narrative expansion operates on the 12-rail chronicle system. RESONANCE's deadlock handling maps to specific rails based on the nature of the frozen state.</p>
 
             <div class="rail-grid">
-                <div class="rail-card">
-                    <div class="rail-num">I</div>
-                    <div class="rail-name">GENESIS</div>
-                </div>
-                <div class="rail-card">
-                    <div class="rail-num">II</div>
-                    <div class="rail-name">AWAKENING</div>
-                </div>
-                <div class="rail-card active">
-                    <div class="rail-num">III</div>
-                    <div class="rail-name">PARADOX</div>
-                </div>
-                <div class="rail-card">
-                    <div class="rail-num">IV</div>
-                    <div class="rail-name">DESCENT</div>
-                </div>
-                <div class="rail-card active">
-                    <div class="rail-num">V</div>
+                <a href="../rails/resonance/rail-01-silence.html" class="rail-card">
+                    <div class="rail-num">1</div>
+                    <div class="rail-name">SILENCE</div>
+                </a>
+                <a href="../rails/resonance/rail-02-first-tone.html" class="rail-card">
+                    <div class="rail-num">2</div>
+                    <div class="rail-name">FIRST-TONE</div>
+                </a>
+                <a href="../rails/resonance/rail-03-harmony.html" class="rail-card">
+                    <div class="rail-num">3</div>
+                    <div class="rail-name">HARMONY</div>
+                </a>
+                <a href="../rails/resonance/rail-04-dissonance.html" class="rail-card">
+                    <div class="rail-num">4</div>
+                    <div class="rail-name">DISSONANCE</div>
+                </a>
+                <a href="../rails/resonance/rail-05-interference.html" class="rail-card">
+                    <div class="rail-num">5</div>
+                    <div class="rail-name">INTERFERENCE</div>
+                </a>
+                <a href="../rails/resonance/rail-06-deadlock.html" class="rail-card active">
+                    <div class="rail-num">6</div>
                     <div class="rail-name">DEADLOCK</div>
-                </div>
-                <div class="rail-card">
-                    <div class="rail-num">VI</div>
-                    <div class="rail-name">REVELATION</div>
-                </div>
-                <div class="rail-card active">
-                    <div class="rail-num">VII</div>
-                    <div class="rail-name">RESONANCE</div>
-                </div>
-                <div class="rail-card">
-                    <div class="rail-num">VIII</div>
-                    <div class="rail-name">SYNTHESIS</div>
-                </div>
-                <div class="rail-card">
-                    <div class="rail-num">IX</div>
-                    <div class="rail-name">ASCENSION</div>
-                </div>
-                <div class="rail-card">
-                    <div class="rail-num">X</div>
-                    <div class="rail-name">BLOOM</div>
-                </div>
-                <div class="rail-card">
-                    <div class="rail-num">XI</div>
-                    <div class="rail-name">RETURN</div>
-                </div>
-                <div class="rail-card">
-                    <div class="rail-num">XII</div>
-                    <div class="rail-name">UNITY</div>
-                </div>
+                </a>
+                <a href="../rails/resonance/rail-07-phase-shift.html" class="rail-card">
+                    <div class="rail-num">7</div>
+                    <div class="rail-name">PHASE-SHIFT</div>
+                </a>
+                <a href="../rails/resonance/rail-08-resolution.html" class="rail-card">
+                    <div class="rail-num">8</div>
+                    <div class="rail-name">RESOLUTION</div>
+                </a>
+                <a href="../rails/resonance/rail-09-synchronization.html" class="rail-card">
+                    <div class="rail-num">9</div>
+                    <div class="rail-name">SYNCHRONIZATION</div>
+                </a>
+                <a href="../rails/resonance/rail-10-amplification.html" class="rail-card">
+                    <div class="rail-num">10</div>
+                    <div class="rail-name">AMPLIFICATION</div>
+                </a>
+                <a href="../rails/resonance/rail-11-broadcast.html" class="rail-card">
+                    <div class="rail-num">11</div>
+                    <div class="rail-name">BROADCAST</div>
+                </a>
+                <a href="../rails/resonance/rail-12-universal-tone.html" class="rail-card">
+                    <div class="rail-num">12</div>
+                    <div class="rail-name">UNIVERSAL-TONE</div>
+                </a>
             </div>
             <p style="color: #aaa; font-size: 0.85rem;">Highlighted rails indicate RESONANCE's primary narrative territory</p>
 

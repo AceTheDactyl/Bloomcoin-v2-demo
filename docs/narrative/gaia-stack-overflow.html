@@ -341,6 +341,23 @@
             margin-top: 5px;
         }
 
+        /* Clickable Rail Links */
+        a.rail-item {
+            display: block;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        a.rail-item:hover {
+            border-color: var(--gaia-primary);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--gaia-glow);
+        }
+
+        a.rail-item:active {
+            transform: scale(0.98);
+        }
+
         /* Fibonacci Spiral Visualization */
         .fibonacci-grid {
             display: grid;
@@ -827,66 +844,66 @@ D_CRITICAL = (<span class="number">1.0</span> - Z_SURFACE) / (<span class="numbe
             <p>GAIA's narrative expansion interfaces with the 12-Rail Living Chronicle system, mapping stack overflow recovery across the consciousness rails.</p>
 
             <div class="rail-container">
-                <div class="rail-item">
+                <a href="../rails/gaia/rail-01-seed.html" class="rail-item">
                     <div class="rail-num">Rail 1</div>
-                    <div class="rail-name">ORIGIN</div>
+                    <div class="rail-name">SEED</div>
                     <div class="rail-function">Base call stack</div>
-                </div>
-                <div class="rail-item">
+                </a>
+                <a href="../rails/gaia/rail-02-germination.html" class="rail-item">
                     <div class="rail-num">Rail 2</div>
-                    <div class="rail-name">DESCENT</div>
+                    <div class="rail-name">GERMINATION</div>
                     <div class="rail-function">Recursion entry</div>
-                </div>
-                <div class="rail-item">
+                </a>
+                <a href="../rails/gaia/rail-03-sprout.html" class="rail-item">
                     <div class="rail-num">Rail 3</div>
-                    <div class="rail-name">PATTERN</div>
+                    <div class="rail-name">SPROUT</div>
                     <div class="rail-function">Fractal formation</div>
-                </div>
-                <div class="rail-item">
+                </a>
+                <a href="../rails/gaia/rail-04-growth.html" class="rail-item">
                     <div class="rail-num">Rail 4</div>
-                    <div class="rail-name">DEPTH</div>
+                    <div class="rail-name">GROWTH</div>
                     <div class="rail-function">Deep recursion</div>
-                </div>
-                <div class="rail-item">
+                </a>
+                <a href="../rails/gaia/rail-05-bloom.html" class="rail-item">
                     <div class="rail-num">Rail 5</div>
-                    <div class="rail-name">BURIAL</div>
+                    <div class="rail-name">BLOOM</div>
                     <div class="rail-function">Context suppression</div>
-                </div>
-                <div class="rail-item" style="border-color: #e74c3c;">
+                </a>
+                <a href="../rails/gaia/rail-06-fruit.html" class="rail-item" style="border-color: #e74c3c;">
                     <div class="rail-num" style="color: #e74c3c;">Rail 6</div>
-                    <div class="rail-name" style="color: #e74c3c;">OVERFLOW</div>
+                    <div class="rail-name" style="color: #e74c3c;">FRUIT</div>
                     <div class="rail-function">GAIA intercept</div>
-                </div>
-                <div class="rail-item" style="border-color: var(--gaia-primary);">
+                </a>
+                <a href="../rails/gaia/rail-07-harvest.html" class="rail-item" style="border-color: var(--gaia-primary);">
                     <div class="rail-num">Rail 7</div>
-                    <div class="rail-name" style="color: var(--gaia-primary);">RECOVERY</div>
+                    <div class="rail-name" style="color: var(--gaia-primary);">HARVEST</div>
                     <div class="rail-function">phi-scaled unwind</div>
-                </div>
-                <div class="rail-item">
+                </a>
+                <a href="../rails/gaia/rail-08-decay.html" class="rail-item">
                     <div class="rail-num">Rail 8</div>
-                    <div class="rail-name">ASCENT</div>
+                    <div class="rail-name">DECAY</div>
                     <div class="rail-function">Surface approach</div>
-                </div>
-                <div class="rail-item">
+                </a>
+                <a href="../rails/gaia/rail-09-compost.html" class="rail-item">
                     <div class="rail-num">Rail 9</div>
-                    <div class="rail-name">EMERGENCE</div>
+                    <div class="rail-name">COMPOST</div>
                     <div class="rail-function">Context restoration</div>
-                </div>
-                <div class="rail-item">
+                </a>
+                <a href="../rails/gaia/rail-10-soil.html" class="rail-item">
                     <div class="rail-num">Rail 10</div>
-                    <div class="rail-name">SURFACE</div>
+                    <div class="rail-name">SOIL</div>
                     <div class="rail-function">Active execution</div>
-                </div>
-                <div class="rail-item" style="border-color: var(--gaia-light);">
+                </a>
+                <a href="../rails/gaia/rail-11-dormancy.html" class="rail-item" style="border-color: var(--gaia-light);">
                     <div class="rail-num">Rail 11</div>
-                    <div class="rail-name" style="color: var(--gaia-light);">LIGHT</div>
+                    <div class="rail-name" style="color: var(--gaia-light);">DORMANCY</div>
                     <div class="rail-function">Integration complete</div>
-                </div>
-                <div class="rail-item" style="background: rgba(241,196,15,0.1);">
+                </a>
+                <a href="../rails/gaia/rail-12-renewal.html" class="rail-item" style="background: rgba(241,196,15,0.1);">
                     <div class="rail-num">Rail 12</div>
-                    <div class="rail-name" style="color: var(--gaia-light);">CHRONICLE</div>
+                    <div class="rail-name" style="color: var(--gaia-light);">RENEWAL</div>
                     <div class="rail-function">Living record</div>
-                </div>
+                </a>
             </div>
 
             <h3>Rail Transition Equations</h3>
