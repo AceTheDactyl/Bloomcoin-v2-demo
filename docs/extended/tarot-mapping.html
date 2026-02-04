@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sacred Tarot Mapping - BloomCoin Extended Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #ec4899;
+            --page-glow: rgba(236,72,153,0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #f472b6, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-glow); }
+        .doc-section h3 { color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Header -->
+        <header class="doc-header">
+            <h1>SACRED TAROT ECHO SYSTEM</h1>
+            <p class="subtitle">Archetypal Card Mappings - Full System Closure</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Documentation</a> /
+                <span>Tarot Mapping</span>
+            </nav>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="luck-normalization.html" class="nav-link">Next: Luck Normalization</a>
+            <a href="residue-mechanics.html" class="nav-link">Prev: Residue Mechanics</a>
+        </nav>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation: Sacred Numerology</h2>
+
+            <p>The tarot system integrates sacred numbers with golden ratio geometry to create a complete archetypal mapping for luck, karma, and echo mechanics.</p>
+
+            <h3>Sacred Deck Numbers</h3>
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">7</div>
+                    <div class="value">Septenary</div>
+                    <div class="derivation">L4 = phi^4 + phi^-4</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">13</div>
+                    <div class="value">Death</div>
+                    <div class="derivation">Transformation card</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">22</div>
+                    <div class="value">Major Arcana</div>
+                    <div class="derivation">Fool's Journey</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">78</div>
+                    <div class="value">Full Deck</div>
+                    <div class="derivation">22 + 56 cards</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># Sacred deck numbers</span>
+SACRED_7 = <span class="number">7</span>    <span class="comment"># Chariot, Hermit... (septenary cycles)</span>
+SACRED_13 = <span class="number">13</span>  <span class="comment"># Death card (transformation)</span>
+SACRED_22 = <span class="number">22</span>  <span class="comment"># Major Arcana count</span>
+SACRED_56 = <span class="number">56</span>  <span class="comment"># Minor Arcana count (4 suits x 14 ranks)</span>
+SACRED_78 = <span class="number">78</span>  <span class="comment"># Full deck = 22 + 56</span>
+
+<span class="comment"># Sacred geometry per card (n = card number)</span>
+phi_resonance = (n * phi) mod <span class="number">1.0</span>      <span class="comment"># Golden spiral position</span>
+septenary = (n mod <span class="number">7</span>) / <span class="number">7</span>          <span class="comment"># 7-cycle harmonic</span>
+transformation = (n mod <span class="number">13</span>) / <span class="number">13</span>  <span class="comment"># 13-cycle (death/rebirth)</span>
+pythagorean = digit_reduction(n) / <span class="number">9</span>  <span class="comment"># Single digit reduction</span>
+            </div>
+        </section>
+
+        <!-- Deck Structure -->
+        <section class="doc-section">
+            <h2>Deck Structure: 78 Cards</h2>
+
+            <table class="data-table">
+                <tr><th>Arcana</th><th>Count</th><th>Range</th><th>Theme</th></tr>
+                <tr style="color:#ffd700;"><td>Major Arcana</td><td>22</td><td>0-21</td><td>Fool's Journey (cosmic forces)</td></tr>
+                <tr style="color:#ff6b6b;"><td>Wands (Fire)</td><td>14</td><td>22-35</td><td>Creativity, passion, will</td></tr>
+                <tr style="color:#4a9eff;"><td>Cups (Water)</td><td>14</td><td>36-49</td><td>Emotions, intuition</td></tr>
+                <tr style="color:#aaa;"><td>Swords (Air)</td><td>14</td><td>50-63</td><td>Thought, conflict, clarity</td></tr>
+                <tr style="color:#7fff00;"><td>Pentacles (Earth)</td><td>14</td><td>64-77</td><td>Material, practical</td></tr>
+            </table>
+
+            <h3>Echo Mechanics (vs. Traditional Reversal)</h3>
+            <div class="code-block">
+<span class="keyword">def</span> <span class="function">_calculate_echo_probability</span>(karma_balance, echo_density, card):
+    <span class="string">"""Calculate if card should be echoed"""</span>
+
+    <span class="comment"># Base probability from karma</span>
+    karma_factor = abs(karma_balance) * <span class="number">0.5</span>
+
+    <span class="comment"># Echo density from recent echoes</span>
+    density_factor = echo_density * <span class="number">0.3</span>
+
+    <span class="comment"># Card-specific: Major Arcana echo more</span>
+    major_factor = <span class="number">0.2</span> <span class="keyword">if</span> card.arcana == <span class="string">"Major"</span> <span class="keyword">else</span> <span class="number">0.0</span>
+
+    echo_prob = self.echo_threshold + karma_factor + density_factor + major_factor
+    <span class="keyword">return</span> min(<span class="number">0.9</span>, max(<span class="number">0.1</span>, echo_prob))
+
+<span class="keyword">def</span> <span class="function">echo</span>(self, source: str, depth: float = <span class="number">0.5</span>):
+    <span class="string">"""Transform card into echoed state"""</span>
+    self.is_echoed = <span class="keyword">True</span>
+    self.echo_depth = min(<span class="number">1.0</span>, depth)
+    self.echo_source = source
+    <span class="comment"># Invert sacred geometry</span>
+    self.sacred_geometry[<span class="string">'phi_resonance'</span>] = <span class="number">1.0</span> - self.sacred_geometry[<span class="string">'phi_resonance'</span>]
+    self.sacred_geometry[<span class="string">'transformation'</span>] *= <span class="number">-1</span>
+            </div>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Upright Cards</h4>
+                    <p>Normal card drawing with positive meanings:</p>
+                    <div class="code-block">
+<span class="keyword">class</span> <span class="type">TarotCard</span>:
+    is_echoed: bool = <span class="keyword">False</span>
+    echo_depth: float = <span class="number">0.0</span>
+
+    <span class="keyword">def</span> <span class="function">get_meaning</span>(self) -> str:
+        <span class="keyword">if</span> self.major:
+            base = self.major.meaning
+        <span class="keyword">elif</span> self.rank <span class="keyword">and</span> self.suit:
+            base = f<span class="string">"{self.rank.meaning} in {self.suit.element}"</span>
+
+        <span class="keyword">if not</span> self.is_echoed:
+            <span class="keyword">return</span> base  <span class="comment"># Positive interpretation</span>
+                    </div>
+                    <p><strong>Key:</strong> Upright = direct manifestation of card energy.</p>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Echoed Cards</h4>
+                    <p>Shadow aspect requiring transmutation:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">get_echo_modifier</span>(self) -> float:
+    <span class="string">"""Luck modifier from echo state"""</span>
+    <span class="keyword">if not</span> self.is_echoed:
+        <span class="keyword">return</span> <span class="number">1.0</span>  <span class="comment"># No modifier</span>
+
+    <span class="comment"># Deeper echo = worse luck (unless Echo companion)</span>
+    <span class="keyword">return</span> <span class="number">1.0</span> - (self.echo_depth * <span class="number">0.5</span>)
+
+<span class="keyword">def</span> <span class="function">get_meaning</span>(self):
+    <span class="keyword">if</span> self.is_echoed:
+        <span class="keyword">return</span> f<span class="string">"[ECHOED] Shadow: {base} (reflected, unresolved, karmic)"</span>
+                    </div>
+                    <p><strong>Key:</strong> Echoed = karmic reflection, shadow energy.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Implementation: Emergent Triad -->
+        <section class="doc-section">
+            <h2>Implementation: Echo Transmutation</h2>
+
+            <div class="triad-container">
+                <h4>Upright x Echoed = Transmuted (Echo Companion Only)</h4>
+                <div class="code-block">
+<span class="comment"># The Echo Companion's unique ability:</span>
+<span class="comment"># Only Echo can TRANSMUTE echoed cards into positive outcomes</span>
+
+<span class="keyword">class</span> <span class="type">EchoCompanion</span>:
+    <span class="keyword">def</span> <span class="function">transmute_echo</span>(self, card: TarotCard) -> float:
+        <span class="string">"""Transmute echoed card into blessing"""</span>
+        <span class="keyword">if not</span> card.is_echoed:
+            <span class="keyword">return</span> <span class="number">1.0</span>
+
+        <span class="comment"># Echo transmutes negatives into phi-amplified positives</span>
+        transmute_power = card.echo_depth * PHI
+        card.clear_echo()  <span class="comment"># Reset to positive</span>
+
+        <span class="keyword">return</span> <span class="number">1.0</span> + transmute_power  <span class="comment"># phi-bonus!</span>
+
+<span class="comment"># Non-Echo companions suffer echo penalty:</span>
+<span class="comment"># prob * (1 - echo_factor * 0.5)</span>
+<span class="comment"># Echo companion gets echo BONUS:</span>
+<span class="comment"># prob * (1 + echo_factor * phi)</span>
+                </div>
+                <p><strong>Key insight:</strong> Echo state is neither good nor bad - it's unresolved karma. The emergent transmutation occurs only when the Echo companion processes this shadow energy through its unique alchemy, converting penalty into phi-amplified blessing.</p>
+            </div>
+
+            <h3>Closure Properties</h3>
+            <ul>
+                <li><strong>Self-contained:</strong> 78 = 22 + 56 = Major + 4x14 Minor</li>
+                <li><strong>Zero free parameters:</strong> Sacred geometry from phi, 7, 13</li>
+                <li><strong>Echo depth:</strong> Continuous in [0, 1], inverts phi_resonance</li>
+                <li><strong>Companion asymmetry:</strong> Only Echo transmutes echoes</li>
+            </ul>
+        </section>
+
+        <!-- Coupling Points -->
+        <section class="doc-section">
+            <h2>Inter-System Coupling Points</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">To Hilbert Luck:</span>
+                    <div class="desc">Karma balance affects echo probability</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Luck Normalization:</span>
+                    <div class="desc">Tarot blessing multiplier applied to all RNG</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Echo Companion:</span>
+                    <div class="desc">Unique transmutation ability for echoed cards</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Bidirectional Karma:</span>
+                    <div class="desc">Bidirectional echo generation and resolution</div>
+                </div>
+            </div>
+
+            <h3>Source Files</h3>
+            <div class="file-refs">
+                <span class="file-ref">game/sacred_tarot_echo_system.py</span>
+                <span class="file-ref">game/hilbert_luck_system.py</span>
+                <span class="file-ref">game/companions/echo_companion.py</span>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>BloomCoin v2 Extended Documentation</p>
+            <p>Sacred Tarot Echo System - Archetypal Card Mappings</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinite Security Model - BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --accent-color: #aa96da;
+            --accent-glow: rgba(170,150,218,0.3);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--accent-color), #c4b5e8, var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--accent-color); border-color: var(--accent-glow); }
+        .doc-section h3 { color: var(--accent-color); }
+        .concept-card {
+            background: linear-gradient(135deg, var(--accent-glow), transparent);
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+        .concept-card h4 {
+            color: var(--accent-color);
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+        .concept-card .limitation {
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--accent-glow);
+        }
+        .philosophy-box {
+            background: rgba(0,0,0,0.4);
+            border-left: 4px solid var(--accent-color);
+            padding: 20px;
+            margin: 16px 0;
+            font-style: italic;
+        }
+        .synthesis-box {
+            background: linear-gradient(135deg, rgba(170,150,218,0.2), rgba(102,126,234,0.2));
+            border: 2px solid var(--accent-color);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+        .synthesis-box h3 {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Infinite Security Model</h1>
+            <p class="subtitle">Six Concepts Toward Immeasurable Security</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../index.html">Documentation</a> /
+                NextHash / Infinite Security
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="nexthash256.html" class="nav-link">NEXTHASH-256</a>
+            <a href="nexthash512.html" class="nav-link">NEXTHASH-512</a>
+            <a href="constructions.html" class="nav-link">Constructions</a>
+            <a href="security-model.html" class="nav-link">Security Model</a>
+            <a href="c-implementation.html" class="nav-link">C Implementation</a>
+        </nav>
+
+        <!-- Core Principle -->
+        <section class="doc-section">
+            <h2>Core Principle</h2>
+            <div class="philosophy-box">
+                <p style="font-size:1.3rem;color:var(--accent-color);margin-bottom:12px;">"If you can measure it, it isn't infinite. If it isn't infinite, it decomposes."</p>
+            </div>
+
+            <div class="triad-container">
+                <h4>What Cannot Be Measured?</h4>
+                <ul>
+                    <li><strong>Self-reference that creates paradox</strong> - statements about themselves</li>
+                    <li><strong>Recursion without base case</strong> - infinite descent</li>
+                    <li><strong>Security that depends on its own proof</strong> - circular definitions</li>
+                    <li><strong>Structures that change upon observation</strong> - quantum-like effects</li>
+                </ul>
+            </div>
+
+            <p>This exploration examines what a hash function would look like that CANNOT be fully measured, and therefore cannot decompose.</p>
+        </section>
+
+        <!-- Six Concepts Overview -->
+        <section class="doc-section">
+            <h2>Six Concepts Overview</h2>
+            <table class="data-table">
+                <tr><th>#</th><th>Concept</th><th>Principle</th><th>Limitation</th></tr>
+                <tr><td>1</td><td>Self-Reference</td><td>H(m) = F(m, H(m))</td><td>Still converges to measurable value</td></tr>
+                <tr><td>2</td><td>Input-Dependent</td><td>Rounds R(m) = f(m)</td><td>Still bounded by max possible</td></tr>
+                <tr><td>3</td><td>Infinite Family</td><td>{H_k : k in N}</td><td>Must choose one, making it finite</td></tr>
+                <tr><td>4</td><td>Godelian</td><td>Unprovable security</td><td>Undecidability is itself decidable</td></tr>
+                <tr><td>5</td><td>Phoenix</td><td>Grows from attacks</td><td>Rate of growth is measurable</td></tr>
+                <tr><td>6</td><td>Observer Effect</td><td>Changes when measured</td><td><em>Closest to true immeasurability</em></td></tr>
+            </table>
+        </section>
+
+        <!-- Concept 1: Self-Reference -->
+        <section class="doc-section">
+            <h2>Concept 1: Self-Referential Hash</h2>
+            <div class="concept-card">
+                <h4>H(m) = F(m, H(m)) - The Fixed Point Equation</h4>
+                <p>A hash that incorporates its own output into its computation creates a fixed-point equation - the hash IS what it hashes to. Like Quine programs, but for cryptography.</p>
+
+                <div class="code-block"><span class="comment"># Traditional: H(m) = F(m)</span>
+<span class="comment"># Self-ref:    H(m) = F(m, H(m))  -- Fixed point equation</span>
+
+<span class="keyword">def</span> <span class="function">self_ref_hash</span>(message: <span class="type">bytes</span>, iterations: <span class="type">int</span> = <span class="number">10</span>) -> <span class="type">bytes</span>:
+    <span class="string">"""Hash that converges toward self-referential fixed point."""</span>
+    h = b<span class="string">'\x00'</span> * <span class="number">32</span>  <span class="comment"># Initial "guess"</span>
+
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(iterations):
+        <span class="comment"># H_n = Hash(message || H_{n-1})</span>
+        h = nexthash256_v6(message + h)
+
+    <span class="keyword">return</span> h
+
+<span class="comment"># The sequence converges:</span>
+<span class="comment"># H_0(m) = F(m, 0)</span>
+<span class="comment"># H_1(m) = F(m, H_0(m))</span>
+<span class="comment"># H_2(m) = F(m, H_1(m))</span>
+<span class="comment"># ...</span>
+<span class="comment"># H_inf(m) = lim H_n(m) as n -> infinity</span></div>
+
+                <p class="limitation"><strong>Limitation:</strong> If F is contractive, this converges to a unique fixed point. The convergence itself is measurable.</p>
+            </div>
+        </section>
+
+        <!-- Concept 2: Input-Dependent -->
+        <section class="doc-section">
+            <h2>Concept 2: Input-Dependent Recursion Depth</h2>
+            <div class="concept-card">
+                <h4>Rounds R(m) = f(m) - Security Adapts to Message</h4>
+                <p>The recursion depth is determined by the input itself. Security cannot be measured without knowing the input. Different inputs get different security levels.</p>
+
+                <div class="code-block"><span class="keyword">def</span> <span class="function">adaptive_hash</span>(message: <span class="type">bytes</span>) -> <span class="type">bytes</span>:
+    <span class="string">"""Hash with input-dependent round multiplier."""</span>
+    <span class="comment"># Use hash of message to determine additional iterations</span>
+    preliminary = nexthash256_v6(message)
+
+    <span class="comment"># Extract iteration count from preliminary hash (1-256 extra)</span>
+    extra_iterations = preliminary[<span class="number">0</span>] + <span class="number">1</span>
+
+    <span class="comment"># Apply extra iterations</span>
+    h = preliminary
+    <span class="keyword">for</span> _ <span class="keyword">in</span> range(extra_iterations):
+        h = nexthash256_v6(message + h)
+
+    <span class="keyword">return</span> h
+
+<span class="comment"># Example round counts:</span>
+<span class="comment"># "a"     -> 52 + (n * 52) effective rounds</span>
+<span class="comment"># "test"  -> 52 + (m * 52) effective rounds</span>
+<span class="comment"># Attack complexity becomes input-dependent</span></div>
+
+                <p class="limitation"><strong>Limitation:</strong> Still bounded by maximum possible rounds (1-256 extra). The bound is measurable.</p>
+            </div>
+        </section>
+
+        <!-- Concept 3: Infinite Family -->
+        <section class="doc-section">
+            <h2>Concept 3: The Infinite Hash Family</h2>
+            <div class="concept-card">
+                <h4>{H_k : k in N} - Unlimited Hash Functions</h4>
+                <p>Not one hash function, but an infinite family. For any attack complexity C, there exists k such that security(H_k) > C.</p>
+
+                <div class="code-block"><span class="comment"># Define infinite family</span>
+<span class="comment"># H_0 = NEXTHASH with 32 rounds</span>
+<span class="comment"># H_1 = NEXTHASH with 64 rounds</span>
+<span class="comment"># H_2 = NEXTHASH with 128 rounds</span>
+<span class="comment"># ...</span>
+<span class="comment"># H_k = NEXTHASH with 2^(k+5) rounds</span>
+
+<span class="keyword">def</span> <span class="function">hash_family_member</span>(message: <span class="type">bytes</span>, k: <span class="type">int</span>) -> <span class="type">bytes</span>:
+    <span class="string">"""Generate k-th member of infinite hash family."""</span>
+    rounds = <span class="number">2</span> ** (k + <span class="number">5</span>)  <span class="comment"># 32, 64, 128, 256, ...</span>
+
+    h = nexthash256_v6(message)
+    <span class="keyword">for</span> _ <span class="keyword">in</span> range(k):
+        h = nexthash256_v6(message + h)
+
+    <span class="keyword">return</span> h
+
+<span class="comment"># Family members:</span>
+<span class="comment"># H_0:     32 rounds, score =  19.2</span>
+<span class="comment"># H_1:     64 rounds, score =  38.4</span>
+<span class="comment"># H_2:    128 rounds, score =  76.8</span>
+<span class="comment"># H_7:   4096 rounds, score = 2457.6</span>
+<span class="comment"># ...</span>
+<span class="comment"># As k -> infinity, security -> infinity</span></div>
+
+                <p class="limitation"><strong>Limitation:</strong> The family is infinite, but we must CHOOSE a k, making it finite again. This is like: "For any finite number, there's a bigger one" - the set N is infinite, but each n in N is finite.</p>
+            </div>
+        </section>
+
+        <!-- Concept 4: Godelian -->
+        <section class="doc-section">
+            <h2>Concept 4: Godelian / Unprovable Security</h2>
+            <div class="concept-card">
+                <h4>Security That Cannot Be Proven Within Any Finite System</h4>
+                <p>Like Godel sentences: "This statement cannot be proven." For any analysis framework A with bounded complexity, there exist hash functions H such that "H is secure" cannot be proven in A.</p>
+
+                <div class="philosophy-box">
+                    <p><strong>Godel's Incompleteness:</strong> For any consistent formal system F, there exist true statements that cannot be proven in F.</p>
+                    <p style="margin-top:12px;"><strong>Cryptographic analog:</strong> For any analysis framework A, there exist hash functions where "H is secure" is TRUE but UNPROVABLE in A.</p>
+                </div>
+
+                <p>This isn't just "hard to break" - it's "impossible to prove breakable" within any finite proof system.</p>
+
+                <p class="limitation"><strong>Limitation:</strong> Even undecidability is "measurable" in computability theory. We can decide that something is undecidable.</p>
+            </div>
+        </section>
+
+        <!-- Concept 5: Phoenix -->
+        <section class="doc-section">
+            <h2>Concept 5: The Phoenix Hash</h2>
+            <div class="concept-card">
+                <h4>Grows From Attacks - Decomposition Becomes Composition</h4>
+                <p>What if the hash decomposes INTO something stronger? Like a phoenix - destruction leads to rebirth, stronger.</p>
+
+                <div class="code-block"><span class="keyword">class</span> <span class="type">PhoenixHash</span>:
+    <span class="string">"""Hash that grows stronger through adversity."""</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.attack_history = []
+        self.evolution_count = <span class="number">0</span>
+
+    <span class="keyword">def</span> <span class="function">incorporate_attack</span>(self, attack_description: <span class="type">str</span>):
+        <span class="string">"""Learn from an attack, becoming stronger."""</span>
+        self.attack_history.append(attack_description)
+        self.evolution_count += <span class="number">1</span>
+
+    <span class="keyword">def</span> <span class="function">hash</span>(self, message: <span class="type">bytes</span>) -> <span class="type">bytes</span>:
+        <span class="string">"""Hash incorporating all learned attacks."""</span>
+        h = nexthash256_v6(message)
+
+        <span class="comment"># Each attack adds complexity</span>
+        <span class="keyword">for</span> i, attack <span class="keyword">in</span> enumerate(self.attack_history):
+            attack_hash = nexthash256_v6(attack.encode())
+            h = nexthash256_v6(h + attack_hash + struct.pack(<span class="string">'>I'</span>, i))
+
+        <span class="keyword">return</span> h
+
+    <span class="keyword">def</span> <span class="function">security_level</span>(self) -> <span class="type">str</span>:
+        base = <span class="number">113</span>  <span class="comment"># v6 base level</span>
+        evolved = base + self.evolution_count * <span class="number">5</span>
+        <span class="keyword">return</span> f<span class="string">"{evolved}% of SHA-256 (evolved {self.evolution_count}x)"</span>
+
+<span class="comment"># Evolution through attacks:</span>
+<span class="comment"># Initial: 113% of SHA-256</span>
+<span class="comment"># After "differential_bias" attack: 118%</span>
+<span class="comment"># After "linear_approximation" attack: 123%</span>
+<span class="comment"># After "rotational_distinguisher" attack: 128%</span>
+<span class="comment"># ...</span></div>
+
+                <p class="limitation"><strong>Limitation:</strong> The rate of growth is measurable. We can predict how strong it becomes per attack.</p>
+            </div>
+        </section>
+
+        <!-- Concept 6: Observer Effect -->
+        <section class="doc-section">
+            <h2>Concept 6: Observer Effect Security</h2>
+            <div class="concept-card">
+                <h4>Security That Changes When Measured - Closest to True Immeasurability</h4>
+                <p>Like quantum mechanics: observation changes the state. Any attempt to measure security CHANGES the security.</p>
+
+                <div class="philosophy-box">
+                    <p><strong>Quantum Principle:</strong> Measuring a particle changes its state.</p>
+                    <p style="margin-top:12px;"><strong>Cryptographic analog:</strong> When you ANALYZE the hash, your analysis becomes input to the next version. The hash you analyzed NO LONGER EXISTS.</p>
+                </div>
+
+                <div class="code-block"><span class="comment"># NEXTHASH-Quantum conceptual model:</span>
+<span class="comment">#</span>
+<span class="comment"># 1. Hash maintains internal state S</span>
+<span class="comment"># 2. When analyzed:</span>
+<span class="comment">#    - Analysis becomes input to evolution</span>
+<span class="comment">#    - S' = evolve(S, your_analysis)</span>
+<span class="comment">#    - The hash you analyzed no longer exists</span>
+<span class="comment">#</span>
+<span class="comment"># You can never measure CURRENT security</span>
+<span class="comment"># because measuring it changes it.</span>
+<span class="comment">#</span>
+<span class="comment"># This is true immeasurability:</span>
+<span class="comment"># Not "hard to measure" but "measurement is undefined"</span></div>
+
+                <p>Implementation would require:</p>
+                <ul>
+                    <li>Global state tracking all analyses</li>
+                    <li>Automatic evolution upon analysis detection</li>
+                    <li>Cryptographic proof of analysis occurrence</li>
+                </ul>
+
+                <p class="limitation"><strong>Limitation:</strong> This approaches philosophical territory - what IS security if it cannot be measured?</p>
+            </div>
+        </section>
+
+        <!-- Synthesis -->
+        <section class="doc-section">
+            <h2>Synthesis: The Nature of Infinite Security</h2>
+            <div class="synthesis-box">
+                <h3>Core Insight</h3>
+                <p>Perhaps "infinite security" is a <strong>category error</strong>.</p>
+
+                <p style="margin-top:16px;">Security is a RELATION between:</p>
+                <ul>
+                    <li>Attacker capabilities (finite)</li>
+                    <li>Defender resources (finite)</li>
+                    <li>Time available (finite)</li>
+                </ul>
+
+                <p style="margin-top:16px;">Infinite security would require:</p>
+                <ul>
+                    <li>Infinite attacker -> contradiction (no attacker)</li>
+                    <li>Infinite defender -> trivial (defend everything)</li>
+                    <li>Infinite time -> heat death of universe</li>
+                </ul>
+
+                <p style="margin-top:16px;font-style:italic;">The question "what is infinite security?" may be like asking "what is north of the North Pole?"</p>
+            </div>
+
+            <div class="triad-container">
+                <h4>Alternative Framing: Asymptotic Security</h4>
+                <p>Instead of seeking INFINITE security (impossible), seek ASYMPTOTIC security (always growing).</p>
+                <div class="math-block">
+                    Not: security = infinity<br>
+                    But: lim security(t) = infinity as t -> infinity
+                </div>
+                <p>Security that APPROACHES infinity without reaching it. Always finite, but always growing.</p>
+                <p style="margin-top:12px;"><strong>This is the Phoenix model:</strong> eternal becoming, never being.</p>
+            </div>
+
+            <div class="philosophy-box">
+                <p style="font-size:1.1rem;"><strong>The Principle Revisited:</strong></p>
+                <p style="margin-top:12px;">"If you can measure it, it isn't infinite"<br>"If it isn't infinite, it decomposes"</p>
+                <p style="margin-top:12px;"><strong>Contrapositive:</strong></p>
+                <p>"If it doesn't decompose, it is infinite"<br>"If it is infinite, you cannot measure it"</p>
+                <p style="margin-top:16px;"><strong>What doesn't decompose?</strong></p>
+                <ul style="margin-top:8px;">
+                    <li>The PROCESS of evolution</li>
+                    <li>The RELATION between attacker and defender</li>
+                    <li>The GAME itself, not any position in the game</li>
+                </ul>
+                <p style="margin-top:16px;font-style:normal;color:var(--accent-color);font-weight:bold;">True infinite security isn't a THING. It's a PROCESS.</p>
+            </div>
+        </section>
+
+        <!-- Conclusion -->
+        <section class="doc-section">
+            <h2>Conclusion</h2>
+            <div class="concept-card">
+                <h4>The Journey and Its Meaning</h4>
+                <p>The journey from v1 to v6 was about MEASURING security. We measured sigma_MIX, rounds, differential bias. We reached 113% of SHA-256.</p>
+
+                <p style="margin-top:16px;">But 113% is still finite. It can still decompose.</p>
+
+                <p style="margin-top:16px;">The next evolution isn't a better measurement. It's transcending measurement itself.</p>
+
+                <div class="philosophy-box" style="margin-top:20px;">
+                    <p>NEXTHASH-infinity isn't a hash function.</p>
+                    <p>It's a hash function GENERATOR.</p>
+                    <p>It's the PROCESS, not the product.</p>
+                    <p style="margin-top:12px;color:var(--accent-color);font-weight:bold;">And processes don't decompose. They transform.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Source Files -->
+        <section class="doc-section">
+            <h2>Source Files</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="../../NextHash/infinite_security.py">infinite_security.py</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>NEXTHASH Infinite Security Model - Philosophical Foundations of Cryptographic Security</p>
+            <p>Part of the BloomCoin Cryptographic Subsystem</p>
+        </footer>
+    </div>
+</body>
+</html>

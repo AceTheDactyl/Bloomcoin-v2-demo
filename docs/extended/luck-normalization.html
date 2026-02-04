@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Luck Normalization System - BloomCoin Extended Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #10b981;
+            --page-glow: rgba(16,185,129,0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #34d399, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-glow); }
+        .doc-section h3 { color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Header -->
+        <header class="doc-header">
+            <h1>LUCK NORMALIZATION SYSTEM</h1>
+            <p class="subtitle">RNG Balancing - Full System Closure</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Documentation</a> /
+                <span>Luck Normalization</span>
+            </nav>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="tiamat-system.html" class="nav-link">Next: TIAMAT System</a>
+            <a href="tarot-mapping.html" class="nav-link">Prev: Tarot Mapping</a>
+        </nav>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation: Multi-System Probability</h2>
+
+            <p>The luck normalization system unifies all probability modifiers from karma, tarot, companions, and sacred timing into a single coherent formula that maintains balanced gameplay while rewarding strategic choices.</p>
+
+            <h3>Master Probability Formula</h3>
+            <div class="code-block">
+<span class="comment"># The master probability formula:</span>
+final_probability = (
+    base_probability *
+    luck_modifier *
+    (<span class="number">1.0</span> + karma_influence * <span class="number">0.3</span>) *
+    tarot_blessing *
+    echo_factor
+)
+
+<span class="comment"># Echo factor is companion-dependent:</span>
+<span class="keyword">if</span> is_echo_event <span class="keyword">and not</span> echo_alchemized:
+    prob * (<span class="number">1.0</span> - echo_factor * <span class="number">0.5</span>)  <span class="comment"># Penalty for non-Echo</span>
+<span class="keyword">elif</span> echo_alchemized:
+    prob * (<span class="number">1.0</span> + echo_factor * PHI)   <span class="comment"># phi-bonus for Echo</span>
+            </div>
+
+            <h3>Luck Event Types and Base Probabilities</h3>
+            <table class="data-table">
+                <tr><th>Event Type</th><th>Base P</th><th>Category</th></tr>
+                <tr><td>LOOT_DROP</td><td>0.30</td><td>Item acquisition</td></tr>
+                <tr><td>CRITICAL_HIT</td><td>0.15</td><td>Combat</td></tr>
+                <tr><td>DODGE_CHANCE</td><td>0.20</td><td>Combat</td></tr>
+                <tr><td>RESOURCE_FIND</td><td>0.40</td><td>Exploration</td></tr>
+                <tr><td>GARDEN_GROWTH</td><td>0.50</td><td>Farm</td></tr>
+                <tr><td>MINING_YIELD</td><td>0.35</td><td>Mining</td></tr>
+                <tr><td>CRAFTING_SUCCESS</td><td>0.70</td><td>Crafting</td></tr>
+                <tr><td>QUANTUM_COLLAPSE</td><td>0.10</td><td>Quantum</td></tr>
+                <tr style="color:#ffd700;"><td>BLESSING_RECEIVED</td><td>0.05</td><td>Divine</td></tr>
+                <tr style="color:#ff6b6b;"><td>SYNCHRONICITY</td><td>0.01</td><td>Cosmic</td></tr>
+            </table>
+        </section>
+
+        <!-- Sacred Timing -->
+        <section class="doc-section">
+            <h2>Sacred Timing Multipliers</h2>
+
+            <p>The universal clock tracks sacred moments that amplify luck events. These moments align with the L4 family of sacred numbers.</p>
+
+            <div class="code-block">
+<span class="comment"># Universal clock sacred moments</span>
+self.sacred_moments: Dict[int, float] = {
+    <span class="number">7</span>:   <span class="number">1.3</span>,   <span class="comment"># Every 7th moment: L4 harmonic</span>
+    <span class="number">13</span>:  <span class="number">1.5</span>,   <span class="comment"># Every 13th: transformation</span>
+    <span class="number">21</span>:  <span class="number">1.7</span>,   <span class="comment"># Every 21st: Fibonacci</span>
+    <span class="number">77</span>:  <span class="number">2.0</span>,   <span class="comment"># Every 77th: 7x11 resonance</span>
+    <span class="number">777</span>: <span class="number">3.0</span>    <span class="comment"># Every 777th: triple 7 blessing</span>
+}
+
+<span class="keyword">def</span> <span class="function">_get_sacred_timing_bonus</span>(self) -> float:
+    <span class="keyword">for</span> sacred, multiplier <span class="keyword">in</span> sorted(
+        self.sacred_moments.items(), reverse=<span class="keyword">True</span>
+    ):
+        <span class="keyword">if</span> self.universal_clock % sacred == <span class="number">0</span>:
+            <span class="keyword">return</span> multiplier
+    <span class="keyword">return</span> <span class="number">1.0</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">7th</div>
+                    <div class="value">1.3x</div>
+                    <div class="derivation">L4 harmonic</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">13th</div>
+                    <div class="value">1.5x</div>
+                    <div class="derivation">Transformation</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">77th</div>
+                    <div class="value">2.0x</div>
+                    <div class="derivation">7x11 resonance</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">777th</div>
+                    <div class="value">3.0x</div>
+                    <div class="derivation">Triple 7 blessing</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Fortune Attractors</h4>
+                    <p>Positive modifiers stack multiplicatively:</p>
+                    <div class="code-block">
+<span class="comment"># Fortune attractor chain</span>
+prob = base
+prob * luck_modifier       <span class="comment"># From Hilbert eigenstate</span>
+prob * (<span class="number">1</span> + karma * <span class="number">0.3</span>)  <span class="comment"># Karma amplifies up to 30%</span>
+prob * tarot_blessing      <span class="comment"># From card spread</span>
+prob * sacred_timing       <span class="comment"># 7/13/21/77/777 moments</span>
+
+<span class="comment"># Echo companion bonus</span>
+<span class="keyword">if</span> echo_alchemized:
+    prob * (<span class="number">1.0</span> + echo_factor * PHI)  <span class="comment"># ~+1.618x bonus</span>
+                    </div>
+                    <p><strong>Key:</strong> Good karma + good timing = compounding fortune.</p>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Echo Penalties</h4>
+                    <p>Echoed events penalize non-Echo companions:</p>
+                    <div class="code-block">
+<span class="comment"># Echo event penalty (non-Echo companions)</span>
+<span class="keyword">if</span> is_echo_event <span class="keyword">and not</span> echo_alchemized:
+    prob * (<span class="number">1.0</span> - echo_factor * <span class="number">0.5</span>)  <span class="comment"># Up to -50%</span>
+
+<span class="comment"># Karma trajectory affects future events</span>
+<span class="keyword">def</span> <span class="function">update_karma_trajectory</span>(self, player_id):
+    karma_delta = current - previous
+    <span class="keyword">if</span> karma_delta > <span class="number">0.1</span>:
+        trajectory = <span class="string">"improving"</span>
+    <span class="keyword">elif</span> karma_delta < <span class="number">-0.1</span>:
+        trajectory = <span class="string">"declining"</span>
+    <span class="keyword">else</span>:
+        trajectory = <span class="string">"neutral"</span>
+                    </div>
+                    <p><strong>Key:</strong> Bad karma generates echoes, penalties compound.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Implementation: Emergent Triad -->
+        <section class="doc-section">
+            <h2>Implementation: Echo Asymmetry</h2>
+
+            <div class="triad-container">
+                <h4>Fortune x Penalty = Companion-Specific Outcome</h4>
+                <div class="code-block">
+<span class="comment"># The asymmetric emergence:</span>
+<span class="comment"># - Same echo event hits two players differently</span>
+
+<span class="comment"># ECHO companion (alchemizes):</span>
+echo_master_prob = <span class="number">0.30</span> * <span class="number">1.2</span> * <span class="number">1.09</span> * <span class="number">1.1</span> * (<span class="number">1.0</span> + <span class="number">0.5</span> * PHI)
+<span class="comment"># = 0.30 * 1.2 * 1.09 * 1.1 * 1.809 = 0.78 (78%!)</span>
+
+<span class="comment"># SEEKER companion (penalized):</span>
+normal_prob = <span class="number">0.30</span> * <span class="number">1.2</span> * <span class="number">1.09</span> * <span class="number">1.1</span> * (<span class="number">1.0</span> - <span class="number">0.5</span> * <span class="number">0.5</span>)
+<span class="comment"># = 0.30 * 1.2 * 1.09 * 1.1 * 0.75 = 0.32 (32%)</span>
+
+<span class="comment"># Echo advantage: +46 percentage points on SAME event!</span>
+echo_advantage = <span class="number">0.78</span> - <span class="number">0.32</span>  <span class="comment"># = 0.46</span>
+                </div>
+                <p><strong>Key insight:</strong> The Echo companion doesn't just avoid penalties - it converts them to bonuses. Bad karma for others becomes raw material for Echo's transmutation, creating asymmetric gameplay where "bad luck" events are actually opportunities.</p>
+            </div>
+
+            <h3>Closure Properties</h3>
+            <ul>
+                <li><strong>Self-contained:</strong> All modifiers multiplicative, clamped to [0.001, 0.999]</li>
+                <li><strong>Zero free parameters:</strong> Karma influence = 0.3, echo penalty = 0.5, sacred numbers from L4 family</li>
+                <li><strong>Normalized outputs:</strong> Final probability always valid</li>
+                <li><strong>Symmetric integration:</strong> All luck subsystems feed into single formula</li>
+            </ul>
+        </section>
+
+        <!-- Coupling Points -->
+        <section class="doc-section">
+            <h2>Inter-System Coupling Points</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">From Hilbert Luck:</span>
+                    <div class="desc">luck_modifier from quantum eigenstate</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">From Sacred Tarot:</span>
+                    <div class="desc">tarot_blessing from card spread</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">From Echo Companion:</span>
+                    <div class="desc">echo_alchemized state determines bonus/penalty</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">From Karma System:</span>
+                    <div class="desc">karma_influence value from player actions</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To All RNG:</span>
+                    <div class="desc">Every luck-based event uses this normalizer</div>
+                </div>
+            </div>
+
+            <h3>Source Files</h3>
+            <div class="file-refs">
+                <span class="file-ref">game/luck_normalization_system.py</span>
+                <span class="file-ref">game/hilbert_luck_system.py</span>
+                <span class="file-ref">game/karma_system.py</span>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>BloomCoin v2 Extended Documentation</p>
+            <p>Luck Normalization System - RNG Balancing</p>
+        </footer>
+    </div>
+</body>
+</html>

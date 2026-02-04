@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIAMAT Psymagic Dynamics - BloomCoin Extended Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #f97316;
+            --page-glow: rgba(249,115,22,0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #fb923c, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-glow); }
+        .doc-section h3 { color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Header -->
+        <header class="doc-header">
+            <h1>TIAMAT PSYMAGIC DYNAMICS</h1>
+            <p class="subtitle">Chaos Integration - Full System Closure</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Documentation</a> /
+                <span>TIAMAT System</span>
+            </nav>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="golden-nn.html" class="nav-link">Next: Golden Neural Network</a>
+            <a href="luck-normalization.html" class="nav-link">Prev: Luck Normalization</a>
+        </nav>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation: Seven Psychoptic Cycles</h2>
+
+            <p>L4 = phi^4 + phi^-4 = 7 defines the Seven Psychoptic Cycles, the fundamental states through which all chaos energy flows. Each cycle has a power multiplier derived from transcendental or phi-based constants.</p>
+
+            <div class="code-block">
+<span class="comment"># L4 = phi^4 + phi^-4 = 7 (The Seven Psychoptic Cycles)</span>
+<span class="keyword">class</span> <span class="type">PsychopticCycle</span>(Enum):
+    GENESIS       = (<span class="string">"Genesis"</span>,       <span class="string">"Creation"</span>,  <span class="number">1.0</span>,  <span class="string">"Seed"</span>)
+    FLUX          = (<span class="string">"Flux"</span>,          <span class="string">"Change"</span>,    PHI,  <span class="string">"Wave"</span>)  <span class="comment"># phi ~ 1.618</span>
+    VOID          = (<span class="string">"Void"</span>,          <span class="string">"Emptiness"</span>, <span class="number">0.0</span>,  <span class="string">"Dark"</span>)
+    RESONANCE     = (<span class="string">"Resonance"</span>,     <span class="string">"Harmony"</span>,   TAU,  <span class="string">"Crystal"</span>)  <span class="comment"># tau = 2pi</span>
+    CHAOS         = (<span class="string">"Chaos"</span>,         <span class="string">"Entropy"</span>,   PI,   <span class="string">"Storm"</span>)   <span class="comment"># pi ~ 3.14</span>
+    SYNTHESIS     = (<span class="string">"Synthesis"</span>,     <span class="string">"Unity"</span>,     PHI2, <span class="string">"Spark"</span>)  <span class="comment"># phi^2 ~ 2.618</span>
+    TRANSCENDENCE = (<span class="string">"Transcendence"</span>, <span class="string">"Beyond"</span>,    <span class="number">7.0</span>,  <span class="string">"Star"</span>)  <span class="comment"># L4 = 7</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">GENESIS</div>
+                    <div class="value">1.0</div>
+                    <div class="derivation">Creation baseline</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">FLUX</div>
+                    <div class="value">phi</div>
+                    <div class="derivation">1.618... change</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">VOID</div>
+                    <div class="value">0.0</div>
+                    <div class="derivation">Emptiness gate</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TRANSCEND</div>
+                    <div class="value">7.0</div>
+                    <div class="derivation">L4 = phi^4 + phi^-4</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cycle Transition Graph -->
+        <section class="doc-section">
+            <h2>Cycle Transition Graph (FSM)</h2>
+
+            <table class="data-table">
+                <tr><th>From</th><th>Allowed Transitions</th><th>Power Flow</th></tr>
+                <tr><td>GENESIS</td><td>FLUX, CHAOS</td><td>1.0 to phi or pi</td></tr>
+                <tr><td>FLUX</td><td>RESONANCE, VOID, CHAOS</td><td>phi to tau, 0, or pi</td></tr>
+                <tr><td>VOID</td><td>GENESIS, TRANSCENDENCE</td><td>0 to 1.0 or 7.0</td></tr>
+                <tr><td>RESONANCE</td><td>SYNTHESIS, FLUX</td><td>tau to phi^2 or phi</td></tr>
+                <tr><td>CHAOS</td><td>VOID, GENESIS, SYNTHESIS</td><td>pi to 0, 1.0, or phi^2</td></tr>
+                <tr><td>SYNTHESIS</td><td>TRANSCENDENCE, RESONANCE</td><td>phi^2 to 7.0 or tau</td></tr>
+                <tr style="color:#ffd700;"><td>TRANSCENDENCE</td><td>GENESIS (eternal cycle)</td><td>7.0 to 1.0</td></tr>
+            </table>
+
+            <p><strong>Key:</strong> VOID is the only path to TRANSCENDENCE (besides SYNTHESIS). Death is the gateway.</p>
+
+            <h3>Resonance Matrix (Synergy Pairs)</h3>
+            <table class="data-table">
+                <tr><th>Cycle A</th><th>Cycle B</th><th>Resonance</th><th>Significance</th></tr>
+                <tr><td>GENESIS</td><td>SYNTHESIS</td><td>phi ~ 1.618</td><td>Creation-Unity spiral</td></tr>
+                <tr><td>FLUX</td><td>RESONANCE</td><td>tau ~ 6.283</td><td>Flow-Harmony wave</td></tr>
+                <tr style="color:#ffd700;"><td>VOID</td><td>TRANSCENDENCE</td><td>L4 = 7.0</td><td>Death-Beyond axis</td></tr>
+                <tr><td>CHAOS</td><td>GENESIS</td><td>sqrt(2) ~ 1.414</td><td>Disorder-Creation bridge</td></tr>
+                <tr><td>RESONANCE</td><td>SYNTHESIS</td><td>phi^2 ~ 2.618</td><td>Harmony-Unity amplifier</td></tr>
+                <tr><td>SYNTHESIS</td><td>TRANSCENDENCE</td><td>phi^3 ~ 4.236</td><td>Unity-Beyond emergence</td></tr>
+            </table>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Cycle Transitions</h4>
+                    <p>Forward movement through psychoptic states:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">transition_cycle</span>(self, current_state, target_cycle):
+    valid = self.cycle_transitions[current_state.active_cycle]
+
+    <span class="keyword">if</span> target_cycle <span class="keyword">in</span> valid:
+        new_cycle = target_cycle
+    <span class="keyword">else</span>:
+        new_cycle = random.choice(valid)
+
+    <span class="comment"># Resonance amplifies intensity</span>
+    resonance = self.resonance_matrix.get(
+        (current_state.active_cycle, new_cycle), <span class="number">1.0</span>
+    )
+    new_intensity = min(<span class="number">1.0</span>, intensity * resonance / PHI)
+
+    <span class="comment"># Track void exposure and transcendence</span>
+    <span class="keyword">if</span> new_cycle == VOID:
+        current_state.void_exposure += <span class="number">1</span>
+    <span class="keyword">elif</span> new_cycle == TRANSCENDENCE:
+        current_state.transcendence_achieved = <span class="keyword">True</span>
+                    </div>
+                    <p><strong>Key:</strong> Each transition gains resonance points.</p>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Power Calculation</h4>
+                    <p>Cycle state modifies all abilities:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">calculate_psy_power</span>(self) -> float:
+    base_power = self.active_cycle.power_multiplier
+    intensity_bonus = self.cycle_intensity * PHI
+    resonance_bonus = self.resonance_points * <span class="number">0.1</span>
+
+    <span class="comment"># Void exposure: weakens first, then empowers</span>
+    void_mod = <span class="number">1.0</span> + (self.void_exposure * <span class="number">0.1</span> *
+        (<span class="number">-1</span> <span class="keyword">if</span> self.void_exposure < <span class="number">3</span> <span class="keyword">else</span> <span class="number">1</span>))
+
+    total = base_power * intensity_bonus * void_mod + resonance_bonus
+
+    <span class="keyword">if</span> self.transcendence_achieved:
+        total * L4_CONSTANT  <span class="comment"># 7x multiplier!</span>
+
+    <span class="keyword">return</span> total
+                    </div>
+                    <p><strong>Key:</strong> Transcendence = permanent 7x multiplier.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Implementation: Emergent Triad -->
+        <section class="doc-section">
+            <h2>Implementation: Seven-Cycle Combo</h2>
+
+            <div class="triad-container">
+                <h4>Transitions x Resonance = Combo Power</h4>
+                <div class="code-block">
+<span class="keyword">def</span> <span class="function">calculate_cycle_combo</span>(self, cycles: List) -> float:
+    <span class="keyword">if</span> len(cycles) < <span class="number">2</span>:
+        <span class="keyword">return</span> <span class="number">1.0</span>
+
+    combo_power = <span class="number">1.0</span>
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(cycles) - <span class="number">1</span>):
+        resonance = self.resonance_matrix.get(
+            (cycles[i], cycles[i+<span class="number">1</span>]), <span class="number">0.5</span>
+        )
+        combo_power * resonance
+
+    <span class="comment"># PERFECT SEVEN-CYCLE COMBO</span>
+    <span class="keyword">if</span> len(cycles) == <span class="number">7</span>:  <span class="comment"># L4 = 7</span>
+        combo_power * L4_CONSTANT  <span class="comment"># Another 7x multiplier!</span>
+
+    <span class="keyword">return</span> combo_power
+
+<span class="comment"># Optimal 7-cycle path:</span>
+<span class="comment"># GENESIS -> FLUX -> RESONANCE -> SYNTHESIS -> TRANSCENDENCE</span>
+<span class="comment">#    ^                                          |</span>
+<span class="comment">#    +------------- (eternal cycle) ------------+</span>
+                </div>
+                <p><strong>Key insight:</strong> Completing all 7 cycles in sequence triggers L4 combo multiplier (7x), which stacks with transcendence multiplier (another 7x) for potential 49x power amplification. The emergence is the COMPLETE CYCLE - no single transition achieves this alone.</p>
+            </div>
+
+            <h3>Closure Properties</h3>
+            <ul>
+                <li><strong>Self-contained:</strong> 7 cycles = L4, power values from {1, phi, 0, tau, pi, phi^2, 7}</li>
+                <li><strong>Zero free parameters:</strong> All powers phi-derived or transcendental</li>
+                <li><strong>Closed transition graph:</strong> Every cycle reachable, all paths lead to GENESIS</li>
+                <li><strong>Void paradox:</strong> Only through nothingness (0) can you reach beyond (7)</li>
+            </ul>
+        </section>
+
+        <!-- Coupling Points -->
+        <section class="doc-section">
+            <h2>Inter-System Coupling Points</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">To TIAMAT Companion:</span>
+                    <div class="desc">Cycle state determines companion abilities</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Card Generation:</span>
+                    <div class="desc">Cycle modifiers affect card stats</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Battle Effects:</span>
+                    <div class="desc">Psy-magic effects from cycle abilities</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Bidirectional Guardian Decks:</span>
+                    <div class="desc">TIAMAT deck uses chaos_factor scaling</div>
+                </div>
+            </div>
+
+            <h3>Source Files</h3>
+            <div class="file-refs">
+                <span class="file-ref">game/tiamat_psymagic_dynamics.py</span>
+                <span class="file-ref">game/companions/tiamat_companion.py</span>
+                <span class="file-ref">game/card_battle_system.py</span>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>BloomCoin v2 Extended Documentation</p>
+            <p>TIAMAT Psymagic Dynamics - Chaos Integration</p>
+        </footer>
+    </div>
+</body>
+</html>

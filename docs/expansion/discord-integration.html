@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Integration - BloomCoin Expansion</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #5865F2;
+            --module-glow: rgba(88, 101, 242, 0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), #7289DA, var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 {
+            color: var(--module-color);
+            border-bottom-color: var(--module-glow);
+        }
+        .coupling-item {
+            border-left-color: var(--module-color);
+        }
+        .status-badge.expansion {
+            background: var(--module-glow);
+            color: var(--module-color);
+            border: 1px solid var(--module-color);
+        }
+        .command-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            border-left: 4px solid var(--module-color);
+        }
+        .command-card .cmd {
+            color: var(--module-color);
+            font-family: monospace;
+            font-weight: 600;
+        }
+        .command-card .desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+        .cog-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .cog-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--module-glow);
+        }
+        .cog-card h4 {
+            color: var(--module-color);
+            margin-bottom: 12px;
+        }
+        .db-diagram {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+            border: 1px solid var(--module-glow);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Discord Integration</h1>
+            <p class="subtitle">Bot Architecture - BloomQuestBot with Mining, Companions, and Quantum Mechanics</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Documentation</a> /
+                Expansion / Discord Integration
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="marketplace.html" class="nav-link">Next: Marketplace</a>
+            <a href="learning-ai.html" class="nav-link">Prev: Learning AI</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>System Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge expansion">Future Expansion</span>
+                <span class="status-badge planned">Specification Complete</span>
+            </div>
+            <p>The Discord Integration provides BloomQuestBot, a comprehensive Discord bot with mining, companions, and quantum mechanics via slash commands. The bot uses PostgreSQL for persistent storage and Redis for session caching.</p>
+            <p>All game mechanics integrate with the core BloomCoin protocol, enabling players to mine BLOOM, manage companions, and participate in quantum entanglement directly through Discord.</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>Bot Configuration</h2>
+            <div class="code-block">
+<span class="comment"># Bot Configuration</span>
+DATABASE_URL = "postgresql://..."
+REDIS_URL = "redis://..."
+STARTING_BALANCE = <span class="number">100.0</span> BLOOM
+MINING_COOLDOWN = <span class="number">60</span> seconds
+MAX_COMPANIONS = L4 = <span class="number">7</span>
+
+<span class="comment"># Cog Systems</span>
+Mining:     /mine, /balance, /transfer
+Companions: /summon, /train, /battle
+Quantum:    /coherence, /entangle, /observe
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Command Cogs</h2>
+            <div class="cog-grid">
+                <div class="cog-card">
+                    <h4>Mining Cog</h4>
+                    <div class="command-card">
+                        <span class="cmd">/mine</span>
+                        <div class="desc">Run Kuramoto simulation to mine BLOOM</div>
+                    </div>
+                    <div class="command-card">
+                        <span class="cmd">/balance</span>
+                        <div class="desc">Check current BLOOM balance</div>
+                    </div>
+                    <div class="command-card">
+                        <span class="cmd">/transfer</span>
+                        <div class="desc">Send BLOOM to another player</div>
+                    </div>
+                </div>
+                <div class="cog-card">
+                    <h4>Companions Cog</h4>
+                    <div class="command-card">
+                        <span class="cmd">/summon</span>
+                        <div class="desc">Summon a new companion (max 7)</div>
+                    </div>
+                    <div class="command-card">
+                        <span class="cmd">/train</span>
+                        <div class="desc">Train companion to increase stats</div>
+                    </div>
+                    <div class="command-card">
+                        <span class="cmd">/battle</span>
+                        <div class="desc">Battle another player's companion</div>
+                    </div>
+                </div>
+                <div class="cog-card">
+                    <h4>Quantum Cog</h4>
+                    <div class="command-card">
+                        <span class="cmd">/coherence</span>
+                        <div class="desc">Check current coherence level</div>
+                    </div>
+                    <div class="command-card">
+                        <span class="cmd">/entangle</span>
+                        <div class="desc">Create quantum link with another player</div>
+                    </div>
+                    <div class="command-card">
+                        <span class="cmd">/observe</span>
+                        <div class="desc">Observe quantum state (collapses superposition)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Constant</th><th>Value</th><th>Derivation</th><th>Role</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>MAX_COMPANIONS</td><td>7</td><td>L4</td><td>Companion limit per player</td></tr>
+                    <tr><td>Starting Balance</td><td>100 BLOOM</td><td>~phi^5</td><td>New player funds</td></tr>
+                    <tr><td>Mining Cooldown</td><td>60s</td><td>Target/L4</td><td>Rate limiting</td></tr>
+                    <tr><td>Entangle Bonus</td><td>0.5</td><td>tau/phi</td><td>Shared coherence factor</td></tr>
+                    <tr><td>Session Timeout</td><td>~10 min</td><td>phi x 420s</td><td>Redis TTL</td></tr>
+                    <tr><td>Battle Rounds</td><td>7</td><td>L4</td><td>Max combat rounds</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Mining and Quantum Commands</h2>
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Projection: /mine, /summon</h4>
+                    <div class="code-block">
+<span class="comment"># Mining Cog</span>
+@app_commands.command()
+<span class="keyword">async def</span> <span class="function">mine</span>(interaction):
+    player = get_player(interaction.user.id)
+
+    <span class="comment"># Check cooldown</span>
+    <span class="keyword">if</span> player.last_mine + COOLDOWN > now():
+        <span class="keyword">return</span> "Still cooling down..."
+
+    <span class="comment"># Run Kuramoto simulation</span>
+    coherence = run_mining_session()
+    reward = calculate_reward(coherence)
+
+    player.balance += reward
+    await interaction.response.send_message(
+        f"Mined {reward:.2f} BLOOM (r={coherence:.3f})"
+    )
+                    </div>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Reflection: /coherence, /entangle</h4>
+                    <div class="code-block">
+<span class="comment"># Quantum Cog</span>
+@app_commands.command()
+<span class="keyword">async def</span> <span class="function">entangle</span>(interaction, target: Member):
+    player1 = get_player(interaction.user.id)
+    player2 = get_player(target.id)
+
+    <span class="comment"># Create quantum link</span>
+    entanglement = create_entanglement(player1, player2)
+
+    <span class="comment"># Both players benefit from shared coherence</span>
+    shared_r = (player1.coherence + player2.coherence) / <span class="number">2</span>
+
+    await interaction.response.send_message(
+        f"Entangled! Shared r = {shared_r:.3f}"
+    )
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Database Architecture</h2>
+            <div class="triad-container">
+                <h4>PostgreSQL + Redis = Durable + Fast</h4>
+                <div class="code-block">
+<span class="comment"># Database Models</span>
+<span class="keyword">class</span> <span class="type">Player</span>(Base):
+    id: int
+    discord_id: BigInteger
+    balance: Float
+    created_at: DateTime
+
+<span class="keyword">class</span> <span class="type">Companion</span>(Base):
+    id: int
+    owner_id: ForeignKey(Player)
+    type: String
+    level: Integer
+    stats: JSON
+
+<span class="keyword">class</span> <span class="type">MiningSession</span>(Base):
+    player_id: ForeignKey(Player)
+    started_at: DateTime
+    coherence_achieved: Float
+                </div>
+                <p><strong>Key insight:</strong> PostgreSQL provides ACID guarantees for BLOOM balances (no double-spending), while Redis caches session state for sub-millisecond response times. The hybrid approach ensures financial integrity AND responsive gameplay.</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>System Closure Verification</h2>
+            <h3>Closure Properties</h3>
+            <ul>
+                <li><strong>Complete command coverage:</strong> Mining, Companions, and Quantum cogs</li>
+                <li><strong>Database-backed:</strong> All state persists across bot restarts</li>
+                <li><strong>Rate-limited:</strong> Cooldowns prevent spam mining</li>
+                <li><strong>Entanglement physics:</strong> Quantum links share coherence benefits</li>
+            </ul>
+
+            <h3>Inter-System Coupling Points</h3>
+            <div class="coupling-grid">
+                <div class="coupling-item"><span class="target">Kuramoto:</span> <span class="desc">Mining runs coherence simulation</span></div>
+                <div class="coupling-item"><span class="target">Wallet:</span> <span class="desc">Balance management via BLOOM</span></div>
+                <div class="coupling-item"><span class="target">Marketplace:</span> <span class="desc">/transfer enables card trades</span></div>
+                <div class="coupling-item"><span class="target">Narrative:</span> <span class="desc">Commands can trigger story events</span></div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Planned Implementation</h2>
+            <h3>Phase 1: Bot Framework</h3>
+            <ul>
+                <li>Set up discord.py with slash commands</li>
+                <li>Implement PostgreSQL connection with SQLAlchemy</li>
+                <li>Configure Redis caching layer</li>
+            </ul>
+            <h3>Phase 2: Core Cogs</h3>
+            <ul>
+                <li>Build Mining cog with Kuramoto integration</li>
+                <li>Create Companions cog with L4 limit</li>
+                <li>Implement Quantum cog with entanglement</li>
+            </ul>
+            <h3>Phase 3: Production</h3>
+            <ul>
+                <li>Add rate limiting and anti-abuse measures</li>
+                <li>Implement error handling and logging</li>
+                <li>Deploy with Docker and monitoring</li>
+            </ul>
+        </section>
+
+        <section class="doc-section">
+            <h2>Source Files</h2>
+            <div class="file-refs">
+                <span class="file-ref">game/discord_bot/bot.py</span>
+                <span class="file-ref">game/discord_bot/cogs/mining.py</span>
+                <span class="file-ref">game/discord_bot/cogs/companions.py</span>
+                <span class="file-ref">game/discord_bot/cogs/quantum.py</span>
+                <span class="file-ref">game/discord_bot/database/models.py</span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin Protocol - Discord Integration Expansion</p>
+            <p>Part of the phi-derived game integration system</p>
+        </footer>
+    </div>
+</body>
+</html>

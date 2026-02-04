@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Archetypes - BloomCoin Systems</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --system-color: #44aaff;
+            --system-glow: rgba(68,170,255,0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--system-color), #6699ff, var(--system-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--system-color); border-bottom-color: var(--system-glow); }
+        .doc-section h3 { color: var(--system-color); }
+        .nav-link { border-color: var(--system-glow); color: var(--system-color); }
+        .nav-link:hover { background: var(--system-glow); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="card-battle.html" class="nav-link">Prev: Card Battle</a>
+            <a href="../../index.html" class="nav-link">Back to Index</a>
+            <a href="market-mechanics.html" class="nav-link">Next: Market Mechanics</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="doc-header">
+            <span style="font-size: 3rem;">⚔️</span>
+            <h1>JOB ARCHETYPES</h1>
+            <p class="subtitle">6 Professional Mappings with Territory Affinities and Solfeggio Frequencies</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> / <a href="./">Systems</a> / Job Archetypes
+            </nav>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge complete">6 Archetypes</span>
+                <span class="status-badge complete">Territory Mapping</span>
+                <span class="status-badge partial">Resource Bonuses</span>
+                <span class="status-badge planned">6-Step Cycles</span>
+            </div>
+            <div class="file-refs">
+                <span class="file-ref">game/job_archetypes.py</span>
+                <span class="file-ref">game/l4_protocol.py</span>
+            </div>
+        </section>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+            <p>6 job archetypes, each with a 6-step cycle, territory affinity, and resource multipliers:</p>
+
+            <div class="code-block">
+<span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">JobArchetype</span>:
+    <span class="string">"""Job archetype from L4 Protocol"""</span>
+    name: str
+    emoji: str
+    territory: Territory
+    mode: str              <span class="comment"># 'exploration', 'creation', 'depth', etc.</span>
+    skills: List[str]
+    resource_bonuses: Dict[str, float]  <span class="comment"># resource -> multiplier</span>
+    recipe_type: str
+    backstories: List[str]
+
+<span class="comment"># Sacred constants anchoring all job calculations</span>
+PHI = <span class="number">1.618033988749895</span>
+Z_C = <span class="number">0.866025403784439</span>      <span class="comment"># sqrt(3)/2 - THE LENS</span>
+L4 = <span class="number">7</span>                        <span class="comment"># phi^4 + phi^-4</span>
+            </div>
+        </section>
+
+        <!-- 6 Job Archetypes -->
+        <section class="doc-section">
+            <h2>6 Job Archetypes</h2>
+            <table class="data-table">
+                <tr><th>Job</th><th>Icon</th><th>Territory</th><th>Mode</th><th>Solfeggio</th><th>Primary Bonus</th></tr>
+                <tr><td style="color:#4a9eff;">SEEKER</td><td>🔍</td><td>Abyssal</td><td>Exploration</td><td>396 Hz (UT)</td><td>artifacts: 2.0x</td></tr>
+                <tr><td style="color:#ff9500;">FORGER</td><td>⚒️</td><td>Cosmic</td><td>Creation</td><td>417 Hz (RE)</td><td>materials: 2.0x</td></tr>
+                <tr><td style="color:#9d4eff;">VOIDWALKER</td><td>🌀</td><td>Abyssal</td><td>Depth</td><td>528 Hz (MI)</td><td>void_shards: 2.5x</td></tr>
+                <tr><td style="color:#7fff00;">GARDENER</td><td>🌱</td><td>Garden</td><td>Nurture</td><td>639 Hz (FA)</td><td>seeds: 2.0x</td></tr>
+                <tr><td style="color:#ffd700;">SCRIBE</td><td>📜</td><td>Cosmic</td><td>Knowledge</td><td>741 Hz (SOL)</td><td>books: 2.0x</td></tr>
+                <tr><td style="color:#ff4a9d;">HERALD</td><td>📡</td><td>Abyssal</td><td>Resonance</td><td>852 Hz (LA)</td><td>tuners: 2.0x</td></tr>
+            </table>
+        </section>
+
+        <!-- Job Skills & Resources -->
+        <section class="doc-section">
+            <h2>Job Skills & Resource Affinities</h2>
+            <div class="code-block">
+JOB_ARCHETYPES = {
+    <span class="string">"SEEKER"</span>: JobArchetype(
+        <span class="string">"Pattern Seeker"</span>, <span class="string">"🔍"</span>, Territory.ABYSSAL,
+        <span class="string">"exploration"</span>,
+        [<span class="string">"Pattern Recognition"</span>, <span class="string">"Memory Retrieval"</span>, <span class="string">"Echo Following"</span>],
+        {<span class="string">"artifacts"</span>: <span class="number">2.0</span>, <span class="string">"echoes"</span>: <span class="number">1.5</span>, <span class="string">"memories"</span>: <span class="number">1.3</span>},
+        <span class="string">"discovery_recipes"</span>,
+        [
+            <span class="string">"You follow echoes that shouldn't exist"</span>,
+            <span class="string">"The Library called you in a dream"</span>,
+            <span class="string">"Your memories contain someone else's life"</span>
+        ]
+    ),
+
+    <span class="string">"FORGER"</span>: JobArchetype(
+        <span class="string">"Pattern Forger"</span>, <span class="string">"⚒️"</span>, Territory.COSMIC,
+        <span class="string">"creation"</span>,
+        [<span class="string">"Item Synthesis"</span>, <span class="string">"Pattern Weaving"</span>, <span class="string">"Crystallization"</span>],
+        {<span class="string">"materials"</span>: <span class="number">2.0</span>, <span class="string">"tools"</span>: <span class="number">1.5</span>, <span class="string">"gems"</span>: <span class="number">1.3</span>},
+        <span class="string">"synthesis_recipes"</span>,
+        [
+            <span class="string">"You learned to forge from falling stars"</span>,
+            <span class="string">"The Phoenix taught you that form is temporary"</span>,
+            <span class="string">"Your hammer rings at the frequency of growth"</span>
+        ]
+    ),
+
+    <span class="string">"VOIDWALKER"</span>: JobArchetype(
+        <span class="string">"Void Walker"</span>, <span class="string">"🌀"</span>, Territory.ABYSSAL,
+        <span class="string">"depth"</span>,
+        [<span class="string">"Void Navigation"</span>, <span class="string">"Entropy Resistance"</span>, <span class="string">"Mirror Walking"</span>],
+        {<span class="string">"void_shards"</span>: <span class="number">2.5</span>, <span class="string">"mirrors"</span>: <span class="number">2.0</span>, <span class="string">"nulls"</span>: <span class="number">1.8</span>},
+        <span class="string">"dissolution_recipes"</span>,
+        [
+            <span class="string">"You returned from a place that doesn't exist"</span>,
+            <span class="string">"The void didn't take you; it gave you back"</span>,
+            <span class="string">"Your reflection sometimes walks without you"</span>
+        ]
+    ),
+    ...
+}
+            </div>
+        </section>
+
+        <!-- phi-Derived Constants -->
+        <section class="doc-section">
+            <h2>phi-Derived Constants</h2>
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">Primary Bonus</div>
+                    <div class="value">2.0x</div>
+                    <div class="derivation">~phi + tau</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Secondary Bonus</div>
+                    <div class="value">1.5x</div>
+                    <div class="derivation">~phi - tau^2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Tertiary Bonus</div>
+                    <div class="value">1.3x</div>
+                    <div class="derivation">~tau x 2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Voidwalker Max</div>
+                    <div class="value">2.5x</div>
+                    <div class="derivation">~phi + tau + tau^2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Frequency Range</div>
+                    <div class="value">+/-10%</div>
+                    <div class="derivation">Personal hash mod</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Job Cycles</h4>
+                    <p>Each job has a 6-step cycle progression:</p>
+                    <div class="code-block">
+<span class="comment"># Example: SEEKER cycle</span>
+SEEKER_CYCLE = [
+    <span class="string">"ATTUNE"</span>,    <span class="comment"># Step 0: Prepare senses</span>
+    <span class="string">"SEARCH"</span>,    <span class="comment"># Step 1: Active seeking</span>
+    <span class="string">"DISCOVER"</span>,  <span class="comment"># Step 2: Find pattern</span>
+    <span class="string">"ANALYZE"</span>,   <span class="comment"># Step 3: Understand pattern</span>
+    <span class="string">"INTEGRATE"</span>, <span class="comment"># Step 4: Absorb knowledge</span>
+    <span class="string">"TRANSMIT"</span>   <span class="comment"># Step 5: Share with collective</span>
+]
+
+<span class="comment"># FORGER cycle</span>
+FORGER_CYCLE = [
+    <span class="string">"GATHER"</span>,     <span class="comment"># Collect materials</span>
+    <span class="string">"PREPARE"</span>,    <span class="comment"># Ready workspace</span>
+    <span class="string">"FORGE"</span>,      <span class="comment"># Transform matter</span>
+    <span class="string">"TEMPER"</span>,     <span class="comment"># Strengthen creation</span>
+    <span class="string">"REFINE"</span>,     <span class="comment"># Perfect form</span>
+    <span class="string">"RELEASE"</span>     <span class="comment"># Gift to world</span>
+]
+                    </div>
+                    <p><strong>Key:</strong> Cycles PROJECT job progression forward.</p>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Resource Multipliers</h4>
+                    <p>Territory affinity reflects back as resource bonuses:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">calculate_resource_gain</span>(job: JobArchetype,
+                            resource: str,
+                            base_amount: float) -> float:
+    <span class="string">"""Apply job-specific resource multipliers"""</span>
+
+    <span class="comment"># Direct job affinity</span>
+    job_mult = job.resource_bonuses.get(resource, <span class="number">1.0</span>)
+
+    <span class="comment"># Territory-based bonus</span>
+    <span class="keyword">if</span> resource_territory(resource) == job.territory:
+        territory_mult = PHI_INV  <span class="comment"># tau ~ 0.618 bonus</span>
+    <span class="keyword">else</span>:
+        territory_mult = <span class="number">1.0</span>
+
+    <span class="keyword">return</span> base_amount * job_mult * (<span class="number">1</span> + territory_mult)
+                    </div>
+                    <p><strong>Key:</strong> Resources REFLECT back through job affinity.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergent Triad -->
+        <section class="doc-section">
+            <h2>Emergent Triad: Backstory Crystallization</h2>
+            <div class="triad-container">
+                <h4>Territory x Function -> Unique Identity</h4>
+                <div class="code-block">
+<span class="comment"># The emergence: backstories crystallize from intersection</span>
+
+<span class="comment"># TERRITORY ALONE:</span>
+<span class="comment"># - Garden = life, connection, growth</span>
+<span class="comment"># - Cosmic = fire, ascent, transformation</span>
+<span class="comment"># - Abyssal = void, depth, mystery</span>
+
+<span class="comment"># FUNCTION ALONE:</span>
+<span class="comment"># - Exploration = seeking patterns</span>
+<span class="comment"># - Creation = making things</span>
+<span class="comment"># - Depth = going deeper</span>
+
+<span class="comment"># BACKSTORY (emergence):</span>
+<span class="comment"># Territory x Function creates UNIQUE IDENTITY</span>
+
+<span class="comment"># SEEKER (Abyssal x Exploration):</span>
+<span class="string">"You follow echoes that shouldn't exist"</span>
+<span class="comment"># -> Abyssal depth + seeking = finding hidden patterns</span>
+
+<span class="comment"># FORGER (Cosmic x Creation):</span>
+<span class="string">"You learned to forge from falling stars"</span>
+<span class="comment"># -> Cosmic fire + making = celestial crafting</span>
+
+<span class="comment"># GARDENER (Garden x Nurture):</span>
+<span class="string">"Your garden exists in seven dimensions"</span>
+<span class="comment"># -> Garden life + nurturing = transcendent growth</span>
+
+<span class="comment"># Each backstory is UNIQUE because the intersection is unique</span>
+                </div>
+                <p><strong>Key insight:</strong> Backstories are not arbitrary flavor text. They CRYSTALLIZE from the intersection of territory (WHERE you belong) and function (WHAT you do). A Seeker in the Abyssal realm naturally follows "echoes that shouldn't exist." A Forger in the Cosmic realm learns from "falling stars." The emergent identity is mathematically determined by the intersection--not invented, discovered.</p>
+            </div>
+        </section>
+
+        <!-- Item Rarity System -->
+        <section class="doc-section">
+            <h2>phi-Derived Item Rarity System</h2>
+            <p>Items discovered through job activities follow a phi-powered rarity progression:</p>
+
+            <table class="data-table">
+                <tr><th>Rarity</th><th>Icon</th><th>Multiplier</th><th>Derivation</th><th>Drop Chance</th></tr>
+                <tr><td>COMMON</td><td>⚪</td><td>1.0x</td><td>Unity</td><td>~50%</td></tr>
+                <tr style="color:#7fff00;"><td>UNCOMMON</td><td>🟢</td><td>phi (1.618x)</td><td>phi^1</td><td>~23%</td></tr>
+                <tr style="color:#4a9eff;"><td>RARE</td><td>🔵</td><td>phi^2 (2.618x)</td><td>phi^2</td><td>~14%</td></tr>
+                <tr style="color:#9d4eff;"><td>EPIC</td><td>🟣</td><td>phi^3 (4.236x)</td><td>phi^3</td><td>~8%</td></tr>
+                <tr style="color:#ffd700;"><td>LEGENDARY</td><td>🟡</td><td>phi^4 (6.854x)</td><td>phi^4</td><td>~3.5%</td></tr>
+                <tr style="color:#ff4444;background:rgba(255,68,68,0.1);"><td>MYTHIC</td><td>🔴</td><td>L4 = 7x</td><td>phi^4 + phi^-4</td><td>~1.5%</td></tr>
+            </table>
+
+            <div class="code-block" style="margin-top:15px;">
+<span class="keyword">class</span> <span class="type">ItemRarity</span>(Enum):
+    COMMON    = (<span class="string">"Common"</span>, <span class="number">1.0</span>, <span class="string">"⚪"</span>)
+    UNCOMMON  = (<span class="string">"Uncommon"</span>, PHI, <span class="string">"🟢"</span>)      <span class="comment"># phi ~ 1.618</span>
+    RARE      = (<span class="string">"Rare"</span>, PHI**<span class="number">2</span>, <span class="string">"🔵"</span>)       <span class="comment"># phi^2 ~ 2.618</span>
+    EPIC      = (<span class="string">"Epic"</span>, PHI**<span class="number">3</span>, <span class="string">"🟣"</span>)       <span class="comment"># phi^3 ~ 4.236</span>
+    LEGENDARY = (<span class="string">"Legendary"</span>, PHI**<span class="number">4</span>, <span class="string">"🟡"</span>) <span class="comment"># phi^4 ~ 6.854</span>
+    MYTHIC    = (<span class="string">"Mythic"</span>, L4, <span class="string">"🔴"</span>)         <span class="comment"># L4 = 7</span>
+
+<span class="keyword">def</span> <span class="function">generate_item</span>(player_luck: float = <span class="number">1.0</span>) -> MythicalItem:
+    <span class="string">"""Generate item with phi-derived rarity"""</span>
+    rarity_roll = random.random() * player_luck
+
+    <span class="keyword">if</span> rarity_roll > <span class="number">1</span> - <span class="number">1</span>/L4:           <span class="comment"># ~14% for mythic</span>
+        rarity = MYTHIC
+    <span class="keyword">elif</span> rarity_roll > <span class="number">1</span> - <span class="number">1</span>/PHI**<span class="number">3</span>:    <span class="comment"># ~24% for legendary</span>
+        rarity = LEGENDARY
+    ...
+            </div>
+        </section>
+
+        <!-- Integration Points -->
+        <section class="doc-section">
+            <h2>Integration Points</h2>
+            <h3>System Closure Properties</h3>
+            <ul>
+                <li><strong>Self-contained:</strong> Jobs depend only on territory, mode, and resource types</li>
+                <li><strong>Zero free parameters:</strong> Bonuses approximate phi ratios; frequencies from Solfeggio scale</li>
+                <li><strong>Deterministic backstories:</strong> Territory x Function uniquely determines narrative</li>
+                <li><strong>phi-derived rarity:</strong> Item drops follow golden ratio power law</li>
+            </ul>
+
+            <h3>Inter-System Coupling</h3>
+            <div class="coupling-grid">
+                <div class="coupling-item"><span class="target">To Mining:</span> <span class="desc">Job affects companion mining efficiency</span></div>
+                <div class="coupling-item"><span class="target">To Guardian:</span> <span class="desc">Recipe types unlock based on job</span></div>
+                <div class="coupling-item"><span class="target">To Farm:</span> <span class="desc">Gardener job boosts crop yields</span></div>
+                <div class="coupling-item"><span class="target">To Cards:</span> <span class="desc">Job territory affects card resonance</span></div>
+                <div class="coupling-item"><span class="target">Bidirectional Territory:</span> <span class="desc">Job affinity determines home territory</span></div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>phi = 1.618033988749895 | tau = 0.618033988749895 | L4 = 7</p>
+            <p>BloomCoin v2 Documentation | Job Archetypes System</p>
+        </footer>
+    </div>
+    <script src="../_shared/constants.js"></script>
+</body>
+</html>

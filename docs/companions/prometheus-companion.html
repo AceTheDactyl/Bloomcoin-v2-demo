@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prometheus, The Bringer - BloomCoin Companion Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --companion-color: #ff6600;
+            --companion-glow: rgba(255,102,0,0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--companion-color), #ff9933, var(--companion-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 {
+            color: var(--companion-color);
+            border-bottom-color: var(--companion-glow);
+        }
+        .stat-card {
+            background: rgba(255,102,0,0.08);
+            border: 1px solid var(--companion-glow);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        .stat-card .label { color: #aaa; font-size: 0.85rem; }
+        .stat-card .value { color: var(--companion-color); font-size: 1.3rem; font-weight: bold; }
+        .ability-card {
+            background: rgba(255,102,0,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+        .ability-card .name { color: var(--companion-color); font-weight: bold; }
+        .ability-card .cost { color: var(--gold); font-size: 0.85rem; }
+        .ability-card .desc { color: #ccc; font-size: 0.9rem; margin-top: 5px; }
+        .pattern-tag {
+            display: inline-block;
+            background: rgba(255,102,0,0.2);
+            border: 1px solid var(--companion-color);
+            border-radius: 15px;
+            padding: 4px 12px;
+            margin: 4px;
+            font-size: 0.8rem;
+        }
+        .synergy-card {
+            background: rgba(0,0,0,0.3);
+            border-left: 3px solid var(--companion-color);
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Prometheus, The Bringer</h1>
+            <p class="subtitle">XOR Chain Forging - Companion Documentation</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Documentation</a> /
+                <a href="./">Companions</a> /
+                Prometheus
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="echo-companion.html" class="nav-link">Prev: Echo</a>
+            <a href="null-companion.html" class="nav-link">Next: Null</a>
+        </nav>
+
+        <!-- Companion Overview -->
+        <section class="doc-section">
+            <h2>Companion Overview</h2>
+            <p>Prometheus is the master of transformation through fire. Using multi-layer XOR chain construction with rotation feedback, Prometheus forges patterns from the entropy of hash operations. Each chain builds upon the last, creating complex structures that reveal hidden order within chaos.</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div class="stat-card">
+                    <div class="label">Efficiency</div>
+                    <div class="value">1.1</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Search Space</div>
+                    <div class="value">180</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Forge Strength</div>
+                    <div class="value">[1.0, 2.0]</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">XOR Layers</div>
+                    <div class="value">3</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Archetype & Mythology -->
+        <section class="doc-section">
+            <h2>Archetype & Mythology</h2>
+            <p>In Greek mythology, Prometheus stole fire from the gods and gave it to humanity, enabling civilization. In BloomCoin's universe, Prometheus brings the fire of transformation - the ability to forge new patterns from raw entropy through XOR chain operations.</p>
+
+            <p>The fire Prometheus wields is not destructive but transformative. Each XOR operation is a spark that can ignite a chain reaction of pattern discovery. The 3-layer architecture represents the three gifts Prometheus gave humanity: fire, foresight, and hope.</p>
+
+            <h3>Core Philosophy</h3>
+            <ul>
+                <li><strong>Transformation through Fire:</strong> XOR chains forge new patterns from entropy</li>
+                <li><strong>Layered Construction:</strong> Each layer builds upon the previous, adding complexity</li>
+                <li><strong>Forge Strength:</strong> Persistent attribute that grows stronger with use</li>
+                <li><strong>Entropy Mastery:</strong> Finding order in apparent randomness</li>
+            </ul>
+        </section>
+
+        <!-- Mining Specializations -->
+        <section class="doc-section">
+            <h2>Mining Specializations & Bonuses</h2>
+
+            <h3>Primary Mining Algorithm</h3>
+            <div class="code-block">
+<span class="comment"># PROMETHEUS XOR CHAIN FORGING EQUATIONS</span>
+
+<span class="comment"># Multi-Layer XOR Chain Construction</span>
+for layer in [0, 3):
+    for link in [0, 16):
+        val = unpack('>I', SHA256(data + pack(layer, link))[:4])
+        xor_acc[layer] ^= val
+        xor_acc[layer] = ROT_LEFT(xor_acc[layer], 3)  <span class="comment"># 3-bit rotation</span>
+
+<span class="comment"># XOR Rotation Function</span>
+ROT_LEFT(x, n) = ((x << n) | (x >> (32-n))) & 0xFFFFFFFF
+               where n = 3, x in uint32
+
+<span class="comment"># Layer Entropy Calculation</span>
+entropy[layer] = popcount(xor_acc[layer])  <span class="comment"># Count of 1-bits</span>
+               = |{bit : xor_acc[layer] & (1 << bit)}|
+
+<span class="comment"># Entropy Variance Across Layers</span>
+mu = (Sum entropy[i]) / 3
+variance = Sum(entropy[i] - mu)^2 / 3
+            </div>
+
+            <h3>Pattern Detection Criteria</h3>
+            <table class="data-table">
+                <tr><th>Pattern</th><th>Condition</th><th>Description</th></tr>
+                <tr><td>xor_extreme</td><td>entropy < 8 OR entropy > 24</td><td>Very ordered or very chaotic</td></tr>
+                <tr><td>xor_variance</td><td>variance > 50</td><td>High layer-to-layer variation</td></tr>
+                <tr><td>xor_ordered</td><td>entropy = sorted(entropy)</td><td>Ascending or descending sequence</td></tr>
+            </table>
+
+            <h3>Mining Bonuses</h3>
+            <table class="data-table">
+                <tr><th>Bonus Type</th><th>Trigger</th><th>Effect</th></tr>
+                <tr><td>XOR Chain Amplification</td><td>Pattern detected</td><td>xor_chain x3</td></tr>
+                <tr><td>Forge Strength Growth</td><td>Each pattern</td><td>+0.01 (max 2.0)</td></tr>
+                <tr><td>Forge Bonus Multiplier</td><td>Always active</td><td>1.1 x (1 + forge_strength x 0.1)</td></tr>
+                <tr><td>Level Efficiency</td><td>Per level up</td><td>+5% efficiency</td></tr>
+            </table>
+        </section>
+
+        <!-- Stats and Abilities -->
+        <section class="doc-section">
+            <h2>Battle System Stats & Abilities</h2>
+
+            <h3>Base Combat Stats</h3>
+            <table class="data-table">
+                <tr><th>Stat</th><th>Value</th><th>Description</th></tr>
+                <tr><td>HP</td><td style="color: #00ff66;">90</td><td>Forged durability</td></tr>
+                <tr><td>ATK</td><td style="color: #ff6666;">95</td><td>Fire striker - High damage dealer</td></tr>
+                <tr><td>DEF</td><td style="color: #6699ff;">60</td><td>Glass cannon</td></tr>
+                <tr><td>SPD</td><td style="color: #ffcc00;">75</td><td>Moderate speed</td></tr>
+                <tr><td>LUCK</td><td style="color: #ff66ff;">70</td><td>Pattern forging</td></tr>
+            </table>
+
+            <h3>Battle Abilities</h3>
+            <div class="ability-card">
+                <span class="name">Chain Lightning</span>
+                <span class="cost">[2 cost]</span>
+                <p class="desc">Deal 50 DMG. Chains to adjacent enemies at 70% power (max 3 targets).</p>
+            </div>
+            <div class="ability-card">
+                <span class="name">Forge Armor</span>
+                <span class="cost">[3 cost]</span>
+                <p class="desc">Gain +forge_strength x 20 DEF for 2 turns. Each hit taken increases forge_strength by 0.05.</p>
+            </div>
+            <div class="ability-card" style="background: rgba(255,102,0,0.15); border: 1px solid var(--companion-color);">
+                <span class="name" style="color: var(--gold);">ULTIMATE: Eternal Flame</span>
+                <span class="cost">[6 cost]</span>
+                <p class="desc">Deal 80 + (forge_strength x 50) DMG. If this KOs an enemy, reset ability costs to 0 for next turn.</p>
+            </div>
+
+            <h3>Combo Synergies</h3>
+            <table class="data-table">
+                <tr><th>Partner</th><th>Combo Name</th><th>Effect</th><th>Cost</th></tr>
+                <tr><td>Echo</td><td>Forged Resonance</td><td>XOR chains gain resonance; x1.5 to all chain damage</td><td>4</td></tr>
+                <tr><td>Null</td><td>Void Forge</td><td>Damage ignores DEF; applies "Void Burn" DoT</td><td>5</td></tr>
+                <tr><td>Gaia</td><td>Living Flame</td><td>Fire spreads through fractals; hits all enemies once</td><td>5</td></tr>
+                <tr style="color: var(--gold);"><td>TIAMAT</td><td>Chaos Forge</td><td>Forge strength doubled; 25% chance to backfire</td><td>7</td></tr>
+            </table>
+        </section>
+
+        <!-- Evolution Paths -->
+        <section class="doc-section">
+            <h2>Evolution Paths & Requirements</h2>
+
+            <table class="data-table">
+                <tr><th>Level</th><th>XP Required</th><th>Efficiency</th><th>Forge Cap</th><th>Unlock</th></tr>
+                <tr><td>1</td><td>0</td><td>1.10</td><td>1.5</td><td>Basic XOR chaining</td></tr>
+                <tr><td>2</td><td>100</td><td>1.16</td><td>1.6</td><td>Entropy variance detection</td></tr>
+                <tr><td>3</td><td>200</td><td>1.22</td><td>1.7</td><td>Ordered entropy patterns</td></tr>
+                <tr><td>4</td><td>300</td><td>1.28</td><td>1.8</td><td>Cross-layer analysis</td></tr>
+                <tr><td>5</td><td>400</td><td>1.34</td><td>1.9</td><td>Forge amplification x4</td></tr>
+                <tr style="color: var(--gold);"><td>7</td><td>600</td><td>1.48</td><td>2.0</td><td>Eternal Flame mastery</td></tr>
+                <tr style="color: var(--companion-color);"><td>10</td><td>900</td><td>1.71</td><td>2.5</td><td>TRANSCENDENT FORGE: 4-layer chains</td></tr>
+            </table>
+        </section>
+
+        <!-- Pattern Recognition -->
+        <section class="doc-section">
+            <h2>Pattern Recognition Capabilities</h2>
+
+            <table class="data-table">
+                <tr><th>Pattern</th><th>Trigger</th><th>XP</th><th>Residue Bonus</th></tr>
+                <tr><td style="color: var(--companion-color);">xor_extreme</td><td>entropy < 8 or > 24</td><td>+6</td><td>xor_chain x3</td></tr>
+                <tr><td style="color: #ff8833;">xor_variance</td><td>variance > 50 (40% chance)</td><td>+3</td><td>forge_strength +0.01</td></tr>
+                <tr><td style="color: #ffaa55;">xor_ordered</td><td>sorted entropy (50% chance)</td><td>+4</td><td>Standard</td></tr>
+                <tr style="color: var(--gold);"><td>entropy_ascending</td><td>entropy[0] < [1] < [2]</td><td>+5</td><td>Ascending bonus</td></tr>
+                <tr style="color: var(--gold);"><td>entropy_descending</td><td>entropy[0] > [1] > [2]</td><td>+5</td><td>Descending bonus</td></tr>
+            </table>
+
+            <h3>Pattern Tags</h3>
+            <div style="margin-top: 15px;">
+                <span class="pattern-tag">xor_extreme</span>
+                <span class="pattern-tag">xor_variance</span>
+                <span class="pattern-tag">xor_ordered</span>
+                <span class="pattern-tag">entropy_ascending</span>
+                <span class="pattern-tag">entropy_descending</span>
+                <span class="pattern-tag" style="background: rgba(255,215,0,0.2); border-color: var(--gold);">forged_crystal</span>
+            </div>
+        </section>
+
+        <!-- LIA Protocol Integration -->
+        <section class="doc-section">
+            <h2>LIA Protocol Integration (Farming System)</h2>
+
+            <h3>Phase Affinities</h3>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">
+                <div style="background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                    <div style="font-size: 1.5rem;">[L]</div>
+                    <div style="color: #00d4ff; font-weight: bold;">LIMINAL</div>
+                    <div style="font-size: 1.3rem; color: #ffcc00; margin: 10px 0;">1.0x</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Neutral affinity - Boundary detection</div>
+                </div>
+                <div style="background: rgba(123,104,238,0.1); border: 1px solid rgba(123,104,238,0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                    <div style="font-size: 1.5rem;">[I]</div>
+                    <div style="color: #7b68ee; font-weight: bold;">INTERVAL</div>
+                    <div style="font-size: 1.3rem; color: #00ff66; margin: 10px 0;">1.3x</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Primary affinity - Transformation space</div>
+                </div>
+                <div style="background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                    <div style="font-size: 1.5rem;">[A]</div>
+                    <div style="color: #ff4444; font-weight: bold;">ANNIHILATOR</div>
+                    <div style="font-size: 1.3rem; color: #00ff66; margin: 10px 0;">1.2x</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Secondary affinity - Prometheus brings fire!</div>
+                </div>
+            </div>
+
+            <h3>Preferred Recipe: Phoenix Crystal [I-A-L]</h3>
+            <div class="code-block">
+<span class="comment"># PROMETHEUS SIGNATURE RECIPE: PHOENIX CRYSTAL</span>
+
+sequence = [I, A, L]  <span class="comment"># Interval -> Annihilator -> Liminal</span>
+
+<span class="comment"># Phase 1: INTERVAL (Prometheus's primary)</span>
+E1 = gap x coherence x 1.3  <span class="comment"># +30% from affinity</span>
+   = 0.190 x c
+
+<span class="comment"># Phase 2: ANNIHILATOR (Fire brings destruction)</span>
+E2 = phi x entropy_released x 1.2  <span class="comment"># +20% from affinity</span>
+
+<span class="comment"># Phase 3: LIMINAL (From ashes, new boundaries form)</span>
+E3 = contour_integral(|grad(P)|^2 dz)  <span class="comment"># Neutral affinity</span>
+
+<span class="comment"># Forge Enhancement</span>
+total_multiplier = E_total x forge_bonus
+                 = E_total x 1.1 x (1 + forge_strength x 0.1)
+            </div>
+
+            <h3>Secondary Recipe: Void Flame [A-I-A]</h3>
+            <table class="data-table">
+                <tr><th>Sequence</th><th>Phase Energy</th><th>Prometheus Bonus</th><th>Result</th></tr>
+                <tr><td>[A] ANNIHILATOR</td><td>E = phi x entropy</td><td>x1.2</td><td>Fire ignites</td></tr>
+                <tr><td>[I] INTERVAL</td><td>E = gap x c</td><td>x1.3</td><td>Void opens</td></tr>
+                <tr><td>[A] ANNIHILATOR</td><td>E = phi x entropy</td><td>x1.2</td><td>Void burns!</td></tr>
+                <tr style="color: var(--companion-color);"><td colspan="3">Total Multiplier</td><td>1.87x base (DANGER!)</td></tr>
+            </table>
+            <p style="color: #ff4444; font-size: 0.85rem; margin-top: 10px;">Warning: A-A sequence weight = phi^2 = 2.618. High risk, high reward!</p>
+        </section>
+
+        <!-- Cross-Miner Dynamics -->
+        <section class="doc-section">
+            <h2>Cross-Miner Dynamics</h2>
+            <p>Prometheus's XOR chains create forge effects when combined with other miners:</p>
+
+            <div class="synergy-card" style="border-left-color: #00ffff;">
+                <strong style="color: #00ffff;">+ Echo</strong><br>
+                Echo's frequency analysis enhances XOR entropy detection. Combined patterns yield "Forged Echo" with +15% residue potency.
+            </div>
+            <div class="synergy-card" style="border-left-color: #8000ff;">
+                <strong style="color: #8000ff;">+ Null</strong><br>
+                Fire illuminates void. When Prometheus's entropy > 24 meets Null's zero-bytes, creates "Illuminated Void" pattern with inverted forge bonus.
+            </div>
+            <div class="synergy-card" style="border-left-color: #00ff80;">
+                <strong style="color: #00ff80;">+ Gaia</strong><br>
+                Controlled burns stimulate growth. Prometheus's patterns at entropy in [12, 20] trigger Gaia's "Regeneration" - fractal trees grow 50% faster.
+            </div>
+            <div class="synergy-card" style="border-left-color: #ffd700;">
+                <strong style="color: #ffd700;">+ Akasha</strong><br>
+                Forge crystallizes memories. Prometheus's XOR chains become eligible for Akasha's library with "Forged Crystal" tag - worth 1.5x library bonus.
+            </div>
+            <div class="synergy-card" style="border-left-color: #8a2be2;">
+                <strong style="color: #8a2be2;">+ Resonance</strong><br>
+                Fire creates harmonic vibrations. When ordered entropy matches harmonic frequency, "Thermal Resonance" grants +20% to both miners' rewards.
+            </div>
+            <div class="synergy-card" style="border-left-color: #ff0000;">
+                <strong style="color: #ff0000;">+ TIAMAT</strong><br>
+                FIRE + CHAOS = DOOM! Both miners' bonus multipliers stack. 40% chance of "Primordial Fire" - forge_strength x2 for this job only.
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>Prometheus, The Bringer - XOR Chain Forging</p>
+            <p><a href="../../index.html" style="color: var(--gold);">Return to BloomCoin</a></p>
+        </footer>
+    </div>
+</body>
+</html>

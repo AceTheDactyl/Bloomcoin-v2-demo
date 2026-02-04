@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Narrative Engine - BloomCoin Expansion</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #cc88ff;
+            --module-glow: rgba(204, 136, 255, 0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), #9966cc, var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 {
+            color: var(--module-color);
+            border-bottom-color: var(--module-glow);
+        }
+        .coupling-item {
+            border-left-color: var(--module-color);
+        }
+        .status-badge.expansion {
+            background: var(--module-glow);
+            color: var(--module-color);
+            border: 1px solid var(--module-color);
+        }
+        .beat-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid var(--module-color);
+        }
+        .beat-card .beat-name {
+            color: var(--module-color);
+            font-weight: 600;
+        }
+        .beat-card .threshold {
+            color: var(--text-secondary);
+            font-family: monospace;
+        }
+        .tone-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .tone-chip {
+            background: rgba(0,0,0,0.3);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--module-glow);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Narrative Engine</h1>
+            <p class="subtitle">Story Generation System - Hero's Journey and Coherence-Gated Revelation</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Documentation</a> /
+                Expansion / Narrative Engine
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="learning-ai.html" class="nav-link">Next: Learning AI</a>
+            <a href="mythic-integration.html" class="nav-link">Prev: Mythic Integration</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>System Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge expansion">Future Expansion</span>
+                <span class="status-badge planned">Specification Complete</span>
+            </div>
+            <p>The Narrative Engine provides dynamic story generation through Hero's Journey beats, archetype templates, and coherence-gated progression. Stories unfold based on player actions and achieved coherence levels, creating intrinsic motivation through revelation rather than extrinsic rewards.</p>
+            <p>With 12 archetypes and 7 story beats, the system offers 84 unique template permutations, each flavored by corridor-specific lore and tone adaptation.</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+            <p>Story generation through Hero's Journey beats, archetype templates, and coherence gates:</p>
+            <div class="code-block">
+<span class="comment"># Narrative Tones</span>
+MYSTERIOUS, TRIUMPHANT, OMINOUS
+PEACEFUL, URGENT, CONTEMPLATIVE, CHAOTIC
+
+<span class="comment"># 7 Story Beats (Hero's Journey)</span>
+<span class="keyword">class</span> <span class="type">StoryBeat</span>(Enum):
+    CALL = <span class="number">0</span>           <span class="comment"># The call to adventure</span>
+    THRESHOLD = <span class="number">1</span>      <span class="comment"># Crossing the threshold</span>
+    TRIALS = <span class="number">2</span>         <span class="comment"># Road of trials</span>
+    ABYSS = <span class="number">3</span>          <span class="comment"># The abyss (death/rebirth)</span>
+    TRANSFORMATION = <span class="number">4</span> <span class="comment"># The transformation</span>
+    ATONEMENT = <span class="number">5</span>      <span class="comment"># Atonement with the father</span>
+    RETURN = <span class="number">6</span>         <span class="comment"># The return</span>
+
+<span class="comment"># Templates: 12 archetypes x 7 beats = 84 template sets</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Hero's Journey Beats</h2>
+            <p>Each beat requires a minimum coherence threshold to unlock:</p>
+            <div class="beat-card">
+                <span class="beat-name">CALL</span>
+                <span class="threshold">coherence >= 0.0 (Always available)</span>
+            </div>
+            <div class="beat-card">
+                <span class="beat-name">THRESHOLD</span>
+                <span class="threshold">coherence >= tau (0.618)</span>
+            </div>
+            <div class="beat-card">
+                <span class="beat-name">TRIALS</span>
+                <span class="threshold">coherence >= 0.75</span>
+            </div>
+            <div class="beat-card">
+                <span class="beat-name">ABYSS</span>
+                <span class="threshold">coherence >= z_c (0.866)</span>
+            </div>
+            <div class="beat-card">
+                <span class="beat-name">TRANSFORMATION</span>
+                <span class="threshold">coherence >= K (0.924)</span>
+            </div>
+            <div class="beat-card">
+                <span class="beat-name">ATONEMENT</span>
+                <span class="threshold">coherence >= 0.95</span>
+            </div>
+            <div class="beat-card">
+                <span class="beat-name">RETURN</span>
+                <span class="threshold">coherence >= 1.0 (Perfect coherence)</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Tones</h2>
+            <p>Seven tones adapt narrative flavor to game state:</p>
+            <div class="tone-grid">
+                <div class="tone-chip">MYSTERIOUS</div>
+                <div class="tone-chip">TRIUMPHANT</div>
+                <div class="tone-chip">OMINOUS</div>
+                <div class="tone-chip">PEACEFUL</div>
+                <div class="tone-chip">URGENT</div>
+                <div class="tone-chip">CONTEMPLATIVE</div>
+                <div class="tone-chip">CHAOTIC</div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Constant</th><th>Value</th><th>Derivation</th><th>Role</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Story Beats</td><td>7</td><td>L4</td><td>Hero's journey structure</td></tr>
+                    <tr><td>Archetypes</td><td>12</td><td>Gradient corridors x phi</td><td>Character templates</td></tr>
+                    <tr><td>Template Sets</td><td>84</td><td>7 x 12</td><td>Total permutations</td></tr>
+                    <tr><td>THRESHOLD Gate</td><td>0.618</td><td>tau</td><td>First progression gate</td></tr>
+                    <tr><td>ABYSS Gate</td><td>0.866</td><td>z_c</td><td>Death/rebirth threshold</td></tr>
+                    <tr><td>TRANSFORMATION</td><td>0.924</td><td>K</td><td>Metamorphosis threshold</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Context</h2>
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Projection: Hero's Journey</h4>
+                    <div class="code-block">
+<span class="comment"># NarrativeContext</span>
+@dataclass
+<span class="keyword">class</span> <span class="type">NarrativeContext</span>:
+    archetype: Archetype
+    corridor: SpectralCorridor
+    coherence: float
+    story_beat: StoryBeat
+    tone: NarrativeTone
+    previous_choices: List[str]
+    world_state: Dict
+                    </div>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Reflection: Corridor-Specific Lore</h4>
+                    <div class="code-block">
+<span class="comment"># Generate narrative for current context</span>
+<span class="keyword">def</span> <span class="function">generate_narrative</span>(context):
+    template = templates[context.archetype][context.story_beat]
+
+    <span class="comment"># Apply corridor-specific flavoring</span>
+    flavor = corridor_descriptions[context.corridor]
+
+    <span class="comment"># Gate content by coherence</span>
+    <span class="keyword">if</span> context.coherence >= Z_C:
+        <span class="keyword">return</span> template.deep_version(flavor)
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> template.surface_version(flavor)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Progressive Revelation</h2>
+            <div class="triad-container">
+                <h4>Coherence Unlocks Story Through BLOOM</h4>
+                <div class="code-block">
+<span class="comment"># Coherence gates story progression</span>
+CALL:           coherence >= <span class="number">0.0</span>   <span class="comment"># Always available</span>
+THRESHOLD:      coherence >= tau   <span class="comment"># 0.618</span>
+TRIALS:         coherence >= <span class="number">0.75</span>
+ABYSS:          coherence >= z_c   <span class="comment"># 0.866</span>
+TRANSFORMATION: coherence >= K     <span class="comment"># 0.924</span>
+ATONEMENT:      coherence >= <span class="number">0.95</span>
+RETURN:         coherence >= <span class="number">1.0</span>   <span class="comment"># Perfect coherence</span>
+                </div>
+                <p><strong>Key insight:</strong> The narrative system creates intrinsic motivation by tying story progression to gameplay coherence. Players don't grind for rewards - they journey for revelation. The Hero's Journey structure ensures psychologically resonant progression.</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>System Closure Verification</h2>
+            <h3>Closure Properties</h3>
+            <ul>
+                <li><strong>Complete structure:</strong> 7 story beats x 12 archetypes = 84 template permutations</li>
+                <li><strong>Threshold-gated:</strong> All gates use phi-derived values (tau, z_c, K)</li>
+                <li><strong>Context-aware:</strong> Corridor flavoring personalizes each archetype's journey</li>
+                <li><strong>Tone-responsive:</strong> 7 narrative tones adapt to game state</li>
+            </ul>
+
+            <h3>Inter-System Coupling Points</h3>
+            <div class="coupling-grid">
+                <div class="coupling-item"><span class="target">Kuramoto:</span> <span class="desc">Coherence value gates beats</span></div>
+                <div class="coupling-item"><span class="target">Archetype:</span> <span class="desc">12 archetypes provide templates</span></div>
+                <div class="coupling-item"><span class="target">Mythic:</span> <span class="desc">Guardian context shapes flavor</span></div>
+                <div class="coupling-item"><span class="target">Discord:</span> <span class="desc">Story beats trigger announcements</span></div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Planned Implementation</h2>
+            <h3>Phase 1: Template System</h3>
+            <ul>
+                <li>Create 84 base narrative templates (12 archetypes x 7 beats)</li>
+                <li>Implement surface and deep version variants</li>
+                <li>Build corridor-specific flavor library</li>
+            </ul>
+            <h3>Phase 2: Context Engine</h3>
+            <ul>
+                <li>Implement NarrativeContext tracking</li>
+                <li>Build coherence-gated progression system</li>
+                <li>Create tone selection algorithm based on game state</li>
+            </ul>
+            <h3>Phase 3: Integration</h3>
+            <ul>
+                <li>Connect to Kuramoto coherence calculations</li>
+                <li>Link archetype system for template selection</li>
+                <li>Integrate with Discord for story announcements</li>
+            </ul>
+        </section>
+
+        <section class="doc-section">
+            <h2>Source Files</h2>
+            <div class="file-refs">
+                <span class="file-ref">game/narrative_generator.py</span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin Protocol - Narrative Engine Expansion</p>
+            <p>Part of the phi-derived game integration system</p>
+        </footer>
+    </div>
+</body>
+</html>

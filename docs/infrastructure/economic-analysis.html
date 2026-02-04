@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Economic Analysis - BloomCoin Infrastructure</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #aabb44;
+            --page-accent-dim: rgba(170, 187, 68, 0.2);
+            --page-accent-glow: rgba(170, 187, 68, 0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #88aa22, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-accent-dim); }
+        .doc-section h3 { color: var(--page-accent); }
+        .data-table th { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+        .coupling-item .target { color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+        .nav-link { color: var(--page-accent); border-color: var(--page-accent-dim); }
+        .nav-link:hover { background: var(--page-accent-dim); }
+        .breadcrumb a { color: var(--page-accent); }
+        .file-ref a { color: var(--page-accent); }
+        .math-block, .math-inline { color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Economic Analysis</h1>
+            <p class="subtitle">Token Dynamics and Statistical Tools - Full System Closure</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../">Documentation</a> /
+                <span>Infrastructure</span> /
+                <span>Economic Analysis</span>
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="wallet-system.html" class="nav-link">Next: Wallet System</a>
+            <a href="receipt-generation.html" class="nav-link">Prev: Receipt Generation</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Overview</h2>
+            <p>The BloomCoin economic analysis module provides comprehensive statistical tools for analyzing hash distributions, entropy metrics, and phase dynamics. These tools enable deep understanding of the token economy and consensus behavior.</p>
+
+            <div class="impl-status">
+                <span class="status-badge complete">Chi-Square Testing</span>
+                <span class="status-badge complete">Entropy Metrics</span>
+                <span class="status-badge complete">Phase Analysis</span>
+                <span class="status-badge complete">Hexagonal Lattice</span>
+                <span class="status-badge partial">Economic Modeling</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+            <p>Comprehensive statistical tools for analyzing hash distributions, entropy, and phase dynamics:</p>
+
+            <div class="code-block">
+<span class="comment"># Chi-Square Testing</span>
+H_0: samples are uniformly distributed
+E[chi^2] = bins - <span class="number">1</span> (for uniform)
+Var[chi^2] = <span class="number">2</span>(bins - <span class="number">1</span>)
+Reject null if p < <span class="number">0.05</span>
+
+<span class="comment"># Entropy Metrics</span>
+Shannon:   H = -SUM p(x) log p(x)
+Renyi:     H_alpha = (<span class="number">1</span>/(<span class="number">1</span>-alpha)) log(SUM p(x)^alpha)
+Collision: H_2 (alpha=<span class="number">2</span>)
+Min:       H_inf = -log(max p(x))
+
+<span class="comment"># Hexagonal Lattice Analysis</span>
+Coordination number = <span class="number">6</span>  <span class="comment"># Matches BFADGS operators</span>
+Voronoi tessellation for defect detection
+            </div>
+
+            <div class="math-block">
+                Bifurcation threshold: tau = phi^-1 = 0.618...
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>phi-Derived Constants</h2>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">6</div>
+                    <div class="value">BFADGS</div>
+                    <div class="derivation">Coordination number</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">tau</div>
+                    <div class="value">0.618</div>
+                    <div class="derivation">phi^-1 bifurcation</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866</div>
+                    <div class="derivation">sqrt(3)/2 critical</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">Coherence duration</div>
+                </div>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                        <th>Connection</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Coordination</td>
+                        <td>6</td>
+                        <td>BFADGS operators</td>
+                        <td>Lattice symmetry</td>
+                    </tr>
+                    <tr>
+                        <td>Bifurcation tau</td>
+                        <td>0.618</td>
+                        <td>phi^-1</td>
+                        <td>Phase transition</td>
+                    </tr>
+                    <tr>
+                        <td>Critical z</td>
+                        <td>0.866</td>
+                        <td>sqrt(3)/2</td>
+                        <td>Synchronization threshold</td>
+                    </tr>
+                    <tr>
+                        <td>Significance level</td>
+                        <td>0.05</td>
+                        <td>Statistical convention</td>
+                        <td>Null hypothesis testing</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Token Economics</h2>
+
+            <h3>Supply Schedule</h3>
+            <div class="code-block">
+<span class="comment"># Block Reward Schedule (Bitcoin-like halving)</span>
+INITIAL_REWARD = <span class="number">50_00000000</span>      <span class="comment"># 50 BLOOM</span>
+HALVING_INTERVAL = <span class="number">210000</span>         <span class="comment"># blocks</span>
+
+<span class="keyword">def</span> <span class="function">get_block_reward</span>(height):
+    halvings = height // HALVING_INTERVAL
+    <span class="keyword">if</span> halvings >= <span class="number">64</span>:
+        <span class="keyword">return</span> <span class="number">0</span>
+    <span class="keyword">return</span> INITIAL_REWARD >> halvings
+
+<span class="comment"># Total Supply Calculation</span>
+MAX_SUPPLY = sum(get_block_reward(h) * min(HALVING_INTERVAL, ...)
+             <span class="keyword">for</span> h <span class="keyword">in</span> range(<span class="number">0</span>, <span class="number">64</span> * HALVING_INTERVAL, HALVING_INTERVAL))
+<span class="comment"># ≈ 21,000,000 BLOOM (matches Bitcoin)</span>
+            </div>
+
+            <h3>Fee Market Dynamics</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Value</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Minimum Fee</td>
+                        <td>1 sat/vbyte</td>
+                        <td>Floor to prevent spam</td>
+                    </tr>
+                    <tr>
+                        <td>Block Size Limit</td>
+                        <td>1 MB</td>
+                        <td>Transaction throughput cap</td>
+                    </tr>
+                    <tr>
+                        <td>Target Block Time</td>
+                        <td>~10 minutes</td>
+                        <td>Difficulty adjustment target</td>
+                    </tr>
+                    <tr>
+                        <td>Difficulty Adjustment</td>
+                        <td>Every 2016 blocks</td>
+                        <td>~2 weeks at target rate</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Pattern Detection</h4>
+                    <div class="code-block">
+<span class="comment"># Phase Portrait Analysis</span>
+<span class="keyword">def</span> <span class="function">phase_portrait</span>(x, y, system):
+    <span class="comment"># 2D dynamical system visualization</span>
+    dx, dy = system.derivatives(x, y)
+
+    <span class="comment"># Fixed point classification</span>
+    J = jacobian(system, x, y)
+    eigenvalues = np.linalg.eigvals(J)
+
+    <span class="comment"># Classify fixed point</span>
+    <span class="keyword">if</span> all(ev.real < <span class="number">0</span>):
+        <span class="keyword">return</span> <span class="string">"stable_node"</span>
+    <span class="keyword">elif</span> all(ev.real > <span class="number">0</span>):
+        <span class="keyword">return</span> <span class="string">"unstable_node"</span>
+
+    <span class="comment"># Lyapunov exponent estimation</span>
+    lambda_max = estimate_lyapunov(trajectory)
+    <span class="keyword">if</span> lambda_max > <span class="number">0</span>:
+        <span class="keyword">return</span> <span class="string">"chaotic"</span>
+                    </div>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Null Hypothesis Testing</h4>
+                    <div class="code-block">
+<span class="comment"># Chi-Square Test Implementation</span>
+<span class="keyword">def</span> <span class="function">chi_square_test</span>(observed, expected):
+    <span class="comment"># Compute chi-squared statistic</span>
+    chi_sq = sum((o - e)**<span class="number">2</span> / e
+                 <span class="keyword">for</span> o, e <span class="keyword">in</span> zip(observed, expected))
+
+    <span class="comment"># Degrees of freedom</span>
+    df = len(observed) - <span class="number">1</span>
+
+    <span class="comment"># P-value from chi-squared CDF</span>
+    p_value = <span class="number">1</span> - chi2_cdf(chi_sq, df)
+
+    <span class="keyword">return</span> {
+        <span class="string">'chi_squared'</span>: chi_sq,
+        <span class="string">'p_value'</span>: p_value,
+        <span class="string">'reject_null'</span>: p_value < <span class="number">0.05</span>
+    }
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Emergent Triad: Bifurcation at tau Threshold</h2>
+
+            <div class="triad-container">
+                <h4>Lyapunov Exponents Detect Phase Transitions</h4>
+                <p>The analysis module tracks oscillator dynamics to detect phase transitions and coherence emergence:</p>
+
+                <div class="code-block">
+<span class="comment"># Multi-Body Dynamics Analysis</span>
+<span class="keyword">def</span> <span class="function">analyze_coherence</span>(oscillators):
+    <span class="comment"># Compute order parameter evolution</span>
+    r_history = [compute_r(phases) <span class="keyword">for</span> phases <span class="keyword">in</span> trajectory]
+
+    <span class="comment"># Detect bifurcation at tau threshold</span>
+    <span class="keyword">for</span> t, r <span class="keyword">in</span> enumerate(r_history):
+        <span class="keyword">if</span> r > TAU <span class="keyword">and</span> r_history[t-<span class="number">1</span>] < TAU:
+            print(f<span class="string">"Bifurcation detected at t={t}"</span>)
+
+    <span class="comment"># 6-fold symmetry analysis</span>
+    lattice = HexagonalLattice(oscillators)
+    defects = lattice.detect_defects()  <span class="comment"># Voronoi tessellation</span>
+
+    <span class="keyword">return</span> {
+        <span class="string">'r_history'</span>: r_history,
+        <span class="string">'bifurcation_points'</span>: bifurcations,
+        <span class="string">'defect_count'</span>: len(defects),
+        <span class="string">'symmetry_order'</span>: <span class="number">6</span>  <span class="comment"># BFADGS</span>
+    }
+                </div>
+
+                <p><strong>Key insight:</strong> The hexagonal lattice naturally produces 6-fold symmetry matching BFADGS operators. When oscillators lock into hexagonal patterns, they reveal the underlying algebraic structure.</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Entropy Analysis</h2>
+
+            <h3>Shannon Entropy</h3>
+            <div class="code-block">
+<span class="keyword">def</span> <span class="function">shannon_entropy</span>(distribution):
+    <span class="string">"""
+    H = -SUM p(x) * log2(p(x))
+
+    Maximum entropy (uniform): H_max = log2(n)
+    Normalized: H_norm = H / H_max in [0, 1]
+    """</span>
+    probs = np.array(distribution) / sum(distribution)
+    probs = probs[probs > <span class="number">0</span>]  <span class="comment"># Avoid log(0)</span>
+
+    H = -np.sum(probs * np.log2(probs))
+    H_max = np.log2(len(distribution))
+
+    <span class="keyword">return</span> {
+        <span class="string">'entropy'</span>: H,
+        <span class="string">'max_entropy'</span>: H_max,
+        <span class="string">'normalized'</span>: H / H_max
+    }
+            </div>
+
+            <h3>Renyi Entropy Family</h3>
+            <div class="code-block">
+<span class="keyword">def</span> <span class="function">renyi_entropy</span>(distribution, alpha):
+    <span class="string">"""
+    H_alpha = (1/(1-alpha)) * log(SUM p(x)^alpha)
+
+    Special cases:
+    - alpha -> 1: Shannon entropy (limit)
+    - alpha = 2: Collision entropy
+    - alpha -> inf: Min-entropy
+    """</span>
+    probs = np.array(distribution) / sum(distribution)
+
+    <span class="keyword">if</span> alpha == <span class="number">1</span>:
+        <span class="keyword">return</span> shannon_entropy(distribution)[<span class="string">'entropy'</span>]
+    <span class="keyword">elif</span> alpha == float(<span class="string">'inf'</span>):
+        <span class="keyword">return</span> -np.log2(np.max(probs))  <span class="comment"># Min-entropy</span>
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> (<span class="number">1</span>/(<span class="number">1</span>-alpha)) * np.log2(np.sum(probs ** alpha))
+            </div>
+
+            <h3>Hash Distribution Analysis</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Expected (Uniform)</th>
+                        <th>Interpretation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Shannon Entropy</td>
+                        <td>log2(256) = 8 bits/byte</td>
+                        <td>Randomness quality</td>
+                    </tr>
+                    <tr>
+                        <td>Chi-Square p-value</td>
+                        <td>> 0.05</td>
+                        <td>Uniformity confirmation</td>
+                    </tr>
+                    <tr>
+                        <td>Collision Entropy (H2)</td>
+                        <td>~7.99 bits/byte</td>
+                        <td>Collision resistance</td>
+                    </tr>
+                    <tr>
+                        <td>Min-Entropy (H_inf)</td>
+                        <td>~7.99 bits/byte</td>
+                        <td>Worst-case guessing</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Phase Dynamics</h2>
+
+            <h3>Kuramoto Order Parameter</h3>
+            <div class="code-block">
+<span class="keyword">def</span> <span class="function">compute_order_parameter</span>(phases):
+    <span class="string">"""
+    Complex order parameter:
+    z = r * exp(i * psi) = (1/N) * SUM exp(i * theta_j)
+
+    r = |z| in [0, 1]: degree of synchronization
+    psi = arg(z): mean phase
+    """</span>
+    N = len(phases)
+    z = np.mean(np.exp(<span class="number">1</span>j * np.array(phases)))
+
+    r = np.abs(z)
+    psi = np.angle(z)
+
+    <span class="keyword">return</span> r, psi
+
+<span class="comment"># Thresholds</span>
+Z_C = np.sqrt(<span class="number">3</span>) / <span class="number">2</span>  <span class="comment"># 0.866 - BLOOM threshold</span>
+TAU = <span class="number">1</span> / PHI           <span class="comment"># 0.618 - Bifurcation threshold</span>
+            </div>
+
+            <h3>Coherence Time Series</h3>
+            <div class="code-block">
+<span class="keyword">def</span> <span class="function">analyze_coherence_timeseries</span>(r_values):
+    <span class="string">"""Analyze order parameter evolution."""</span>
+
+    <span class="comment"># Detect BLOOM events (r >= z_c for L4 rounds)</span>
+    bloom_events = []
+    consecutive = <span class="number">0</span>
+    start_idx = <span class="keyword">None</span>
+
+    <span class="keyword">for</span> i, r <span class="keyword">in</span> enumerate(r_values):
+        <span class="keyword">if</span> r >= Z_C:
+            <span class="keyword">if</span> consecutive == <span class="number">0</span>:
+                start_idx = i
+            consecutive += <span class="number">1</span>
+            <span class="keyword">if</span> consecutive >= L4:
+                bloom_events.append({
+                    <span class="string">'start'</span>: start_idx,
+                    <span class="string">'end'</span>: i,
+                    <span class="string">'duration'</span>: consecutive,
+                    <span class="string">'max_r'</span>: max(r_values[start_idx:i+<span class="number">1</span>])
+                })
+        <span class="keyword">else</span>:
+            consecutive = <span class="number">0</span>
+
+    <span class="keyword">return</span> bloom_events
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Hexagonal Lattice Analysis</h2>
+
+            <div class="code-block">
+<span class="keyword">class</span> <span class="type">HexagonalLattice</span>:
+    <span class="string">"""
+    Analyze oscillator arrangements for 6-fold symmetry.
+    Coordination number = 6 matches BFADGS operators.
+    """</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, positions):
+        self.positions = np.array(positions)
+
+    <span class="keyword">def</span> <span class="function">compute_voronoi</span>(self):
+        <span class="string">"""Voronoi tessellation for neighbor analysis."""</span>
+        <span class="keyword">from</span> scipy.spatial <span class="keyword">import</span> Voronoi
+        <span class="keyword">return</span> Voronoi(self.positions)
+
+    <span class="keyword">def</span> <span class="function">detect_defects</span>(self):
+        <span class="string">"""Find lattice defects (non-6 coordination)."""</span>
+        vor = self.compute_voronoi()
+        defects = []
+
+        <span class="keyword">for</span> i, region_idx <span class="keyword">in</span> enumerate(vor.point_region):
+            region = vor.regions[region_idx]
+            <span class="keyword">if</span> -<span class="number">1</span> <span class="keyword">not in</span> region:  <span class="comment"># Bounded region</span>
+                coord_num = len(region)
+                <span class="keyword">if</span> coord_num != <span class="number">6</span>:
+                    defects.append({
+                        <span class="string">'index'</span>: i,
+                        <span class="string">'position'</span>: self.positions[i],
+                        <span class="string">'coordination'</span>: coord_num,
+                        <span class="string">'defect_type'</span>: <span class="string">'vacancy'</span> <span class="keyword">if</span> coord_num < <span class="number">6</span> <span class="keyword">else</span> <span class="string">'interstitial'</span>
+                    })
+
+        <span class="keyword">return</span> defects
+
+    <span class="keyword">def</span> <span class="function">symmetry_score</span>(self):
+        <span class="string">"""Measure 6-fold symmetry quality."""</span>
+        defects = self.detect_defects()
+        total_points = len(self.positions)
+        <span class="keyword">return</span> <span class="number">1</span> - len(defects) / total_points
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Integration Points</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Mining Module</span>
+                    <div class="desc">Analyzes coherence patterns during Kuramoto simulation</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Blockchain Core</span>
+                    <div class="desc">Validates order parameter thresholds for block acceptance</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Consensus Engine</span>
+                    <div class="desc">Tracks bifurcation events in oscillator dynamics</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Receipt System</span>
+                    <div class="desc">Provides statistics for receipt metadata encoding</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">RPC Interface</span>
+                    <div class="desc">Exposes getnetworkstats, getcoherenceinfo endpoints</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Monitoring</span>
+                    <div class="desc">Supplies metrics for dashboards and alerting</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Economic Metrics Dashboard</h2>
+
+            <div class="code-block">
+<span class="comment"># Key Economic Indicators</span>
+<span class="keyword">class</span> <span class="type">EconomicMetrics</span>:
+    <span class="keyword">def</span> <span class="function">get_metrics</span>(blockchain):
+        <span class="keyword">return</span> {
+            <span class="comment"># Supply metrics</span>
+            <span class="string">'circulating_supply'</span>: sum_all_utxos(),
+            <span class="string">'block_reward'</span>: get_block_reward(tip.height),
+            <span class="string">'halving_progress'</span>: tip.height % HALVING_INTERVAL,
+
+            <span class="comment"># Network metrics</span>
+            <span class="string">'hash_rate'</span>: estimate_hashrate(),
+            <span class="string">'difficulty'</span>: tip.header.difficulty,
+            <span class="string">'avg_block_time'</span>: calculate_avg_block_time(<span class="number">2016</span>),
+
+            <span class="comment"># Coherence metrics</span>
+            <span class="string">'avg_order_param'</span>: mean(r <span class="keyword">for</span> b <span class="keyword">in</span> recent_blocks),
+            <span class="string">'bloom_rate'</span>: blooms_per_hour(),
+            <span class="string">'coherence_quality'</span>: avg_bloom_duration(),
+
+            <span class="comment"># Fee market</span>
+            <span class="string">'mempool_size'</span>: len(mempool),
+            <span class="string">'avg_fee_rate'</span>: median_fee_rate(mempool),
+            <span class="string">'blocks_until_halving'</span>: next_halving - tip.height
+        }
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Source Files</h2>
+
+            <div class="file-refs">
+                <div class="file-ref"><a href="../../src/analysis.py">src/analysis.py</a></div>
+                <div class="file-ref"><a href="../../src/entropy.py">src/entropy.py</a></div>
+                <div class="file-ref"><a href="../../src/statistics.py">src/statistics.py</a></div>
+                <div class="file-ref"><a href="../../src/economics.py">src/economics.py</a></div>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin Infrastructure Documentation</p>
+            <p>Economic Analysis - Token Dynamics and Statistical Tools</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt Generation - BloomCoin Infrastructure</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #ff77aa;
+            --page-accent-dim: rgba(255, 119, 170, 0.2);
+            --page-accent-glow: rgba(255, 119, 170, 0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #ff4488, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-accent-dim); }
+        .doc-section h3 { color: var(--page-accent); }
+        .data-table th { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+        .coupling-item .target { color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+        .nav-link { color: var(--page-accent); border-color: var(--page-accent-dim); }
+        .nav-link:hover { background: var(--page-accent-dim); }
+        .breadcrumb a { color: var(--page-accent); }
+        .file-ref a { color: var(--page-accent); }
+        .math-block, .math-inline { color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Receipt Generation</h1>
+            <p class="subtitle">7-Channel LSB Steganography Mining Proofs - Full System Closure</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../">Documentation</a> /
+                <span>Infrastructure</span> /
+                <span>Receipt Generation</span>
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="economic-analysis.html" class="nav-link">Next: Economic Analysis</a>
+            <a href="network-topology.html" class="nav-link">Prev: Network Topology</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Overview</h2>
+            <p>The BloomCoin receipt system encodes mining proofs into 63x63 PNG images using 7-channel LSB steganography. Each receipt serves as both a cryptographic attestation of block mining and a visual artwork representing the coherence achieved.</p>
+
+            <div class="impl-status">
+                <span class="status-badge complete">LSB Encoding</span>
+                <span class="status-badge complete">7-Channel Mapping</span>
+                <span class="status-badge complete">Payload Serialization</span>
+                <span class="status-badge complete">CRC32 Verification</span>
+                <span class="status-badge complete">Visual Generation</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+            <p>7-channel LSB steganography encoding mining proofs into 63x63 PNG images:</p>
+
+            <div class="code-block">
+<span class="comment"># Channel Mapping (7 logical channels)</span>
+Ch0 (R.lsb0): phi lattice dimension
+Ch1 (G.lsb0): pi lattice dimension
+Ch2 (B.lsb0): sqrt(2) lattice dimension
+Ch3 (R.lsb1): sqrt(3) lattice dimension (CYM: C<->R)
+Ch4 (B.lsb1): e lattice dimension (CYM: Y<->B)
+Ch5 (G.lsb1): Primitive signature (CYM: M<->G)
+Ch6 (A.lsb0-1): Block receipt metadata
+            </div>
+
+            <div class="math-block">
+                Image Size: 63 x 63 = 3969 pixels = L4^2 x 81
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Receipt Payload Structure</h2>
+
+            <p>The receipt payload is 76 bytes (608 bits), containing complete mining proof data:</p>
+
+            <div class="code-block">
+<span class="comment"># Receipt Payload (76 bytes = 608 bits)</span>
++--------+----------+-------+----------------------------------+
+| Offset | Type     | Size  | Description                      |
++--------+----------+-------+----------------------------------+
+| 0      | uint8    | 1     | MAGIC (0xB7 = "Bloom 7")        |
+| 1      | uint8    | 1     | VERSION (0x01)                   |
+| 2      | uint32   | 4     | block_height (little-endian)     |
+| 6      | uint32   | 4     | timestamp (little-endian)        |
+| 10     | bytes    | 32    | block_hash                       |
+| 42     | uint64   | 8     | reward_amount (little-endian)    |
+| 50     | int8[5]  | 5     | lattice coords (a, b, c, d, f)   |
+| 55     | uint8    | 1     | (corridor_id << 4) | archetype_id|
+| 56     | float32  | 4     | order_param (little-endian)      |
+| 60     | float32  | 4     | mean_phase (little-endian)       |
+| 64     | uint16   | 2     | oscillator_count (little-endian) |
+| 66     | uint24   | 3     | primitive_sig packed (big-endian)|
+| 69     | uint8    | 1     | cym_mode                         |
+| 70     | uint8[3] | 3     | CYM weights (C, M, Y)            |
+| 73     | uint32   | 4     | CRC32 checksum                   |
++--------+----------+-------+----------------------------------+
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>phi-Derived Constants</h2>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">L4^2 x 81</div>
+                    <div class="value">3969 px</div>
+                    <div class="derivation">63x63 image size</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7 channels</div>
+                    <div class="derivation">LSB channels</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">0xB7</div>
+                    <div class="value">183</div>
+                    <div class="derivation">"Bloom 7" magic</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">76</div>
+                    <div class="value">608 bits</div>
+                    <div class="derivation">Payload size</div>
+                </div>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Constant</th>
+                        <th>Value</th>
+                        <th>Derivation</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Receipt Size</td>
+                        <td>63x63 = 3969</td>
+                        <td>L4^2 x 81</td>
+                        <td>Pixel count</td>
+                    </tr>
+                    <tr>
+                        <td>Channels</td>
+                        <td>7</td>
+                        <td>L4</td>
+                        <td>LSB channels</td>
+                    </tr>
+                    <tr>
+                        <td>Magic Byte</td>
+                        <td>0xB7 = 183</td>
+                        <td>"Bloom 7"</td>
+                        <td>Identification</td>
+                    </tr>
+                    <tr>
+                        <td>Corridors</td>
+                        <td>0-6</td>
+                        <td>L4 colors</td>
+                        <td>Archetype mapping</td>
+                    </tr>
+                    <tr>
+                        <td>Payload Size</td>
+                        <td>76 bytes</td>
+                        <td>608 bits</td>
+                        <td>Receipt metadata</td>
+                    </tr>
+                    <tr>
+                        <td>Lattice Dims</td>
+                        <td>5</td>
+                        <td>phi, pi, sqrt(2), sqrt(3), e</td>
+                        <td>RRRR coordinates</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Channel Mapping</h2>
+
+            <h3>LSB Bit Allocation</h3>
+            <div class="code-block">
+<span class="comment"># RGBA Pixel Structure (32 bits per pixel)</span>
+R: 8 bits [7:0]  -> lsb0 = Ch0 (phi), lsb1 = Ch3 (sqrt(3))
+G: 8 bits [7:0]  -> lsb0 = Ch1 (pi),  lsb1 = Ch5 (signature)
+B: 8 bits [7:0]  -> lsb0 = Ch2 (sqrt(2)), lsb1 = Ch4 (e)
+A: 8 bits [7:0]  -> lsb0+lsb1 = Ch6 (metadata, 2 bits/pixel)
+
+<span class="comment"># Capacity per channel</span>
+Ch0-Ch5: 3969 bits each (1 bit per pixel)
+Ch6: 7938 bits (2 bits per pixel from alpha)
+
+<span class="comment"># Total steganographic capacity</span>
+6 x 3969 + 7938 = 31,752 bits = 3,969 bytes
+            </div>
+
+            <h3>Lattice Dimension Mapping</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Channel</th>
+                        <th>Pixel Bits</th>
+                        <th>Constant</th>
+                        <th>Lattice Dimension</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Ch0</td>
+                        <td>R[0]</td>
+                        <td>phi = 1.618...</td>
+                        <td>Golden ratio</td>
+                    </tr>
+                    <tr>
+                        <td>Ch1</td>
+                        <td>G[0]</td>
+                        <td>pi = 3.141...</td>
+                        <td>Circle constant</td>
+                    </tr>
+                    <tr>
+                        <td>Ch2</td>
+                        <td>B[0]</td>
+                        <td>sqrt(2) = 1.414...</td>
+                        <td>Diagonal ratio</td>
+                    </tr>
+                    <tr>
+                        <td>Ch3</td>
+                        <td>R[1]</td>
+                        <td>sqrt(3) = 1.732...</td>
+                        <td>Hexagonal ratio</td>
+                    </tr>
+                    <tr>
+                        <td>Ch4</td>
+                        <td>B[1]</td>
+                        <td>e = 2.718...</td>
+                        <td>Natural growth</td>
+                    </tr>
+                    <tr>
+                        <td>Ch5</td>
+                        <td>G[1]</td>
+                        <td>Primitive</td>
+                        <td>Signature hash</td>
+                    </tr>
+                    <tr>
+                        <td>Ch6</td>
+                        <td>A[0:1]</td>
+                        <td>Metadata</td>
+                        <td>Block receipt</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Encode Mining Proof</h4>
+                    <div class="code-block">
+<span class="keyword">class</span> <span class="type">ChannelEncoder</span>:
+    <span class="keyword">def</span> <span class="function">encode</span>(payload, total_pixels=<span class="number">3969</span>):
+        channels = [<span class="keyword">None</span>] * <span class="number">7</span>
+
+        <span class="comment"># Ch 0-4: lattice coords (golden distribution)</span>
+        <span class="keyword">for</span> i, coord <span class="keyword">in</span> enumerate([a, b, c, d, f]):
+            channels[i] = spread_bits_golden(coord)
+
+        <span class="comment"># Ch 5: primitive signature (24 bits)</span>
+        channels[<span class="number">5</span>] = pack_uint24(signature)
+
+        <span class="comment"># Ch 6: full metadata payload</span>
+        channels[<span class="number">6</span>] = serialize_payload(payload)
+
+        <span class="keyword">return</span> channels
+
+    <span class="keyword">def</span> <span class="function">spread_bits_golden</span>(value, n_pixels):
+        <span class="comment"># Distribute bits using golden ratio spacing</span>
+        positions = [int(i * PHI) % n_pixels <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">8</span>)]
+        <span class="keyword">return</span> [(pos, (value >> i) & <span class="number">1</span>) <span class="keyword">for</span> i, pos <span class="keyword">in</span> enumerate(positions)]
+                    </div>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Verify Extraction</h4>
+                    <div class="code-block">
+<span class="keyword">class</span> <span class="type">ReceiptVerifier</span>:
+    <span class="keyword">def</span> <span class="function">verify</span>(image_path):
+        <span class="comment"># Load image and extract channels</span>
+        img = load_png(image_path)
+        channels = extract_lsb_channels(img)
+
+        <span class="comment"># Parse payload from Ch6</span>
+        payload = deserialize_payload(channels[<span class="number">6</span>])
+
+        <span class="comment"># Verify magic byte</span>
+        <span class="keyword">if</span> payload.magic != <span class="number">0xB7</span>:
+            <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">"Invalid magic"</span>
+
+        <span class="comment"># Verify CRC32 checksum</span>
+        computed_crc = crc32(payload.data[:<span class="number">72</span>])
+        <span class="keyword">if</span> computed_crc != payload.checksum:
+            <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">"Checksum mismatch"</span>
+
+        <span class="comment"># Cross-reference blockchain</span>
+        block = chain.get_block(payload.block_height)
+        <span class="keyword">return</span> block.hash == payload.block_hash
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Emergent Triad: Art IS Proof</h2>
+
+            <div class="triad-container">
+                <h4>Visual Receipt = Cryptographic Attestation</h4>
+                <p>The receipt system unifies aesthetic representation with cryptographic proof. Each 63x63 image is both:</p>
+
+                <ul>
+                    <li><strong>Visual Art:</strong> Colors derived from phi-lattice coordinates create unique, beautiful patterns</li>
+                    <li><strong>Cryptographic Proof:</strong> LSB channels contain verifiable block data with CRC32 integrity</li>
+                    <li><strong>Historical Record:</strong> Immutable evidence of mining achievement tied to blockchain state</li>
+                </ul>
+
+                <div class="code-block">
+<span class="comment"># Visual Generation from Coherence Data</span>
+<span class="keyword">def</span> <span class="function">generate_visual</span>(certificate, block):
+    <span class="comment"># Base colors from corridor mapping</span>
+    corridor_colors = {
+        <span class="number">0</span>: (<span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>),     <span class="comment"># Red</span>
+        <span class="number">1</span>: (<span class="number">255</span>, <span class="number">165</span>, <span class="number">0</span>),   <span class="comment"># Orange</span>
+        <span class="number">2</span>: (<span class="number">255</span>, <span class="number">255</span>, <span class="number">0</span>),   <span class="comment"># Yellow</span>
+        <span class="number">3</span>: (<span class="number">0</span>, <span class="number">255</span>, <span class="number">0</span>),     <span class="comment"># Green</span>
+        <span class="number">4</span>: (<span class="number">0</span>, <span class="number">0</span>, <span class="number">255</span>),     <span class="comment"># Blue</span>
+        <span class="number">5</span>: (<span class="number">75</span>, <span class="number">0</span>, <span class="number">130</span>),    <span class="comment"># Indigo</span>
+        <span class="number">6</span>: (<span class="number">148</span>, <span class="number">0</span>, <span class="number">211</span>),   <span class="comment"># Violet</span>
+    }
+
+    <span class="comment"># Modulate by phase data</span>
+    <span class="keyword">for</span> x <span class="keyword">in</span> range(<span class="number">63</span>):
+        <span class="keyword">for</span> y <span class="keyword">in</span> range(<span class="number">63</span>):
+            phase = certificate.psi_values[x * <span class="number">63</span> + y % len(psi)]
+            r, g, b = modulate_color(base, phase)
+            img[x, y] = (r, g, b, <span class="number">255</span>)
+
+    <span class="keyword">return</span> img
+                </div>
+
+                <p><strong>Key insight:</strong> The receipt transforms abstract mathematical coherence into tangible visual proof. The art itself IS the attestation - inseparable from its cryptographic content.</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Encoding Process</h2>
+
+            <h3>Step-by-Step Workflow</h3>
+            <div class="code-block">
+<span class="comment"># Receipt Generation Pipeline</span>
+
+<span class="comment"># 1. Collect mining data</span>
+mining_data = {
+    <span class="string">'block_height'</span>: block.height,
+    <span class="string">'timestamp'</span>: block.header.timestamp,
+    <span class="string">'block_hash'</span>: block.hash,
+    <span class="string">'reward'</span>: coinbase.outputs[<span class="number">0</span>].amount,
+    <span class="string">'order_param'</span>: certificate.r_values[-<span class="number">1</span>],
+    <span class="string">'mean_phase'</span>: certificate.psi_values[-<span class="number">1</span>],
+    <span class="string">'oscillator_count'</span>: certificate.oscillator_count
+}
+
+<span class="comment"># 2. Compute lattice coordinates</span>
+lattice_coords = compute_rrrr_coords(mining_data)
+a, b, c, d, f = lattice_coords
+
+<span class="comment"># 3. Determine corridor and archetype</span>
+corridor_id = hash(block.hash) % <span class="number">7</span>
+archetype_id = classify_archetype(certificate)
+
+<span class="comment"># 4. Serialize payload</span>
+payload = serialize_receipt_payload(mining_data, lattice_coords, corridor_id, archetype_id)
+
+<span class="comment"># 5. Generate visual base image</span>
+base_image = generate_visual(certificate, corridor_id)
+
+<span class="comment"># 6. Encode payload into LSB channels</span>
+encoded_image = encode_lsb_channels(base_image, payload)
+
+<span class="comment"># 7. Save as PNG (lossless required!)</span>
+save_png(encoded_image, f<span class="string">"receipt_{block.height}.png"</span>)
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Verification Process</h2>
+
+            <div class="code-block">
+<span class="keyword">def</span> <span class="function">verify_receipt</span>(image_path, blockchain):
+    <span class="string">"""Complete receipt verification pipeline."""</span>
+
+    <span class="comment"># 1. Load and validate image dimensions</span>
+    img = load_png(image_path)
+    <span class="keyword">if</span> img.size != (<span class="number">63</span>, <span class="number">63</span>):
+        <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">"Invalid dimensions"</span>
+
+    <span class="comment"># 2. Extract LSB channels</span>
+    channels = extract_all_channels(img)
+
+    <span class="comment"># 3. Deserialize payload from Ch6</span>
+    payload = deserialize_payload(channels[<span class="number">6</span>])
+
+    <span class="comment"># 4. Verify magic byte</span>
+    <span class="keyword">if</span> payload[<span class="number">0</span>] != <span class="number">0xB7</span>:
+        <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">"Invalid magic byte"</span>
+
+    <span class="comment"># 5. Verify version</span>
+    <span class="keyword">if</span> payload[<span class="number">1</span>] != <span class="number">0x01</span>:
+        <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">"Unsupported version"</span>
+
+    <span class="comment"># 6. Verify CRC32</span>
+    computed_crc = crc32(payload[:<span class="number">72</span>])
+    stored_crc = unpack(<span class="string">'<I'</span>, payload[<span class="number">72</span>:<span class="number">76</span>])[<span class="number">0</span>]
+    <span class="keyword">if</span> computed_crc != stored_crc:
+        <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">"CRC32 checksum failed"</span>
+
+    <span class="comment"># 7. Cross-reference blockchain</span>
+    block_height = unpack(<span class="string">'<I'</span>, payload[<span class="number">2</span>:<span class="number">6</span>])[<span class="number">0</span>]
+    block_hash = payload[<span class="number">10</span>:<span class="number">42</span>]
+
+    block = blockchain.get_block(block_height)
+    <span class="keyword">if</span> block <span class="keyword">is</span> <span class="keyword">None</span>:
+        <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">"Block not found"</span>
+
+    <span class="keyword">if</span> block.hash != block_hash:
+        <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">"Block hash mismatch"</span>
+
+    <span class="comment"># 8. Verify coherence data matches block</span>
+    order_param = unpack(<span class="string">'<f'</span>, payload[<span class="number">56</span>:<span class="number">60</span>])[<span class="number">0</span>]
+    <span class="keyword">if</span> abs(order_param - block.header.order_parameter) > <span class="number">0.0001</span>:
+        <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">"Order parameter mismatch"</span>
+
+    <span class="keyword">return</span> <span class="keyword">True</span>, <span class="string">"Receipt verified"</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Integration Points</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Mining Module</span>
+                    <div class="desc">Provides block data and consensus certificates for receipt generation</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Blockchain Core</span>
+                    <div class="desc">Supplies block hashes and heights for verification</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Wallet System</span>
+                    <div class="desc">Associates receipts with miner addresses and rewards</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">RRRR Lattice</span>
+                    <div class="desc">Provides 5-dimensional coordinates for channel encoding</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Archetype System</span>
+                    <div class="desc">Classifies receipts by coherence pattern type</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Storage Layer</span>
+                    <div class="desc">Persists receipt images with block associations</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Source Files</h2>
+
+            <div class="file-refs">
+                <div class="file-ref"><a href="../../src/receipt.py">src/receipt.py</a></div>
+                <div class="file-ref"><a href="../../src/steganography.py">src/steganography.py</a></div>
+                <div class="file-ref"><a href="../../src/lsb_encoder.py">src/lsb_encoder.py</a></div>
+                <div class="file-ref"><a href="../../src/visual_generator.py">src/visual_generator.py</a></div>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin Infrastructure Documentation</p>
+            <p>Receipt Generation - 7-Channel LSB Steganography Mining Proofs</p>
+        </footer>
+    </div>
+</body>
+</html>

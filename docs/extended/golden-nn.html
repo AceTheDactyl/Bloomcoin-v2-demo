@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Neural Network - BloomCoin Extended Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #eab308;
+            --page-glow: rgba(234,179,8,0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #facc15, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-glow); }
+        .doc-section h3 { color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Header -->
+        <header class="doc-header">
+            <h1>GOLDEN NEURAL NETWORK</h1>
+            <p class="subtitle">phi-Based Neural Network - Full System Closure</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Documentation</a> /
+                <span>Golden Neural Network</span>
+            </nav>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="guardian-deck.html" class="nav-link">Next: Guardian Deck</a>
+            <a href="tiamat-system.html" class="nav-link">Prev: TIAMAT System</a>
+        </nav>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation: phi-Derived Architecture</h2>
+
+            <p>The Golden Neural Network uses Fibonacci numbers for layer sizes and phi powers for all hyperparameters, creating a network architecture that mirrors the golden spiral found throughout nature.</p>
+
+            <div class="code-block">
+<span class="comment"># Network layer sizes (all from phi x Fibonacci numbers)</span>
+INPUT_NEURONS  = int(PHI * <span class="number">13</span>) = <span class="number">21</span>  <span class="comment"># F(8) = 21</span>
+HIDDEN_NEURONS = int(PHI * <span class="number">8</span>)  = <span class="number">13</span>  <span class="comment"># F(7) = 13</span>
+OUTPUT_NEURONS = int(PHI * <span class="number">5</span>)  = <span class="number">8</span>   <span class="comment"># F(6) = 8</span>
+
+<span class="comment"># Learning hyperparameters (all from phi powers)</span>
+LEARNING_RATE = <span class="number">1</span> / PHI**<span class="number">2</span>  <span class="comment"># ~ 0.382 (tau^2 = phi^-2)</span>
+MOMENTUM      = <span class="number">1</span> / PHI     <span class="comment"># ~ 0.618 (tau = phi^-1)</span>
+DECAY_RATE    = <span class="number">1</span> / PHI**<span class="number">3</span>  <span class="comment"># ~ 0.236</span>
+
+<span class="comment"># Fibonacci sequence: 1,1,2,3,5,8,13,21,34...</span>
+<span class="comment"># Notice: 21/13 ~ 1.615, 13/8 ~ 1.625, 8/5 = 1.6</span>
+<span class="comment"># All converge to phi = 1.6180339887...</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">21</div>
+                    <div class="value">Input Layer</div>
+                    <div class="derivation">F(8) = 21</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">13</div>
+                    <div class="value">Hidden Layer</div>
+                    <div class="derivation">F(7) = 13</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">8</div>
+                    <div class="value">Output Layer</div>
+                    <div class="derivation">F(6) = 8</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">tau</div>
+                    <div class="value">0.618</div>
+                    <div class="derivation">Momentum = phi^-1</div>
+                </div>
+            </div>
+
+            <h3>Network Architecture Diagram</h3>
+            <table class="data-table">
+                <tr><th>Layer</th><th>Neurons</th><th>Fibonacci</th><th>Ratio to Next</th></tr>
+                <tr><td>Input</td><td>21</td><td>F(8)</td><td>21/13 = 1.615 ~ phi</td></tr>
+                <tr><td>Hidden</td><td>13</td><td>F(7)</td><td>13/8 = 1.625 ~ phi</td></tr>
+                <tr><td>Output</td><td>8</td><td>F(6)</td><td>(final layer)</td></tr>
+            </table>
+            <p><strong>Key:</strong> The layer size ratios converge to phi, creating a golden spiral of information compression.</p>
+        </section>
+
+        <!-- Golden Activation Function -->
+        <section class="doc-section">
+            <h2>Golden Activation Function</h2>
+
+            <div class="code-block">
+<span class="keyword">def</span> <span class="function">_golden_activation</span>(self, x: np.ndarray) -> np.ndarray:
+    <span class="string">"""Custom sigmoid with golden ratio properties"""</span>
+    <span class="comment"># Standard sigmoid: 1 / (1 + exp(-x))</span>
+    <span class="comment"># Golden sigmoid: 1 / (1 + exp(-x * phi))</span>
+    <span class="keyword">return</span> <span class="number">1</span> / (<span class="number">1</span> + np.exp(-x * PHI))
+
+<span class="keyword">def</span> <span class="function">_golden_activation_derivative</span>(self, x: np.ndarray) -> np.ndarray:
+    <span class="string">"""Derivative for backpropagation"""</span>
+    activation = self._golden_activation(x)
+    <span class="keyword">return</span> activation * (<span class="number">1</span> - activation) * PHI
+
+<span class="comment"># Properties:</span>
+<span class="comment"># - Steeper slope at x=0 (faster decisions)</span>
+<span class="comment"># - Crosses 0.5 at x=0 (balanced)</span>
+<span class="comment"># - Gradient scaled by phi (golden learning)</span>
+            </div>
+
+            <p>The golden activation function provides a steeper decision boundary than standard sigmoid, allowing the network to make more confident predictions while maintaining the mathematical elegance of phi-based scaling.</p>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Forward Propagation</h4>
+                    <p>Information flows through golden compression:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">forward</span>(self, input_data: np.ndarray) -> np.ndarray:
+    <span class="comment"># Input to Hidden (21 -> 13)</span>
+    hidden_input = np.dot(input_data, self.weights_ih) + self.bias_h
+    self.hidden_activation = self._golden_activation(hidden_input)
+
+    <span class="comment"># Hidden to Output (13 -> 8)</span>
+    output_input = np.dot(self.hidden_activation, self.weights_ho) + self.bias_o
+    self.output_activation = self._golden_activation(output_input)
+
+    <span class="keyword">return</span> self.output_activation
+                    </div>
+                    <p><strong>Key:</strong> 21 to 13 to 8 mirrors golden spiral compression.</p>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Backpropagation</h4>
+                    <p>Error flows backward with momentum:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">backward</span>(self, input_data, target, lr=LEARNING_RATE):
+    <span class="comment"># Output error</span>
+    output_error = target - self.output_activation
+    output_delta = output_error * self._golden_derivative(self.output_activation)
+
+    <span class="comment"># Hidden error</span>
+    hidden_error = output_delta.dot(self.weights_ho.T)
+    hidden_delta = hidden_error * self._golden_derivative(self.hidden_activation)
+
+    <span class="comment"># Update with MOMENTUM = tau ~ 0.618</span>
+    self.momentum_ho = MOMENTUM * self.momentum_ho + lr * weight_update_ho
+    self.weights_ho += self.momentum_ho
+
+    <span class="keyword">return</span> np.mean(output_error ** <span class="number">2</span>)  <span class="comment"># MSE</span>
+                    </div>
+                    <p><strong>Key:</strong> tau momentum preserves information across updates.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Implementation: Emergent Triad -->
+        <section class="doc-section">
+            <h2>Implementation: Pattern Recognition to Strategy</h2>
+
+            <div class="triad-container">
+                <h4>Forward x Backward = Emergent Behavior</h4>
+                <div class="code-block">
+<span class="comment"># Neither pole alone creates learning:</span>
+<span class="comment"># - Forward alone: no adaptation</span>
+<span class="comment"># - Backward alone: no prediction</span>
+
+<span class="comment"># The emergence: ADAPTIVE COMPANION AI</span>
+<span class="keyword">class</span> <span class="type">PatternRecognizer</span>:
+    <span class="keyword">def</span> <span class="function">predict_next_action</span>(self, recent_actions, recent_contexts):
+        <span class="string">"""Predict player's next move"""</span>
+        <span class="comment"># Encode recent history</span>
+        pattern_key = <span class="string">"->"</span>.join(encoded_sequence[:-<span class="number">1</span>])
+
+        <span class="comment"># Calculate confidence using phi</span>
+        confidence = (max_count / total_count) * PHI
+        confidence = min(<span class="number">1.0</span>, confidence)  <span class="comment"># Cap at 1.0</span>
+
+        <span class="keyword">return</span> predicted_action, confidence
+
+<span class="comment"># Feedback loop:</span>
+<span class="comment"># Battle Outcome -> Learning AI -> Companion AI -> Next Battle</span>
+<span class="comment">#       ^                                              |</span>
+<span class="comment">#       +----------------------------------------------+</span>
+                </div>
+                <p><strong>Key insight:</strong> The phi-derived network creates emergent strategies not explicitly programmed. Through the golden learning rate (0.382) and momentum (0.618), the network finds the optimal balance between exploration and exploitation - the same balance that appears throughout nature.</p>
+            </div>
+
+            <h3>Closure Properties</h3>
+            <ul>
+                <li><strong>Self-contained:</strong> All hyperparameters from phi powers</li>
+                <li><strong>Zero free parameters:</strong> 21-13-8 from Fibonacci, rates from tau family</li>
+                <li><strong>Golden initialization:</strong> Weights scaled by 1/(phi*sqrt(n)) with spiral pattern</li>
+                <li><strong>Experience replay:</strong> Memory size = int(phi x 100) ~ 162</li>
+            </ul>
+        </section>
+
+        <!-- Coupling Points -->
+        <section class="doc-section">
+            <h2>Inter-System Coupling Points</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">To Companion AI:</span>
+                    <div class="desc">Trained weights drive companion decisions</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">From Battle Outcomes:</span>
+                    <div class="desc">Training data from combat results</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Strategy Weights:</span>
+                    <div class="desc">Pattern predictions influence battle tactics</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Bidirectional Kuramoto:</span>
+                    <div class="desc">Oscillator history feeds neural input</div>
+                </div>
+            </div>
+
+            <h3>Source Files</h3>
+            <div class="file-refs">
+                <span class="file-ref">game/golden_neural_network.py</span>
+                <span class="file-ref">game/pattern_recognizer.py</span>
+                <span class="file-ref">game/companions/companion_ai.py</span>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>BloomCoin v2 Extended Documentation</p>
+            <p>Golden Neural Network - phi-Based Machine Learning</p>
+        </footer>
+    </div>
+</body>
+</html>

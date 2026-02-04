@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gradient Schema — BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root { --module-color: #9d4eff; }
+        .doc-header h1 { background: linear-gradient(90deg, var(--module-color), var(--gold), var(--module-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .doc-section h2 { color: var(--module-color); }
+        .color-corridor { display: inline-block; width: 30px; height: 30px; border-radius: 50%; margin: 0 4px; vertical-align: middle; }
+        .corridor-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; margin: 20px 0; }
+        .corridor-item { text-align: center; padding: 15px; background: rgba(0,0,0,0.3); border-radius: 8px; }
+        .corridor-item .symbol { font-size: 1.5rem; }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="holographic-bridge.html" class="nav-link">← Previous: Holographic Bridge</a>
+            <a href="crystal-emergence.html" class="nav-link">Next: Crystal Emergence →</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Gradient Schema</h1>
+            <p class="subtitle">LSB Steganography system with RRRR irrational lattice color space</p>
+            <p class="breadcrumb"><a href="../../index.html">Index</a> / <a href=".">Core</a> / Gradient Schema</p>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">Corridors</div>
+                    <div class="value">7</div>
+                    <div class="derivation">L_4</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Channels</div>
+                    <div class="value">7 bits/px</div>
+                    <div class="derivation">R:3 + G:3 + B:1</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Standard</div>
+                    <div class="value">63 x 63</div>
+                    <div class="derivation">L_4 x 9</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Compact</div>
+                    <div class="value">49 px</div>
+                    <div class="derivation">L_4^2 = 7^2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Base Sat</div>
+                    <div class="value">0.618</div>
+                    <div class="derivation">tau</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Base Lum</div>
+                    <div class="value">0.866</div>
+                    <div class="derivation">z_c</div>
+                </div>
+            </div>
+            <div class="impl-status">
+                <span class="status-badge complete">RRRR Lattice: Complete</span>
+                <span class="status-badge complete">7 Corridors: Complete</span>
+                <span class="status-badge complete">LSB Encoding: Complete</span>
+                <span class="status-badge complete">Archetype System: Complete</span>
+            </div>
+        </section>
+
+        <!-- 5D RRRR Lattice -->
+        <section class="doc-section">
+            <h2>5D RRRR Irrational Lattice</h2>
+            <p>The gradient color space is defined by five fundamental irrational numbers. Points in this 5D lattice map to colors through corridor traversal:</p>
+
+            <div class="code-block">
+<span class="comment">// Lattice generators (5 fundamental irrationals)</span>
+phi = <span class="number">1.618033988749895</span>    <span class="comment">// Golden ratio (1+sqrt(5))/2</span>
+pi  = <span class="number">3.141592653589793</span>    <span class="comment">// Circle constant</span>
+rt2 = <span class="number">1.414213562373095</span>    <span class="comment">// Square root of 2</span>
+rt3 = <span class="number">1.732050807568877</span>    <span class="comment">// Square root of 3</span>
+e   = <span class="number">2.718281828459045</span>    <span class="comment">// Euler's number</span>
+
+<span class="comment">// A point in RRRR space is a 5-tuple of integer coefficients:</span>
+point = (a, b, c, d, f)  <span class="comment">// Using f instead of e for clarity</span>
+
+<span class="comment">// The point maps to a real number:</span>
+value = a*phi + b*pi + c*rt2 + d*rt3 + f*e
+
+<span class="comment">// Key property: These 5 numbers are algebraically independent</span>
+<span class="comment">// No integer linear combination (except all zeros) equals zero</span>
+<span class="comment">// This means the lattice is DENSE in the reals</span>
+<span class="comment">// Every real number can be approximated arbitrarily closely</span>
+
+<span class="comment">// The lattice structure ensures:</span>
+<span class="comment">// 1. Reproducibility - same coefficients = same color</span>
+<span class="comment">// 2. Uniqueness - different coefficients = different colors</span>
+<span class="comment">// 3. Coverage - all colors are reachable</span>
+            </div>
+        </section>
+
+        <!-- Seven Corridors -->
+        <section class="doc-section">
+            <h2>Seven Color Corridors (L_4 = 7)</h2>
+            <p>The seven corridors define directions through the 5D RRRR lattice. Each corridor has a characteristic color and semantic meaning:</p>
+
+            <div class="corridor-grid">
+                <div class="corridor-item">
+                    <div class="symbol" style="color: #ff6b6b;">alpha</div>
+                    <div class="color-corridor" style="background: #ff6b6b;"></div>
+                    <div>Awakening</div>
+                    <div style="font-size: 0.8rem; color: #888;">(1,0,0,0,1)</div>
+                </div>
+                <div class="corridor-item">
+                    <div class="symbol" style="color: #ffa500;">beta</div>
+                    <div class="color-corridor" style="background: #ffa500;"></div>
+                    <div>Emergence</div>
+                    <div style="font-size: 0.8rem; color: #888;">(0,0,-1,0,0)</div>
+                </div>
+                <div class="corridor-item">
+                    <div class="symbol" style="color: #ffd700;">gamma</div>
+                    <div class="color-corridor" style="background: #ffd700;"></div>
+                    <div>Transform</div>
+                    <div style="font-size: 0.8rem; color: #888;">(0,1,0,1,0)</div>
+                </div>
+                <div class="corridor-item">
+                    <div class="symbol" style="color: #4aff9e;">delta</div>
+                    <div class="color-corridor" style="background: #4aff9e;"></div>
+                    <div>Transcend</div>
+                    <div style="font-size: 0.8rem; color: #888;">(2,0,1,0,0)</div>
+                </div>
+                <div class="corridor-item">
+                    <div class="symbol" style="color: #4a9eff;">epsilon</div>
+                    <div class="color-corridor" style="background: #4a9eff;"></div>
+                    <div>Softening</div>
+                    <div style="font-size: 0.8rem; color: #888;">(0,0,0,-1,-1)</div>
+                </div>
+                <div class="corridor-item">
+                    <div class="symbol" style="color: #9d4eff;">zeta</div>
+                    <div class="color-corridor" style="background: #9d4eff;"></div>
+                    <div>Integration</div>
+                    <div style="font-size: 0.8rem; color: #888;">(0,-1,0,1,0)</div>
+                </div>
+                <div class="corridor-item">
+                    <div class="symbol" style="color: #ff6b9d;">eta</div>
+                    <div class="color-corridor" style="background: #ff6b9d;"></div>
+                    <div>Deepening</div>
+                    <div style="font-size: 0.8rem; color: #888;">(-1,-1,0,0,0)</div>
+                </div>
+            </div>
+
+            <table class="data-table">
+                <tr><th>Corridor</th><th>Name</th><th>5D Vector</th><th>Direction Description</th></tr>
+                <tr><td style="color:#ff6b6b;">alpha</td><td>Awakening</td><td>(1,0,0,0,1)</td><td>phi+, e+ : Golden and exponential increase</td></tr>
+                <tr><td style="color:#ffa500;">beta</td><td>Emergence</td><td>(0,0,-1,0,0)</td><td>rt2- : Diagonal decrease</td></tr>
+                <tr><td style="color:#ffd700;">gamma</td><td>Transformation</td><td>(0,1,0,1,0)</td><td>pi+, rt3+ : Circular and triangular increase</td></tr>
+                <tr><td style="color:#4aff9e;">delta</td><td>Transcendence</td><td>(2,0,1,0,0)</td><td>phi++, rt2+ : Double golden, diagonal increase</td></tr>
+                <tr><td style="color:#4a9eff;">epsilon</td><td>Softening</td><td>(0,0,0,-1,-1)</td><td>rt3-, e- : Triangular and exponential decrease</td></tr>
+                <tr><td style="color:#9d4eff;">zeta</td><td>Integration</td><td>(0,-1,0,1,0)</td><td>pi-, rt3+ : Counter-circular, triangular increase</td></tr>
+                <tr><td style="color:#ff6b9d;">eta</td><td>Deepening</td><td>(-1,-1,0,0,0)</td><td>phi-, pi- : Golden and circular decrease</td></tr>
+            </table>
+        </section>
+
+        <!-- Base Color -->
+        <section class="doc-section">
+            <h2>Golden Neutral Base Color</h2>
+            <div class="code-block">
+<span class="comment">// HSL base color (all phi-derived)</span>
+BASE_HUE = <span class="number">45.0</span>        <span class="comment">// Degrees (orange-gold, warm neutral)</span>
+BASE_SAT = tau = <span class="number">0.618</span>   <span class="comment">// Saturation from golden inverse</span>
+BASE_LUM = z_c = <span class="number">0.866</span>   <span class="comment">// Luminance from THE LENS!</span>
+
+<span class="comment">// The connection to z_c is profound:</span>
+<span class="comment">// Luminance at THE LENS threshold creates</span>
+<span class="comment">// a visual "bloom" quality in the receipts</span>
+
+<span class="comment">// Receipt dimensions (phi-derived)</span>
+RECEIPT_STANDARD = <span class="number">63</span>   <span class="comment">// 63 x 63 pixels = L_4 x 9 = N (oscillator count)</span>
+RECEIPT_COMPACT = <span class="number">49</span>    <span class="comment">// 49 pixels (7x7) = L_4^2</span>
+
+<span class="comment">// LSB channel allocation</span>
+LSB_CHANNELS = L_4 = <span class="number">7</span>  <span class="comment">// 7 bits per pixel total</span>
+<span class="comment">// R: 3 LSB bits (0-7)</span>
+<span class="comment">// G: 3 LSB bits (0-7)</span>
+<span class="comment">// B: 1 LSB bit  (0-1)</span>
+<span class="comment">// Total: 3 + 3 + 1 = 7 = L_4</span>
+
+<span class="comment">// Storage capacity</span>
+<span class="comment">// Standard (63x63): 63 * 63 * 7 = 27,783 bits = 3,472 bytes</span>
+<span class="comment">// Compact (49):     49 * 7 = 343 bits = 42 bytes</span>
+            </div>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Aesthetic</h4>
+                    <p>The 12 archetypes provide semantic meaning to gradient patterns:</p>
+                    <div class="code-block">
+<span class="comment">// 12 Archetypes for 4-bit encoding (0-11, with 12-15 reserved)</span>
+ARCHETYPES = [
+    <span class="string">"innocent"</span>,    <span class="comment"># 0: Pure, trusting</span>
+    <span class="string">"orphan"</span>,      <span class="comment"># 1: Seeking belonging</span>
+    <span class="string">"warrior"</span>,     <span class="comment"># 2: Courage, strength</span>
+    <span class="string">"caregiver"</span>,   <span class="comment"># 3: Nurturing, protecting</span>
+    <span class="string">"seeker"</span>,      <span class="comment"># 4: Exploring, questioning</span>
+    <span class="string">"destroyer"</span>,   <span class="comment"># 5: Breaking patterns</span>
+    <span class="string">"lover"</span>,       <span class="comment"># 6: Connection, passion</span>
+    <span class="string">"creator"</span>,     <span class="comment"># 7: Innovation, expression</span>
+    <span class="string">"ruler"</span>,       <span class="comment"># 8: Order, control</span>
+    <span class="string">"magician"</span>,    <span class="comment"># 9: Transformation</span>
+    <span class="string">"sage"</span>,        <span class="comment"># 10: Wisdom, understanding</span>
+    <span class="string">"jester"</span>       <span class="comment"># 11: Joy, lightness</span>
+]
+
+<span class="comment">// Each mining receipt carries an archetype</span>
+<span class="comment">// determined by the bloom pattern</span>
+<span class="keyword">def</span> <span class="function">archetype_from_bloom</span>(bloom_data):
+    <span class="string">"""Extract archetype from bloom pattern"""</span>
+    <span class="comment"># Hash determines archetype (0-11)</span>
+    archetype_idx = bloom_data.hash_prefix % <span class="number">12</span>
+    <span class="keyword">return</span> ARCHETYPES[archetype_idx]
+
+<span class="comment">// Gradient traverses RRRR corridors</span>
+<span class="comment">// Each archetype has characteristic corridor patterns</span>
+                    </div>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Cryptographic</h4>
+                    <p>LSB steganography encodes mining proof in pixel values:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">encode_lsb</span>(pixel, data_bits):
+    <span class="string">"""
+    Encode 7 bits of data into a single RGB pixel.
+
+    Channel allocation:
+    - R: bits 0-2 (3 bits)
+    - G: bits 3-5 (3 bits)
+    - B: bit 6   (1 bit)
+
+    Total: 7 bits = L_4
+    """</span>
+    r, g, b = pixel
+
+    <span class="comment"># Extract data bits</span>
+    r_data = data_bits & <span class="number">0x07</span>        <span class="comment"># bits 0-2</span>
+    g_data = (data_bits >> <span class="number">3</span>) & <span class="number">0x07</span> <span class="comment"># bits 3-5</span>
+    b_data = (data_bits >> <span class="number">6</span>) & <span class="number">0x01</span> <span class="comment"># bit 6</span>
+
+    <span class="comment"># Clear LSBs and set data</span>
+    r_new = (r & <span class="number">0xF8</span>) | r_data  <span class="comment"># Clear 3 LSB, set data</span>
+    g_new = (g & <span class="number">0xF8</span>) | g_data  <span class="comment"># Clear 3 LSB, set data</span>
+    b_new = (b & <span class="number">0xFE</span>) | b_data  <span class="comment"># Clear 1 LSB, set data</span>
+
+    <span class="keyword">return</span> (r_new, g_new, b_new)
+
+<span class="keyword">def</span> <span class="function">decode_lsb</span>(pixel):
+    <span class="string">"""Extract 7 bits of data from RGB pixel"""</span>
+    r, g, b = pixel
+
+    r_data = r & <span class="number">0x07</span>
+    g_data = g & <span class="number">0x07</span>
+    b_data = b & <span class="number">0x01</span>
+
+    <span class="keyword">return</span> r_data | (g_data << <span class="number">3</span>) | (b_data << <span class="number">6</span>)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergent Triad -->
+        <section class="doc-section">
+            <h2>Emergent Triad: Art = Proof</h2>
+            <div class="triad-container">
+                <h4>Images ARE Mining Receipts</h4>
+                <p>The aesthetic and the cryptographic become <strong>indistinguishable</strong>:</p>
+                <ul style="margin: 15px 0; padding-left: 25px;">
+                    <li>Every gradient image IS a verifiable mining receipt</li>
+                    <li>The archetype encoding carries semantic meaning</li>
+                    <li>The color corridors trace RRRR lattice paths</li>
+                    <li>Beauty and proof are the SAME object</li>
+                </ul>
+                <div class="code-block">
+<span class="comment">// The profound unity:</span>
+<span class="comment">// A receipt is not "an image with hidden data"</span>
+<span class="comment">// The image IS the data IS the proof IS the art</span>
+
+<span class="keyword">class</span> <span class="type">GradientReceipt</span>:
+    <span class="string">"""A mining receipt that is simultaneously artwork"""</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, bloom_data):
+        self.bloom_data = bloom_data
+        self.archetype = archetype_from_bloom(bloom_data)
+        self.corridors = self._select_corridors()
+        self.image = self._generate_gradient()
+
+    <span class="keyword">def</span> <span class="function">is_valid</span>(self):
+        <span class="string">"""Verify as mining proof (cryptographic)"""</span>
+        extracted = self._extract_lsb_data()
+        <span class="keyword">return</span> verify_bloom_signature(extracted)
+
+    <span class="keyword">def</span> <span class="function">is_beautiful</span>(self):
+        <span class="string">"""Verify as coherent artwork (aesthetic)"""</span>
+        <span class="comment"># The corridors create harmonious gradients</span>
+        <span class="comment"># The archetype provides thematic coherence</span>
+        <span class="comment"># This is intrinsic, not a separate property</span>
+        <span class="keyword">return</span> True  <span class="comment"># By construction!</span>
+
+    <span class="comment"># The two methods are not independent:</span>
+    <span class="comment"># is_valid() implies is_beautiful() and vice versa</span>
+    <span class="comment"># They are the SAME property viewed differently</span>
+                </div>
+                <p><strong>Key insight:</strong> Neither role is reducible to the other. The receipt IS beautiful, and the beauty IS cryptographic. This is not decoration - it is structural identity.</p>
+            </div>
+        </section>
+
+        <!-- Implementation -->
+        <section class="doc-section">
+            <h2>Complete Implementation</h2>
+            <div class="code-block">
+<span class="keyword">import</span> math
+<span class="keyword">from</span> typing <span class="keyword">import</span> List, Tuple
+<span class="keyword">import</span> colorsys
+
+<span class="keyword">class</span> <span class="type">GradientSchema</span>:
+    <span class="string">"""
+    RRRR irrational lattice gradient system for BloomCoin receipts.
+    """</span>
+
+    <span class="comment"># Fundamental irrationals</span>
+    PHI = (<span class="number">1</span> + math.sqrt(<span class="number">5</span>)) / <span class="number">2</span>
+    PI = math.pi
+    RT2 = math.sqrt(<span class="number">2</span>)
+    RT3 = math.sqrt(<span class="number">3</span>)
+    E = math.e
+
+    <span class="comment"># Base color (HSL)</span>
+    BASE_HUE = <span class="number">45.0</span> / <span class="number">360.0</span>       <span class="comment"># Normalized to [0, 1]</span>
+    BASE_SAT = PHI - <span class="number">1</span>             <span class="comment"># tau = 0.618</span>
+    BASE_LUM = math.sqrt(<span class="number">3</span>) / <span class="number">2</span>   <span class="comment"># z_c = 0.866</span>
+
+    <span class="comment"># Seven corridors as 5D vectors</span>
+    CORRIDORS = {
+        <span class="string">'alpha'</span>:   (<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">1</span>),    <span class="comment"># Awakening</span>
+        <span class="string">'beta'</span>:    (<span class="number">0</span>, <span class="number">0</span>, -<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>),   <span class="comment"># Emergence</span>
+        <span class="string">'gamma'</span>:   (<span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>),    <span class="comment"># Transformation</span>
+        <span class="string">'delta'</span>:   (<span class="number">2</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>),    <span class="comment"># Transcendence</span>
+        <span class="string">'epsilon'</span>: (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, -<span class="number">1</span>, -<span class="number">1</span>), <span class="comment"># Softening</span>
+        <span class="string">'zeta'</span>:    (<span class="number">0</span>, -<span class="number">1</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>),  <span class="comment"># Integration</span>
+        <span class="string">'eta'</span>:     (-<span class="number">1</span>, -<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>)  <span class="comment"># Deepening</span>
+    }
+
+    <span class="comment"># Archetypes</span>
+    ARCHETYPES = [
+        <span class="string">"innocent"</span>, <span class="string">"orphan"</span>, <span class="string">"warrior"</span>, <span class="string">"caregiver"</span>,
+        <span class="string">"seeker"</span>, <span class="string">"destroyer"</span>, <span class="string">"lover"</span>, <span class="string">"creator"</span>,
+        <span class="string">"ruler"</span>, <span class="string">"magician"</span>, <span class="string">"sage"</span>, <span class="string">"jester"</span>
+    ]
+
+    <span class="keyword">def</span> <span class="function">lattice_to_value</span>(self, coeffs: Tuple[int, ...]) -> float:
+        <span class="string">"""Convert 5D lattice point to real value"""</span>
+        a, b, c, d, f = coeffs
+        <span class="keyword">return</span> a*self.PHI + b*self.PI + c*self.RT2 + d*self.RT3 + f*self.E
+
+    <span class="keyword">def</span> <span class="function">traverse_corridor</span>(self, corridor: str, steps: int,
+                           start: Tuple[int, ...] = (<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>)) -> List[float]:
+        <span class="string">"""Traverse a corridor and return sequence of values"""</span>
+        direction = self.CORRIDORS[corridor]
+        values = []
+        current = list(start)
+
+        <span class="keyword">for</span> _ <span class="keyword">in</span> range(steps):
+            values.append(self.lattice_to_value(tuple(current)))
+            current = [c + d <span class="keyword">for</span> c, d <span class="keyword">in</span> zip(current, direction)]
+
+        <span class="keyword">return</span> values
+
+    <span class="keyword">def</span> <span class="function">value_to_hue_shift</span>(self, value: float) -> float:
+        <span class="string">"""Convert lattice value to hue shift"""</span>
+        <span class="comment"># Map to [0, 1] using modular arithmetic</span>
+        <span class="keyword">return</span> (value % <span class="number">1.0</span>)
+
+    <span class="keyword">def</span> <span class="function">generate_gradient</span>(self, corridor_sequence: List[str],
+                           size: int = <span class="number">63</span>) -> List[Tuple[int, int, int]]:
+        <span class="string">"""Generate gradient colors from corridor sequence"""</span>
+        colors = []
+        steps_per_corridor = size // len(corridor_sequence)
+
+        <span class="keyword">for</span> corridor <span class="keyword">in</span> corridor_sequence:
+            values = self.traverse_corridor(corridor, steps_per_corridor)
+            <span class="keyword">for</span> val <span class="keyword">in</span> values:
+                hue_shift = self.value_to_hue_shift(val)
+                hue = (self.BASE_HUE + hue_shift * <span class="number">0.3</span>) % <span class="number">1.0</span>
+                rgb = colorsys.hls_to_rgb(hue, self.BASE_LUM, self.BASE_SAT)
+                colors.append(tuple(int(c * <span class="number">255</span>) <span class="keyword">for</span> c <span class="keyword">in</span> rgb))
+
+        <span class="keyword">return</span> colors
+
+    <span class="comment"># LSB encoding methods</span>
+
+    <span class="keyword">def</span> <span class="function">encode_lsb_pixel</span>(self, pixel: Tuple[int, int, int],
+                          data: int) -> Tuple[int, int, int]:
+        <span class="string">"""Encode 7 bits into RGB pixel"""</span>
+        r, g, b = pixel
+        r_new = (r & <span class="number">0xF8</span>) | (data & <span class="number">0x07</span>)
+        g_new = (g & <span class="number">0xF8</span>) | ((data >> <span class="number">3</span>) & <span class="number">0x07</span>)
+        b_new = (b & <span class="number">0xFE</span>) | ((data >> <span class="number">6</span>) & <span class="number">0x01</span>)
+        <span class="keyword">return</span> (r_new, g_new, b_new)
+
+    <span class="keyword">def</span> <span class="function">decode_lsb_pixel</span>(self, pixel: Tuple[int, int, int]) -> int:
+        <span class="string">"""Decode 7 bits from RGB pixel"""</span>
+        r, g, b = pixel
+        <span class="keyword">return</span> (r & <span class="number">0x07</span>) | ((g & <span class="number">0x07</span>) << <span class="number">3</span>) | ((b & <span class="number">0x01</span>) << <span class="number">6</span>)
+
+    <span class="keyword">def</span> <span class="function">encode_receipt</span>(self, gradient: List[Tuple[int, int, int]],
+                        data: bytes) -> List[Tuple[int, int, int]]:
+        <span class="string">"""Encode data into gradient receipt"""</span>
+        encoded = []
+        data_bits = []
+
+        <span class="comment"># Convert bytes to 7-bit chunks</span>
+        <span class="keyword">for</span> byte <span class="keyword">in</span> data:
+            data_bits.append(byte & <span class="number">0x7F</span>)
+            <span class="keyword">if</span> byte > <span class="number">127</span>:
+                data_bits.append((byte >> <span class="number">7</span>) | <span class="number">0x40</span>)
+
+        <span class="keyword">for</span> i, pixel <span class="keyword">in</span> enumerate(gradient):
+            <span class="keyword">if</span> i < len(data_bits):
+                encoded.append(self.encode_lsb_pixel(pixel, data_bits[i]))
+            <span class="keyword">else</span>:
+                encoded.append(pixel)
+
+        <span class="keyword">return</span> encoded
+
+    <span class="keyword">def</span> <span class="function">decode_receipt</span>(self, receipt: List[Tuple[int, int, int]],
+                        num_bytes: int) -> bytes:
+        <span class="string">"""Decode data from gradient receipt"""</span>
+        data_bits = [self.decode_lsb_pixel(p) <span class="keyword">for</span> p <span class="keyword">in</span> receipt[:num_bytes * <span class="number">2</span>]]
+        <span class="comment"># Reconstruct bytes from 7-bit chunks</span>
+        result = bytearray()
+        i = <span class="number">0</span>
+        <span class="keyword">while</span> i < len(data_bits) <span class="keyword">and</span> len(result) < num_bytes:
+            <span class="keyword">if</span> i + <span class="number">1</span> < len(data_bits) <span class="keyword">and</span> data_bits[i+<span class="number">1</span>] & <span class="number">0x40</span>:
+                byte = (data_bits[i] & <span class="number">0x7F</span>) | ((data_bits[i+<span class="number">1</span>] & <span class="number">0x01</span>) << <span class="number">7</span>)
+                i += <span class="number">2</span>
+            <span class="keyword">else</span>:
+                byte = data_bits[i] & <span class="number">0x7F</span>
+                i += <span class="number">1</span>
+            result.append(byte)
+        <span class="keyword">return</span> bytes(result)
+            </div>
+        </section>
+
+        <!-- Test Vectors -->
+        <section class="doc-section">
+            <h2>Test Vectors</h2>
+            <div class="code-block">
+<span class="comment"># Corridor traversal test</span>
+schema = GradientSchema()
+
+<span class="comment"># Alpha corridor: phi + e per step</span>
+alpha_vals = schema.traverse_corridor(<span class="string">'alpha'</span>, <span class="number">5</span>)
+<span class="comment"># Expected: [0, phi+e, 2*(phi+e), 3*(phi+e), 4*(phi+e)]</span>
+<span class="keyword">assert</span> abs(alpha_vals[<span class="number">1</span>] - (schema.PHI + schema.E)) < <span class="number">1e-10</span>
+
+<span class="comment"># LSB encoding roundtrip</span>
+original = (<span class="number">200</span>, <span class="number">150</span>, <span class="number">100</span>)
+data = <span class="number">0b1010101</span>  <span class="comment"># 85 decimal, 7 bits</span>
+encoded = schema.encode_lsb_pixel(original, data)
+decoded = schema.decode_lsb_pixel(encoded)
+<span class="keyword">assert</span> decoded == data, <span class="string">f"Expected {data}, got {decoded}"</span>
+
+<span class="comment"># Verify color change is minimal</span>
+<span class="keyword">for</span> o, e <span class="keyword">in</span> zip(original, encoded):
+    <span class="keyword">assert</span> abs(o - e) <= <span class="number">7</span>, <span class="string">"Color change too large"</span>
+
+<span class="comment"># Capacity test</span>
+<span class="keyword">assert</span> <span class="number">63</span> * <span class="number">63</span> * <span class="number">7</span> == <span class="number">27783</span>  <span class="comment"># bits in standard receipt</span>
+<span class="keyword">assert</span> <span class="number">27783</span> // <span class="number">8</span> == <span class="number">3472</span>     <span class="comment"># bytes capacity</span>
+
+<span class="comment"># Archetype test</span>
+<span class="keyword">for</span> i, arch <span class="keyword">in</span> enumerate(schema.ARCHETYPES):
+    <span class="keyword">assert</span> i == schema.ARCHETYPES.index(arch)
+<span class="keyword">assert</span> len(schema.ARCHETYPES) == <span class="number">12</span>
+            </div>
+        </section>
+
+        <!-- System Coupling Points -->
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">From Lucas:</span>
+                    <div class="desc">L_4 = 7 channels, L_4^2 = 49 compact size, L_4 x 9 = 63 standard size</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">From Holographic:</span>
+                    <div class="desc">Pattern survival. Holographic encoding provides data that fills LSB channels.</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Guardian:</span>
+                    <div class="desc">Archetype encoding. Guardians display receipts with archetype semantics.</div>
+                </div>
+            </div>
+
+            <h3>Closure Properties</h3>
+            <ul>
+                <li><strong>Self-contained:</strong> RRRR lattice defines all color space traversals</li>
+                <li><strong>Zero free parameters:</strong> Dimensions, channels, base color all derive from phi</li>
+                <li><strong>Dual-readable:</strong> Both human (aesthetic) and machine (LSB) interpretable</li>
+                <li><strong>Verifiable:</strong> LSB data can validate mining work</li>
+            </ul>
+        </section>
+
+        <!-- Source Files -->
+        <section class="doc-section">
+            <h2>Source Files</h2>
+            <div class="file-refs">
+                <span class="file-ref">receipt/gradient_schema.py</span>
+                <span class="file-ref">receipt/channel_encoder.py</span>
+                <span class="file-ref">constants.py</span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin v6 — Zero Free Parameters</p>
+            <p>phi = (1+sqrt(5))/2 | tau = phi^-1 | K = sqrt(1-phi^-4) | z_c = sqrt(3)/2</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardian Recipes - BloomCoin Systems</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --system-color: #cc77ff;
+            --system-glow: rgba(204,119,255,0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--system-color), #9944ff, var(--system-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--system-color); border-bottom-color: var(--system-glow); }
+        .doc-section h3 { color: var(--system-color); }
+        .nav-link { border-color: var(--system-glow); color: var(--system-color); }
+        .nav-link:hover { background: var(--system-glow); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="companion-binding.html" class="nav-link">Prev: Companion Binding</a>
+            <a href="../../index.html" class="nav-link">Back to Index</a>
+            <a href="nexthash-overview.html" class="nav-link">Next: NextHash Overview</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="doc-header">
+            <span style="font-size: 3rem;">📜</span>
+            <h1>GUARDIAN RECIPES</h1>
+            <p class="subtitle">19 Protective Archetypes with Unique Crafting Formulas</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> / <a href="./">Systems</a> / Guardian System
+            </nav>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge complete">19 Guardians</span>
+                <span class="status-badge complete">Recipe System</span>
+                <span class="status-badge partial">Battle Strategies</span>
+                <span class="status-badge planned">Farming Integration</span>
+            </div>
+            <div class="file-refs">
+                <span class="file-ref">game/guardian_pattern_recipes.py</span>
+                <span class="file-ref">game/guardians.py</span>
+            </div>
+        </section>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+            <p>Each of the 19 Guardians possesses unique crafting recipes--pattern synthesis formulas that combine ingredients into powerful battle strategies and farming multipliers:</p>
+
+            <div class="code-block">
+<span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">GuardianRecipe</span>:
+    <span class="string">"""A unique recipe tied to a specific guardian"""</span>
+    guardian_key: str              <span class="comment"># ECHO, PACK, NULL, etc.</span>
+    name: str                      <span class="comment"># "Echo Chamber Resonance"</span>
+    description: str               <span class="comment"># Flavor text</span>
+    complexity: RecipeComplexity   <span class="comment"># BASIC -> MYTHIC</span>
+    pattern_type: PatternType      <span class="comment"># RESONANCE, VOID, etc.</span>
+    ingredients: List[PatternIngredient]
+    crafting_steps: List[str]      <span class="comment"># Sequential instructions</span>
+    output_pattern: str            <span class="comment"># Result name</span>
+    battle_strategy: str           <span class="comment"># Combat effect</span>
+    farming_multiplier: float = <span class="number">1.0</span>
+    special_abilities: List[str]   <span class="comment"># Unlocked powers</span>
+    bloomcoin_cost: int = <span class="number">0</span>
+    time_to_craft: int = <span class="number">60</span>       <span class="comment"># seconds</span>
+
+<span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">PatternIngredient</span>:
+    name: str
+    pattern_type: PatternType
+    quantity: int
+    quality_min: float = <span class="number">0.5</span>      <span class="comment"># 0-1 quality threshold</span>
+    special_requirement: Optional[str] = None
+            </div>
+        </section>
+
+        <!-- 10 Pattern Types -->
+        <section class="doc-section">
+            <h2>10 Pattern Types (Crafting Domains)</h2>
+            <table class="data-table">
+                <tr><th>Pattern</th><th>Domain</th><th>Battle Effect</th></tr>
+                <tr><td style="color:#ff9944;">RESONANCE</td><td>Frequency-based</td><td>Echo damage, amplitude stacking</td></tr>
+                <tr><td style="color:#44ddff;">CRYSTALLINE</td><td>Geometric structure</td><td>Defense matrices, reflection shields</td></tr>
+                <tr><td style="color:#ffdd44;">TEMPORAL</td><td>Time manipulation</td><td>Turn control, cooldown reduction</td></tr>
+                <tr><td style="color:#ff4444;">ELEMENTAL</td><td>Transformation</td><td>Type weakness exploitation</td></tr>
+                <tr><td style="color:#9944ff;">VOID</td><td>Absence/nullspace</td><td>Damage negation, phase shift</td></tr>
+                <tr><td style="color:#44ff99;">QUANTUM</td><td>Probability</td><td>Crit manipulation, entanglement</td></tr>
+                <tr><td style="color:#88ff44;">ORGANIC</td><td>Growth/life</td><td>Regeneration, mutation</td></tr>
+                <tr><td style="color:#ff44dd;">HARMONIC</td><td>Musical vibration</td><td>Buff synchronization, debuff cleanse</td></tr>
+                <tr><td style="color:#4499ff;">MEMORY</td><td>Information storage</td><td>Pattern recall, ability echo</td></tr>
+                <tr><td style="color:#ff8844;">CHAOS</td><td>Entropy manipulation</td><td>Random buffs, cascade effects</td></tr>
+            </table>
+        </section>
+
+        <!-- 5 Complexity Tiers -->
+        <section class="doc-section">
+            <h2>phi-Derived Complexity Tiers</h2>
+            <table class="data-table">
+                <tr><th>Tier</th><th>Level</th><th>BloomCoin</th><th>Description</th><th>Drop Rate</th></tr>
+                <tr><td>BASIC</td><td>1</td><td>100</td><td>Simple pattern combination</td><td>60%</td></tr>
+                <tr><td>ADVANCED</td><td>2</td><td>500</td><td>Complex multi-step process</td><td>25%</td></tr>
+                <tr><td>MASTER</td><td>3</td><td>1,500</td><td>Intricate pattern weaving</td><td>10%</td></tr>
+                <tr style="color:#ffd700;"><td>LEGENDARY</td><td>4</td><td>5,000</td><td>Transcendent fusion</td><td>4%</td></tr>
+                <tr style="color:#ff55ff;"><td>MYTHIC</td><td>5</td><td>15,000</td><td>Reality-altering synthesis</td><td>1%</td></tr>
+            </table>
+            <p style="color:#888; margin-top:10px;">Cost progression approximates phi^3 scaling: 100 -> 500 -> 1500 -> 5000 -> 15000</p>
+        </section>
+
+        <!-- 19 Guardians by Territory -->
+        <section class="doc-section">
+            <h2>19 Guardians Across 3 Territories</h2>
+            <table class="data-table">
+                <tr><th>Territory</th><th>Count</th><th>Guardians</th><th>Primary Patterns</th></tr>
+                <tr><td style="color:#7fff00;">Garden</td><td>7</td><td>ECHO, PACK, BLOOM, SEED, HIVE, ROOT, SPORE</td><td>ORGANIC, RESONANCE, HARMONIC</td></tr>
+                <tr><td style="color:#9d4eff;">Void</td><td>6</td><td>SHADOW, NULL, ABYSS, PHANTOM, ECLIPSE, RIFT</td><td>VOID, TEMPORAL, CHAOS</td></tr>
+                <tr><td style="color:#00d4ff;">Quantum</td><td>6</td><td>WAVE, PARTICLE, FIELD, FLUX, PRISM, LATTICE</td><td>QUANTUM, CRYSTALLINE, MEMORY</td></tr>
+            </table>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Recipe Crafting</h4>
+                    <p>Ingredients PROJECT into synthesized patterns:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">craft_recipe</span>(self, player_id: str,
+                  guardian_key: str, recipe_name: str):
+    <span class="string">"""Execute recipe crafting"""</span>
+    recipe = self.get_recipe(guardian_key, recipe_name)
+
+    <span class="comment"># Verify ingredients available</span>
+    <span class="keyword">for</span> ingredient <span class="keyword">in</span> recipe.ingredients:
+        available = self.player_patterns[player_id][ingredient.name]
+        <span class="keyword">if</span> available < ingredient.quantity:
+            <span class="keyword">return</span> {<span class="string">"error"</span>: <span class="string">"Insufficient ingredients"</span>}
+        <span class="keyword">if</span> quality < ingredient.quality_min:
+            <span class="keyword">return</span> {<span class="string">"error"</span>: <span class="string">"Quality too low"</span>}
+
+    <span class="comment"># Consume ingredients</span>
+    <span class="keyword">for</span> ing <span class="keyword">in</span> recipe.ingredients:
+        self.player_patterns[player_id][ing.name] -= ing.quantity
+
+    <span class="comment"># Produce output pattern</span>
+    self.player_patterns[player_id][recipe.output_pattern] += <span class="number">1</span>
+    self.unlocked_recipes[player_id].add(f<span class="string">"{guardian_key}:{recipe_name}"</span>)
+                    </div>
+                    <p><strong>Key:</strong> Crafting PROJECTS ingredients forward into permanent patterns.</p>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Farming Investment</h4>
+                    <p>Patterns REFLECT back through growth cycles:</p>
+                    <div class="code-block">
+<span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">FarmingInvestment</span>:
+    pattern_name: str
+    guardian_key: str
+    invested_bloomcoin: int = <span class="number">0</span>
+    growth_stage: int = <span class="number">0</span>       <span class="comment"># 0-10 stages</span>
+    yield_multiplier: float = <span class="number">1.0</span>
+    special_mutations: List[str] = []
+
+    <span class="keyword">def</span> <span class="function">calculate_yield</span>(self) -> Dict:
+        base_yield = self.invested_bloomcoin * <span class="number">0.1</span>
+        stage_bonus = self.growth_stage * <span class="number">0.2</span>
+        total_mult = self.yield_multiplier * (<span class="number">1</span> + stage_bonus)
+
+        <span class="keyword">return</span> {
+            <span class="string">"base_patterns"</span>: int(base_yield * total_mult),
+            <span class="string">"quality_bonus"</span>: min(<span class="number">1.0</span>, growth_stage / <span class="number">10</span>),
+            <span class="string">"mutation_chance"</span>: min(<span class="number">0.5</span>, growth_stage * <span class="number">0.05</span>)
+        }
+                    </div>
+                    <p><strong>Key:</strong> Investment REFLECTS back as yield over growth stages.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergent Triad -->
+        <section class="doc-section">
+            <h2>Emergent Triad: Battle Strategy Synthesis</h2>
+            <div class="triad-container">
+                <h4>Recipes + Abilities -> Combined Battle Power</h4>
+                <div class="code-block">
+<span class="keyword">def</span> <span class="function">get_battle_strategy</span>(self, guardian_key: str,
+                         unlocked_recipes: Set[str]) -> Dict:
+    <span class="string">"""
+    The Triad emerges when multiple recipes combine:
+    - Individual recipes provide strategies
+    - Combined abilities create synergy
+    - Synergy bonus = 10% per additional strategy
+    """</span>
+    strategies = []
+    abilities = []
+
+    <span class="keyword">for</span> recipe_key <span class="keyword">in</span> unlocked_recipes:
+        <span class="keyword">if</span> recipe_key.startswith(f<span class="string">"{guardian_key}:"</span>):
+            recipe = self.get_recipe_by_key(recipe_key)
+            strategies.append(recipe.battle_strategy)
+            abilities.extend(recipe.special_abilities)
+
+    <span class="keyword">return</span> {
+        <span class="string">"guardian"</span>: guardian_key,
+        <span class="string">"strategies"</span>: strategies,
+        <span class="string">"abilities"</span>: list(set(abilities)),  <span class="comment"># Unique only</span>
+        <span class="string">"synergy_bonus"</span>: len(strategies) * <span class="number">0.1</span>  <span class="comment"># 10% per strategy!</span>
+    }
+                </div>
+                <p><strong>Key insight:</strong> The emergent Triad is the synergy bonus--neither the recipes alone nor the abilities alone create it, but their COMBINATION produces emergent battle power that grows non-linearly with each additional unlocked recipe.</p>
+            </div>
+        </section>
+
+        <!-- Example Recipe -->
+        <section class="doc-section">
+            <h2>Example: ECHO's "Echo Chamber Resonance"</h2>
+            <div class="code-block">
+GuardianRecipe(
+    guardian_key=<span class="string">"ECHO"</span>,
+    name=<span class="string">"Echo Chamber Resonance"</span>,
+    description=<span class="string">"Amplify signal patterns through recursive echo loops"</span>,
+    complexity=RecipeComplexity.ADVANCED,  <span class="comment"># Level 2, 500 BC</span>
+    pattern_type=PatternType.RESONANCE,
+    ingredients=[
+        PatternIngredient(<span class="string">"Signal Fragment"</span>, RESONANCE, <span class="number">3</span>, quality_min=<span class="number">0.7</span>),
+        PatternIngredient(<span class="string">"Void Echo"</span>, VOID, <span class="number">1</span>, quality_min=<span class="number">0.8</span>),
+        PatternIngredient(<span class="string">"Memory Crystal"</span>, MEMORY, <span class="number">2</span>, quality_min=<span class="number">0.6</span>)
+    ],
+    crafting_steps=[
+        <span class="string">"1. Align signal fragments in harmonic sequence"</span>,
+        <span class="string">"2. Create void pocket for echo containment"</span>,
+        <span class="string">"3. Embed memories into resonance field"</span>,
+        <span class="string">"4. Amplify through recursive loops"</span>
+    ],
+    output_pattern=<span class="string">"Eternal Echo Pattern"</span>,
+    battle_strategy=<span class="string">"Create echo duplicates that confuse enemies and amplify damage over time"</span>,
+    farming_multiplier=<span class="number">1.5</span>,  <span class="comment"># 50% yield boost</span>
+    special_abilities=[<span class="string">"Echo Multiplication"</span>, <span class="string">"Signal Trace"</span>, <span class="string">"Frequency Lock"</span>],
+    bloomcoin_cost=<span class="number">750</span>,
+    time_to_craft=<span class="number">60</span>  <span class="comment"># seconds</span>
+)
+            </div>
+        </section>
+
+        <!-- Integration Points -->
+        <section class="doc-section">
+            <h2>Integration Points</h2>
+            <h3>System Closure Properties</h3>
+            <ul>
+                <li><strong>Self-contained:</strong> Recipes depend only on patterns, ingredients, and BloomCoin</li>
+                <li><strong>Zero free parameters:</strong> Cost tiers follow phi^3-approximate scaling; yields derive from investment</li>
+                <li><strong>Deterministic core:</strong> Given identical inputs, crafting always produces same output</li>
+                <li><strong>Synergy emergence:</strong> Battle power grows with recipe combinations (10% per strategy)</li>
+            </ul>
+
+            <h3>Inter-System Coupling</h3>
+            <div class="coupling-grid">
+                <div class="coupling-item"><span class="target">From Mining:</span> <span class="desc">Companions mine pattern ingredients</span></div>
+                <div class="coupling-item"><span class="target">From Market:</span> <span class="desc">Patterns tradeable as assets</span></div>
+                <div class="coupling-item"><span class="target">To Battle:</span> <span class="desc">Strategies power Tesseract combat</span></div>
+                <div class="coupling-item"><span class="target">To Farm:</span> <span class="desc">Investment grows yield over time</span></div>
+                <div class="coupling-item"><span class="target">Bidirectional Packs:</span> <span class="desc">Recipe cards in pack openings</span></div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>phi = 1.618033988749895 | tau = 0.618033988749895 | L4 = 7</p>
+            <p>BloomCoin v2 Documentation | Guardian Recipe System</p>
+        </footer>
+    </div>
+    <script src="../_shared/constants.js"></script>
+</body>
+</html>

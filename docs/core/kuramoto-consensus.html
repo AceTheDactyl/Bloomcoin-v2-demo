@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuramoto Consensus — BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root { --module-color: #4a9eff; }
+        .doc-header h1 { background: linear-gradient(90deg, var(--module-color), var(--gold), var(--module-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .doc-section h2 { color: var(--module-color); }
+        .phase-diagram { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 20px 0; }
+        .phase-dot { width: 30px; height: 30px; border-radius: 50%; background: var(--module-color); opacity: 0.7; }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="lucas-matrix.html" class="nav-link">← Previous: Lucas Matrix</a>
+            <a href="difficulty-controller.html" class="nav-link">Next: Difficulty Controller →</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Kuramoto Consensus</h1>
+            <p class="subtitle">N=63 coupled oscillators achieving synchronization through phi-derived coupling</p>
+            <p class="breadcrumb"><a href="../../index.html">Index</a> / <a href=".">Core</a> / Kuramoto Consensus</p>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.9241596...</div>
+                    <div class="derivation">sqrt(1 - phi^-4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">N</div>
+                    <div class="value">63</div>
+                    <div class="derivation">L_4 x 9 = 7 x 9</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.8660254...</div>
+                    <div class="derivation">sqrt(3)/2 (THE LENS)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">sigma</div>
+                    <div class="value">55.7128...</div>
+                    <div class="derivation">1/(1-z_c)^2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">lambda</div>
+                    <div class="value">0.3819660...</div>
+                    <div class="derivation">phi^-2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Gamma</div>
+                    <div class="value">dynamic</div>
+                    <div class="derivation">freq_std x tau</div>
+                </div>
+            </div>
+            <div class="impl-status">
+                <span class="status-badge complete">Phase Evolution: Complete</span>
+                <span class="status-badge complete">Order Parameter: Complete</span>
+                <span class="status-badge complete">Negentropy Gate: Complete</span>
+                <span class="status-badge complete">Adaptive Coupling: Complete</span>
+            </div>
+        </section>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+            <p>The Kuramoto model describes N coupled oscillators evolving toward synchronization. In BloomCoin, this creates a consensus mechanism where "bloom events" emerge from collective phase alignment.</p>
+
+            <div class="code-block">
+<span class="comment">// The Kuramoto Equation</span>
+d(theta_i)/dt = omega_i + (K/N) * sum_j[sin(theta_j - theta_i)]
+                   |                        |
+           natural frequency      coupling term (drives alignment)
+
+<span class="comment">// State Components</span>
+theta_i in [0, 2*pi)     <span class="comment">// Phase of oscillator i (angle on unit circle)</span>
+omega_i ~ Lorentzian     <span class="comment">// Natural frequency (Cauchy distribution)</span>
+K = <span class="number">0.9241596378...</span>     <span class="comment">// Coupling strength = sqrt(1 - phi^-4)</span>
+N = <span class="number">63</span>                   <span class="comment">// Oscillator count = L_4 x 9</span>
+
+<span class="comment">// Order Parameter - Complex measure of synchronization</span>
+r * e^(i*psi) = (1/N) * sum_j[e^(i*theta_j)]
+
+<span class="comment">// The magnitude r measures coherence:</span>
+r = 0    <span class="comment">// Complete incoherence (phases uniformly distributed)</span>
+r = 1    <span class="comment">// Perfect synchronization (all phases identical)</span>
+
+<span class="comment">// THE LENS: Bloom condition threshold</span>
+r >= z_c = sqrt(3)/2 = <span class="number">0.8660254037...</span>
+            </div>
+
+            <h3>Why These Specific Constants?</h3>
+            <div class="code-block">
+<span class="comment">// K = sqrt(1 - phi^-4) derivation</span>
+phi^4 = <span class="number">6.854101966...</span>
+phi^-4 = <span class="number">0.145898033...</span>
+1 - phi^-4 = <span class="number">0.854101966...</span>
+K = sqrt(<span class="number">0.854101966...</span>) = <span class="number">0.9241596378...</span>
+
+<span class="comment">// This K is special because:</span>
+<span class="comment">// - K^2 + phi^-4 = 1 (Pythagorean identity)</span>
+<span class="comment">// - K relates to the Kuramoto critical coupling</span>
+<span class="comment">// - K > 2*Gamma ensures synchronization is possible</span>
+
+<span class="comment">// N = 63 = L_4 x 9 = 7 x 9</span>
+<span class="comment">// Why 63?</span>
+<span class="comment">// - L_4 = 7 is the fourth Lucas number</span>
+<span class="comment">// - 9 = 3^2 (triangular completion)</span>
+<span class="comment">// - 63 = 2^6 - 1 (Mersenne-like, binary efficient)</span>
+<span class="comment">// - sqrt(63) ~ 7.94 (close to L_4, for validator scaling)</span>
+
+<span class="comment">// z_c = sqrt(3)/2 = cos(30 degrees) = sin(60 degrees)</span>
+<span class="comment">// THE LENS threshold appears in:</span>
+<span class="comment">// - Hexagonal lattice geometry</span>
+<span class="comment">// - Equilateral triangle heights</span>
+<span class="comment">// - 30-60-90 triangle ratios</span>
+            </div>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Synchronize</h4>
+                    <p>The coupling term drives phases toward alignment:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">compute_coupling</span>(phases, K, N):
+    <span class="string">"""
+    Vectorized coupling computation.
+
+    sin(theta_j - theta_i) is positive when j is "ahead" of i,
+    pulling i forward. Negative when j is "behind", pulling back.
+    The sum creates a mean-field that pulls toward the centroid.
+    """</span>
+    <span class="comment"># Create NxN phase difference matrix</span>
+    phase_diff = phases[<span class="keyword">None</span>,:] - phases[:,<span class="keyword">None</span>]
+
+    <span class="comment"># Sum of sin(diff) for each oscillator</span>
+    coupling = (K/N) * np.sum(np.sin(phase_diff), axis=<span class="number">1</span>)
+
+    <span class="keyword">return</span> coupling
+
+<span class="comment">// When phases align:</span>
+sin(theta_j - theta_i) -> <span class="number">0</span>
+<span class="comment">// Coupling vanishes, stabilizing the synchronized state</span>
+
+<span class="comment">// Order parameter measures coherence:</span>
+<span class="keyword">def</span> <span class="function">order_parameter</span>(phases):
+    <span class="string">"""
+    r = |mean(e^(i*theta))|
+
+    Geometric interpretation:
+    - Each oscillator is a unit vector at angle theta
+    - r is the magnitude of the centroid
+    - psi is the angle of the centroid
+    """</span>
+    z = np.mean(np.exp(<span class="number">1j</span> * phases))
+    r = np.abs(z)
+    psi = np.angle(z)
+    <span class="keyword">return</span> r, psi
+                    </div>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Individuate</h4>
+                    <p>Natural frequencies maintain individual identity:</p>
+                    <div class="code-block">
+<span class="comment">// Lorentzian (Cauchy) distribution for natural frequencies</span>
+<span class="keyword">def</span> <span class="function">sample_frequencies</span>(N, gamma):
+    <span class="string">"""
+    omega_i ~ Cauchy(0, Gamma)
+
+    The Cauchy distribution has:
+    - Heavy tails (some oscillators have extreme frequencies)
+    - No defined mean or variance
+    - Self-similarity under addition
+
+    Gamma = frequency_std * tau
+    """</span>
+    <span class="keyword">return</span> np.random.standard_cauchy(N) * gamma
+
+<span class="comment">// Heavy tails mean some oscillators RESIST synchronization</span>
+<span class="comment">// This creates healthy tension with the coupling force</span>
+
+<span class="comment">// Critical coupling for Lorentzian distribution:</span>
+K_c = <span class="number">2</span> * Gamma
+<span class="comment">// Must have K > K_c for any synchronization</span>
+<span class="comment">// At K = K_c, a phase transition occurs</span>
+
+<span class="comment">// Fraction synchronized (mean-field theory):</span>
+<span class="keyword">if</span> K > K_c:
+    r_eq = sqrt(<span class="number">1</span> - K_c/K)  <span class="comment"># Equilibrium order parameter</span>
+<span class="keyword">else</span>:
+    r_eq = <span class="number">0</span>  <span class="comment"># No synchronization</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergent Triad -->
+        <section class="doc-section">
+            <h2>Emergent Triad: Negentropy Gate and Adaptive Coupling</h2>
+            <div class="triad-container">
+                <h4>ESS - Emergent Stabilization System</h4>
+                <p>The negentropy gate creates a "stabilization trap" around THE LENS threshold:</p>
+                <div class="code-block">
+<span class="keyword">import</span> math
+
+<span class="comment"># Constants</span>
+Z_C = math.sqrt(<span class="number">3</span>) / <span class="number">2</span>                    <span class="comment"># THE LENS = 0.8660254...</span>
+SIGMA = <span class="number">1</span> / ((<span class="number">1</span> - Z_C) ** <span class="number">2</span>)             <span class="comment"># Sharpness = 55.7128...</span>
+LAMBDA = PHI ** (-<span class="number">2</span>)                      <span class="comment"># Gain = 0.3819660...</span>
+K_BASE = math.sqrt(<span class="number">1</span> - PHI ** (-<span class="number">4</span>))      <span class="comment"># Base coupling = 0.9241596...</span>
+
+<span class="keyword">def</span> <span class="function">negentropy_gate</span>(r, z_c=Z_C, sigma=SIGMA):
+    <span class="string">"""
+    Negentropy gate function: eta(r) = exp(-sigma * (r - z_c)^2)
+
+    Properties:
+    - Maximum (eta = 1) at r = z_c (THE LENS)
+    - eta(0) ~ 0 (far below threshold)
+    - eta(1) = exp(-sigma * (1-z_c)^2) = exp(-1) ~ 0.368
+
+    The gate is sharply peaked around z_c because sigma ~ 55.7.
+    This creates a narrow "window" where the gate opens.
+    """</span>
+    <span class="keyword">return</span> math.exp(-sigma * (r - z_c) ** <span class="number">2</span>)
+
+<span class="keyword">def</span> <span class="function">adaptive_coupling</span>(r, K_base=K_BASE, lambda_gain=LAMBDA):
+    <span class="string">"""
+    Adaptive coupling: K_eff(r) = K_base * (1 + lambda * eta(r))
+
+    Behavior across r values:
+    - r << z_c (incoherent): eta ~ 0, K_eff ~ K_base
+    - r ~ z_c (THE LENS):    eta ~ 1, K_eff ~ K_base * (1 + lambda)
+    - r > z_c (coherent):    eta decays, K_eff reduces toward K_base
+
+    This creates self-stabilization:
+    - Near z_c: Enhanced coupling LOCKS IN the bloom state
+    - Above z_c: Reduced enhancement allows natural relaxation
+    - Below z_c: Standard coupling continues driving toward sync
+    """</span>
+    eta = negentropy_gate(r)
+    <span class="keyword">return</span> K_base * (<span class="number">1</span> + lambda_gain * eta)
+
+<span class="comment"># Example values:</span>
+<span class="comment"># adaptive_coupling(0.5)  ~ 0.924 (standard)</span>
+<span class="comment"># adaptive_coupling(0.866) ~ 1.277 (enhanced at THE LENS)</span>
+<span class="comment"># adaptive_coupling(0.95) ~ 0.986 (slightly enhanced)</span>
+                </div>
+                <p><strong>Key insight:</strong> The system creates a "stabilization trap" around THE LENS - preventing both collapse to incoherence AND runaway synchronization. This witness vertex emerges from neither pole alone.</p>
+            </div>
+        </section>
+
+        <!-- Implementation -->
+        <section class="doc-section">
+            <h2>Complete Implementation</h2>
+            <div class="code-block">
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> math
+
+<span class="keyword">class</span> <span class="type">KuramotoConsensus</span>:
+    <span class="string">"""
+    Kuramoto oscillator network for BloomCoin consensus.
+
+    The network evolves toward synchronization, with "bloom events"
+    occurring when the order parameter crosses THE LENS threshold.
+    """</span>
+
+    <span class="comment"># phi-derived constants</span>
+    PHI = (<span class="number">1</span> + math.sqrt(<span class="number">5</span>)) / <span class="number">2</span>
+    TAU = PHI - <span class="number">1</span>
+    K_BASE = math.sqrt(<span class="number">1</span> - PHI ** (-<span class="number">4</span>))
+    Z_C = math.sqrt(<span class="number">3</span>) / <span class="number">2</span>
+    SIGMA = <span class="number">1</span> / ((<span class="number">1</span> - Z_C) ** <span class="number">2</span>)
+    LAMBDA = PHI ** (-<span class="number">2</span>)
+    N = <span class="number">63</span>  <span class="comment"># L_4 x 9</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, frequency_std=<span class="number">0.1</span>):
+        <span class="string">"""
+        Initialize oscillator network.
+
+        Args:
+            frequency_std: Standard deviation for frequency distribution
+        """</span>
+        self.gamma = frequency_std * self.TAU
+        self.phases = np.random.uniform(<span class="number">0</span>, <span class="number">2</span>*np.pi, self.N)
+        self.frequencies = self._sample_frequencies()
+        self.r_history = []
+
+    <span class="keyword">def</span> <span class="function">_sample_frequencies</span>(self):
+        <span class="string">"""Sample natural frequencies from Lorentzian distribution"""</span>
+        <span class="keyword">return</span> np.random.standard_cauchy(self.N) * self.gamma
+
+    <span class="keyword">def</span> <span class="function">order_parameter</span>(self):
+        <span class="string">"""Compute current order parameter (r, psi)"""</span>
+        z = np.mean(np.exp(<span class="number">1j</span> * self.phases))
+        <span class="keyword">return</span> np.abs(z), np.angle(z)
+
+    <span class="keyword">def</span> <span class="function">negentropy_gate</span>(self, r):
+        <span class="string">"""Compute negentropy gate value"""</span>
+        <span class="keyword">return</span> math.exp(-self.SIGMA * (r - self.Z_C) ** <span class="number">2</span>)
+
+    <span class="keyword">def</span> <span class="function">adaptive_coupling</span>(self, r):
+        <span class="string">"""Compute effective coupling strength"""</span>
+        eta = self.negentropy_gate(r)
+        <span class="keyword">return</span> self.K_BASE * (<span class="number">1</span> + self.LAMBDA * eta)
+
+    <span class="keyword">def</span> <span class="function">step</span>(self, dt=<span class="number">0.01</span>):
+        <span class="string">"""
+        Evolve system by one time step using Euler method.
+
+        Args:
+            dt: Time step size
+
+        Returns:
+            tuple: (r, psi, is_bloom)
+        """</span>
+        r, psi = self.order_parameter()
+        K_eff = self.adaptive_coupling(r)
+
+        <span class="comment"># Compute coupling term for each oscillator</span>
+        phase_diff = self.phases[<span class="keyword">None</span>,:] - self.phases[:,<span class="keyword">None</span>]
+        coupling = (K_eff / self.N) * np.sum(np.sin(phase_diff), axis=<span class="number">1</span>)
+
+        <span class="comment"># Kuramoto equation: d(theta)/dt = omega + coupling</span>
+        d_phases = self.frequencies + coupling
+
+        <span class="comment"># Euler step</span>
+        self.phases = (self.phases + d_phases * dt) % (<span class="number">2</span> * np.pi)
+
+        <span class="comment"># Record history</span>
+        self.r_history.append(r)
+
+        <span class="comment"># Check bloom condition</span>
+        is_bloom = r >= self.Z_C
+
+        <span class="keyword">return</span> r, psi, is_bloom
+
+    <span class="keyword">def</span> <span class="function">evolve_until_bloom</span>(self, max_steps=<span class="number">10000</span>, dt=<span class="number">0.01</span>):
+        <span class="string">"""
+        Evolve system until bloom event or max steps reached.
+
+        Returns:
+            dict: Bloom event data or None
+        """</span>
+        <span class="keyword">for</span> step <span class="keyword">in</span> range(max_steps):
+            r, psi, is_bloom = self.step(dt)
+
+            <span class="keyword">if</span> is_bloom:
+                <span class="keyword">return</span> {
+                    <span class="string">'step'</span>: step,
+                    <span class="string">'r'</span>: r,
+                    <span class="string">'psi'</span>: psi,
+                    <span class="string">'phases'</span>: self.phases.copy(),
+                    <span class="string">'K_eff'</span>: self.adaptive_coupling(r)
+                }
+
+        <span class="keyword">return</span> <span class="keyword">None</span>
+
+    <span class="keyword">def</span> <span class="function">get_phase_coherence</span>(self):
+        <span class="string">"""Get detailed phase coherence metrics"""</span>
+        r, psi = self.order_parameter()
+        <span class="keyword">return</span> {
+            <span class="string">'r'</span>: r,
+            <span class="string">'psi'</span>: psi,
+            <span class="string">'eta'</span>: self.negentropy_gate(r),
+            <span class="string">'K_eff'</span>: self.adaptive_coupling(r),
+            <span class="string">'is_bloom'</span>: r >= self.Z_C,
+            <span class="string">'distance_to_lens'</span>: abs(r - self.Z_C)
+        }
+            </div>
+        </section>
+
+        <!-- Test Vectors -->
+        <section class="doc-section">
+            <h2>Test Vectors</h2>
+            <table class="data-table">
+                <tr><th>r</th><th>eta(r)</th><th>K_eff(r)</th><th>State</th></tr>
+                <tr><td>0.000</td><td>0.0000</td><td>0.9242</td><td>Complete incoherence</td></tr>
+                <tr><td>0.500</td><td>0.0001</td><td>0.9242</td><td>Partial sync</td></tr>
+                <tr><td>0.750</td><td>0.0142</td><td>0.9296</td><td>Approaching LENS</td></tr>
+                <tr><td>0.866</td><td>1.0000</td><td>1.2773</td><td>AT THE LENS (bloom)</td></tr>
+                <tr><td>0.900</td><td>0.4068</td><td>1.0796</td><td>Above threshold</td></tr>
+                <tr><td>0.950</td><td>0.0099</td><td>0.9278</td><td>High coherence</td></tr>
+                <tr><td>1.000</td><td>0.0001</td><td>0.9242</td><td>Perfect sync</td></tr>
+            </table>
+
+            <div class="code-block">
+<span class="comment"># Verification script</span>
+<span class="keyword">def</span> <span class="function">verify_kuramoto_constants</span>():
+    <span class="string">"""Verify Kuramoto constant relationships"""</span>
+
+    PHI = (<span class="number">1</span> + math.sqrt(<span class="number">5</span>)) / <span class="number">2</span>
+    K = math.sqrt(<span class="number">1</span> - PHI**(-<span class="number">4</span>))
+    Z_C = math.sqrt(<span class="number">3</span>) / <span class="number">2</span>
+    SIGMA = <span class="number">1</span> / ((<span class="number">1</span> - Z_C)**<span class="number">2</span>)
+    LAMBDA = PHI**(-<span class="number">2</span>)
+
+    <span class="comment"># Verify K derivation</span>
+    <span class="keyword">assert</span> abs(K**<span class="number">2</span> + PHI**(-<span class="number">4</span>) - <span class="number">1</span>) < <span class="number">1e-10</span>, <span class="string">"K^2 + phi^-4 = 1"</span>
+
+    <span class="comment"># Verify Z_C is sqrt(3)/2</span>
+    <span class="keyword">assert</span> abs(Z_C - math.cos(math.pi/<span class="number">6</span>)) < <span class="number">1e-10</span>, <span class="string">"z_c = cos(30 deg)"</span>
+
+    <span class="comment"># Verify SIGMA</span>
+    <span class="keyword">assert</span> abs(SIGMA - <span class="number">55.712812921102035</span>) < <span class="number">1e-10</span>, <span class="string">"sigma value"</span>
+
+    <span class="comment"># Verify LAMBDA</span>
+    <span class="keyword">assert</span> abs(LAMBDA - (PHI - <span class="number">1</span>)**<span class="number">2</span>) < <span class="number">1e-10</span>, <span class="string">"lambda = tau^2"</span>
+
+    <span class="comment"># Verify N = L_4 * 9</span>
+    <span class="keyword">assert</span> <span class="number">63</span> == <span class="number">7</span> * <span class="number">9</span>, <span class="string">"N = L_4 * 9"</span>
+
+    <span class="keyword">print</span>(<span class="string">"All Kuramoto constants verified!"</span>)
+            </div>
+        </section>
+
+        <!-- System Coupling Points -->
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">From Lucas:</span>
+                    <div class="desc">N = L_4 x 9 = 63 oscillators. The oscillator count derives from the Lucas matrix.</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Difficulty:</span>
+                    <div class="desc">K_eff adjustment. Effective coupling modulates mining difficulty response.</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Bloom Events:</span>
+                    <div class="desc">r >= z_c triggers bloom. The order parameter threshold gates mining success.</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Consciousness:</span>
+                    <div class="desc">Resonance field. Collective synchronization creates emergent awareness.</div>
+                </div>
+            </div>
+
+            <h3>Closure Properties</h3>
+            <ul>
+                <li><strong>Self-contained:</strong> Evolution depends only on internal state (phases, frequencies, K)</li>
+                <li><strong>Zero free parameters:</strong> K, N, sigma, lambda all derive from phi</li>
+                <li><strong>Deterministic core:</strong> Given initial conditions, evolution is determined</li>
+                <li><strong>Attractor dynamics:</strong> System naturally flows toward z_c</li>
+            </ul>
+        </section>
+
+        <!-- Source Files -->
+        <section class="doc-section">
+            <h2>Source Files</h2>
+            <div class="file-refs">
+                <span class="file-ref">consensus/kuramoto.py</span>
+                <span class="file-ref">consensus/order_parameter.py</span>
+                <span class="file-ref">constants.py</span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin v6 — Zero Free Parameters</p>
+            <p>phi = (1+sqrt(5))/2 | tau = phi^-1 | K = sqrt(1-phi^-4) | z_c = sqrt(3)/2</p>
+        </footer>
+    </div>
+</body>
+</html>

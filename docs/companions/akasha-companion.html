@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akasha, The Record - BloomCoin Companion Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --companion-color: #ffcc00;
+            --companion-glow: rgba(255,204,0,0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--companion-color), #ffe066, var(--companion-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 {
+            color: var(--companion-color);
+            border-bottom-color: var(--companion-glow);
+        }
+        .stat-card {
+            background: rgba(255,204,0,0.08);
+            border: 1px solid var(--companion-glow);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        .stat-card .label { color: #aaa; font-size: 0.85rem; }
+        .stat-card .value { color: var(--companion-color); font-size: 1.3rem; font-weight: bold; }
+        .ability-card {
+            background: rgba(255,204,0,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+        .ability-card .name { color: var(--companion-color); font-weight: bold; }
+        .ability-card .cost { color: var(--gold); font-size: 0.85rem; }
+        .ability-card .desc { color: #ccc; font-size: 0.9rem; margin-top: 5px; }
+        .pattern-tag {
+            display: inline-block;
+            background: rgba(255,204,0,0.2);
+            border: 1px solid var(--companion-color);
+            border-radius: 15px;
+            padding: 4px 12px;
+            margin: 4px;
+            font-size: 0.8rem;
+        }
+        .synergy-card {
+            background: rgba(0,0,0,0.3);
+            border-left: 3px solid var(--companion-color);
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .library-display {
+            background: rgba(255,204,0,0.1);
+            border: 1px solid var(--companion-glow);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Akasha, The Record</h1>
+            <p class="subtitle">Memory Crystallization - Companion Documentation</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Documentation</a> /
+                <a href="./">Companions</a> /
+                Akasha
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="gaia-companion.html" class="nav-link">Prev: Gaia</a>
+            <a href="resonance-companion.html" class="nav-link">Next: Resonance</a>
+        </nav>
+
+        <!-- Companion Overview -->
+        <section class="doc-section">
+            <h2>Companion Overview</h2>
+            <p>Akasha is the keeper of all knowledge, the eternal library. Through modular fingerprint extraction and memory crystallization, Akasha identifies repeating patterns and stores them in a persistent crystal library. Each discovery adds to the collective wisdom, making future discoveries more likely.</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div class="stat-card">
+                    <div class="label">Efficiency</div>
+                    <div class="value">1.0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Search Space</div>
+                    <div class="value">200</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Memory Depth</div>
+                    <div class="value">[32, 64]</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Library Cap</div>
+                    <div class="value">100 patterns</div>
+                </div>
+            </div>
+
+            <div class="library-display">
+                <strong style="color: var(--companion-color);">The Crystal Library</strong><br>
+                <span style="color: #aaa;">Akasha maintains a persistent collection of discovered signatures. Each stored pattern increases the chance of library resonance, creating a compounding advantage over time.</span>
+            </div>
+        </section>
+
+        <!-- Archetype & Mythology -->
+        <section class="doc-section">
+            <h2>Archetype & Mythology</h2>
+            <p>In Hindu philosophy, the Akashic Records are a compendium of all human events, thoughts, and emotions that have ever occurred. In BloomCoin's universe, Akasha embodies this concept - a living repository of all patterns ever discovered, accessible through the crystal library.</p>
+
+            <p>Akasha's power grows with knowledge. Each pattern stored in the library strengthens future mining operations. The modular fingerprint system uses prime numbers to create unique signatures, echoing the ancient wisdom that primes are the atoms of mathematics.</p>
+
+            <h3>Core Philosophy</h3>
+            <ul>
+                <li><strong>Memory is Power:</strong> Each stored pattern increases future success</li>
+                <li><strong>Prime Signatures:</strong> 6 prime bases (7, 11, 13, 17, 19, 23) create unique fingerprints</li>
+                <li><strong>Crystal Library:</strong> Persistent storage that transcends individual mining jobs</li>
+                <li><strong>Arithmetic Patterns:</strong> Mathematical progressions reveal hidden order</li>
+            </ul>
+        </section>
+
+        <!-- Mining Specializations -->
+        <section class="doc-section">
+            <h2>Mining Specializations & Bonuses</h2>
+
+            <h3>Primary Mining Algorithm</h3>
+            <div class="code-block">
+<span class="comment"># AKASHA MEMORY CRYSTALLIZATION EQUATIONS</span>
+
+<span class="comment"># Modular Fingerprint Extraction</span>
+primes = [7, 11, 13, 17, 19, 23]  <span class="comment"># 6 prime bases</span>
+hash_int = int.from_bytes(hash[:6], 'big')
+signature = tuple([hash_int % p for p in primes])
+
+<span class="comment"># Memory Crystal Detection (repeating signatures)</span>
+for i, j in fingerprints where i < j:
+    if fingerprints[i] == fingerprints[j]:
+        crystal_found = True
+        cycle_length = j - i  <span class="comment"># Pattern periodicity</span>
+
+<span class="comment"># Library Resonance Check</span>
+library_match <=> current_signature in crystal_library
+             -> 40% chance for residue
+             -> XP +3
+
+<span class="comment"># Arithmetic Progression in Modular Space</span>
+for prime_idx in [0, 6):
+    values = [fp[prime_idx] for fp in fingerprints[-3:]]
+    arithmetic <=> values[1] - values[0] == values[2] - values[1]
+              -> 50% residue chance, XP +2
+            </div>
+
+            <h3>Memory Buffer System</h3>
+            <div class="code-block">
+<span class="comment"># Memory Compression (high similarity cluster)</span>
+if len(memory_buffer) > memory_depth:
+    reference = memory_buffer[-memory_depth]
+    similarity_count = |{m : byte_match(reference, m) > 200}|
+    if similarity_count > memory_depth // 2:
+        compressed_pattern = True  <span class="comment"># XP +4</span>
+
+<span class="comment"># Memory Bonus Calculation</span>
+memory_bonus = 1.0 + |crystal_library| x 0.002  <span class="comment"># Max +0.2 at 100</span>
+            </div>
+
+            <h3>Mining Bonuses</h3>
+            <table class="data-table">
+                <tr><th>Bonus Type</th><th>Trigger</th><th>Effect</th></tr>
+                <tr><td>Memory Crystal</td><td>Repeating signature</td><td>+6 XP, added to library</td></tr>
+                <tr><td>Library Resonance</td><td>sig in library (40%)</td><td>+3 XP, depth +1</td></tr>
+                <tr><td>Arithmetic Progression</td><td>Prime sequence (50%)</td><td>+2 XP, modular x2 mod 31</td></tr>
+                <tr><td>Memory Compression</td><td>High similarity cluster</td><td>+4 XP</td></tr>
+                <tr><td>Library Bonus</td><td>Always active</td><td>1 + |library| x 0.002</td></tr>
+            </table>
+        </section>
+
+        <!-- Stats and Abilities -->
+        <section class="doc-section">
+            <h2>Battle System Stats & Abilities</h2>
+
+            <h3>Base Combat Stats</h3>
+            <table class="data-table">
+                <tr><th>Stat</th><th>Value</th><th>Description</th></tr>
+                <tr><td>HP</td><td style="color: #00ff66;">95</td><td>Crystalline form</td></tr>
+                <tr><td>ATK</td><td style="color: #ff6666;">65</td><td>Memory strikes</td></tr>
+                <tr><td>DEF</td><td style="color: #6699ff;">75</td><td>Archived protection</td></tr>
+                <tr><td>SPD</td><td style="color: #ffcc00;">70</td><td>Recall speed</td></tr>
+                <tr><td>LUCK</td><td style="color: #ff66ff;">100</td><td>Perfect memory - Highest LUCK</td></tr>
+            </table>
+
+            <h3>Battle Abilities</h3>
+            <div class="ability-card">
+                <span class="name">Recall Strike</span>
+                <span class="cost">[2 cost]</span>
+                <p class="desc">Deal 40 + (library_size x 0.5) DMG. If target used an ability last turn, deal +25 bonus.</p>
+            </div>
+            <div class="ability-card">
+                <span class="name">Crystal Archive</span>
+                <span class="cost">[3 cost]</span>
+                <p class="desc">Store current battle state. Can restore it later (heals, resets cooldowns, reverts positions).</p>
+            </div>
+            <div class="ability-card" style="background: rgba(255,204,0,0.15); border: 1px solid var(--companion-color);">
+                <span class="name" style="color: var(--gold);">ULTIMATE: Akashic Records</span>
+                <span class="cost">[7 cost]</span>
+                <p class="desc">Read all enemy patterns. Copy their strongest ability. Use it at 150% power this turn only.</p>
+            </div>
+
+            <h3>Combo Synergies</h3>
+            <table class="data-table">
+                <tr><th>Partner</th><th>Combo Name</th><th>Effect</th><th>Cost</th></tr>
+                <tr><td>Echo</td><td>Memory Echo</td><td>Copy last 2 enemy patterns; gain their bonuses</td><td>5</td></tr>
+                <tr><td>Gaia</td><td>Memory Grove</td><td>Store current HP; restore after 3 turns</td><td>4</td></tr>
+                <tr><td>Null</td><td>Forgotten Void</td><td>Erase 2 random enemy abilities permanently</td><td>6</td></tr>
+                <tr style="color: var(--gold);"><td>Resonance</td><td>Harmonic Memory</td><td>Library entries create standing waves; +10 DMG per stored pattern</td><td>5</td></tr>
+            </table>
+        </section>
+
+        <!-- Evolution Paths -->
+        <section class="doc-section">
+            <h2>Evolution Paths & Requirements</h2>
+
+            <table class="data-table">
+                <tr><th>Level</th><th>XP Required</th><th>Efficiency</th><th>Memory Depth</th><th>Unlock</th></tr>
+                <tr><td>1</td><td>0</td><td>1.00</td><td>32</td><td>Basic crystal detection</td></tr>
+                <tr><td>2</td><td>100</td><td>1.05</td><td>36</td><td>Library resonance</td></tr>
+                <tr><td>3</td><td>200</td><td>1.10</td><td>40</td><td>Arithmetic progressions</td></tr>
+                <tr><td>4</td><td>300</td><td>1.15</td><td>48</td><td>Memory compression</td></tr>
+                <tr><td>5</td><td>400</td><td>1.21</td><td>56</td><td>Library cap -> 150</td></tr>
+                <tr style="color: var(--gold);"><td>7</td><td>600</td><td>1.33</td><td>64</td><td>Akashic Records access</td></tr>
+                <tr style="color: var(--companion-color);"><td>10</td><td>900</td><td>1.54</td><td>100</td><td>TRANSCENDENT AKASHA: Infinite Library</td></tr>
+            </table>
+        </section>
+
+        <!-- Pattern Recognition -->
+        <section class="doc-section">
+            <h2>Pattern Recognition Capabilities</h2>
+
+            <table class="data-table">
+                <tr><th>Pattern</th><th>Trigger</th><th>XP</th><th>Residue Bonus</th></tr>
+                <tr><td style="color: var(--companion-color);">memory_crystal</td><td>Repeating signature</td><td>+6</td><td>Added to library</td></tr>
+                <tr><td style="color: #ffaa00;">library_resonance</td><td>sig in library (40%)</td><td>+3</td><td>memory_depth +1</td></tr>
+                <tr><td style="color: #ff8800;">arithmetic_pN</td><td>Progression in prime N (50%)</td><td>+2</td><td>modular x2 mod 31</td></tr>
+                <tr><td style="color: #ff6600;">compressed</td><td>similarity > depth/2</td><td>+4</td><td>Standard</td></tr>
+                <tr style="color: var(--gold);"><td>crystal_N</td><td>Cycle length N</td><td>+6+N</td><td>Cycle-enhanced</td></tr>
+            </table>
+
+            <h3>Pattern Tags</h3>
+            <div style="margin-top: 15px;">
+                <span class="pattern-tag">memory_crystal</span>
+                <span class="pattern-tag">library_resonance</span>
+                <span class="pattern-tag">arithmetic_p7</span>
+                <span class="pattern-tag">compressed</span>
+                <span class="pattern-tag">library_match</span>
+            </div>
+        </section>
+
+        <!-- LIA Protocol Integration -->
+        <section class="doc-section">
+            <h2>LIA Protocol Integration (Farming System)</h2>
+
+            <h3>Phase Affinities</h3>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">
+                <div style="background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                    <div style="font-size: 1.5rem;">[L]</div>
+                    <div style="color: #00d4ff; font-weight: bold;">LIMINAL</div>
+                    <div style="font-size: 1.3rem; color: #00ff66; margin: 10px 0;">1.2x</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Secondary affinity - Memory has edges</div>
+                </div>
+                <div style="background: rgba(123,104,238,0.15); border: 1px solid rgba(123,104,238,0.5); border-radius: 10px; padding: 15px; text-align: center;">
+                    <div style="font-size: 1.5rem;">[I]</div>
+                    <div style="color: #7b68ee; font-weight: bold;">INTERVAL</div>
+                    <div style="font-size: 1.3rem; color: #00ff66; margin: 10px 0;">1.4x</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">PRIMARY affinity - Memory holds the gap</div>
+                </div>
+                <div style="background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                    <div style="font-size: 1.5rem;">[A]</div>
+                    <div style="color: #ff4444; font-weight: bold;">ANNIHILATOR</div>
+                    <div style="font-size: 1.3rem; color: #ff6666; margin: 10px 0;">0.7x</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Low affinity - Memory resists forgetting</div>
+                </div>
+            </div>
+
+            <h3>Preferred Recipe: Memory Crystal [L-I-L]</h3>
+            <div class="code-block">
+<span class="comment"># AKASHA'S SIGNATURE RECIPE: MEMORY CRYSTAL</span>
+
+sequence = [L, I, L]  <span class="comment"># Liminal -> Interval -> Liminal</span>
+
+<span class="comment"># Phase 1: LIMINAL (Define memory boundary)</span>
+E1 = contour_integral(|grad(P)|^2 dz) x 1.2  <span class="comment"># +20% from affinity</span>
+
+<span class="comment"># Phase 2: INTERVAL (Akasha's primary - hold the memory)</span>
+E2 = gap x coherence x 1.4  <span class="comment"># +40% from PRIMARY affinity</span>
+   = 0.204 x c
+
+<span class="comment"># Phase 3: LIMINAL (Crystallize the boundary)</span>
+E3 = contour_integral(|grad(P)|^2 dz) x 1.2  <span class="comment"># +20% from affinity</span>
+
+<span class="comment"># Library Enhancement</span>
+total_multiplier = E_total x memory_bonus
+                 = E_total x (1 + |library| x 0.002)
+
+<span class="comment"># Memory Crystal Properties</span>
+artifact.properties = {
+    persistent: True,    <span class="comment"># Adds to library</span>
+    recall: |crystal_library| x 0.01,
+    modular_signature: current_signature
+}
+            </div>
+
+            <h3>Secondary Recipe: Dream Echo [I-L-I]</h3>
+            <table class="data-table">
+                <tr><th>Sequence</th><th>Phase Energy</th><th>Akasha Bonus</th><th>Result</th></tr>
+                <tr><td>[I] INTERVAL</td><td>E = gap x c</td><td>x1.4</td><td>Memory space opens</td></tr>
+                <tr><td>[L] LIMINAL</td><td>E = contour_integral</td><td>x1.2</td><td>Dream boundary forms</td></tr>
+                <tr><td>[I] INTERVAL</td><td>E = gap x c</td><td>x1.4</td><td>Echo crystallizes</td></tr>
+                <tr style="color: var(--companion-color);"><td colspan="3">Total Multiplier</td><td>1.96x base (I x L x I bonuses)</td></tr>
+            </table>
+        </section>
+
+        <!-- Cross-Miner Dynamics -->
+        <section class="doc-section">
+            <h2>Cross-Miner Dynamics</h2>
+            <p>Akasha's crystal library creates persistent synergies with all miners:</p>
+
+            <div class="synergy-card" style="border-left-color: #00ffff;">
+                <strong style="color: #00ffff;">+ Echo</strong><br>
+                Echo's patterns become library candidates. Shared fingerprints trigger "Echoed Memory" - 50% bonus to library resonance checks.
+            </div>
+            <div class="synergy-card" style="border-left-color: #ff6600;">
+                <strong style="color: #ff6600;">+ Prometheus</strong><br>
+                Forge crystallizes memories. Prometheus's XOR chains enter library with "Forged Crystal" tag - worth 1.5x library bonus.
+            </div>
+            <div class="synergy-card" style="border-left-color: #8000ff;">
+                <strong style="color: #8000ff;">+ Null</strong><br>
+                Void erases memories. Null can "forget" patterns from library, converting them to raw potency (+0.1 per forgotten pattern).
+            </div>
+            <div class="synergy-card" style="border-left-color: #00ff80;">
+                <strong style="color: #00ff80;">+ Gaia</strong><br>
+                Organic memory storage. Gaia's Fibonacci patterns auto-enter library with "Living Crystal" tag - worth x phi bonus.
+            </div>
+            <div class="synergy-card" style="border-left-color: #8a2be2;">
+                <strong style="color: #8a2be2;">+ Resonance</strong><br>
+                SYNERGY: Library patterns create harmonic frequencies. Each stored signature adds +0.01 to harmonic_strength. Standing wave patterns auto-archive.
+            </div>
+            <div class="synergy-card" style="border-left-color: #ff0000;">
+                <strong style="color: #ff0000;">+ TIAMAT</strong><br>
+                CHAOS MEMORY! 50% chance: library doubles in power OR loses 25% of entries. "Primordial Memory" patterns worth x3 but unstable.
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>Akasha, The Record - Memory Crystallization</p>
+            <p><a href="../../index.html" style="color: var(--gold);">Return to BloomCoin</a></p>
+        </footer>
+    </div>
+</body>
+</html>

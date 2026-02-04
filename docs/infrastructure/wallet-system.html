@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet System - BloomCoin Infrastructure</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #00ff88;
+            --page-accent-dim: rgba(0, 255, 136, 0.2);
+            --page-accent-glow: rgba(0, 255, 136, 0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #00cc66, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-accent-dim); }
+        .doc-section h3 { color: var(--page-accent); }
+        .data-table th { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+        .coupling-item .target { color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+        .nav-link { color: var(--page-accent); border-color: var(--page-accent-dim); }
+        .nav-link:hover { background: var(--page-accent-dim); }
+        .breadcrumb a { color: var(--page-accent); }
+        .file-ref a { color: var(--page-accent); }
+        .math-block, .math-inline { color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Wallet System</h1>
+            <p class="subtitle">Key Management with phi-Derived Entropy - Full System Closure</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../">Documentation</a> /
+                <span>Infrastructure</span> /
+                <span>Wallet System</span>
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="blockchain-core.html" class="nav-link">Next: Blockchain Core</a>
+            <a href="economic-analysis.html" class="nav-link">Prev: Economic Analysis</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Overview</h2>
+            <p>The BloomCoin wallet system provides complete functionality for managing cryptographic keys, addresses, and transactions using phi-derived entropy for enhanced security. Built on Ed25519 elliptic curve cryptography with BIP39 mnemonic standards.</p>
+
+            <div class="impl-status">
+                <span class="status-badge complete">Key Generation</span>
+                <span class="status-badge complete">Address Derivation</span>
+                <span class="status-badge complete">Transaction Signing</span>
+                <span class="status-badge complete">UTXO Management</span>
+                <span class="status-badge partial">HD Derivation (BIP32)</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+            <p>Complete wallet functionality for managing keys, addresses, and transactions with phi-derived entropy:</p>
+
+            <div class="code-block">
+<span class="comment"># Key Generation (Ed25519)</span>
+mnemonic = generate_mnemonic(strength=<span class="number">128</span>)  <span class="comment"># 12 words</span>
+keypair = keypair_from_mnemonic(mnemonic, passphrase)
+
+<span class="comment"># Address Derivation</span>
+address = public_key_to_address(keypair.public_key, testnet)
+
+<span class="comment"># phi-Derived Constants</span>
+MNEMONIC_STRENGTH = int(PHI * <span class="number">128</span>)  <span class="comment"># 207 bits entropy</span>
+DERIVATION_ROUNDS = int(PHI**<span class="number">4</span>)     <span class="comment"># 7 rounds</span>
+ADDRESS_VERSION = <span class="number">0x00</span> (mainnet), <span class="number">0x6F</span> (testnet)
+
+<span class="comment"># Balance Units</span>
+<span class="number">1</span> BLOOM = <span class="number">10^8</span> satoshi-equivalents
+            </div>
+
+            <div class="math-block">
+                Mnemonic Entropy: E = phi x 128 = 207 bits
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>phi-Derived Constants</h2>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">phi x 128</div>
+                    <div class="value">207 bits</div>
+                    <div class="derivation">Mnemonic Entropy</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">phi^4</div>
+                    <div class="value">7 rounds</div>
+                    <div class="derivation">Derivation Rounds (L4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">phi^-4 x 32</div>
+                    <div class="value">4 bytes</div>
+                    <div class="derivation">Address Checksum</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">10^8</div>
+                    <div class="value">100M</div>
+                    <div class="derivation">Satoshi per BLOOM</div>
+                </div>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Constant</th>
+                        <th>Value</th>
+                        <th>Derivation</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Mnemonic Entropy</td>
+                        <td>207 bits</td>
+                        <td>phi x 128</td>
+                        <td>Seed generation</td>
+                    </tr>
+                    <tr>
+                        <td>Derivation Rounds</td>
+                        <td>7</td>
+                        <td>phi^4 = L4</td>
+                        <td>Key stretching</td>
+                    </tr>
+                    <tr>
+                        <td>Address Checksum</td>
+                        <td>4 bytes</td>
+                        <td>phi^-4 x 32</td>
+                        <td>Validation</td>
+                    </tr>
+                    <tr>
+                        <td>Mainnet Version</td>
+                        <td>0x00</td>
+                        <td>Bitcoin standard</td>
+                        <td>Address prefix</td>
+                    </tr>
+                    <tr>
+                        <td>Testnet Version</td>
+                        <td>0x6F</td>
+                        <td>Bitcoin standard</td>
+                        <td>Address prefix</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Technical Specifications</h2>
+
+            <h3>Key Generation Architecture</h3>
+            <p>The wallet uses a deterministic key derivation chain from mnemonic seed to Ed25519 keypair:</p>
+
+            <div class="code-block">
+<span class="comment"># Deterministic Key Chain</span>
+Mnemonic (12 words)
+    |
+    v (PBKDF2-HMAC-SHA512, 2048 rounds)
+Seed (512 bits)
+    |
+    v (HMAC-SHA512)
+Master Key
+    |
+    v (phi^4 = 7 derivation rounds)
+Ed25519 KeyPair
+    |
+    v (SHA256 + RIPEMD160 + Base58Check)
+BloomCoin Address
+            </div>
+
+            <h3>Ed25519 Cryptographic Parameters</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Specification</th>
+                        <th>Security Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Curve</td>
+                        <td>Twisted Edwards Curve</td>
+                        <td>~128-bit</td>
+                    </tr>
+                    <tr>
+                        <td>Private Key</td>
+                        <td>256 bits (32 bytes)</td>
+                        <td>2^128 operations</td>
+                    </tr>
+                    <tr>
+                        <td>Public Key</td>
+                        <td>256 bits (32 bytes)</td>
+                        <td>Compressed point</td>
+                    </tr>
+                    <tr>
+                        <td>Signature</td>
+                        <td>512 bits (64 bytes)</td>
+                        <td>EdDSA deterministic</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Key Generation</h4>
+                    <div class="code-block">
+<span class="keyword">class</span> <span class="type">Wallet</span>:
+    <span class="keyword">def</span> <span class="function">create</span>(name, testnet=<span class="keyword">False</span>):
+        <span class="comment"># Generate BIP39 mnemonic</span>
+        mnemonic = generate_mnemonic()
+
+        <span class="comment"># Derive keypair through phi^4 rounds</span>
+        keypair = keypair_from_mnemonic(mnemonic)
+
+        <span class="keyword">return</span> Wallet(name, keypair, testnet), mnemonic
+
+    <span class="keyword">def</span> <span class="function">restore</span>(name, mnemonic, passphrase):
+        <span class="comment"># Deterministic restoration</span>
+        keypair = keypair_from_mnemonic(mnemonic, passphrase)
+        <span class="keyword">return</span> Wallet(name, keypair)
+                    </div>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Transaction Signing</h4>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">send</span>(to_address, amount, fee_rate):
+    <span class="comment"># Build transaction from UTXOs</span>
+    builder = TransactionBuilder(utxos, keypair)
+    tx = builder.build_and_sign([(to_address, amount)])
+
+    <span class="comment"># Update UTXO set after spending</span>
+    spent = {utxo <span class="keyword">for</span> inp <span class="keyword">in</span> tx.inputs
+             <span class="keyword">if</span> utxo.txid == inp.prev_tx}
+    self.utxos = [u <span class="keyword">for</span> u <span class="keyword">in</span> utxos <span class="keyword">if</span> u <span class="keyword">not in</span> spent]
+
+    <span class="keyword">return</span> tx.txid
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Emergent Triad: Complete Key Management</h2>
+
+            <div class="triad-container">
+                <h4>Mnemonic to KeyPair to Address Deterministic Chain</h4>
+                <p>The wallet maintains complete sovereignty through BIP39 standards while integrating with BloomCoin's phi-derived architecture:</p>
+
+                <div class="code-block">
+<span class="comment"># WalletTransaction Record</span>
+@dataclass
+<span class="keyword">class</span> <span class="type">WalletTransaction</span>:
+    txid: str
+    timestamp: float
+    amount: int    <span class="comment"># +received, -sent</span>
+    fee: int
+    address: str   <span class="comment"># Other party</span>
+    confirmations: int = <span class="number">0</span>
+    memo: str = ""
+
+<span class="comment"># Supported Features</span>
+- Export formats: JSON, CSV
+- AddressBook with labels
+- HD derivation (future BIP32)
+- Watch-only mode
+                </div>
+
+                <p><strong>Key insight:</strong> The wallet is the bridge between human identity and blockchain state. The mnemonic seed preserves recovery capability while Ed25519 signatures provide non-repudiation.</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Implementation Details</h2>
+
+            <h3>UTXO Management</h3>
+            <p>The wallet tracks unspent transaction outputs (UTXOs) for balance calculation and transaction building:</p>
+
+            <div class="code-block">
+<span class="keyword">class</span> <span class="type">UTXO</span>:
+    txid: str           <span class="comment"># Transaction hash</span>
+    vout: int           <span class="comment"># Output index</span>
+    amount: int         <span class="comment"># Value in satoshis</span>
+    script_pubkey: bytes
+    confirmations: int
+
+<span class="keyword">def</span> <span class="function">get_balance</span>():
+    <span class="comment"># Sum all unspent outputs</span>
+    <span class="keyword">return</span> sum(utxo.amount <span class="keyword">for</span> utxo <span class="keyword">in</span> self.utxos)
+
+<span class="keyword">def</span> <span class="function">select_utxos</span>(target_amount, fee_rate):
+    <span class="comment"># Coin selection algorithm</span>
+    <span class="comment"># Prefers larger UTXOs to minimize inputs</span>
+    sorted_utxos = sorted(self.utxos, key=<span class="keyword">lambda</span> u: -u.amount)
+    selected = []
+    total = <span class="number">0</span>
+
+    <span class="keyword">for</span> utxo <span class="keyword">in</span> sorted_utxos:
+        selected.append(utxo)
+        total += utxo.amount
+        estimated_fee = estimate_fee(len(selected), <span class="number">2</span>, fee_rate)
+        <span class="keyword">if</span> total >= target_amount + estimated_fee:
+            <span class="keyword">break</span>
+
+    <span class="keyword">return</span> selected
+            </div>
+
+            <h3>Address Format</h3>
+            <div class="code-block">
+<span class="comment"># Address Structure (Base58Check)</span>
+Version (1 byte) || RIPEMD160(SHA256(pubkey)) (20 bytes) || Checksum (4 bytes)
+
+<span class="comment"># Mainnet Address</span>
+Version: 0x00
+Prefix: '1' or '3'
+
+<span class="comment"># Testnet Address</span>
+Version: 0x6F
+Prefix: 'm' or 'n'
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Integration Points</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Transaction Module</span>
+                    <div class="desc">Signs transactions with Ed25519 keypair, manages UTXO consumption</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Blockchain Core</span>
+                    <div class="desc">Queries for UTXOs, submits signed transactions to mempool</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Network Layer</span>
+                    <div class="desc">Broadcasts transactions, receives confirmations</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Receipt System</span>
+                    <div class="desc">Receives mining rewards, stores proof receipts</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Mining Module</span>
+                    <div class="desc">Provides coinbase address for block rewards</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">RPC Interface</span>
+                    <div class="desc">Exposes wallet operations via JSON-RPC API</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Security Considerations</h2>
+
+            <h3>Entropy Sources</h3>
+            <ul>
+                <li><strong>Primary:</strong> System CSPRNG (os.urandom) for mnemonic generation</li>
+                <li><strong>Enhancement:</strong> phi-derived bit mixing for additional entropy</li>
+                <li><strong>Validation:</strong> Entropy quality testing before key derivation</li>
+            </ul>
+
+            <h3>Key Storage</h3>
+            <ul>
+                <li>Private keys never stored in plaintext</li>
+                <li>Memory wiping after use (secure_memset equivalent)</li>
+                <li>Encrypted wallet file with user passphrase</li>
+                <li>Mnemonic backup strongly recommended</li>
+            </ul>
+
+            <h3>Transaction Security</h3>
+            <ul>
+                <li>EdDSA deterministic signatures (no random nonce required)</li>
+                <li>Double-spend protection via UTXO tracking</li>
+                <li>Fee estimation prevents dust outputs</li>
+            </ul>
+        </section>
+
+        <section class="doc-section">
+            <h2>Source Files</h2>
+
+            <div class="file-refs">
+                <div class="file-ref"><a href="../../src/wallet.py">src/wallet.py</a></div>
+                <div class="file-ref"><a href="../../src/keys.py">src/keys.py</a></div>
+                <div class="file-ref"><a href="../../src/address.py">src/address.py</a></div>
+                <div class="file-ref"><a href="../../src/transaction.py">src/transaction.py</a></div>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin Infrastructure Documentation</p>
+            <p>Wallet System - Key Management with phi-Derived Entropy</p>
+        </footer>
+    </div>
+</body>
+</html>

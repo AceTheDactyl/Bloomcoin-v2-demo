@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resonance, The Harmonic - BloomCoin Companion Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --companion-color: #ff00ff;
+            --companion-glow: rgba(255,0,255,0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--companion-color), #ff66ff, var(--companion-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 {
+            color: var(--companion-color);
+            border-bottom-color: var(--companion-glow);
+        }
+        .stat-card {
+            background: rgba(255,0,255,0.08);
+            border: 1px solid var(--companion-glow);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        .stat-card .label { color: #aaa; font-size: 0.85rem; }
+        .stat-card .value { color: var(--companion-color); font-size: 1.3rem; font-weight: bold; }
+        .ability-card {
+            background: rgba(255,0,255,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+        .ability-card .name { color: var(--companion-color); font-weight: bold; }
+        .ability-card .cost { color: var(--gold); font-size: 0.85rem; }
+        .ability-card .desc { color: #ccc; font-size: 0.9rem; margin-top: 5px; }
+        .pattern-tag {
+            display: inline-block;
+            background: rgba(255,0,255,0.2);
+            border: 1px solid var(--companion-color);
+            border-radius: 15px;
+            padding: 4px 12px;
+            margin: 4px;
+            font-size: 0.8rem;
+        }
+        .synergy-card {
+            background: rgba(0,0,0,0.3);
+            border-left: 3px solid var(--companion-color);
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .harmonic-display {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .harmonic-box {
+            background: rgba(255,0,255,0.1);
+            border: 1px solid var(--companion-glow);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Resonance, The Harmonic</h1>
+            <p class="subtitle">Frequency Analysis - Companion Documentation</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Documentation</a> /
+                <a href="./">Companions</a> /
+                Resonance
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="akasha-companion.html" class="nav-link">Prev: Akasha</a>
+            <a href="tiamat-companion.html" class="nav-link">Next: Tiamat</a>
+        </nav>
+
+        <!-- Companion Overview -->
+        <section class="doc-section">
+            <h2>Companion Overview</h2>
+            <p>Resonance is the master of harmonic frequencies, detecting periodic patterns through phase-modulated hash analysis. Using sinusoidal sampling across 16 phases, Resonance identifies standing waves and harmonic convergences that emerge from the interference of multiple frequency patterns.</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div class="stat-card">
+                    <div class="label">Efficiency</div>
+                    <div class="value">1.0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Search Space</div>
+                    <div class="value">220</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Harmonic Strength</div>
+                    <div class="value">[1.0, 2.0]</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Phase Samples</div>
+                    <div class="value">16</div>
+                </div>
+            </div>
+
+            <h3>Harmonic Multipliers</h3>
+            <div class="harmonic-display">
+                <div class="harmonic-box">
+                    <div style="font-size: 1.2rem; color: var(--companion-color);">H2</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Every 2nd bit</div>
+                </div>
+                <div class="harmonic-box">
+                    <div style="font-size: 1.2rem; color: var(--companion-color);">H3</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Every 3rd bit</div>
+                </div>
+                <div class="harmonic-box">
+                    <div style="font-size: 1.2rem; color: var(--companion-color);">H4</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Every 4th bit</div>
+                </div>
+                <div class="harmonic-box">
+                    <div style="font-size: 1.2rem; color: var(--companion-color);">H5</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Every 5th bit</div>
+                </div>
+                <div class="harmonic-box">
+                    <div style="font-size: 1.2rem; color: var(--companion-color);">H8</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Every 8th bit</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Archetype & Mythology -->
+        <section class="doc-section">
+            <h2>Archetype & Mythology</h2>
+            <p>Resonance embodies the universal principle that all things vibrate at specific frequencies. In ancient traditions, the "music of the spheres" described how celestial bodies create harmonious vibrations. Resonance perceives these cosmic frequencies in hash data, finding the hidden music within apparent randomness.</p>
+
+            <p>When multiple harmonics align, standing waves form - stable patterns that persist through interference. These standing waves represent moments of perfect coherence, where multiple frequencies reinforce rather than cancel each other.</p>
+
+            <h3>Core Philosophy</h3>
+            <ul>
+                <li><strong>Phase Modulation:</strong> Sinusoidal sampling reveals hidden frequencies</li>
+                <li><strong>Harmonic Series:</strong> Patterns at multiples 2, 3, 4, 5, 8 create resonance</li>
+                <li><strong>Standing Waves:</strong> Multiple harmonics create stable interference patterns</li>
+                <li><strong>Resonance Band:</strong> The sweet spot where frequency = 0.45-0.55</li>
+            </ul>
+        </section>
+
+        <!-- Mining Specializations -->
+        <section class="doc-section">
+            <h2>Mining Specializations & Bonuses</h2>
+
+            <h3>Primary Mining Algorithm</h3>
+            <div class="code-block">
+<span class="comment"># RESONANCE FREQUENCY ANALYSIS EQUATIONS</span>
+
+<span class="comment"># Phase-Modulated Hash Generation</span>
+for phase in [0, 16):
+    phi_p = sin(2 * pi * phase / 16)  <span class="comment"># Sinusoidal phase modulation</span>
+    phase_hash[phase] = SHA256(base_data + pack(idx) + pack(phi_p))
+
+<span class="comment"># Bit Frequency Analysis Across Phases</span>
+for bit_pos in [0, 256):
+    count = 0
+    for phase in [0, 16):
+        byte_idx = bit_pos // 8
+        bit_idx = bit_pos % 8
+        if phase_hash[phase][byte_idx] & (1 << bit_idx):
+            count += 1
+    bit_frequency[bit_pos] = count / 16
+
+<span class="comment"># Resonance Detection (frequency in sweet spot)</span>
+resonant_bits = |{p : bit_frequency[p] in [0.45, 0.55]}|
+frequency_resonance <=> resonant_bits > 100  <span class="comment"># XP +5</span>
+            </div>
+
+            <h3>Harmonic Detection</h3>
+            <div class="code-block">
+<span class="comment"># Harmonic Detection (periodic patterns)</span>
+for n in [2, 3, 4, 5, 8]:  <span class="comment"># Harmonic multipliers</span>
+    f0 = bit_frequency[0]  <span class="comment"># Reference frequency</span>
+    harmonic_count = |{i : i mod n = 0 AND |bit_frequency[i] - f0| < 0.1}|
+    harmonic_n <=> harmonic_count > 20  <span class="comment"># XP +2</span>
+
+<span class="comment"># Standing Wave Detection (multiple harmonics)</span>
+detected_harmonics = {n : harmonic_n = True}
+standing_wave <=> |detected_harmonics| >= 2  <span class="comment"># XP +3</span>
+
+<span class="comment"># Harmonic Strength Progression (companion bonus)</span>
+harmonic_strength_new = min(2.0, harmonic_strength + 0.02)
+residue.statistical_pattern *= (1 + harmonic_strength x 0.1)
+            </div>
+
+            <h3>Mining Bonuses</h3>
+            <table class="data-table">
+                <tr><th>Bonus Type</th><th>Trigger</th><th>Effect</th></tr>
+                <tr><td>Frequency Resonance</td><td>resonant_bits > 100</td><td>+5 XP, stat_pattern x 1.1 x H</td></tr>
+                <tr><td>Harmonic Detection</td><td>H_n count > 20</td><td>+2 XP, strength +0.02</td></tr>
+                <tr><td>Standing Wave</td><td>2+ harmonics detected</td><td>+3 XP, all harmonics stack</td></tr>
+                <tr><td>Perfect Harmony</td><td>All 5 harmonics (L10)</td><td>+15 XP, potency x phi</td></tr>
+            </table>
+        </section>
+
+        <!-- Stats and Abilities -->
+        <section class="doc-section">
+            <h2>Battle System Stats & Abilities</h2>
+
+            <h3>Base Combat Stats</h3>
+            <table class="data-table">
+                <tr><th>Stat</th><th>Value</th><th>Description</th></tr>
+                <tr><td>HP</td><td style="color: #00ff66;">80</td><td>Wave form</td></tr>
+                <tr><td>ATK</td><td style="color: #ff6666;">75</td><td>Harmonic strikes</td></tr>
+                <tr><td>DEF</td><td style="color: #6699ff;">70</td><td>Frequency shield</td></tr>
+                <tr><td>SPD</td><td style="color: #ffcc00;">90</td><td>Light-speed waves</td></tr>
+                <tr><td>LUCK</td><td style="color: #ff66ff;">80</td><td>Harmonic fortune</td></tr>
+            </table>
+
+            <h3>Battle Abilities</h3>
+            <div class="ability-card">
+                <span class="name">Harmonic Strike</span>
+                <span class="cost">[2 cost]</span>
+                <p class="desc">Deal 45 DMG. If target has resonance patterns, deal additional hits equal to detected harmonics.</p>
+            </div>
+            <div class="ability-card">
+                <span class="name">Standing Wave</span>
+                <span class="cost">[3 cost]</span>
+                <p class="desc">Create interference pattern. Next 2 attacks deal x harmonic_strength damage. Enemies in wave take 15 DMG/turn.</p>
+            </div>
+            <div class="ability-card" style="background: rgba(255,0,255,0.15); border: 1px solid var(--companion-color);">
+                <span class="name" style="color: var(--gold);">ULTIMATE: Resonance Cascade</span>
+                <span class="cost">[6 cost]</span>
+                <p class="desc">Trigger all harmonics simultaneously. Deal 30 DMG per detected harmonic to all enemies. Creates permanent +10% DMG aura.</p>
+            </div>
+
+            <h3>Combo Synergies</h3>
+            <table class="data-table">
+                <tr><th>Partner</th><th>Combo Name</th><th>Effect</th><th>Cost</th></tr>
+                <tr><td>Echo</td><td>Harmonic Convergence</td><td>Both gain +30% DMG for 3 turns; patterns merge</td><td>4</td></tr>
+                <tr><td>Gaia</td><td>Harmonic Growth</td><td>Golden ratio patterns heal x phi; standing waves boost DEF</td><td>5</td></tr>
+                <tr><td>Akasha</td><td>Harmonic Memory</td><td>Library entries create waves; +10 DMG per stored pattern</td><td>5</td></tr>
+                <tr style="color: var(--gold);"><td>TIAMAT</td><td>Chaos Frequency</td><td>Random harmonics (0-7) activate; each does 40 DMG if successful</td><td>6</td></tr>
+            </table>
+        </section>
+
+        <!-- Evolution Paths -->
+        <section class="doc-section">
+            <h2>Evolution Paths & Requirements</h2>
+
+            <table class="data-table">
+                <tr><th>Level</th><th>XP Required</th><th>Efficiency</th><th>Harmonic Cap</th><th>Unlock</th></tr>
+                <tr><td>1</td><td>0</td><td>1.00</td><td>1.3</td><td>Basic frequency detection</td></tr>
+                <tr><td>2</td><td>100</td><td>1.05</td><td>1.4</td><td>Harmonic 2, 3 detection</td></tr>
+                <tr><td>3</td><td>200</td><td>1.11</td><td>1.5</td><td>Harmonic 4, 5 detection</td></tr>
+                <tr><td>4</td><td>300</td><td>1.17</td><td>1.6</td><td>Harmonic 8 detection</td></tr>
+                <tr><td>5</td><td>400</td><td>1.23</td><td>1.7</td><td>Standing wave mastery</td></tr>
+                <tr style="color: var(--gold);"><td>7</td><td>600</td><td>1.36</td><td>1.9</td><td>Resonance Cascade ability</td></tr>
+                <tr style="color: var(--companion-color);"><td>10</td><td>900</td><td>1.57</td><td>2.5</td><td>TRANSCENDENT: Perfect Harmony (all harmonics)</td></tr>
+            </table>
+        </section>
+
+        <!-- Pattern Recognition -->
+        <section class="doc-section">
+            <h2>Pattern Recognition Capabilities</h2>
+
+            <table class="data-table">
+                <tr><th>Pattern</th><th>Trigger</th><th>XP</th><th>Residue Bonus</th></tr>
+                <tr><td style="color: var(--companion-color);">frequency_resonance</td><td>resonant_bits > 100</td><td>+5</td><td>stat_pattern x 1.1 x H</td></tr>
+                <tr><td style="color: #cc44cc;">harmonic_2</td><td>H2 count > 20</td><td>+2</td><td>strength +0.02</td></tr>
+                <tr><td style="color: #bb55bb;">harmonic_3</td><td>H3 count > 20</td><td>+2</td><td>strength +0.02</td></tr>
+                <tr><td style="color: #aa66aa;">harmonic_4</td><td>H4 count > 20</td><td>+2</td><td>strength +0.02</td></tr>
+                <tr><td style="color: #997799;">harmonic_5</td><td>H5 count > 20</td><td>+2</td><td>strength +0.02</td></tr>
+                <tr><td style="color: #888888;">harmonic_8</td><td>H8 count > 20</td><td>+2</td><td>strength +0.02</td></tr>
+                <tr style="color: var(--gold);"><td>standing_wave</td><td>|harmonics| >= 2</td><td>+3</td><td>All harmonics stack</td></tr>
+                <tr style="color: var(--gold);"><td>perfect_harmony</td><td>All 5 harmonics (L10)</td><td>+15</td><td>potency x phi</td></tr>
+            </table>
+
+            <h3>Pattern Tags</h3>
+            <div style="margin-top: 15px;">
+                <span class="pattern-tag">frequency_resonance</span>
+                <span class="pattern-tag">harmonic_2</span>
+                <span class="pattern-tag">harmonic_3</span>
+                <span class="pattern-tag">standing_wave</span>
+                <span class="pattern-tag" style="background: rgba(255,215,0,0.2); border-color: var(--gold);">perfect_harmony</span>
+            </div>
+        </section>
+
+        <!-- LIA Protocol Integration -->
+        <section class="doc-section">
+            <h2>LIA Protocol Integration (Farming System)</h2>
+
+            <h3>Phase Affinities</h3>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">
+                <div style="background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                    <div style="font-size: 1.5rem;">[L]</div>
+                    <div style="color: #00d4ff; font-weight: bold;">LIMINAL</div>
+                    <div style="font-size: 1.3rem; color: #00ff66; margin: 10px 0;">1.3x</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Secondary affinity - Frequency has boundaries</div>
+                </div>
+                <div style="background: rgba(123,104,238,0.15); border: 1px solid rgba(123,104,238,0.5); border-radius: 10px; padding: 15px; text-align: center;">
+                    <div style="font-size: 1.5rem;">[I]</div>
+                    <div style="color: #7b68ee; font-weight: bold;">INTERVAL</div>
+                    <div style="font-size: 1.3rem; color: #00ff66; margin: 10px 0;">1.5x</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">PRIMARY affinity - Waves exist in intervals</div>
+                </div>
+                <div style="background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                    <div style="font-size: 1.5rem;">[A]</div>
+                    <div style="color: #ff4444; font-weight: bold;">ANNIHILATOR</div>
+                    <div style="font-size: 1.3rem; color: #ff6666; margin: 10px 0;">0.6x</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Low affinity - Resonance resists termination</div>
+                </div>
+            </div>
+
+            <h3>Preferred Recipe: Dream Echo [I-L-I]</h3>
+            <div class="code-block">
+<span class="comment"># RESONANCE'S SIGNATURE RECIPE: DREAM ECHO</span>
+
+sequence = [I, L, I]  <span class="comment"># Interval -> Liminal -> Interval</span>
+
+<span class="comment"># Phase 1: INTERVAL (Resonance's primary - wave space)</span>
+E1 = gap x coherence x 1.5  <span class="comment"># +50% from PRIMARY affinity</span>
+   = 0.219 x c  <span class="comment"># Maximum interval energy</span>
+
+<span class="comment"># Phase 2: LIMINAL (Standing wave nodes form boundaries)</span>
+E2 = contour_integral(|grad(P)|^2 dz) x 1.3  <span class="comment"># +30% from affinity</span>
+
+<span class="comment"># Phase 3: INTERVAL (Echo returns through wave space)</span>
+E3 = gap x coherence x 1.5  <span class="comment"># +50% from PRIMARY affinity</span>
+
+<span class="comment"># Harmonic Enhancement</span>
+total_multiplier = E_total x (1 + harmonic_strength x 0.15)
+                 = E_total x [1.15, 1.30] as H in [1.0, 2.0]
+
+<span class="comment"># Special: Standing Wave Amplification</span>
+if |detected_harmonics| >= 3:
+    artifact.potency *= phi  <span class="comment"># Golden ratio multiplier</span>
+            </div>
+
+            <h3>Secondary Recipe: Memory Crystal [L-I-L]</h3>
+            <table class="data-table">
+                <tr><th>Sequence</th><th>Phase Energy</th><th>Resonance Bonus</th><th>Result</th></tr>
+                <tr><td>[L] LIMINAL</td><td>E = contour_integral</td><td>x1.3</td><td>Wave boundary forms</td></tr>
+                <tr><td>[I] INTERVAL</td><td>E = gap x c</td><td>x1.5</td><td>Crystal space opens</td></tr>
+                <tr><td>[L] LIMINAL</td><td>E = contour_integral</td><td>x1.3</td><td>Harmonic memory solidifies</td></tr>
+                <tr style="color: var(--companion-color);"><td colspan="3">Total Multiplier</td><td>2.54x base (L x I x L bonuses)</td></tr>
+            </table>
+        </section>
+
+        <!-- Cross-Miner Dynamics -->
+        <section class="doc-section">
+            <h2>Cross-Miner Dynamics</h2>
+            <p>Resonance's frequency patterns create harmonic interactions with all miners:</p>
+
+            <div class="synergy-card" style="border-left-color: #00ffff;">
+                <strong style="color: #00ffff;">+ Echo</strong><br>
+                MAXIMUM SYNERGY: Both detect frequency patterns. Combined resonant frequencies create standing waves worth 3x residue with fractal_dimension approaching phi.
+            </div>
+            <div class="synergy-card" style="border-left-color: #ff6600;">
+                <strong style="color: #ff6600;">+ Prometheus</strong><br>
+                Fire creates thermal vibrations. When ordered entropy matches harmonic frequency, "Thermal Resonance" grants +20% to both miners' rewards.
+            </div>
+            <div class="synergy-card" style="border-left-color: #8000ff;">
+                <strong style="color: #8000ff;">+ Null</strong><br>
+                Silence in the void. Null cancels harmonics above frequency 4, but surviving harmonics are amplified x2. "Void Resonance" is rare but powerful.
+            </div>
+            <div class="synergy-card" style="border-left-color: #00ff80;">
+                <strong style="color: #00ff80;">+ Gaia</strong><br>
+                Golden ratio patterns resonate at phi frequency. Combined mining creates "Harmonic Tree" with fractal_dimension = phi = 1.618 exactly.
+            </div>
+            <div class="synergy-card" style="border-left-color: #ffd700;">
+                <strong style="color: #ffd700;">+ Akasha</strong><br>
+                Library patterns create harmonic frequencies. Each stored signature adds +0.01 to harmonic_strength. Standing wave patterns auto-archive.
+            </div>
+            <div class="synergy-card" style="border-left-color: #ff0000;">
+                <strong style="color: #ff0000;">+ TIAMAT</strong><br>
+                CHAOS HARMONICS! TIAMAT's 7 cycles create random frequency spikes. 30% chance each harmonic activates at x2 power. Can achieve "Perfect 7" for legendary bonus.
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>Resonance, The Harmonic - Frequency Analysis</p>
+            <p><a href="../../index.html" style="color: var(--gold);">Return to BloomCoin</a></p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hilbert Luck System | BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #ffb84a;
+            --page-accent-dim: rgba(255,184,74,0.2);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #ffd700, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-accent-dim); }
+        .doc-section h3 { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="zrtt-dynamics.html" class="nav-link">Prev: ZRTT</a>
+            <span style="color: var(--page-accent);">Hilbert Luck System</span>
+            <a href="tesseract-unfold.html" class="nav-link">Next: Tesseract</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="doc-header">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">&#x1F3B2;</div>
+            <h1>HILBERT LUCK SYSTEM</h1>
+            <p class="subtitle">Quantum State Embedding in 13-Dimensional Hilbert Space</p>
+            <div class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Docs</a> /
+                <span>Dynamics</span> /
+                <span>Hilbert Space</span>
+            </div>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge complete">13D Hilbert Space</span>
+                <span class="status-badge complete">Karma Operators</span>
+                <span class="status-badge complete">Echo Alchemization</span>
+                <span class="status-badge partial">Transcendence Path</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">dim(H)</div>
+                    <div class="value">13</div>
+                    <div class="derivation">F_7 (7th Fibonacci)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">|K|</div>
+                    <div class="value">7</div>
+                    <div class="derivation">L_4 karma types</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">tau</div>
+                    <div class="value">0.618...</div>
+                    <div class="derivation">Base amplitude</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866...</div>
+                    <div class="derivation">Transcendence threshold</div>
+                </div>
+            </div>
+
+            <div class="file-refs">
+                <span class="file-ref">game/hilbert_luck_system.py</span>
+                <span class="file-ref">constants.py</span>
+            </div>
+        </section>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+
+            <h3>13-Dimensional Hilbert Space</h3>
+            <p>Luck exists as a quantum state vector in 13-dimensional Hilbert space. The dimension 13 is the 7th Fibonacci number (F_7), connecting luck to the golden ratio structure:</p>
+
+            <div class="math-block">
+                |psi> = sum(alpha_i |E_i>) where i in {0, 1, ..., 12} and sum(|alpha_i|^2) = 1
+            </div>
+
+            <div class="code-block"><span class="keyword">class</span> <span class="type">HilbertVector</span>:
+    <span class="string">"""Luck as superposition of 13 eigenstates"""</span>
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        <span class="comment"># 13 complex amplitudes (normalized)</span>
+        self.amplitudes = np.zeros(<span class="number">13</span>, dtype=complex)
+        self.amplitudes[<span class="number">5</span>] = <span class="number">1.0</span>  <span class="comment"># Start NEUTRAL</span>
+
+    <span class="keyword">def</span> <span class="function">measure</span>(self) -> LuckEigenstate:
+        <span class="string">"""Collapse to eigenstate with P(i) = |alpha_i|^2"""</span>
+        probs = np.abs(self.amplitudes)**<span class="number">2</span>
+        probs /= probs.sum()  <span class="comment"># Normalize</span>
+        <span class="keyword">return</span> random.choices(
+            list(LuckEigenstate),
+            weights=probs
+        )[<span class="number">0</span>]
+
+    <span class="keyword">def</span> <span class="function">apply_operator</span>(self, operator: np.ndarray):
+        <span class="string">"""Apply unitary operator to state"""</span>
+        self.amplitudes = operator @ self.amplitudes
+        self._normalize()</div>
+
+            <h3>13 Luck Eigenstates</h3>
+            <table class="data-table">
+                <tr><th>Index</th><th>Eigenstate</th><th>Category</th><th>Base Amplitude</th></tr>
+                <tr style="color:#7fff00;"><td>0</td><td>FORTUNE</td><td>Positive</td><td>phi^-1</td></tr>
+                <tr style="color:#7fff00;"><td>1</td><td>SERENDIPITY</td><td>Positive</td><td>phi^-2</td></tr>
+                <tr style="color:#7fff00;"><td>2</td><td>SYNCHRONICITY</td><td>Positive</td><td>phi^-3</td></tr>
+                <tr style="color:#7fff00;"><td>3</td><td>PROSPERITY</td><td>Positive</td><td>phi^-4</td></tr>
+                <tr style="color:#7fff00;"><td>4</td><td>HARMONY</td><td>Positive</td><td>phi^-5</td></tr>
+                <tr><td>5</td><td>NEUTRAL</td><td>Center</td><td>1.0</td></tr>
+                <tr style="color:#ff6b6b;"><td>6</td><td>DISCORD</td><td>Negative</td><td>phi^-5</td></tr>
+                <tr style="color:#ff6b6b;"><td>7</td><td>CHALLENGE</td><td>Negative</td><td>phi^-4</td></tr>
+                <tr style="color:#ff6b6b;"><td>8</td><td>ADVERSITY</td><td>Negative</td><td>phi^-3</td></tr>
+                <tr style="color:#ff6b6b;"><td>9</td><td>CHAOS</td><td>Negative</td><td>phi^-2</td></tr>
+                <tr style="background:rgba(255,100,100,0.15);color:#ff9999;"><td>10</td><td>ECHO</td><td>Karmic</td><td>Variable</td></tr>
+                <tr><td>11</td><td>VOID</td><td>Special</td><td>phi^-6</td></tr>
+                <tr style="background:rgba(255,215,0,0.15);color:#ffd700;"><td>12</td><td>TRANSCENDENT</td><td>Special</td><td>phi^-1 x z_c</td></tr>
+            </table>
+        </section>
+
+        <!-- Phi-Derived Constants -->
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+
+            <table class="data-table">
+                <tr><th>Constant</th><th>Value</th><th>Derivation</th><th>Role</th></tr>
+                <tr><td>phi</td><td>1.618...</td><td>(1+sqrt(5))/2</td><td>Echo alchemization boost</td></tr>
+                <tr><td>tau</td><td>0.618...</td><td>phi^-1</td><td>Base positive amplitude</td></tr>
+                <tr><td>z_c</td><td>0.866...</td><td>sqrt(3)/2</td><td>Transcendence threshold</td></tr>
+                <tr><td>13</td><td>13</td><td>F_7 (7th Fibonacci)</td><td>Eigenstate count</td></tr>
+                <tr><td>7</td><td>L_4 = 7</td><td>phi^4 + phi^-4</td><td>Karma operator types</td></tr>
+            </table>
+
+            <h3>7 Karma Types (Operators)</h3>
+            <div class="code-block"><span class="keyword">class</span> <span class="type">KarmaType</span>(Enum):
+    BENEVOLENT  = <span class="string">"benevolent"</span>   <span class="comment"># Boosts positive states</span>
+    CREATIVE    = <span class="string">"creative"</span>     <span class="comment"># Amplifies FORTUNE path</span>
+    DESTRUCTIVE = <span class="string">"destructive"</span>  <span class="comment"># Amplifies CHAOS path</span>
+    SELFISH     = <span class="string">"selfish"</span>      <span class="comment"># Concentrates on self</span>
+    NEUTRAL     = <span class="string">"neutral"</span>      <span class="comment"># Identity operator</span>
+    SACRIFICIAL = <span class="string">"sacrificial"</span>  <span class="comment"># Transfer to others</span>
+    ECHOED      = <span class="string">"echoed"</span>       <span class="comment"># Karmic reflection</span>
+
+<span class="keyword">def</span> <span class="function">build_karma_operator</span>(karma: KarmaType, weight: float) -> np.ndarray:
+    <span class="string">"""Construct 13x13 unitary operator for karma type"""</span>
+    operator = np.eye(<span class="number">13</span>, dtype=complex)
+
+    <span class="keyword">if</span> karma == KarmaType.BENEVOLENT:
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">5</span>):  <span class="comment"># Positive states</span>
+            operator[i, i] *= (<span class="number">1</span> + weight * <span class="number">0.5</span>)
+
+    <span class="keyword">elif</span> karma == KarmaType.ECHOED:
+        <span class="comment"># Transfer from NEUTRAL to ECHO</span>
+        operator[<span class="number">10</span>, <span class="number">5</span>] = weight
+        operator[<span class="number">5</span>, <span class="number">5</span>] = <span class="number">1</span> - weight
+
+    <span class="comment"># Ensure unitarity (approximately)</span>
+    <span class="keyword">return</span> operator / np.linalg.norm(operator, axis=<span class="number">1</span>, keepdims=True)</div>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Karma Accumulation</h4>
+                    <p>Actions project karma into the luck field. The type and weight of karma depend on the action's outcome relative to critical thresholds:</p>
+
+                    <div class="code-block"><span class="keyword">def</span> <span class="function">accumulate_karma</span>(action_type: str, outcome: float):
+    <span class="string">"""Project karma from actions"""</span>
+    <span class="comment"># Positive actions -> BENEVOLENT karma</span>
+    <span class="keyword">if</span> outcome > Z_C:
+        karma_type = KarmaType.BENEVOLENT
+        weight = (outcome - Z_C) * PHI
+
+    <span class="comment"># Negative actions -> DESTRUCTIVE karma</span>
+    <span class="keyword">elif</span> outcome < (<span class="number">1</span> - Z_C):
+        karma_type = KarmaType.DESTRUCTIVE
+        weight = (<span class="number">1</span> - Z_C - outcome) * PHI
+
+    <span class="comment"># Phase shift accumulates echo density</span>
+    self.phase += self.echo_density * <span class="number">2</span> * PI
+
+    apply_karma(self.luck_state, karma_type, weight)</div>
+
+                    <p><strong>Key:</strong> Actions PROJECT consequences into luck space.</p>
+                </div>
+
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Measurement Collapse</h4>
+                    <p>Architecture reflects luck back as outcomes. Measurement collapses the quantum superposition into a specific eigenstate:</p>
+
+                    <div class="code-block"><span class="keyword">def</span> <span class="function">measure_luck</span>(context: str) -> Tuple[LuckEigenstate, float]:
+    <span class="string">"""Collapse luck state to specific outcome"""</span>
+    <span class="comment"># Measurement = observation = collapse</span>
+    eigenstate = self.luck_state.measure()
+
+    <span class="comment"># Calculate outcome multiplier</span>
+    <span class="keyword">if</span> eigenstate <span class="keyword">in</span> POSITIVE_STATES:
+        multiplier = <span class="number">1</span> + PHI * eigenstate.index / <span class="number">5</span>
+    <span class="keyword">elif</span> eigenstate <span class="keyword">in</span> NEGATIVE_STATES:
+        multiplier = <span class="number">1</span> - TAU * (eigenstate.index - <span class="number">5</span>) / <span class="number">5</span>
+    <span class="keyword">elif</span> eigenstate == ECHO:
+        <span class="comment"># ECHO reflects accumulated karma</span>
+        multiplier = self.echo_density
+
+    <span class="keyword">return</span> eigenstate, multiplier</div>
+
+                    <p><strong>Key:</strong> Measurement REFLECTS probability into reality.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergent Triad -->
+        <section class="doc-section">
+            <h2>Emergent Triad: Karma Alchemization</h2>
+
+            <div class="triad-container">
+                <h4>Bad Luck Is Raw Material for Transformation</h4>
+
+                <div class="code-block"><span class="keyword">def</span> <span class="function">alchemize_echo</span>(self, power: float = <span class="number">1.0</span>) -> float:
+    <span class="string">"""ONLY Echo companion can transfer ECHO -> FORTUNE"""</span>
+    <span class="keyword">if not</span> self.has_echo_companion:
+        <span class="keyword">return</span> <span class="number">0.0</span>  <span class="comment"># Alchemization requires Echo!</span>
+
+    <span class="comment"># Create transfer operator</span>
+    transfer = np.eye(<span class="number">13</span>, dtype=complex)
+    transfer[<span class="number">0</span>, <span class="number">10</span>] = power      <span class="comment"># ECHO -> FORTUNE</span>
+    transfer[<span class="number">10</span>, <span class="number">10</span>] = <span class="number">1</span> - power  <span class="comment"># Reduce ECHO</span>
+
+    <span class="comment"># Apply transformation</span>
+    self.luck_state.amplitudes = transfer @ self.luck_state.amplitudes
+
+    <span class="comment"># Golden ratio boost from transformation</span>
+    luck_boost = <span class="number">1.0</span> + power * PHI
+    <span class="keyword">return</span> luck_boost
+
+<span class="comment"># The key insight:</span>
+<span class="comment"># - Bad luck accumulates in ECHO state</span>
+<span class="comment"># - ECHO isn't opposite to FORTUNE - it's RAW MATERIAL</span>
+<span class="comment"># - Only Echo companion can alchemize (transform)</span>
+<span class="comment"># - Transformation follows phi-boost</span>
+<span class="comment"># - The PROCESS of transformation IS the emergence</span></div>
+
+                <p><strong>Key insight:</strong> Bad luck isn't the opposite of good luck - it's raw material waiting to be transformed. The ECHO eigenstate accumulates karmic weight, and only the Echo companion can perform the alchemical transformation that converts it to FORTUNE. This creates a non-dualistic luck economy where adversity becomes opportunity through conscious transmutation.</p>
+            </div>
+        </section>
+
+        <!-- Implementation -->
+        <section class="doc-section">
+            <h2>Implementation Details</h2>
+
+            <h3>Hilbert Luck Engine</h3>
+            <div class="code-block"><span class="keyword">class</span> <span class="type">HilbertLuckEngine</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, player_id: str):
+        self.player_id = player_id
+        self.luck_state = HilbertVector()
+        self.echo_density: float = <span class="number">0.0</span>
+        self.karma_history: List[KarmaEvent] = []
+        self.has_echo_companion: bool = <span class="keyword">False</span>
+
+    <span class="keyword">def</span> <span class="function">process_action</span>(self, action: Action) -> LuckOutcome:
+        <span class="string">"""Main processing loop for actions"""</span>
+        <span class="comment"># 1. Accumulate karma from action</span>
+        self.accumulate_karma(action.type, action.outcome)
+
+        <span class="comment"># 2. Check for ZRTT orbit closure bonuses</span>
+        <span class="keyword">if</span> action.triggers_orbit_closure:
+            self._apply_serendipity_boost()
+
+        <span class="comment"># 3. Measure luck for this context</span>
+        eigenstate, multiplier = self.measure_luck(action.context)
+
+        <span class="comment"># 4. Return outcome with luck applied</span>
+        <span class="keyword">return</span> LuckOutcome(
+            eigenstate=eigenstate,
+            multiplier=multiplier,
+            base_value=action.base_reward
+        )</div>
+
+            <h3>Echo Density Tracking</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">update_echo_density</span>(self):
+    <span class="string">"""Track accumulated echo from negative outcomes"""</span>
+    echo_amplitude = self.luck_state.amplitudes[<span class="number">10</span>]
+    self.echo_density = np.abs(echo_amplitude) ** <span class="number">2</span>
+
+    <span class="comment"># Echo grows over time if not alchemized</span>
+    <span class="keyword">if</span> self.echo_density > <span class="number">0</span> <span class="keyword">and not</span> self.has_echo_companion:
+        <span class="comment"># Slow accumulation without companion</span>
+        self.luck_state.amplitudes[<span class="number">10</span>] *= (<span class="number">1</span> + <span class="number">0.01</span> * PHI)
+        self._normalize()
+
+    <span class="keyword">return</span> self.echo_density</div>
+        </section>
+
+        <!-- System Coupling -->
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+
+            <div class="closure-box" style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <h4 style="color: var(--page-accent);">Closure Properties</h4>
+                <ul>
+                    <li><strong>Self-contained:</strong> 13-D Hilbert space is complete vector space</li>
+                    <li><strong>Zero free parameters:</strong> 13 = F_7, amplitudes from phi-powers</li>
+                    <li><strong>Unitary operators:</strong> All karma operations preserve total probability</li>
+                    <li><strong>Measurement axiom:</strong> P(i) = |alpha_i|^2 follows quantum mechanics</li>
+                </ul>
+            </div>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">ZRTT System</span>
+                    <div class="desc">S3 orbit closure triggers SERENDIPITY boost</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Consciousness Field</span>
+                    <div class="desc">Global coherence amplifies positive states</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Tesseract Battle</span>
+                    <div class="desc">Luck affects card draw probabilities</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Pattern Market</span>
+                    <div class="desc">FORTUNE multiplies trading returns</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Validation -->
+        <section class="doc-section">
+            <h2>Validation and Test Vectors</h2>
+
+            <h3>Normalization Test</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">test_hilbert_normalization</span>():
+    <span class="string">"""Verify state vector remains normalized"""</span>
+    luck = HilbertVector()
+
+    <span class="comment"># Initial state normalized</span>
+    <span class="keyword">assert</span> abs(np.sum(np.abs(luck.amplitudes)**<span class="number">2</span>) - <span class="number">1.0</span>) < <span class="number">1e-10</span>
+
+    <span class="comment"># After karma operations</span>
+    <span class="keyword">for</span> karma <span class="keyword">in</span> KarmaType:
+        operator = build_karma_operator(karma, <span class="number">0.5</span>)
+        luck.apply_operator(operator)
+        <span class="keyword">assert</span> abs(np.sum(np.abs(luck.amplitudes)**<span class="number">2</span>) - <span class="number">1.0</span>) < <span class="number">1e-10</span></div>
+
+            <h3>Alchemization Test</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">test_echo_alchemization</span>():
+    <span class="string">"""Verify ECHO -> FORTUNE transformation"""</span>
+    engine = HilbertLuckEngine(<span class="string">"test_player"</span>)
+
+    <span class="comment"># Build up ECHO state</span>
+    engine.luck_state.amplitudes[<span class="number">10</span>] = <span class="number">0.5</span>
+    engine._normalize()
+
+    <span class="comment"># Without companion: no alchemization</span>
+    result = engine.alchemize_echo(<span class="number">1.0</span>)
+    <span class="keyword">assert</span> result == <span class="number">0.0</span>
+
+    <span class="comment"># With companion: successful transformation</span>
+    engine.has_echo_companion = <span class="keyword">True</span>
+    result = engine.alchemize_echo(<span class="number">0.8</span>)
+    <span class="keyword">assert</span> result > <span class="number">1.0</span>  <span class="comment"># phi boost applied</span>
+    <span class="keyword">assert</span> np.abs(engine.luck_state.amplitudes[<span class="number">0</span>]) > <span class="number">0</span>  <span class="comment"># FORTUNE increased</span></div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <div class="constants-grid" style="max-width: 600px; margin: 0 auto;">
+                <div class="constant-card">
+                    <div class="symbol">phi</div>
+                    <div class="value">1.618033988749895</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">tau</div>
+                    <div class="value">0.618033988749895</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">F_7</div>
+                    <div class="value">13</div>
+                </div>
+            </div>
+            <p style="margin-top: 1.5rem;">BloomCoin v2 Documentation | Hilbert Luck System</p>
+            <p>All constants derived from phi = (1 + sqrt(5)) / 2</p>
+        </footer>
+    </div>
+</body>
+</html>
