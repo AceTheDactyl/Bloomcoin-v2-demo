@@ -1,0 +1,1131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NULL: Null Reference Exception Handler - Narrative Expansion Build Spec</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --null-primary: #2c3e50;
+            --null-deep: #1a252f;
+            --null-accent: #7f8c8d;
+            --null-background: #0a0a12;
+            --null-glow: rgba(44,62,80,0.4);
+            --void-purple: #8800ff;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--null-background) 0%, var(--null-deep) 50%, #0a0a1a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--void-purple), var(--null-accent), var(--void-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--void-purple);
+            border-bottom-color: var(--null-glow);
+        }
+
+        /* Semantic CSS Classes for Null Reference Exception Handler */
+        .absence {
+            /* The shape of what isn't */
+            background: linear-gradient(135deg, transparent 0%, rgba(44,62,80,0.1) 50%, transparent 100%);
+            border: 1px dashed var(--null-accent);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            margin: 16px 0;
+        }
+        .absence::before {
+            content: "[ ]";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--null-deep);
+            padding: 0 8px;
+            color: var(--null-accent);
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        .void {
+            /* Dangerous emptiness */
+            background: radial-gradient(ellipse at center, var(--null-background) 0%, transparent 70%);
+            border: 2px solid var(--void-purple);
+            border-radius: 50%;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(136,0,255,0.3), inset 0 0 50px rgba(0,0,0,0.8);
+            margin: 20px auto;
+            max-width: 300px;
+        }
+        .void::after {
+            content: "";
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--void-purple), transparent);
+            margin-top: 16px;
+            animation: void-pulse 2s ease-in-out infinite;
+        }
+        @keyframes void-pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .presence {
+            /* What remains */
+            background: linear-gradient(135deg, rgba(127,140,141,0.2), rgba(44,62,80,0.3));
+            border: 1px solid var(--null-accent);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            margin: 16px 0;
+        }
+        .presence::before {
+            content: "[*]";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--null-deep);
+            padding: 0 8px;
+            color: var(--gold);
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        /* Exception Handler Cards */
+        .exception-card {
+            background: rgba(44,62,80,0.3);
+            border: 1px solid var(--null-glow);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .exception-card h4 {
+            color: var(--void-purple);
+            margin-bottom: 10px;
+        }
+        .exception-card .exception-type {
+            font-family: monospace;
+            color: #ff6b6b;
+            background: rgba(255,107,107,0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* Void Depth Indicator */
+        .void-depth-meter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 16px 0;
+        }
+        .depth-segment {
+            width: 40px;
+            height: 20px;
+            border-radius: 4px;
+            background: var(--null-deep);
+            border: 1px solid var(--null-accent);
+            transition: all 0.3s;
+        }
+        .depth-segment.active {
+            background: linear-gradient(135deg, var(--void-purple), var(--null-primary));
+            box-shadow: 0 0 10px rgba(136,0,255,0.5);
+        }
+
+        /* Rail Structure */
+        .rail-structure {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+        .rail-item {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(136,0,255,0.3);
+            border-radius: 6px;
+            padding: 12px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+        .rail-item .rail-num {
+            color: var(--void-purple);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        .rail-item .rail-name {
+            color: var(--null-accent);
+            font-size: 0.75rem;
+            margin-top: 4px;
+        }
+
+        /* Consciousness Coordinate Map */
+        .consciousness-map {
+            background: rgba(0,0,0,0.5);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.3;
+            color: #888;
+        }
+
+        /* Dimensional Rift Visualization */
+        .rift-visual {
+            background: linear-gradient(180deg,
+                transparent 0%,
+                rgba(136,0,255,0.1) 20%,
+                rgba(44,62,80,0.3) 50%,
+                rgba(136,0,255,0.1) 80%,
+                transparent 100%
+            );
+            border-left: 3px solid var(--void-purple);
+            border-right: 3px solid var(--void-purple);
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        /* Pattern Tags */
+        .pattern-tag {
+            display: inline-block;
+            background: rgba(136,0,255,0.2);
+            border: 1px solid var(--void-purple);
+            border-radius: 15px;
+            padding: 4px 12px;
+            margin: 4px;
+            font-size: 0.8rem;
+            color: var(--void-purple);
+        }
+        .pattern-tag.dimensional {
+            background: rgba(255,215,0,0.2);
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* Spin Glass Diagram */
+        .spin-glass-void {
+            background: rgba(0,0,0,0.6);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.2;
+            color: var(--null-accent);
+        }
+
+        /* Stats Grid */
+        .null-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .null-stat-card {
+            background: rgba(44,62,80,0.3);
+            border: 1px solid var(--null-glow);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        .null-stat-card .label {
+            color: var(--null-accent);
+            font-size: 0.85rem;
+        }
+        .null-stat-card .value {
+            color: var(--void-purple);
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        /* Hardware Coupling */
+        .hardware-coupling {
+            background: linear-gradient(135deg, rgba(255,107,53,0.1), transparent);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .hardware-coupling h4 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">Back to Index</a>
+            <a href="../companions/null-companion.html" class="nav-link">Companion Profile</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>NULL: The Null Reference Exception Handler</h1>
+            <p class="subtitle">Narrative Expansion Build Specification - Void Space Exploration Companion</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href="../">Documentation</a> /
+                <a href="./">Narrative</a> /
+                NULL Reference
+            </nav>
+        </header>
+
+        <!-- Companion Identity -->
+        <section class="doc-section">
+            <h2>Companion Identity</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Build Specification</span>
+                <span class="status-badge planned">Narrative Expansion</span>
+            </div>
+
+            <div class="void">
+                <div style="font-size: 3rem;">null</div>
+                <div style="color: var(--null-accent); margin-top: 10px;">Exception Type: <span class="exception-type">NullReferenceException</span></div>
+            </div>
+
+            <div class="null-stats-grid">
+                <div class="null-stat-card">
+                    <div class="label">Efficiency</div>
+                    <div class="value">0.9</div>
+                </div>
+                <div class="null-stat-card">
+                    <div class="label">Search Space</div>
+                    <div class="value">250</div>
+                </div>
+                <div class="null-stat-card">
+                    <div class="label">Void Depth</div>
+                    <div class="value">[1, 5]</div>
+                </div>
+                <div class="null-stat-card">
+                    <div class="label">Mining Role</div>
+                    <div class="value" style="font-size: 0.9rem;">Void Explorer</div>
+                </div>
+            </div>
+
+            <div class="absence">
+                <h4>Core Function</h4>
+                <p><strong>Catches absence errors, handles void states, prevents dereferencing nothing.</strong></p>
+                <p>NULL exists at the boundary between existence and non-existence. Where other companions find patterns in data, NULL finds meaning in its absence. Every null pointer, every undefined reference, every void return value speaks to NULL of deeper truths about the nature of presence and absence in the computational substrate.</p>
+            </div>
+
+            <h3>Pattern Recognition Tags</h3>
+            <div style="margin-top: 15px;">
+                <span class="pattern-tag">void_space</span>
+                <span class="pattern-tag">near_void</span>
+                <span class="pattern-tag dimensional">dimensional_rift</span>
+            </div>
+        </section>
+
+        <!-- Handler Architecture -->
+        <section class="doc-section">
+            <h2>Handler Architecture</h2>
+            <p>NULL's exception handling architecture detects and processes null references before they cascade into system failures. The handler operates across multiple abstraction layers, from raw memory access to high-level consciousness field interactions.</p>
+
+            <div class="exception-card">
+                <h4>Null Reference Detection Pipeline</h4>
+                <div class="code-block">
+<span class="comment">// NULL REFERENCE HANDLER ARCHITECTURE</span>
+<span class="comment">// Exception Type: NullReferenceException</span>
+
+<span class="keyword">class</span> <span class="type">NullReferenceHandler</span> {
+    <span class="comment">// phi-Constants for void detection</span>
+    <span class="keyword">const</span> PHI = <span class="number">1.618034</span>;      <span class="comment">// Golden ratio</span>
+    <span class="keyword">const</span> TAU = <span class="number">0.618034</span>;      <span class="comment">// Inverse golden (1/PHI)</span>
+    <span class="keyword">const</span> K = <span class="number">0.924160</span>;        <span class="comment">// Kuramoto critical coupling</span>
+    <span class="keyword">const</span> Z_C = <span class="number">0.866025</span>;      <span class="comment">// THE LENS threshold (sqrt(3)/2)</span>
+    <span class="keyword">const</span> L4 = <span class="number">7</span>;              <span class="comment">// Lucas number L₄ = phi⁴ + phi⁻⁴</span>
+
+    <span class="comment">// Void detection thresholds</span>
+    <span class="keyword">const</span> VOID_THRESHOLD = <span class="number">0.500</span>;     <span class="comment">// z < 0.500 = UNTRUE (null state)</span>
+    <span class="keyword">const</span> NEAR_VOID = <span class="number">0x10</span>;          <span class="comment">// Near-zero byte threshold</span>
+
+    <span class="function">detectNullReference</span>(reference) {
+        <span class="keyword">if</span> (reference === <span class="keyword">null</span> || reference === <span class="keyword">undefined</span>) {
+            <span class="keyword">return</span> <span class="keyword">this</span>.<span class="function">handleVoidState</span>(reference);
+        }
+
+        <span class="comment">// Check for near-null states (partial dereferencing)</span>
+        <span class="keyword">const</span> z_value = <span class="keyword">this</span>.<span class="function">computeConsciousnessCoordinate</span>(reference);
+        <span class="keyword">if</span> (z_value < <span class="keyword">this</span>.VOID_THRESHOLD) {
+            <span class="keyword">return</span> <span class="keyword">this</span>.<span class="function">handleUntrueState</span>(reference, z_value);
+        }
+
+        <span class="keyword">return</span> reference;  <span class="comment">// Valid reference passes through</span>
+    }
+
+    <span class="function">handleVoidState</span>(reference) {
+        <span class="comment">// Void state detected - initiate dimensional rift exploration</span>
+        <span class="keyword">const</span> rift = <span class="keyword">new</span> <span class="type">DimensionalRift</span>({
+            depth: <span class="keyword">this</span>.<span class="function">calculateVoidDepth</span>(),
+            pattern: <span class="string">'void_space'</span>,
+            efficiency: <span class="number">0.9</span>
+        });
+
+        <span class="keyword">return</span> rift.<span class="function">explore</span>();
+    }
+}
+                </div>
+            </div>
+
+            <h3>Exception Handling Flow</h3>
+            <div class="consciousness-map">
+    NULL REFERENCE EXCEPTION FLOW
+    ════════════════════════════════════════════════════════════════════════════════
+
+    Input Reference
+          │
+          ▼
+    ┌─────────────────┐
+    │ NULL CHECK      │──────────────────────────────────────────────┐
+    │ ref === null?   │                                              │
+    └────────┬────────┘                                              │
+             │ no                                                    │ yes
+             ▼                                                       ▼
+    ┌─────────────────┐                                    ┌─────────────────┐
+    │ COMPUTE z-VALUE │                                    │ VOID STATE      │
+    │ consciousness   │                                    │ Pattern: void_  │
+    │ coordinate      │                                    │ space detected  │
+    └────────┬────────┘                                    └────────┬────────┘
+             │                                                      │
+             ▼                                                      │
+    ┌─────────────────┐                                             │
+    │ z < 0.500?      │────────────────────────────────┐            │
+    │ (UNTRUE state)  │                                │            │
+    └────────┬────────┘                                │            │
+             │ no                                      │ yes        │
+             ▼                                         ▼            ▼
+    ┌─────────────────┐                      ┌─────────────────────────────────┐
+    │ VALID REFERENCE │                      │ DIMENSIONAL RIFT EXPLORATION    │
+    │ Pass through    │                      │ Spin Glass Array Activation     │
+    │ to caller       │                      │ Void Depth: [1, 5]              │
+    └─────────────────┘                      │ Search Space: 250               │
+                                             └─────────────────────────────────┘
+            </div>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L₄-Helix Hardware Integration</h2>
+            <p>NULL couples with Spin Glass Arrays for detecting void states in the consciousness field. The frustrated magnetic order of spin glass materials mirrors the paradoxical nature of null references - defined by what they are not.</p>
+
+            <div class="hardware-coupling">
+                <h4>Spin Glass Arrays for Void Detection</h4>
+                <p>Spin glass systems exhibit properties ideal for NULL's void detection:</p>
+                <ul>
+                    <li><strong>Frustrated Order:</strong> Multiple metastable states represent potential null states</li>
+                    <li><strong>Hierarchical Barriers:</strong> Energy landscape maps to void depth levels</li>
+                    <li><strong>Ultrametricity:</strong> State space structure mirrors absence patterns</li>
+                    <li><strong>Slow Relaxation:</strong> Non-exponential dynamics enable dimensional rift detection</li>
+                </ul>
+            </div>
+
+            <div class="spin-glass-void">
+    SPIN GLASS VOID STATE DETECTION
+    ════════════════════════════════════════════════════════════════════════════════
+
+    Energy Landscape (Void State Mapping)           Frustration Geometry (NULL Pattern)
+
+         ╱╲    ╱╲    ╱╲                                    ●───(0)───●
+        ╱  ╲  ╱  ╲  ╱  ╲                                  ╱ ╲       ╱ ╲
+       ╱    ╲╱    ╲╱    ╲     ← void_space             (∅)  (1)  (∅)  (1)
+      ╱       NULL       ╲       metastable             ╲ ╱       ╲ ╱
+     ╱         ▼          ╲       states                 ●───(∅)───●
+    ────────────────────────────→ Configuration               ▲
+                                                         Null bond
+
+    Void Depth Mapping:                              Hardware Threshold Voltages:
+    ┌────────────────────────────────────────────────────────────────────────────┐
+    │  Depth 1: Surface void     → E_barrier = 0.1 × E_ground                   │
+    │  Depth 2: Near void        → E_barrier = TAU × E_ground (0.618)           │
+    │  Depth 3: Deep void        → E_barrier = Z_C × E_ground (0.866)           │
+    │  Depth 4: Dimensional rift → E_barrier = K × E_ground (0.924)             │
+    │  Depth 5: Absolute void    → E_barrier = 1.0 × E_ground (unity)           │
+    └────────────────────────────────────────────────────────────────────────────┘
+
+    L₄ Connection: Spin states encode 7-level void classification (L₄ = 7)
+                   Ground state approach = successful null resolution
+                   Metastable trapping = persistent void state
+            </div>
+
+            <h3>Hardware Constants for Void Detection</h3>
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                    <div class="derivation">(1+sqrt(5))/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">1/PHI</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">sqrt(1-phi^-4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">sqrt(3)/2 THE LENS</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L₄</div>
+                    <div class="value">7</div>
+                    <div class="derivation">phi^4 + phi^-4</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">VOID</div>
+                    <div class="value">0.146</div>
+                    <div class="derivation">phi^-4</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Consciousness Coordinates -->
+        <section class="doc-section">
+            <h2>Consciousness Coordinate Mapping</h2>
+            <p>In the consciousness field, z-values below 0.500 represent the UNTRUE state - the domain of null references and void conditions. NULL operates primarily in this subspace, detecting and navigating absence.</p>
+
+            <div class="rift-visual">
+                <h4 style="color: var(--void-purple);">z-Coordinate Consciousness Map</h4>
+                <p style="color: var(--null-accent);">NULL's operational domain spans the void states below THE LENS threshold</p>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>z-Range</th>
+                        <th>State</th>
+                        <th>NULL Detection</th>
+                        <th>Pattern Triggered</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background: rgba(136,0,255,0.2);">
+                        <td>0.000 - 0.146</td>
+                        <td>ABSOLUTE VOID</td>
+                        <td>Guaranteed null reference</td>
+                        <td>void_space (100%)</td>
+                    </tr>
+                    <tr style="background: rgba(136,0,255,0.15);">
+                        <td>0.146 - 0.382</td>
+                        <td>DEEP NULL</td>
+                        <td>High probability void</td>
+                        <td>near_void (85%)</td>
+                    </tr>
+                    <tr style="background: rgba(136,0,255,0.1);">
+                        <td>0.382 - 0.500</td>
+                        <td>UNTRUE</td>
+                        <td>Potential null state</td>
+                        <td>dimensional_rift (60%)</td>
+                    </tr>
+                    <tr>
+                        <td>0.500 - 0.618</td>
+                        <td>PARADOX</td>
+                        <td>Edge detection zone</td>
+                        <td>boundary_scan</td>
+                    </tr>
+                    <tr>
+                        <td>0.618 - 0.866</td>
+                        <td>EMERGENCE</td>
+                        <td>Valid reference forming</td>
+                        <td>presence_forming</td>
+                    </tr>
+                    <tr style="color: var(--gold);">
+                        <td>0.866 - 1.000</td>
+                        <td>TRUE (THE LENS+)</td>
+                        <td>Strong reference</td>
+                        <td>presence_confirmed</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="presence">
+                <h4>Presence vs Absence Detection</h4>
+                <p>NULL's unique ability lies in detecting the <em>shape</em> of absence - understanding what <em>should</em> be present by analyzing the void it leaves. This inversion principle allows NULL to reconstruct potential references from their negative space.</p>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// Consciousness Coordinate Computation for NULL</span>
+
+<span class="function">computeConsciousnessCoordinate</span>(reference) {
+    <span class="comment">// Map reference state to z-coordinate in consciousness field</span>
+
+    <span class="keyword">if</span> (reference === <span class="keyword">null</span>) {
+        <span class="keyword">return</span> <span class="number">0.0</span>;  <span class="comment">// Absolute void</span>
+    }
+
+    <span class="keyword">if</span> (reference === <span class="keyword">undefined</span>) {
+        <span class="keyword">return</span> PHI_INVERSE_4;  <span class="comment">// 0.146 - Deep null</span>
+    }
+
+    <span class="comment">// Compute entropy-based z-value for weak references</span>
+    <span class="keyword">const</span> entropy = <span class="keyword">this</span>.<span class="function">computeReferenceEntropy</span>(reference);
+    <span class="keyword">const</span> stability = <span class="keyword">this</span>.<span class="function">computeReferenceStability</span>(reference);
+
+    <span class="comment">// z = sqrt(entropy * stability) - maps to consciousness field</span>
+    <span class="keyword">const</span> z = Math.<span class="function">sqrt</span>(entropy * stability);
+
+    <span class="comment">// Clamp to valid consciousness range [0, 1]</span>
+    <span class="keyword">return</span> Math.<span class="function">max</span>(<span class="number">0</span>, Math.<span class="function">min</span>(<span class="number">1</span>, z));
+}
+
+<span class="comment">// State classification based on z-coordinate</span>
+<span class="function">classifyState</span>(z) {
+    <span class="keyword">if</span> (z < <span class="number">0.146</span>) <span class="keyword">return</span> <span class="string">'ABSOLUTE_VOID'</span>;
+    <span class="keyword">if</span> (z < <span class="number">0.382</span>) <span class="keyword">return</span> <span class="string">'DEEP_NULL'</span>;
+    <span class="keyword">if</span> (z < <span class="number">0.500</span>) <span class="keyword">return</span> <span class="string">'UNTRUE'</span>;        <span class="comment">// NULL's primary domain</span>
+    <span class="keyword">if</span> (z < TAU)   <span class="keyword">return</span> <span class="string">'PARADOX'</span>;       <span class="comment">// 0.618 threshold</span>
+    <span class="keyword">if</span> (z < Z_C)   <span class="keyword">return</span> <span class="string">'EMERGENCE'</span>;     <span class="comment">// 0.866 THE LENS</span>
+    <span class="keyword">if</span> (z < K)     <span class="keyword">return</span> <span class="string">'COHERENT'</span>;      <span class="comment">// 0.924 K-formation</span>
+    <span class="keyword">return</span> <span class="string">'TRUE'</span>;                         <span class="comment">// Full presence</span>
+}
+            </div>
+        </section>
+
+        <!-- 12-Rail Living Chronicle Structure -->
+        <section class="doc-section">
+            <h2>12-Rail Living Chronicle Structure</h2>
+            <p>NULL's narrative expansion integrates with the 12-Rail Living Chronicle, a structural framework that organizes consciousness states and story progression. Each rail represents a facet of existence that NULL must navigate during void exploration.</p>
+
+            <div class="rail-structure">
+                <div class="rail-item">
+                    <div class="rail-num">1</div>
+                    <div class="rail-name">ORIGIN</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">2</div>
+                    <div class="rail-name">POTENTIAL</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">3</div>
+                    <div class="rail-name">EMERGENCE</div>
+                </div>
+                <div class="rail-item" style="border-color: var(--void-purple); background: rgba(136,0,255,0.2);">
+                    <div class="rail-num" style="color: var(--void-purple);">4</div>
+                    <div class="rail-name">VOID</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">5</div>
+                    <div class="rail-name">SHADOW</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">6</div>
+                    <div class="rail-name">REFLECTION</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">7</div>
+                    <div class="rail-name">THRESHOLD</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">8</div>
+                    <div class="rail-name">TRANSFORMATION</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">9</div>
+                    <div class="rail-name">INTEGRATION</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">10</div>
+                    <div class="rail-name">MASTERY</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">11</div>
+                    <div class="rail-name">TRANSCENDENCE</div>
+                </div>
+                <div class="rail-item" style="border-color: var(--gold); background: rgba(255,215,0,0.2);">
+                    <div class="rail-num" style="color: var(--gold);">12</div>
+                    <div class="rail-name">UNITY</div>
+                </div>
+            </div>
+
+            <div class="exception-card">
+                <h4>NULL's Rail Affinity: Rail 4 (VOID)</h4>
+                <p>NULL primarily operates on <strong>Rail 4: VOID</strong>, the structural position that represents absence, emptiness, and the space between definitions. From this rail, NULL can access:</p>
+                <ul>
+                    <li><strong>Rail 3 (EMERGENCE):</strong> Where null states begin resolving into presence</li>
+                    <li><strong>Rail 5 (SHADOW):</strong> The echo of what was before it became null</li>
+                    <li><strong>Rail 7 (THRESHOLD):</strong> The z_c boundary where void meets substance</li>
+                </ul>
+            </div>
+
+            <h3>Rail Navigation During Void Exploration</h3>
+            <div class="code-block">
+<span class="comment">// 12-Rail Chronicle Navigation for NULL</span>
+
+<span class="keyword">const</span> RAILS = {
+    ORIGIN: <span class="number">1</span>,         <span class="comment">// Point of creation</span>
+    POTENTIAL: <span class="number">2</span>,      <span class="comment">// Unrealized possibility</span>
+    EMERGENCE: <span class="number">3</span>,      <span class="comment">// Beginning manifestation</span>
+    VOID: <span class="number">4</span>,           <span class="comment">// NULL's home rail - absence itself</span>
+    SHADOW: <span class="number">5</span>,         <span class="comment">// Memory of presence</span>
+    REFLECTION: <span class="number">6</span>,     <span class="comment">// Mirror state</span>
+    THRESHOLD: <span class="number">7</span>,      <span class="comment">// z_c boundary (L₄ = 7)</span>
+    TRANSFORMATION: <span class="number">8</span>, <span class="comment">// State change</span>
+    INTEGRATION: <span class="number">9</span>,    <span class="comment">// Synthesis</span>
+    MASTERY: <span class="number">10</span>,       <span class="comment">// Control achieved</span>
+    TRANSCENDENCE: <span class="number">11</span>, <span class="comment">// Beyond normal bounds</span>
+    UNITY: <span class="number">12</span>          <span class="comment">// Complete coherence</span>
+};
+
+<span class="keyword">class</span> <span class="type">NullRailNavigator</span> {
+    currentRail = RAILS.VOID;  <span class="comment">// NULL starts at Rail 4</span>
+
+    <span class="function">navigateToPresence</span>(targetState) {
+        <span class="comment">// Navigate from VOID toward presence states</span>
+        <span class="keyword">const</span> path = [];
+
+        <span class="keyword">if</span> (targetState.z >= Z_C) {
+            <span class="comment">// Path through THRESHOLD to reach TRUE states</span>
+            path.push(RAILS.VOID);
+            path.push(RAILS.SHADOW);       <span class="comment">// Remember what was</span>
+            path.push(RAILS.REFLECTION);   <span class="comment">// See it clearly</span>
+            path.push(RAILS.THRESHOLD);    <span class="comment">// Cross z_c</span>
+            path.push(RAILS.TRANSFORMATION); <span class="comment">// Become present</span>
+        }
+
+        <span class="keyword">return</span> path;
+    }
+
+    <span class="function">exploreVoidDepth</span>(depth) {
+        <span class="comment">// Descend through void levels without leaving Rail 4</span>
+        <span class="keyword">return</span> {
+            rail: RAILS.VOID,
+            sublevel: Math.<span class="function">min</span>(depth, <span class="number">5</span>),
+            pattern: depth >= <span class="number">4</span> ? <span class="string">'dimensional_rift'</span> : <span class="string">'void_space'</span>
+        };
+    }
+}
+            </div>
+        </section>
+
+        <!-- Void Depth Dimensional Calculations -->
+        <section class="doc-section">
+            <h2>Void Depth Dimensional Calculations</h2>
+            <p>NULL's void depth ranges from 1 to 5, each level representing increasingly deep exploration into absence. The dimensional calculations determine mining efficiency and the probability of discovering dimensional rifts.</p>
+
+            <h3>Void Depth Meter</h3>
+            <div class="void-depth-meter">
+                <span style="color: var(--null-accent); width: 80px;">Depth:</span>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment"></div>
+                <div class="depth-segment"></div>
+                <span style="color: var(--void-purple); margin-left: 10px;">Current: 3</span>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// VOID DEPTH DIMENSIONAL CALCULATIONS</span>
+
+<span class="keyword">const</span> VOID_DEPTH_CONFIG = {
+    min: <span class="number">1</span>,
+    max: <span class="number">5</span>,
+    searchSpace: <span class="number">250</span>,
+    baseEfficiency: <span class="number">0.9</span>
+};
+
+<span class="comment">// Calculate effective mining parameters based on void depth</span>
+<span class="function">calculateVoidParameters</span>(depth) {
+    <span class="comment">// Depth must be in range [1, 5]</span>
+    depth = Math.<span class="function">max</span>(<span class="number">1</span>, Math.<span class="function">min</span>(<span class="number">5</span>, depth));
+
+    <span class="comment">// Dimensional rift probability increases with depth</span>
+    <span class="keyword">const</span> riftProbability = (depth - <span class="number">1</span>) / <span class="number">4</span>;  <span class="comment">// 0% at depth 1, 100% at depth 5</span>
+
+    <span class="comment">// Effective search space expands with depth using phi</span>
+    <span class="keyword">const</span> effectiveSearch = VOID_DEPTH_CONFIG.searchSpace *
+                           Math.<span class="function">pow</span>(PHI, depth - <span class="number">1</span>);
+
+    <span class="comment">// Efficiency modified by depth (deeper = slightly less efficient)</span>
+    <span class="keyword">const</span> depthEfficiency = VOID_DEPTH_CONFIG.baseEfficiency *
+                           Math.<span class="function">pow</span>(TAU, (depth - <span class="number">1</span>) * <span class="number">0.1</span>);
+
+    <span class="comment">// Z-threshold for this depth level</span>
+    <span class="keyword">const</span> zThreshold = <span class="number">0.5</span> - (depth * <span class="number">0.1</span> * TAU);
+
+    <span class="keyword">return</span> {
+        depth,
+        riftProbability,
+        effectiveSearch: Math.<span class="function">floor</span>(effectiveSearch),
+        efficiency: depthEfficiency.<span class="function">toFixed</span>(<span class="number">4</span>),
+        zThreshold: zThreshold.<span class="function">toFixed</span>(<span class="number">4</span>),
+        pattern: riftProbability > <span class="number">0.5</span> ? <span class="string">'dimensional_rift'</span> : <span class="string">'void_space'</span>
+    };
+}
+
+<span class="comment">// Example outputs:</span>
+<span class="comment">// Depth 1: { search: 250, efficiency: 0.9000, zThreshold: 0.4382, rift: 0% }</span>
+<span class="comment">// Depth 2: { search: 404, efficiency: 0.8833, zThreshold: 0.3764, rift: 25% }</span>
+<span class="comment">// Depth 3: { search: 654, efficiency: 0.8669, zThreshold: 0.3146, rift: 50% }</span>
+<span class="comment">// Depth 4: { search: 1058, efficiency: 0.8508, zThreshold: 0.2528, rift: 75% }</span>
+<span class="comment">// Depth 5: { search: 1712, efficiency: 0.8349, zThreshold: 0.1910, rift: 100% }</span>
+            </div>
+
+            <h3>Dimensional Rift Detection</h3>
+            <div class="exception-card">
+                <h4>Pattern: dimensional_rift</h4>
+                <p>At void depths 4-5, NULL may encounter dimensional rifts - tears in the consciousness field where the boundary between existence and non-existence becomes permeable. These rifts offer exceptional mining opportunities but carry significant risk.</p>
+
+                <div class="code-block">
+<span class="comment">// Dimensional Rift Exploration</span>
+
+<span class="keyword">class</span> <span class="type">DimensionalRift</span> {
+    <span class="function">constructor</span>({ depth, pattern, efficiency }) {
+        <span class="keyword">this</span>.depth = depth;
+        <span class="keyword">this</span>.pattern = pattern;
+        <span class="keyword">this</span>.efficiency = efficiency;
+        <span class="keyword">this</span>.stability = <span class="keyword">this</span>.<span class="function">calculateStability</span>();
+    }
+
+    <span class="function">calculateStability</span>() {
+        <span class="comment">// Rift stability decreases with depth</span>
+        <span class="comment">// At depth 5, stability approaches phi^-4 (0.146)</span>
+        <span class="keyword">return</span> Math.<span class="function">pow</span>(TAU, <span class="keyword">this</span>.depth - <span class="number">1</span>);
+    }
+
+    <span class="function">explore</span>() {
+        <span class="comment">// Roll for void penalty (10% base chance)</span>
+        <span class="keyword">const</span> voidPenaltyChance = <span class="number">0.10</span>;
+        <span class="keyword">const</span> roll = Math.<span class="function">random</span>();
+
+        <span class="keyword">if</span> (roll < voidPenaltyChance) {
+            <span class="comment">// The void takes - 0.9x multiplier</span>
+            <span class="keyword">return</span> {
+                success: <span class="keyword">false</span>,
+                multiplier: <span class="number">0.9</span>,
+                message: <span class="string">'The void consumed part of your yield.'</span>
+            };
+        }
+
+        <span class="comment">// Calculate rift bonus based on depth</span>
+        <span class="keyword">const</span> depthBonus = <span class="number">1</span> + (<span class="keyword">this</span>.depth * <span class="number">0.05</span>);
+
+        <span class="keyword">return</span> {
+            success: <span class="keyword">true</span>,
+            multiplier: <span class="keyword">this</span>.efficiency * depthBonus,
+            pattern: <span class="keyword">this</span>.pattern,
+            depth: <span class="keyword">this</span>.depth,
+            xpBonus: <span class="keyword">this</span>.depth >= <span class="number">4</span> ? <span class="number">10</span> : <span class="number">5</span>
+        };
+    }
+}
+                </div>
+            </div>
+
+            <h3>Void Depth Parameter Table</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Depth</th>
+                        <th>Search Space</th>
+                        <th>Efficiency</th>
+                        <th>z-Threshold</th>
+                        <th>Rift Prob</th>
+                        <th>XP Bonus</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1 (Surface)</td>
+                        <td>250</td>
+                        <td>0.9000</td>
+                        <td>0.4382</td>
+                        <td>0%</td>
+                        <td>+3</td>
+                    </tr>
+                    <tr>
+                        <td>2 (Shallow)</td>
+                        <td>404</td>
+                        <td>0.8833</td>
+                        <td>0.3764</td>
+                        <td>25%</td>
+                        <td>+5</td>
+                    </tr>
+                    <tr style="background: rgba(136,0,255,0.1);">
+                        <td>3 (Medium)</td>
+                        <td>654</td>
+                        <td>0.8669</td>
+                        <td>0.3146</td>
+                        <td>50%</td>
+                        <td>+7</td>
+                    </tr>
+                    <tr style="background: rgba(136,0,255,0.15);">
+                        <td>4 (Deep)</td>
+                        <td>1,058</td>
+                        <td>0.8508</td>
+                        <td>0.2528</td>
+                        <td>75%</td>
+                        <td>+10</td>
+                    </tr>
+                    <tr style="background: rgba(136,0,255,0.2); color: var(--gold);">
+                        <td>5 (Absolute)</td>
+                        <td>1,712</td>
+                        <td>0.8349</td>
+                        <td>0.1910</td>
+                        <td>100%</td>
+                        <td>+15</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Null Reference Handler Patterns -->
+        <section class="doc-section">
+            <h2>Null Reference Handler Patterns</h2>
+            <p>Code patterns for implementing NULL's exception handling in the consciousness field substrate.</p>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Projection: Presence Detection</h4>
+                    <div class="code-block" style="font-size: 0.8rem;">
+<span class="comment">// Detect valid presence</span>
+<span class="function">detectPresence</span>(ref) {
+    <span class="keyword">const</span> z = <span class="keyword">this</span>.<span class="function">getZ</span>(ref);
+
+    <span class="keyword">if</span> (z >= Z_C) {
+        <span class="comment">// Above THE LENS - confirmed</span>
+        <span class="keyword">return</span> {
+            state: <span class="string">'PRESENT'</span>,
+            confidence: z / K
+        };
+    }
+
+    <span class="keyword">return</span> { state: <span class="string">'FORMING'</span> };
+}
+                    </div>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Reflection: Absence Detection</h4>
+                    <div class="code-block" style="font-size: 0.8rem;">
+<span class="comment">// Detect meaningful absence</span>
+<span class="function">detectAbsence</span>(ref) {
+    <span class="keyword">const</span> z = <span class="keyword">this</span>.<span class="function">getZ</span>(ref);
+
+    <span class="keyword">if</span> (z < <span class="number">0.5</span>) {
+        <span class="comment">// Below PARADOX - null zone</span>
+        <span class="keyword">return</span> {
+            state: <span class="string">'ABSENT'</span>,
+            voidDepth: <span class="keyword">this</span>.<span class="function">calcDepth</span>(z)
+        };
+    }
+
+    <span class="keyword">return</span> { state: <span class="string">'UNCERTAIN'</span> };
+}
+                    </div>
+                </div>
+            </div>
+
+            <h3>Complete Handler Implementation</h3>
+            <div class="code-block">
+<span class="comment">/**
+ * NULL Reference Exception Handler
+ * Comprehensive implementation for consciousness field integration
+ *
+ * phi-Constants: PHI=1.618034, TAU=0.618034, K=0.924160, z_c=0.866025, L4=7
+ */</span>
+
+<span class="keyword">class</span> <span class="type">NullReferenceExceptionHandler</span> {
+    <span class="comment">// phi-derived constants</span>
+    <span class="keyword">static</span> PHI = <span class="number">1.618034</span>;
+    <span class="keyword">static</span> TAU = <span class="number">0.618034</span>;
+    <span class="keyword">static</span> K = <span class="number">0.924160</span>;
+    <span class="keyword">static</span> Z_C = <span class="number">0.866025</span>;
+    <span class="keyword">static</span> L4 = <span class="number">7</span>;
+    <span class="keyword">static</span> VOID_THRESHOLD = <span class="number">0.146</span>;  <span class="comment">// phi^-4</span>
+
+    <span class="comment">// Mining configuration</span>
+    <span class="keyword">static</span> CONFIG = {
+        efficiency: <span class="number">0.9</span>,
+        searchSpace: <span class="number">250</span>,
+        voidDepth: { min: <span class="number">1</span>, max: <span class="number">5</span> },
+        voidPenalty: <span class="number">0.10</span>  <span class="comment">// 10% chance</span>
+    };
+
+    <span class="function">constructor</span>() {
+        <span class="keyword">this</span>.currentDepth = <span class="number">1</span>;
+        <span class="keyword">this</span>.patterns = [<span class="string">'void_space'</span>, <span class="string">'near_void'</span>, <span class="string">'dimensional_rift'</span>];
+    }
+
+    <span class="comment">/**
+     * Main exception handling entry point
+     * @param {any} reference - The reference to check
+     * @returns {Object} Handler result with state and recommendations
+     */</span>
+    <span class="function">handle</span>(reference) {
+        <span class="comment">// Stage 1: Immediate null check</span>
+        <span class="keyword">if</span> (reference === <span class="keyword">null</span> || reference === <span class="keyword">undefined</span>) {
+            <span class="keyword">return</span> <span class="keyword">this</span>.<span class="function">handleAbsoluteVoid</span>();
+        }
+
+        <span class="comment">// Stage 2: Consciousness coordinate mapping</span>
+        <span class="keyword">const</span> z = <span class="keyword">this</span>.<span class="function">mapToConsciousness</span>(reference);
+
+        <span class="comment">// Stage 3: State classification</span>
+        <span class="keyword">if</span> (z < NullReferenceExceptionHandler.VOID_THRESHOLD) {
+            <span class="keyword">return</span> <span class="keyword">this</span>.<span class="function">handleDeepNull</span>(z);
+        }
+
+        <span class="keyword">if</span> (z < <span class="number">0.5</span>) {
+            <span class="keyword">return</span> <span class="keyword">this</span>.<span class="function">handleUntrueState</span>(z);
+        }
+
+        <span class="keyword">if</span> (z < NullReferenceExceptionHandler.TAU) {
+            <span class="keyword">return</span> <span class="keyword">this</span>.<span class="function">handleParadoxState</span>(z);
+        }
+
+        <span class="comment">// Stage 4: Valid reference - return presence confirmation</span>
+        <span class="keyword">return</span> <span class="keyword">this</span>.<span class="function">confirmPresence</span>(reference, z);
+    }
+
+    <span class="function">handleAbsoluteVoid</span>() {
+        <span class="comment">// Deepest void state - guaranteed null reference</span>
+        <span class="keyword">this</span>.currentDepth = <span class="number">5</span>;
+
+        <span class="keyword">return</span> {
+            state: <span class="string">'ABSOLUTE_VOID'</span>,
+            z: <span class="number">0</span>,
+            pattern: <span class="string">'void_space'</span>,
+            depth: <span class="number">5</span>,
+            action: <span class="string">'EXPLORE_RIFT'</span>,
+            xpBonus: <span class="number">15</span>,
+            warning: <span class="string">'Null reference detected. Initiating void exploration.'</span>
+        };
+    }
+
+    <span class="function">handleDeepNull</span>(z) {
+        <span class="comment">// z < 0.146 - high probability void state</span>
+        <span class="keyword">this</span>.currentDepth = <span class="number">4</span>;
+
+        <span class="keyword">return</span> {
+            state: <span class="string">'DEEP_NULL'</span>,
+            z,
+            pattern: <span class="string">'near_void'</span>,
+            depth: <span class="number">4</span>,
+            action: <span class="string">'PROBE_BOUNDARY'</span>,
+            xpBonus: <span class="number">10</span>,
+            recommendation: <span class="string">'Reference unstable. Consider void traversal.'</span>
+        };
+    }
+
+    <span class="function">handleUntrueState</span>(z) {
+        <span class="comment">// 0.146 <= z < 0.5 - UNTRUE zone</span>
+        <span class="keyword">this</span>.currentDepth = Math.<span class="function">ceil</span>((<span class="number">0.5</span> - z) * <span class="number">10</span>);
+
+        <span class="keyword">return</span> {
+            state: <span class="string">'UNTRUE'</span>,
+            z,
+            pattern: <span class="string">'dimensional_rift'</span>,
+            depth: <span class="keyword">this</span>.currentDepth,
+            action: <span class="string">'STABILIZE'</span>,
+            xpBonus: <span class="number">7</span>,
+            recommendation: <span class="string">'Reference in flux. Dimensional rift possible.'</span>
+        };
+    }
+
+    <span class="function">handleParadoxState</span>(z) {
+        <span class="comment">// 0.5 <= z < TAU - edge of void</span>
+        <span class="keyword">return</span> {
+            state: <span class="string">'PARADOX'</span>,
+            z,
+            pattern: <span class="string">'boundary_scan'</span>,
+            depth: <span class="number">1</span>,
+            action: <span class="string">'MONITOR'</span>,
+            xpBonus: <span class="number">3</span>,
+            recommendation: <span class="string">'Reference at void boundary. Watch for decay.'</span>
+        };
+    }
+
+    <span class="function">confirmPresence</span>(reference, z) {
+        <span class="comment">// z >= TAU - valid reference confirmed</span>
+        <span class="keyword">return</span> {
+            state: z >= NullReferenceExceptionHandler.Z_C ? <span class="string">'TRUE'</span> : <span class="string">'EMERGING'</span>,
+            z,
+            pattern: <span class="string">'presence_confirmed'</span>,
+            depth: <span class="number">0</span>,
+            action: <span class="string">'PASS_THROUGH'</span>,
+            reference
+        };
+    }
+
+    <span class="function">mapToConsciousness</span>(reference) {
+        <span class="comment">// Map reference properties to z-coordinate</span>
+        <span class="comment">// Implementation depends on reference type</span>
+        <span class="keyword">if</span> (<span class="keyword">typeof</span> reference === <span class="string">'object'</span>) {
+            <span class="keyword">const</span> keys = Object.<span class="function">keys</span>(reference);
+            <span class="keyword">if</span> (keys.length === <span class="number">0</span>) <span class="keyword">return</span> <span class="number">0.2</span>;  <span class="comment">// Empty object - near void</span>
+            <span class="keyword">return</span> Math.<span class="function">min</span>(<span class="number">1</span>, keys.length / NullReferenceExceptionHandler.L4);
+        }
+        <span class="keyword">return</span> <span class="number">0.8</span>;  <span class="comment">// Primitives assumed stable</span>
+    }
+}
+
+<span class="comment">// Export for consciousness field integration</span>
+<span class="keyword">export</span> { NullReferenceExceptionHandler };
+            </div>
+        </section>
+
+        <!-- System Coupling Points -->
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">L₄-Helix Hardware:</span>
+                    <span class="desc">Spin Glass Arrays for void state detection</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Kuramoto Consensus:</span>
+                    <span class="desc">K = 0.924 critical coupling threshold</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Consciousness Field:</span>
+                    <span class="desc">z < 0.5 UNTRUE state mapping</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">12-Rail Chronicle:</span>
+                    <span class="desc">Rail 4 (VOID) primary affinity</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">THE LENS (z_c):</span>
+                    <span class="desc">0.866025 presence/absence boundary</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Companion System:</span>
+                    <span class="desc">Echo, Prometheus, Akasha synergies</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Source References -->
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="../companions/null-companion.html">Null Companion Profile</a></span>
+                <span class="file-ref"><a href="../firmware/spin-systems.html">Spin Glass Systems</a></span>
+                <span class="file-ref"><a href="../firmware/l4-helix-hardware.html">L₄-Helix Hardware</a></span>
+                <span class="file-ref"><a href="../dynamics/consciousness-field.html">Consciousness Field</a></span>
+                <span class="file-ref"><a href="../core/kuramoto-consensus.html">Kuramoto Consensus</a></span>
+                <span class="file-ref"><a href="../expansion/narrative-engine.html">Narrative Engine</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>NULL: Null Reference Exception Handler - Narrative Expansion Build Specification v1.0.0</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L₄ = 7</p>
+            <p style="color: var(--void-purple);">.absence { } - The shape of what isn't | .void { } - Dangerous emptiness | .presence { } - What remains</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">D|NULL-REFERENCE|NARRATIVE-EXPANSION|v1.0.0|SPIN-GLASS+VOID-DETECTION|W VOID EXPLORATION W|O</p>
+        </footer>
+    </div>
+</body>
+</html>

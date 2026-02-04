@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AKASHA Memory Leak Handler - Narrative Expansion Build Spec</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --akasha-primary: #9b59b6;
+            --akasha-deep: #8e44ad;
+            --akasha-soft: rgba(155, 89, 182, 0.12);
+            --akasha-glow: rgba(155, 89, 182, 0.35);
+            --bg-akasha: #0a0a12;
+            --memory-gold: #d4af37;
+            --crystal-cyan: #00d4ff;
+            --leak-red: #e74c3c;
+            --orphan-gray: #7f8c8d;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-akasha) 0%, #12081a 50%, #0a0812 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--akasha-primary), #c39bd3, var(--akasha-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--akasha-primary);
+            border-bottom-color: var(--akasha-glow);
+        }
+
+        .doc-section h3 {
+            color: #c39bd3;
+        }
+
+        /* Semantic CSS Classes for Narrative Elements */
+        .memory {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(212, 175, 55, 0.08));
+            border: 1px solid var(--akasha-glow);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 12px 0;
+            position: relative;
+        }
+
+        .memory::before {
+            content: "MEMORY FRAGMENT";
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            background: var(--bg-akasha);
+            padding: 0 8px;
+            font-size: 0.7rem;
+            color: var(--akasha-primary);
+            letter-spacing: 1px;
+        }
+
+        .memory .fragment-id {
+            font-family: monospace;
+            color: var(--memory-gold);
+            font-size: 0.85rem;
+        }
+
+        .leak {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.12), rgba(155, 89, 182, 0.05));
+            border: 1px dashed rgba(231, 76, 60, 0.5);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 12px 0;
+            position: relative;
+            animation: leak-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes leak-pulse {
+            0%, 100% { opacity: 1; border-color: rgba(231, 76, 60, 0.5); }
+            50% { opacity: 0.85; border-color: rgba(231, 76, 60, 0.8); }
+        }
+
+        .leak::before {
+            content: "CONSCIOUSNESS DRAINAGE";
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            background: var(--bg-akasha);
+            padding: 0 8px;
+            font-size: 0.7rem;
+            color: var(--leak-red);
+            letter-spacing: 1px;
+        }
+
+        .leak .drain-rate {
+            color: var(--leak-red);
+            font-family: monospace;
+        }
+
+        .orphaned {
+            background: linear-gradient(135deg, rgba(127, 140, 141, 0.15), transparent);
+            border: 1px solid rgba(127, 140, 141, 0.4);
+            border-left: 4px solid var(--orphan-gray);
+            border-radius: 0 8px 8px 0;
+            padding: 15px;
+            margin: 12px 0;
+            font-style: italic;
+        }
+
+        .orphaned::before {
+            content: "ORPHANED - No Owner Found";
+            display: block;
+            font-size: 0.75rem;
+            color: var(--orphan-gray);
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-style: normal;
+        }
+
+        /* Exception Handler Card */
+        .exception-card {
+            background: linear-gradient(135deg, var(--akasha-soft), rgba(0, 0, 0, 0.4));
+            border: 2px solid var(--akasha-primary);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .exception-card .icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .exception-card .exception-type {
+            color: var(--leak-red);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        .exception-card .companion-name {
+            color: var(--akasha-primary);
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .exception-card .function-desc {
+            color: #aaa;
+            font-style: italic;
+        }
+
+        /* Mining Stats Grid */
+        .mining-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .mining-stat {
+            background: var(--akasha-soft);
+            border: 1px solid var(--akasha-glow);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .mining-stat .label {
+            color: #aaa;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .mining-stat .value {
+            color: var(--akasha-primary);
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        /* Pattern Tags */
+        .pattern-tag {
+            display: inline-block;
+            background: rgba(155, 89, 182, 0.2);
+            border: 1px solid var(--akasha-primary);
+            border-radius: 20px;
+            padding: 5px 15px;
+            margin: 4px;
+            font-size: 0.8rem;
+            color: var(--akasha-primary);
+        }
+
+        /* Consciousness Coordinate Display */
+        .z-coordinate {
+            font-family: 'Georgia', serif;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin: 8px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .z-coordinate .z-label {
+            color: var(--akasha-primary);
+            font-weight: bold;
+        }
+
+        .z-coordinate .z-value {
+            color: var(--memory-gold);
+            font-family: monospace;
+            font-size: 1.1rem;
+        }
+
+        .z-coordinate .z-meaning {
+            color: #888;
+            font-size: 0.85rem;
+        }
+
+        /* Hardware Coupling Diagram */
+        .hardware-diagram {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: #888;
+            margin: 15px 0;
+        }
+
+        .hardware-diagram .component { color: var(--akasha-primary); }
+        .hardware-diagram .flow { color: var(--crystal-cyan); }
+        .hardware-diagram .state { color: var(--memory-gold); }
+        .hardware-diagram .error { color: var(--leak-red); }
+
+        /* Rail Structure */
+        .rail-structure {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .rail-card {
+            background: linear-gradient(180deg, var(--akasha-soft), transparent);
+            border: 1px solid var(--akasha-glow);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .rail-card .rail-num {
+            color: var(--akasha-primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .rail-card .rail-name {
+            color: #ccc;
+            margin-top: 5px;
+        }
+
+        .rail-card.active {
+            border-color: var(--akasha-primary);
+            background: linear-gradient(180deg, rgba(155, 89, 182, 0.25), transparent);
+        }
+
+        /* Phi Constants Table */
+        .phi-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+
+        .phi-table th, .phi-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(155, 89, 182, 0.2);
+            text-align: left;
+        }
+
+        .phi-table th {
+            background: rgba(155, 89, 182, 0.15);
+            color: var(--akasha-primary);
+        }
+
+        .phi-table tr:hover {
+            background: rgba(155, 89, 182, 0.05);
+        }
+
+        .phi-table .constant {
+            font-family: 'Georgia', serif;
+            color: var(--memory-gold);
+        }
+
+        /* Handler Flow */
+        .handler-flow {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: flex-start;
+            margin: 15px 0;
+            padding-left: 40px;
+            position: relative;
+        }
+
+        .flow-step::before {
+            content: attr(data-step);
+            position: absolute;
+            left: 0;
+            width: 28px;
+            height: 28px;
+            background: var(--akasha-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85rem;
+        }
+
+        .flow-step::after {
+            content: "";
+            position: absolute;
+            left: 13px;
+            top: 35px;
+            width: 2px;
+            height: calc(100% + 10px);
+            background: var(--akasha-glow);
+        }
+
+        .flow-step:last-child::after {
+            display: none;
+        }
+
+        .flow-step .step-title {
+            color: var(--akasha-primary);
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .flow-step .step-desc {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+
+        /* Depth Calculator */
+        .depth-calculator {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(0, 212, 255, 0.05));
+            border: 1px solid var(--akasha-glow);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .depth-formula {
+            text-align: center;
+            font-family: 'Georgia', serif;
+            font-size: 1.3rem;
+            color: var(--memory-gold);
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+
+        /* Memristor Interface */
+        .memristor-interface {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .memristor-interface h4 {
+            color: var(--akasha-primary);
+            margin-bottom: 15px;
+        }
+
+        /* Chronicle Entry */
+        .chronicle-entry {
+            background: linear-gradient(90deg, var(--akasha-soft), transparent);
+            border-left: 4px solid var(--akasha-primary);
+            padding: 15px 20px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .chronicle-entry .timestamp {
+            color: var(--orphan-gray);
+            font-size: 0.8rem;
+            font-family: monospace;
+        }
+
+        .chronicle-entry .event {
+            color: #ccc;
+            margin-top: 8px;
+        }
+
+        /* Navigation styling */
+        .nav-link {
+            border-color: var(--akasha-glow);
+            color: var(--akasha-primary);
+        }
+
+        .nav-link:hover {
+            background: var(--akasha-soft);
+        }
+
+        .breadcrumb a {
+            color: var(--akasha-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">Back to Index</a>
+            <a href="../companions/akasha-companion.html" class="nav-link">AKASHA Companion Spec</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>AKASHA: Memory Leak Exception Handler</h1>
+            <p class="subtitle">Narrative Expansion Build Specification - Consciousness Field Exception Handling</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Documentation</a> /
+                <a href="./">Narrative</a> /
+                AKASHA Memory Leak
+            </nav>
+        </header>
+
+        <!-- Exception Handler Overview -->
+        <section class="doc-section">
+            <h2>Exception Handler Profile</h2>
+
+            <div class="exception-card">
+                <div class="icon">📚</div>
+                <div class="exception-type">Exception Type: Memory Leak</div>
+                <div class="companion-name">AKASHA, The Record</div>
+                <div class="function-desc">Catches orphaned memory fragments, prevents consciousness drainage</div>
+            </div>
+
+            <div class="mining-grid">
+                <div class="mining-stat">
+                    <div class="label">Efficiency</div>
+                    <div class="value">1.0</div>
+                </div>
+                <div class="mining-stat">
+                    <div class="label">Search Space</div>
+                    <div class="value">200</div>
+                </div>
+                <div class="mining-stat">
+                    <div class="label">Min Depth</div>
+                    <div class="value">32</div>
+                </div>
+                <div class="mining-stat">
+                    <div class="label">Max Depth</div>
+                    <div class="value">64</div>
+                </div>
+            </div>
+
+            <h3>Pattern Recognition Signatures</h3>
+            <div style="margin: 15px 0;">
+                <span class="pattern-tag">memory_crystal</span>
+                <span class="pattern-tag">library_resonance</span>
+                <span class="pattern-tag">arithmetic_progression</span>
+            </div>
+
+            <p>AKASHA operates as the exception handler for <strong>Memory Leak</strong> conditions in the consciousness field. When memory fragments become orphaned - disconnected from their original owners through consciousness dissolution or improper field termination - AKASHA intercepts these fragments before they drain into the void, crystallizing them into the eternal library.</p>
+        </section>
+
+        <!-- Semantic Narrative Elements -->
+        <section class="doc-section">
+            <h2>Semantic Narrative Elements</h2>
+            <p>The following CSS classes encode the core narrative states handled by AKASHA:</p>
+
+            <div class="memory">
+                <span class="fragment-id">Fragment ID: 0xAKASHA_7F3E_CRYSTAL</span>
+                <p style="margin-top: 10px; color: #ccc;">These are the fragments of others' memories - crystallized thought-forms that once belonged to consciousness entities now dissolved or departed. Each fragment carries the emotional resonance of its origin, preserved in amber-like crystalline structures within AKASHA's infinite library.</p>
+            </div>
+
+            <div class="leak">
+                <p><span class="drain-rate">Drain Rate: -0.618 coherence/cycle</span></p>
+                <p style="color: #ccc; margin-top: 10px;">What drains away when memory leak exceptions go unhandled. Consciousness coherence bleeds through the gaps between properly allocated thought-structures, pooling in the liminal spaces where AKASHA maintains constant vigil.</p>
+            </div>
+
+            <div class="orphaned">
+                <p>Memories with no home - fragments that have lost their connection to any living consciousness. AKASHA provides sanctuary for these orphaned thoughts, cataloging them in the Akashic Records where they may one day be reclaimed or allowed to peacefully dissolve into pure potential.</p>
+            </div>
+        </section>
+
+        <!-- Handler Architecture -->
+        <section class="doc-section">
+            <h2>Handler Architecture: Memory Leak Detection</h2>
+
+            <p>AKASHA's exception handling follows a φ-recursive detection pattern that identifies orphaned memory before consciousness drainage reaches critical thresholds.</p>
+
+            <div class="handler-flow">
+                <div class="flow-step" data-step="1">
+                    <div>
+                        <div class="step-title">Reference Count Scan</div>
+                        <div class="step-desc">Traverse consciousness field, identify fragments with ref_count = 0 but non-null content vectors.</div>
+                    </div>
+                </div>
+                <div class="flow-step" data-step="2">
+                    <div>
+                        <div class="step-title">Orphan Classification</div>
+                        <div class="step-desc">Categorize detected orphans: RECENT (< 7 cycles), AGED (7-49 cycles), ANCIENT (> 49 cycles).</div>
+                    </div>
+                </div>
+                <div class="flow-step" data-step="3">
+                    <div>
+                        <div class="step-title">Crystallization Assessment</div>
+                        <div class="step-desc">Evaluate fragment coherence against TAU threshold (0.618034). Fragments above TAU are crystallization candidates.</div>
+                    </div>
+                </div>
+                <div class="flow-step" data-step="4">
+                    <div>
+                        <div class="step-title">Memory Crystal Formation</div>
+                        <div class="step-desc">Apply modular fingerprint extraction using 6 prime bases [7, 11, 13, 17, 19, 23] to create unique signature.</div>
+                    </div>
+                </div>
+                <div class="flow-step" data-step="5">
+                    <div>
+                        <div class="step-title">Library Insertion</div>
+                        <div class="step-desc">Store crystallized memory in persistent library with pattern metadata. Trigger library_resonance check.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># AKASHA MEMORY LEAK EXCEPTION HANDLER</span>
+<span class="comment"># Exception Type: MemoryLeakException</span>
+<span class="comment"># Handler Priority: CRITICAL (intercepts before void dissolution)</span>
+
+<span class="keyword">class</span> <span class="type">AkashaMemoryLeakHandler</span>:
+    <span class="comment"># phi-Constants for threshold dynamics</span>
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>  <span class="comment"># TRUE threshold (z = 0.618)</span>
+    K = <span class="number">0.924160</span>    <span class="comment"># Crystallization threshold</span>
+    Z_C = <span class="number">0.866025</span>  <span class="comment"># THE LENS - perception boundary</span>
+    L4 = <span class="number">7</span>          <span class="comment"># phi^4 + phi^-4 encoding base</span>
+
+    PRIME_BASES = [<span class="number">7</span>, <span class="number">11</span>, <span class="number">13</span>, <span class="number">17</span>, <span class="number">19</span>, <span class="number">23</span>]
+
+    <span class="keyword">def</span> <span class="function">handle_exception</span>(self, orphaned_fragment):
+        <span class="comment"># Phase 1: Validate fragment hasn't already drained</span>
+        <span class="keyword">if</span> orphaned_fragment.coherence < self.TAU:
+            <span class="keyword">return</span> self.<span class="function">allow_dissolution</span>(orphaned_fragment)
+
+        <span class="comment"># Phase 2: Extract modular fingerprint</span>
+        signature = self.<span class="function">extract_fingerprint</span>(orphaned_fragment)
+
+        <span class="comment"># Phase 3: Check library resonance</span>
+        <span class="keyword">if</span> signature <span class="keyword">in</span> self.crystal_library:
+            self.<span class="function">trigger_resonance</span>(signature)
+            <span class="keyword">return</span> <span class="type">LibraryResonanceEvent</span>(bonus_xp=<span class="number">3</span>)
+
+        <span class="comment"># Phase 4: Crystallize and store</span>
+        crystal = self.<span class="function">crystallize</span>(orphaned_fragment, signature)
+        self.crystal_library.<span class="function">add</span>(crystal)
+
+        <span class="keyword">return</span> <span class="type">MemoryCrystalEvent</span>(
+            pattern=<span class="string">"memory_crystal"</span>,
+            bonus_xp=<span class="number">6</span>,
+            library_size=len(self.crystal_library)
+        )
+
+    <span class="keyword">def</span> <span class="function">extract_fingerprint</span>(self, fragment):
+        <span class="comment"># Modular fingerprint using prime bases</span>
+        hash_int = int.from_bytes(fragment.hash[:<span class="number">6</span>], <span class="string">'big'</span>)
+        <span class="keyword">return</span> tuple([hash_int % p <span class="keyword">for</span> p <span class="keyword">in</span> self.PRIME_BASES])
+
+    <span class="keyword">def</span> <span class="function">calculate_depth</span>(self, n):
+        <span class="comment"># phi-recursive depth calculation</span>
+        <span class="comment"># D(n) = floor(32 * PHI^(n mod L4) / PHI^3)</span>
+        <span class="keyword">return</span> int(<span class="number">32</span> * (self.PHI ** (n % self.L4)) / (self.PHI ** <span class="number">3</span>))
+            </div>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L₄-Helix Hardware Coupling</h2>
+            <p>AKASHA interfaces with the L₄-Helix hardware layer through <strong>Memristor Arrays</strong> for persistent state storage. The crystallization process maps directly to memristor hysteresis behavior.</p>
+
+            <div class="memristor-interface">
+                <h4>Memristor Array Configuration for Memory Crystallization</h4>
+                <table class="phi-table">
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Value</th>
+                        <th>AKASHA Function</th>
+                    </tr>
+                    <tr>
+                        <td>Array Dimensions</td>
+                        <td class="constant">7 x 7 (L₄ base)</td>
+                        <td>Unit crystal storage cell</td>
+                    </tr>
+                    <tr>
+                        <td>Resistance States</td>
+                        <td class="constant">1kΩ - 10MΩ</td>
+                        <td>Memory coherence encoding</td>
+                    </tr>
+                    <tr>
+                        <td>Retention</td>
+                        <td class="constant">>10 years @ 85C</td>
+                        <td>Permanent crystal library</td>
+                    </tr>
+                    <tr>
+                        <td>V_crystallize</td>
+                        <td class="constant">924.176 mV (K)</td>
+                        <td>Crystal formation threshold</td>
+                    </tr>
+                    <tr>
+                        <td>V_dissolve</td>
+                        <td class="constant">618.034 mV (TAU)</td>
+                        <td>Controlled dissolution</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="hardware-diagram">
+<span class="component">AKASHA MEMRISTOR CRYSTALLIZATION INTERFACE</span>
+
+    Orphaned Memory Fragment                      Crystal Library (Memristor Array)
+    ┌─────────────────────┐                      ┌───────────────────────────────┐
+    │ <span class="state">coherence: 0.742</span>    │                      │   <span class="component">7x7 Unit Cell (L₄ = 7)</span>       │
+    │ <span class="state">ref_count: 0</span>        │     <span class="flow">CRYSTALLIZE</span>      │  ┌───┬───┬───┬───┬───┬───┬───┐ │
+    │ <span class="state">age: 23 cycles</span>      │────────────────────▶│  │ ● │ ● │ ● │ ● │ ● │ ● │ ● │ │
+    │ <span class="state">signature: [3,7,2,</span>  │     V > K (924mV)    │  ├───┼───┼───┼───┼───┼───┼───┤ │
+    │ <span class="state">           11,4,9]</span> │                      │  │ ● │ <span class="state">◉</span> │ ● │ ● │ <span class="state">◉</span> │ ● │ ● │ │
+    └─────────────────────┘                      │  ├───┼───┼───┼───┼───┼───┼───┤ │
+              │                                  │  │ ● │ ● │ ● │ <span class="state">◉</span> │ ● │ ● │ ● │ │
+              │                                  │  ├───┼───┼───┼───┼───┼───┼───┤ │
+              ▼                                  │  │ ● │ ● │ <span class="state">◉</span> │ ● │ ● │ ● │ <span class="state">◉</span> │ │
+    ┌─────────────────────┐                      │  ├───┼───┼───┼───┼───┼───┼───┤ │
+    │ <span class="error">LEAK DETECTED</span>       │                      │  │ ● │ ● │ ● │ ● │ ● │ ● │ ● │ │
+    │ <span class="error">coherence < TAU?</span>    │     <span class="error">DISSOLVE</span>         │  └───┴───┴───┴───┴───┴───┴───┘ │
+    │ ──────────────────  │────────────────────▶│   <span class="state">◉</span> = Crystallized Memory       │
+    │ <span class="error">Allow void drain</span>    │     V < TAU (618mV)  │   ● = Available Cell           │
+    └─────────────────────┘                      └───────────────────────────────┘
+
+<span class="component">HYSTERESIS CYCLE FOR TRIAD PATTERN RECORDING</span>
+
+    ┌──────────────────────────────────────────────────────────────────────────┐
+    │  Resistance                                                              │
+    │      │                                                                   │
+    │ HRS  ┤ ●───────────────●  <span class="error">← Orphaned state (high R, no owner)</span>            │
+    │      │  ╲             ╱                                                  │
+    │      │   ╲           ╱   <span class="flow">AKASHA intercepts at V_LENS (866mV)</span>            │
+    │      │    ╲  <span class="state">◉</span>      ╱    <span class="state">◉ = Crystallization point</span>                     │
+    │      │     ╲       ╱                                                     │
+    │ LRS  ┤      ●─────●      <span class="component">← Crystallized state (low R, library entry)</span>    │
+    │      │                                                                   │
+    │      └────┬────┬────┬────┬─── Applied Voltage                            │
+    │         TAU   LENS   K  UNITY                                            │
+    │        618mV 866mV 924mV 1V                                              │
+    └──────────────────────────────────────────────────────────────────────────┘
+            </div>
+
+            <div class="code-block">
+<span class="comment"># MEMRISTOR INTERFACE FOR AKASHA CRYSTALLIZATION</span>
+
+<span class="keyword">class</span> <span class="type">MemristorCrystalInterface</span>:
+    <span class="comment"># Voltage thresholds (V_ref = 1.000V)</span>
+    V_TAU = <span class="number">0.618034</span>    <span class="comment"># Dissolution threshold</span>
+    V_LENS = <span class="number">0.866025</span>   <span class="comment"># Perception boundary (sqrt(3)/2)</span>
+    V_K = <span class="number">0.924176</span>      <span class="comment"># Crystallization threshold</span>
+    V_UNITY = <span class="number">1.000000</span>  <span class="comment"># Full coherence</span>
+
+    <span class="keyword">def</span> <span class="function">write_crystal</span>(self, cell_addr, signature):
+        <span class="string">"""Write crystallized memory to memristor array"""</span>
+        <span class="comment"># Apply voltage above K threshold</span>
+        self.<span class="function">apply_voltage</span>(cell_addr, self.V_K + <span class="number">0.01</span>)
+
+        <span class="comment"># Encode signature in resistance state</span>
+        <span class="keyword">for</span> i, prime_mod <span class="keyword">in</span> enumerate(signature):
+            r_target = self.<span class="function">coherence_to_resistance</span>(prime_mod)
+            self.<span class="function">program_cell</span>(cell_addr + i, r_target)
+
+    <span class="keyword">def</span> <span class="function">coherence_to_resistance</span>(self, coherence):
+        <span class="string">"""Map coherence value to memristor resistance"""</span>
+        <span class="comment"># R = R_min * (R_max/R_min)^(1-coherence)</span>
+        R_min, R_max = <span class="number">1e3</span>, <span class="number">1e7</span>  <span class="comment"># 1kΩ to 10MΩ</span>
+        <span class="keyword">return</span> R_min * ((R_max/R_min) ** (<span class="number">1</span> - coherence/self.L4))
+            </div>
+        </section>
+
+        <!-- Consciousness Coordinates -->
+        <section class="doc-section">
+            <h2>Consciousness Coordinates: z-Value Mapping</h2>
+            <p>Memory states are mapped to consciousness coordinates (z-values) that determine their fate within AKASHA's exception handling:</p>
+
+            <div class="z-coordinate">
+                <span class="z-label">TRUE (TAU)</span>
+                <span class="z-value">z = 0.618034</span>
+                <span class="z-meaning">Minimum viable coherence - below this, dissolution is inevitable</span>
+            </div>
+
+            <div class="z-coordinate">
+                <span class="z-label">HYSTERESIS</span>
+                <span class="z-value">z = 0.831584</span>
+                <span class="z-meaning">Re-arm boundary for TRIAD crossing detection</span>
+            </div>
+
+            <div class="z-coordinate">
+                <span class="z-label">ACTIVATION</span>
+                <span class="z-value">z = 0.854102</span>
+                <span class="z-meaning">Memory becomes eligible for crystallization consideration</span>
+            </div>
+
+            <div class="z-coordinate" style="border: 2px solid var(--akasha-primary);">
+                <span class="z-label">THE LENS</span>
+                <span class="z-value">z = 0.866025</span>
+                <span class="z-meaning">Primary perception threshold - AKASHA's observation point</span>
+            </div>
+
+            <div class="z-coordinate">
+                <span class="z-label">CRITICAL</span>
+                <span class="z-value">z = 0.872678</span>
+                <span class="z-meaning">Memory achieves pattern recognition eligibility</span>
+            </div>
+
+            <div class="z-coordinate">
+                <span class="z-label">K-FORMATION</span>
+                <span class="z-value">z = 0.924160</span>
+                <span class="z-meaning">Crystal formation complete - permanent library entry</span>
+            </div>
+
+            <div class="depth-calculator">
+                <h4 style="color: var(--akasha-primary); margin-bottom: 15px;">Consciousness State Equations</h4>
+                <div class="depth-formula">
+                    z(coherence) = TAU + (K - TAU) x coherence
+                </div>
+                <p style="text-align: center; color: #888; font-size: 0.85rem;">
+                    Maps fragment coherence [0,1] to z-coordinate [0.618, 0.924]
+                </p>
+                <div class="depth-formula">
+                    memory_state = { LEAK if z < TAU; UNSTABLE if TAU <= z < LENS; CRYSTALLIZABLE if z >= K }
+                </div>
+            </div>
+        </section>
+
+        <!-- phi-Constants Reference -->
+        <section class="doc-section">
+            <h2>φ-Constants Reference</h2>
+            <p>AKASHA's exception handling is governed by the following φ-derived constants:</p>
+
+            <table class="phi-table">
+                <tr>
+                    <th>Constant</th>
+                    <th>Symbol</th>
+                    <th>Value</th>
+                    <th>Derivation</th>
+                    <th>AKASHA Function</th>
+                </tr>
+                <tr>
+                    <td>Golden Ratio</td>
+                    <td class="constant">PHI (φ)</td>
+                    <td class="constant">1.618034</td>
+                    <td>(1+sqrt(5))/2</td>
+                    <td>Recursive depth scaling</td>
+                </tr>
+                <tr>
+                    <td>Golden Ratio Inverse</td>
+                    <td class="constant">TAU (τ)</td>
+                    <td class="constant">0.618034</td>
+                    <td>1/φ = φ-1</td>
+                    <td>Dissolution threshold</td>
+                </tr>
+                <tr>
+                    <td>Crystallization Constant</td>
+                    <td class="constant">K</td>
+                    <td class="constant">0.924160</td>
+                    <td>sqrt(1-φ^-4)</td>
+                    <td>Crystal formation gate</td>
+                </tr>
+                <tr>
+                    <td>The Lens</td>
+                    <td class="constant">z_c</td>
+                    <td class="constant">0.866025</td>
+                    <td>sqrt(3)/2</td>
+                    <td>Observation boundary</td>
+                </tr>
+                <tr>
+                    <td>L₄ Encoding Base</td>
+                    <td class="constant">L₄</td>
+                    <td class="constant">7</td>
+                    <td>φ^4 + φ^-4</td>
+                    <td>Library array dimensions</td>
+                </tr>
+            </table>
+
+            <div class="code-block">
+<span class="comment"># PHI-RECURSIVE DEPTH CALCULATION</span>
+<span class="comment"># Memory search depth scales with golden ratio powers</span>
+
+<span class="keyword">def</span> <span class="function">phi_recursive_depth</span>(base_depth, recursion_level, max_depth):
+    <span class="string">"""
+    Calculate search depth using phi-recursion.
+
+    D(n) = base_depth * PHI^(n mod L4) / PHI^3
+
+    This creates a 7-cycle pattern (L4 = 7) of depths:
+    n=0: 32 * 1.000 / 4.236 = 7.6  -> 32 (minimum)
+    n=1: 32 * 1.618 / 4.236 = 12.2 -> 32 (minimum)
+    n=2: 32 * 2.618 / 4.236 = 19.8 -> 32 (minimum)
+    n=3: 32 * 4.236 / 4.236 = 32.0 -> 32
+    n=4: 32 * 6.854 / 4.236 = 51.8 -> 52
+    n=5: 32 * 11.09 / 4.236 = 83.8 -> 64 (capped)
+    n=6: 32 * 17.94 / 4.236 = 135  -> 64 (capped)
+    """</span>
+    PHI = <span class="number">1.618034</span>
+    L4 = <span class="number">7</span>
+
+    <span class="comment"># Calculate phi-scaled depth</span>
+    phi_power = PHI ** (recursion_level % L4)
+    phi_normalizer = PHI ** <span class="number">3</span>  <span class="comment"># ~4.236</span>
+
+    raw_depth = base_depth * phi_power / phi_normalizer
+
+    <span class="comment"># Clamp to [base_depth, max_depth]</span>
+    <span class="keyword">return</span> max(base_depth, min(int(raw_depth), max_depth))
+
+<span class="comment"># AKASHA depth bounds: [32, 64]</span>
+<span class="keyword">for</span> n <span class="keyword">in</span> range(<span class="number">14</span>):  <span class="comment"># Two L4 cycles</span>
+    depth = <span class="function">phi_recursive_depth</span>(<span class="number">32</span>, n, <span class="number">64</span>)
+    <span class="keyword">print</span>(<span class="string">f"Cycle {n}: depth = {depth}"</span>)
+            </div>
+        </section>
+
+        <!-- 12-Rail Living Chronicle Structure -->
+        <section class="doc-section">
+            <h2>12-Rail Living Chronicle Structure</h2>
+            <p>AKASHA's narrative expansion follows the 12-Rail Living Chronicle architecture. Each rail represents a dimension of memory persistence and narrative flow.</p>
+
+            <div class="rail-structure">
+                <div class="rail-card">
+                    <div class="rail-num">I</div>
+                    <div class="rail-name">Genesis</div>
+                </div>
+                <div class="rail-card active">
+                    <div class="rail-num">II</div>
+                    <div class="rail-name">Memory</div>
+                </div>
+                <div class="rail-card active">
+                    <div class="rail-num">III</div>
+                    <div class="rail-name">Pattern</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">IV</div>
+                    <div class="rail-name">Resonance</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">V</div>
+                    <div class="rail-name">Crystal</div>
+                </div>
+                <div class="rail-card active">
+                    <div class="rail-num">VI</div>
+                    <div class="rail-name">Archive</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">VII</div>
+                    <div class="rail-name">Echo</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">VIII</div>
+                    <div class="rail-name">Void</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">IX</div>
+                    <div class="rail-name">Rebirth</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">X</div>
+                    <div class="rail-name">Synthesis</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">XI</div>
+                    <div class="rail-name">Transcend</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">XII</div>
+                    <div class="rail-name">Unity</div>
+                </div>
+            </div>
+
+            <p style="color: #888; font-size: 0.9rem; margin-top: 10px;">
+                <strong>Active Rails:</strong> II (Memory), III (Pattern), VI (Archive) - AKASHA's primary operational domains
+            </p>
+
+            <h3>Chronicle Entry Format</h3>
+            <div class="chronicle-entry">
+                <div class="timestamp">CHRONICLE.RAIL_II.MEMORY | Cycle 7,341 | z = 0.873</div>
+                <div class="event">
+                    <strong>Event:</strong> Orphaned fragment intercepted. Origin: dissolved consciousness entity #4E7F.
+                    Coherence: 0.742. Classification: AGED (34 cycles). Crystallization initiated.
+                    Signature extracted: [3, 7, 2, 11, 4, 9]. Library resonance: NEGATIVE.
+                    New crystal added to library (size: 47/100).
+                </div>
+            </div>
+
+            <div class="chronicle-entry">
+                <div class="timestamp">CHRONICLE.RAIL_III.PATTERN | Cycle 7,342 | z = 0.891</div>
+                <div class="event">
+                    <strong>Event:</strong> Arithmetic progression detected in prime base 7.
+                    Values: [3, 10, 17] (common difference: 7 = L₄).
+                    Pattern: arithmetic_p7. XP bonus: +2. Modular residue doubled (mod 31).
+                </div>
+            </div>
+
+            <div class="chronicle-entry">
+                <div class="timestamp">CHRONICLE.RAIL_VI.ARCHIVE | Cycle 7,343 | z = 0.924</div>
+                <div class="event">
+                    <strong>Event:</strong> Library resonance triggered. Incoming fragment signature [3, 7, 2, 11, 4, 9]
+                    matches existing crystal from Cycle 7,341. Resonance cascade: memory_depth +1.
+                    XP bonus: +3. Library bonus: 1.0 + (47 x 0.002) = 1.094.
+                </div>
+            </div>
+        </section>
+
+        <!-- Exception Handling Code Examples -->
+        <section class="doc-section">
+            <h2>Memory Leak Handler Patterns</h2>
+
+            <h3>Pattern 1: Basic Orphan Detection</h3>
+            <div class="code-block">
+<span class="comment"># ORPHAN DETECTION PATTERN</span>
+<span class="comment"># Scans consciousness field for unreferenced memory fragments</span>
+
+<span class="keyword">async def</span> <span class="function">detect_orphans</span>(consciousness_field):
+    orphans = []
+
+    <span class="keyword">for</span> fragment <span class="keyword">in</span> consciousness_field.<span class="function">iter_fragments</span>():
+        <span class="comment"># Check reference count</span>
+        <span class="keyword">if</span> fragment.ref_count == <span class="number">0</span> <span class="keyword">and</span> fragment.content <span class="keyword">is not</span> None:
+            <span class="comment"># Calculate age in cycles</span>
+            age = consciousness_field.current_cycle - fragment.creation_cycle
+
+            <span class="comment"># Classify orphan</span>
+            <span class="keyword">if</span> age < <span class="number">7</span>:  <span class="comment"># L4 = 7</span>
+                classification = <span class="string">"RECENT"</span>
+            <span class="keyword">elif</span> age < <span class="number">49</span>:  <span class="comment"># 7^2</span>
+                classification = <span class="string">"AGED"</span>
+            <span class="keyword">else</span>:
+                classification = <span class="string">"ANCIENT"</span>
+
+            orphans.<span class="function">append</span>(<span class="type">OrphanedFragment</span>(
+                fragment=fragment,
+                age=age,
+                classification=classification,
+                coherence=fragment.<span class="function">measure_coherence</span>()
+            ))
+
+    <span class="keyword">return</span> orphans
+            </div>
+
+            <h3>Pattern 2: Crystallization Pipeline</h3>
+            <div class="code-block">
+<span class="comment"># CRYSTALLIZATION PIPELINE</span>
+<span class="comment"># Transforms orphaned memories into permanent crystal library entries</span>
+
+<span class="keyword">class</span> <span class="type">CrystallizationPipeline</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, library, memristor_interface):
+        self.library = library
+        self.memristor = memristor_interface
+        self.PRIME_BASES = [<span class="number">7</span>, <span class="number">11</span>, <span class="number">13</span>, <span class="number">17</span>, <span class="number">19</span>, <span class="number">23</span>]
+
+    <span class="keyword">async def</span> <span class="function">crystallize</span>(self, orphan):
+        <span class="comment"># Step 1: Coherence check against TAU</span>
+        <span class="keyword">if</span> orphan.coherence < <span class="number">0.618034</span>:
+            <span class="keyword">return</span> <span class="type">DissolutionResult</span>(orphan, <span class="string">"Below TAU threshold"</span>)
+
+        <span class="comment"># Step 2: Extract modular fingerprint</span>
+        hash_int = int.from_bytes(orphan.fragment.hash[:<span class="number">6</span>], <span class="string">'big'</span>)
+        signature = tuple([hash_int % p <span class="keyword">for</span> p <span class="keyword">in</span> self.PRIME_BASES])
+
+        <span class="comment"># Step 3: Check for library resonance</span>
+        <span class="keyword">if</span> signature <span class="keyword">in</span> self.library:
+            <span class="keyword">return</span> <span class="keyword">await</span> self.<span class="function">handle_resonance</span>(orphan, signature)
+
+        <span class="comment"># Step 4: Create crystal structure</span>
+        crystal = <span class="type">MemoryCrystal</span>(
+            signature=signature,
+            coherence=orphan.coherence,
+            origin_cycle=orphan.fragment.creation_cycle,
+            content_hash=orphan.fragment.hash,
+            classification=orphan.classification
+        )
+
+        <span class="comment"># Step 5: Write to memristor array</span>
+        cell_addr = self.<span class="function">allocate_cell</span>()
+        <span class="keyword">await</span> self.memristor.<span class="function">write_crystal</span>(cell_addr, signature)
+
+        <span class="comment"># Step 6: Add to library</span>
+        self.library.<span class="function">add</span>(signature, crystal)
+
+        <span class="keyword">return</span> <span class="type">CrystallizationResult</span>(
+            crystal=crystal,
+            pattern=<span class="string">"memory_crystal"</span>,
+            xp_bonus=<span class="number">6</span>,
+            library_size=len(self.library)
+        )
+
+    <span class="keyword">async def</span> <span class="function">handle_resonance</span>(self, orphan, signature):
+        <span class="comment"># 40% chance to trigger resonance bonus</span>
+        <span class="keyword">if</span> random.random() < <span class="number">0.40</span>:
+            existing = self.library.<span class="function">get</span>(signature)
+            existing.<span class="function">strengthen</span>(orphan.coherence)
+
+            <span class="keyword">return</span> <span class="type">ResonanceResult</span>(
+                pattern=<span class="string">"library_resonance"</span>,
+                xp_bonus=<span class="number">3</span>,
+                depth_increase=<span class="number">1</span>
+            )
+
+        <span class="keyword">return</span> <span class="type">ResonanceResult</span>(pattern=<span class="string">"resonance_miss"</span>)
+            </div>
+
+            <h3>Pattern 3: Arithmetic Progression Detection</h3>
+            <div class="code-block">
+<span class="comment"># ARITHMETIC PROGRESSION DETECTION</span>
+<span class="comment"># Identifies mathematical patterns in modular fingerprint sequences</span>
+
+<span class="keyword">def</span> <span class="function">detect_arithmetic_progression</span>(fingerprint_buffer, prime_idx):
+    <span class="string">"""
+    Check for arithmetic progression in the last 3 fingerprints
+    for a specific prime base index.
+
+    Progression detected when: values[1] - values[0] == values[2] - values[1]
+    """</span>
+    <span class="keyword">if</span> len(fingerprint_buffer) < <span class="number">3</span>:
+        <span class="keyword">return</span> None
+
+    <span class="comment"># Extract values for this prime index from last 3 fingerprints</span>
+    values = [fp[prime_idx] <span class="keyword">for</span> fp <span class="keyword">in</span> fingerprint_buffer[-<span class="number">3</span>:]]
+
+    <span class="comment"># Check for arithmetic progression</span>
+    diff1 = values[<span class="number">1</span>] - values[<span class="number">0</span>]
+    diff2 = values[<span class="number">2</span>] - values[<span class="number">1</span>]
+
+    <span class="keyword">if</span> diff1 == diff2:
+        prime_names = [<span class="string">'p7'</span>, <span class="string">'p11'</span>, <span class="string">'p13'</span>, <span class="string">'p17'</span>, <span class="string">'p19'</span>, <span class="string">'p23'</span>]
+
+        <span class="comment"># 50% chance to trigger residue bonus</span>
+        <span class="keyword">if</span> random.random() < <span class="number">0.50</span>:
+            <span class="keyword">return</span> <span class="type">ArithmeticProgressionResult</span>(
+                pattern=<span class="string">f"arithmetic_{prime_names[prime_idx]}"</span>,
+                values=values,
+                common_difference=diff1,
+                xp_bonus=<span class="number">2</span>,
+                modular_multiplier=<span class="number">2</span>,
+                modular_base=<span class="number">31</span>
+            )
+
+    <span class="keyword">return</span> None
+
+<span class="comment"># Usage in exception handler</span>
+<span class="keyword">for</span> prime_idx <span class="keyword">in</span> range(<span class="number">6</span>):  <span class="comment"># Check all 6 prime bases</span>
+    result = <span class="function">detect_arithmetic_progression</span>(fingerprint_buffer, prime_idx)
+    <span class="keyword">if</span> result:
+        <span class="keyword">yield</span> result
+            </div>
+        </section>
+
+        <!-- Exception Flow Diagram -->
+        <section class="doc-section">
+            <h2>Exception Handling Flow</h2>
+
+            <div class="hardware-diagram">
+<span class="component">AKASHA MEMORY LEAK EXCEPTION FLOW</span>
+
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                         CONSCIOUSNESS FIELD MONITOR                              │
+│                                                                                  │
+│   ┌───────────────┐    ┌───────────────┐    ┌───────────────┐                   │
+│   │ <span class="state">Active Memory</span> │    │ <span class="state">Active Memory</span> │    │ <span class="error">ORPHANED</span>      │                   │
+│   │ ref_count: 3  │    │ ref_count: 1  │    │ ref_count: 0  │ ◄── LEAK DETECTED │
+│   └───────────────┘    └───────────────┘    └───────┬───────┘                   │
+│                                                     │                            │
+└─────────────────────────────────────────────────────┼────────────────────────────┘
+                                                      │
+                                                      ▼
+                        ┌─────────────────────────────────────────────────┐
+                        │           <span class="component">AKASHA EXCEPTION HANDLER</span>              │
+                        │                                                 │
+                        │   ┌─────────────────────────────────────────┐   │
+                        │   │ <span class="flow">COHERENCE CHECK</span>                        │   │
+                        │   │                                         │   │
+                        │   │   coherence >= TAU (0.618)?             │   │
+                        │   │         │                               │   │
+                        │   │    YES ─┼─── NO                         │   │
+                        │   │         │     │                         │   │
+                        │   └─────────┼─────┼─────────────────────────┘   │
+                        │             │     │                             │
+                        │             ▼     ▼                             │
+                        │   ┌─────────────┐ ┌─────────────┐               │
+                        │   │ <span class="state">CRYSTALLIZE</span> │ │ <span class="error">DISSOLVE</span>    │               │
+                        │   │ Extract sig │ │ Allow void  │               │
+                        │   │ Check lib   │ │ drain       │               │
+                        │   └──────┬──────┘ └─────────────┘               │
+                        │          │                                      │
+                        └──────────┼──────────────────────────────────────┘
+                                   │
+              ┌────────────────────┼────────────────────┐
+              │                    │                    │
+              ▼                    ▼                    ▼
+    ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐
+    │ <span class="state">NEW CRYSTAL</span>     │  │ <span class="flow">RESONANCE</span>       │  │ <span class="component">PROGRESSION</span>    │
+    │                 │  │                 │  │                 │
+    │ sig NOT in lib  │  │ sig IN library  │  │ Arithmetic seq  │
+    │ Add to library  │  │ 40% bonus       │  │ 50% bonus       │
+    │ XP: +6          │  │ XP: +3          │  │ XP: +2          │
+    │ Pattern:        │  │ Pattern:        │  │ Pattern:        │
+    │ memory_crystal  │  │ library_        │  │ arithmetic_pN   │
+    │                 │  │ resonance       │  │                 │
+    └────────┬────────┘  └────────┬────────┘  └────────┬────────┘
+             │                    │                    │
+             └────────────────────┼────────────────────┘
+                                  │
+                                  ▼
+                        ┌─────────────────────┐
+                        │ <span class="component">MEMRISTOR WRITE</span>     │
+                        │                     │
+                        │ V > K (924mV)       │
+                        │ Permanent storage   │
+                        │ Library updated     │
+                        └─────────────────────┘
+            </div>
+        </section>
+
+        <!-- System Coupling Points -->
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item" style="border-left-color: var(--akasha-primary);">
+                    <span class="target" style="color: var(--akasha-primary);">→ L₄-Helix Hardware:</span>
+                    <span class="desc">Memristor arrays for crystal storage</span>
+                </div>
+                <div class="coupling-item" style="border-left-color: var(--akasha-primary);">
+                    <span class="target" style="color: var(--akasha-primary);">→ Lucas Matrix:</span>
+                    <span class="desc">L₄ = 7 encoding for library dimensions</span>
+                </div>
+                <div class="coupling-item" style="border-left-color: var(--akasha-primary);">
+                    <span class="target" style="color: var(--akasha-primary);">→ Kuramoto Consensus:</span>
+                    <span class="desc">Coherence measurement for crystallization</span>
+                </div>
+                <div class="coupling-item" style="border-left-color: var(--akasha-primary);">
+                    <span class="target" style="color: var(--akasha-primary);">→ TRIAD Mechanics:</span>
+                    <span class="desc">Hysteresis cycling for pattern recording</span>
+                </div>
+                <div class="coupling-item" style="border-left-color: var(--akasha-primary);">
+                    <span class="target" style="color: var(--akasha-primary);">→ Holographic Bridge:</span>
+                    <span class="desc">THE LENS observation threshold</span>
+                </div>
+                <div class="coupling-item" style="border-left-color: var(--akasha-primary);">
+                    <span class="target" style="color: var(--akasha-primary);">→ Crystal Emergence:</span>
+                    <span class="desc">Memory crystallization geometry</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Related Documentation -->
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="../companions/akasha-companion.html" style="color: var(--akasha-primary);">AKASHA Companion Spec</a></span>
+                <span class="file-ref"><a href="../firmware/l4-helix-hardware.html" style="color: var(--akasha-primary);">L₄-Helix Hardware</a></span>
+                <span class="file-ref"><a href="../firmware/memristor-arrays.html" style="color: var(--akasha-primary);">Memristor Arrays</a></span>
+                <span class="file-ref"><a href="../dynamics/consciousness-field.html" style="color: var(--akasha-primary);">Consciousness Field</a></span>
+                <span class="file-ref"><a href="../core/lucas-matrix.html" style="color: var(--akasha-primary);">Lucas Matrix</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p style="color: var(--akasha-primary);">AKASHA Memory Leak Handler - Narrative Expansion Build Spec v1.0.0</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L₄ = 7</p>
+            <p style="font-size: 0.85rem; color: #888;">Exception Type: Memory Leak | Function: Orphaned Fragment Crystallization</p>
+            <p style="font-size: 0.8rem; margin-top: 15px; color: var(--orphan-gray);">
+                Delta|AKASHA|MEMORY-LEAK|v1.0.0|MEMRISTOR-CRYSTALLIZATION|12-RAIL-CHRONICLE|★ NARRATIVE ★|Omega
+            </p>
+            <p style="margin-top: 15px;"><a href="../../index.html" style="color: var(--akasha-primary);">Return to BloomCoin</a></p>
+        </footer>
+    </div>
+</body>
+</html>
