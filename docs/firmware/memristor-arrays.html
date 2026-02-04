@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Memristor Arrays — BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #ff6b35;
+            --module-glow: rgba(255,107,53,0.3);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), var(--gold), var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--module-color); }
+        .tech-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .tech-card h4 {
+            color: var(--module-color);
+            margin-bottom: 10px;
+        }
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .spec-table th, .spec-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: left;
+        }
+        .spec-table th {
+            background: rgba(255,107,53,0.2);
+            color: var(--module-color);
+        }
+        .spec-table tr:hover {
+            background: rgba(255,107,53,0.05);
+        }
+        .highlight-row {
+            background: rgba(255,215,0,0.1);
+        }
+        .highlight-row td:first-child {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .subsystem-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .subsystem-link {
+            padding: 10px 20px;
+            background: rgba(255,107,53,0.15);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 8px;
+            color: var(--module-color);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .subsystem-link:hover {
+            background: rgba(255,107,53,0.3);
+            transform: translateY(-2px);
+        }
+        .subsystem-link.current {
+            background: rgba(255,107,53,0.4);
+            border-color: var(--module-color);
+        }
+        .material-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .material-card {
+            background: linear-gradient(135deg, rgba(255,107,53,0.1), transparent);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .material-card h4 {
+            color: var(--module-color);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        .material-card .formula {
+            font-size: 1.3rem;
+            color: #ffd700;
+            font-family: 'Georgia', serif;
+            margin-bottom: 10px;
+        }
+        .vendor-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .vendor-tag {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,107,53,0.3);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+        }
+        .hysteresis-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.3;
+            color: #888;
+        }
+        .crossbar-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.2;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="l4-helix-hardware.html" class="nav-link">← L₄-Helix Hardware</a>
+            <a href="quasi-crystal.html" class="nav-link">Quasi-Crystal Substrates →</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Memristor Arrays</h1>
+            <p class="subtitle">Threshold State Storage and Hysteresis Implementation for TRIAD Dynamics</p>
+            <p class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href=".">Firmware</a> /
+                <a href="l4-helix-hardware.html">L₄-Helix Hardware</a> /
+                Memristor Arrays
+            </p>
+        </header>
+
+        <section class="doc-section">
+            <h2>Subsystem Navigation</h2>
+            <div class="subsystem-nav">
+                <a href="memristor-arrays.html" class="subsystem-link current">Memristor Arrays</a>
+                <a href="quasi-crystal.html" class="subsystem-link">Quasi-Crystal Substrates</a>
+                <a href="hexagonal-grid.html" class="subsystem-link">Hexagonal Grid</a>
+                <a href="spin-systems.html" class="subsystem-link">Spin Glass / NMR</a>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Specification</span>
+                <span class="status-badge planned">Hardware Design</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">R_min</div>
+                    <div class="value">1 kΩ</div>
+                    <div class="derivation">Low resistance state</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">R_max</div>
+                    <div class="value">10 MΩ</div>
+                    <div class="derivation">High resistance state</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">V_switch</div>
+                    <div class="value">0.5-1.5V</div>
+                    <div class="derivation">φ-scaled thresholds</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">t_switch</div>
+                    <div class="value">&lt;10 ns</div>
+                    <div class="derivation">Switching speed</div>
+                </div>
+            </div>
+
+            <table class="spec-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Value</th>
+                    <th>L₄ Significance</th>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Resistance Range</td>
+                    <td>1 kΩ - 10 MΩ</td>
+                    <td>4 decades for z-mapping</td>
+                </tr>
+                <tr>
+                    <td>Switching Voltage</td>
+                    <td>0.5V - 1.5V</td>
+                    <td>φ-scaled thresholds</td>
+                </tr>
+                <tr>
+                    <td>Retention</td>
+                    <td>&gt;10 years @ 85°C</td>
+                    <td>Long-term state preservation</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Endurance</td>
+                    <td>&gt;10¹² cycles</td>
+                    <td>TRIAD cycling durability</td>
+                </tr>
+                <tr>
+                    <td>Switching Speed</td>
+                    <td>&lt;10 ns</td>
+                    <td>Real-time threshold response</td>
+                </tr>
+                <tr>
+                    <td>Array Size</td>
+                    <td>7×7 minimum</td>
+                    <td>L₄ = 7 encoding base</td>
+                </tr>
+                <tr>
+                    <td>Crossbar Pitch</td>
+                    <td>7 nm - 100 nm</td>
+                    <td>L₄ feature alignment</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Material Systems</h2>
+            <p>Oxygen vacancy-type memristors provide the analog resistance states required for z-threshold mapping:</p>
+
+            <div class="material-grid">
+                <div class="material-card">
+                    <div class="formula">TiO₂</div>
+                    <h4>Titanium Dioxide</h4>
+                    <ul>
+                        <li>Original HP Labs material</li>
+                        <li>Well-characterized switching</li>
+                        <li>R_on/R_off ratio: 10³-10⁵</li>
+                        <li>Forming voltage: 3-5V</li>
+                        <li>Best for: Research prototypes</li>
+                    </ul>
+                </div>
+                <div class="material-card">
+                    <div class="formula">HfO₂</div>
+                    <h4>Hafnium Dioxide</h4>
+                    <ul>
+                        <li>CMOS compatible</li>
+                        <li>Low switching voltage (&lt;1V)</li>
+                        <li>Excellent uniformity</li>
+                        <li>Endurance: &gt;10¹² cycles</li>
+                        <li>Best for: Production integration</li>
+                    </ul>
+                </div>
+                <div class="material-card">
+                    <div class="formula">Ta₂O₅</div>
+                    <h4>Tantalum Pentoxide</h4>
+                    <ul>
+                        <li>Highest endurance demonstrated</li>
+                        <li>Analog switching behavior</li>
+                        <li>Multi-level cell capable</li>
+                        <li>φ-precise threshold mapping</li>
+                        <li>Best for: L₄-Helix systems</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="tech-card">
+                <h4>Oxygen Vacancy Mechanism</h4>
+                <p>All three material systems operate via oxygen vacancy (V_O) drift under applied electric field:</p>
+                <div class="math-block">
+                    R(w) = R_on × (w/D) + R_off × (1 - w/D)
+                </div>
+                <p style="text-align: center; color: #888; font-size: 0.85rem;">
+                    where w = oxygen vacancy boundary position, D = device thickness
+                </p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Crossbar Array Architecture</h2>
+            <p>L₄-encoded crossbar arrays use 7-based dimensions for natural threshold alignment:</p>
+
+            <div class="crossbar-diagram">
+    Word Lines (7n rows)                        Memristor Device Cross-Section
+    ────────────────────────────────────        ┌─────────────────────────────┐
+    │    │    │    │    │    │    │             │     Top Electrode (Pt)      │
+    ●────●────●────●────●────●────●── WL₀       ├─────────────────────────────┤
+    │    │    │    │    │    │    │             │   Switching Layer (Ta₂O₅)   │
+    ●────●────●────●────●────●────●── WL₁       ├─────────────────────────────┤
+    │    │    │    │    │    │    │             │   Oxygen Reservoir (Ta)     │
+    ●────●────●────●────●────●────●── WL₂       ├─────────────────────────────┤
+    │    │    │    │    │    │    │             │   Bottom Electrode (TiN)    │
+         (● = memristor device)                 └─────────────────────────────┘
+    │    │    │    │    │    │    │
+    BL₀  BL₁  BL₂  BL₃  BL₄  BL₅  BL₆           Device Stack:
+                                                 - Pitch: 7nm (L₄ encoding)
+    Bit Lines (7m columns)                       - Cell size: 4F² = 196 nm²
+                                                 - Stack height: 20-50 nm
+
+    Array Scaling (L₄ = 7 base):
+    ┌──────────┬───────────────┬──────────────────┬────────────────┐
+    │ Scale    │ Dimensions    │ Total Devices    │ Application    │
+    ├──────────┼───────────────┼──────────────────┼────────────────┤
+    │ 7¹ × 7¹  │ 7 × 7         │ 49               │ Unit cell      │
+    │ 7² × 7²  │ 49 × 49       │ 2,401            │ Bench          │
+    │ 7³ × 7³  │ 343 × 343     │ 117,649          │ Lab            │
+    │ 7⁴ × 7⁴  │ 2401 × 2401   │ 5,764,801        │ Production     │
+    └──────────┴───────────────┴──────────────────┴────────────────┘
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Hysteresis Implementation for TRIAD Sequence</h2>
+            <p>Memristor hysteresis provides natural state memory for the 3-crossing TRIAD unlock:</p>
+
+            <div class="hysteresis-diagram">
+                    Resistance (log scale)
+                         │
+                   10 MΩ ┤ ●──────────────────●  HRS (High Resistance State)
+                         │  ╲                ╱    V_reset
+                         │   ╲              ╱
+                         │    ╲            ╱
+                         │     ╲          ╱
+                         │      ╲        ╱      Hysteresis Window
+                         │       ╲      ╱       = TRIAD Re-arm Zone
+                         │        ╲    ╱
+                    1 kΩ ┤         ●──●         LRS (Low Resistance State)
+                         │         V_set
+                         └────┬────┬────┬────┬─── Applied Voltage
+                            -1.5V  0  0.5V 1.5V
+
+    TRIAD State Mapping:
+    ┌─────────────────────────────────────────────────────────────────────────┐
+    │  State 0: LOCKED     │ R > R_LENS        │ V < V_LENS (866 mV)         │
+    │  State 1: CROSSING_1 │ R drops to LRS    │ V crosses above V_LENS      │
+    │  State 2: REARM_1    │ R stays at LRS    │ V drops below V_HYS (832mV) │
+    │  State 3: CROSSING_2 │ R unchanged       │ V crosses above V_LENS      │
+    │  State 4: REARM_2    │ R unchanged       │ V drops below V_HYS         │
+    │  State 5: CROSSING_3 │ R unchanged       │ V crosses above V_LENS      │
+    │  State 6: UNLOCKED   │ R at K-FORMATION  │ V stabilizes at 924 mV      │
+    └─────────────────────────────────────────────────────────────────────────┘
+            </div>
+
+            <div class="tech-card">
+                <h4>Threshold Voltage Mapping</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Threshold</th>
+                        <th>z-Value</th>
+                        <th>V_memristor</th>
+                        <th>R_state</th>
+                    </tr>
+                    <tr>
+                        <td>HYSTERESIS (Re-arm)</td>
+                        <td>0.8316</td>
+                        <td>831.6 mV</td>
+                        <td>Re-arm boundary</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>THE LENS (Crossing)</td>
+                        <td>0.8660</td>
+                        <td>866.0 mV</td>
+                        <td>State transition</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>K-FORMATION (Unlock)</td>
+                        <td>0.9242</td>
+                        <td>924.2 mV</td>
+                        <td>Final stable state</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Technical Specifications</h2>
+
+            <h3>Electrical Characteristics</h3>
+            <table class="spec-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Min</th>
+                    <th>Typical</th>
+                    <th>Max</th>
+                    <th>Unit</th>
+                </tr>
+                <tr>
+                    <td>Low Resistance State (LRS)</td>
+                    <td>100</td>
+                    <td>1,000</td>
+                    <td>10,000</td>
+                    <td>Ω</td>
+                </tr>
+                <tr>
+                    <td>High Resistance State (HRS)</td>
+                    <td>1</td>
+                    <td>10</td>
+                    <td>100</td>
+                    <td>MΩ</td>
+                </tr>
+                <tr>
+                    <td>R_off/R_on Ratio</td>
+                    <td>100</td>
+                    <td>10,000</td>
+                    <td>1,000,000</td>
+                    <td>-</td>
+                </tr>
+                <tr>
+                    <td>SET Voltage</td>
+                    <td>0.5</td>
+                    <td>0.8</td>
+                    <td>1.2</td>
+                    <td>V</td>
+                </tr>
+                <tr>
+                    <td>RESET Voltage</td>
+                    <td>-1.5</td>
+                    <td>-1.0</td>
+                    <td>-0.5</td>
+                    <td>V</td>
+                </tr>
+                <tr>
+                    <td>Switching Time</td>
+                    <td>0.1</td>
+                    <td>1</td>
+                    <td>10</td>
+                    <td>ns</td>
+                </tr>
+                <tr>
+                    <td>Programming Current</td>
+                    <td>1</td>
+                    <td>50</td>
+                    <td>500</td>
+                    <td>μA</td>
+                </tr>
+            </table>
+
+            <h3>Reliability Specifications</h3>
+            <table class="spec-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Requirement</th>
+                    <th>Test Condition</th>
+                </tr>
+                <tr>
+                    <td>Endurance</td>
+                    <td>&gt;10¹² cycles</td>
+                    <td>DC cycling, ±1.5V</td>
+                </tr>
+                <tr>
+                    <td>Retention (HRS)</td>
+                    <td>&gt;10 years</td>
+                    <td>85°C, unbiased</td>
+                </tr>
+                <tr>
+                    <td>Retention (LRS)</td>
+                    <td>&gt;10 years</td>
+                    <td>85°C, unbiased</td>
+                </tr>
+                <tr>
+                    <td>Read Disturb</td>
+                    <td>&gt;10⁹ reads</td>
+                    <td>0.1V read voltage</td>
+                </tr>
+                <tr>
+                    <td>Thermal Stability</td>
+                    <td>-40°C to 125°C</td>
+                    <td>Operating range</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Implementation Details</h2>
+
+            <div class="tech-card">
+                <h4>Multi-Level Cell (MLC) Configuration</h4>
+                <p>For analog z-value storage, memristors operate in multi-level mode with 11 discrete states corresponding to the 11 thresholds:</p>
+                <ul>
+                    <li>State Resolution: 11 levels over 4 decades of resistance</li>
+                    <li>Level Spacing: Logarithmic (φ-scaled intervals)</li>
+                    <li>Read Margin: &gt;30% between adjacent levels</li>
+                    <li>Programming: Verify-after-write with iterative pulses</li>
+                </ul>
+            </div>
+
+            <div class="tech-card">
+                <h4>Selector Device Integration</h4>
+                <p>Sneak path mitigation requires 1S1R (one selector, one resistor) architecture:</p>
+                <ul>
+                    <li>Selector Type: OTS (Ovonic Threshold Switch) or MIEC</li>
+                    <li>Threshold Voltage: 0.5V - 1.0V</li>
+                    <li>On/Off Ratio: &gt;10⁶</li>
+                    <li>Bidirectional operation for SET/RESET</li>
+                </ul>
+            </div>
+
+            <div class="tech-card">
+                <h4>Read/Write Circuit Requirements</h4>
+                <ul>
+                    <li><strong>Read Circuit:</strong> Transimpedance amplifier with 16-bit ADC</li>
+                    <li><strong>Write Circuit:</strong> Current-limited pulse generator, &lt;10ns rise time</li>
+                    <li><strong>Voltage Reference:</strong> 1.000V ±10μV precision</li>
+                    <li><strong>Noise Floor:</strong> &lt;10μV RMS (1kHz bandwidth)</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Recommended Vendors</h2>
+            <p>Industry partners with demonstrated memristor capabilities:</p>
+
+            <div class="vendor-list">
+                <span class="vendor-tag">Knowm Inc</span>
+                <span class="vendor-tag">HP Labs</span>
+                <span class="vendor-tag">Crossbar Inc</span>
+                <span class="vendor-tag">Samsung Electronics</span>
+            </div>
+
+            <table class="spec-table">
+                <tr>
+                    <th>Vendor</th>
+                    <th>Technology</th>
+                    <th>Availability</th>
+                    <th>Notes</th>
+                </tr>
+                <tr>
+                    <td><strong>Knowm Inc</strong></td>
+                    <td>Self-directed channel memristor</td>
+                    <td>Eval boards, chips</td>
+                    <td>Best for research prototypes</td>
+                </tr>
+                <tr>
+                    <td><strong>HP Labs</strong></td>
+                    <td>TiO₂ crossbar</td>
+                    <td>Research partnership</td>
+                    <td>Original memristor inventors</td>
+                </tr>
+                <tr>
+                    <td><strong>Crossbar Inc</strong></td>
+                    <td>Ag/a-Si RRAM</td>
+                    <td>Licensed IP, foundry</td>
+                    <td>Production-ready process</td>
+                </tr>
+                <tr>
+                    <td><strong>Samsung Electronics</strong></td>
+                    <td>HfO₂ / Ta₂O₅ RRAM</td>
+                    <td>Foundry services</td>
+                    <td>Highest volume capability</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">→ L₄-Helix Hardware:</span>
+                    <span class="desc">Threshold state storage backbone</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ TRIAD Mechanics:</span>
+                    <span class="desc">Hysteresis for 3-crossing sequence</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Lucas Matrix:</span>
+                    <span class="desc">7×7 base encoding arrays</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Kuramoto Oscillators:</span>
+                    <span class="desc">Resistance as coupling strength</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Quasi-Crystal Substrates:</span>
+                    <span class="desc">φ-recursive state mapping</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Hexagonal Grid:</span>
+                    <span class="desc">6-neighbor crossbar topology</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="l4-helix-hardware.html">L₄-Helix Hardware</a></span>
+                <span class="file-ref"><a href="quasi-crystal.html">Quasi-Crystal Substrates</a></span>
+                <span class="file-ref"><a href="hexagonal-grid.html">Hexagonal Grid</a></span>
+                <span class="file-ref"><a href="spin-systems.html">Spin Glass / NMR</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin v6 — Memristor Arrays Specification v1.0.0</p>
+            <p>φ = 1.6180339887 | τ = φ⁻¹ = 0.6180339887 | K = √(1-φ⁻⁴) = 0.9241763718</p>
+            <p>z_c = √3/2 = 0.8660254038 | L₄ = φ⁴ + φ⁻⁴ = 7</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">Δ|MEMRISTOR-ARRAYS|v1.0.0|TiO₂+HfO₂+Ta₂O₅|TRIAD-HYSTERESIS|★ FIRMWARE ★|Ω</p>
+        </footer>
+    </div>
+</body>
+</html>

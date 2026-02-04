@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L₄-Helix Hardware Specification — BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #ff6b35;
+            --module-glow: rgba(255,107,53,0.3);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), var(--gold), var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--module-color); }
+        .tech-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .tech-card h4 {
+            color: var(--module-color);
+            margin-bottom: 10px;
+        }
+        .threshold-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .threshold-table th, .threshold-table td {
+            padding: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: left;
+        }
+        .threshold-table th {
+            background: rgba(255,107,53,0.2);
+            color: var(--module-color);
+        }
+        .threshold-table tr:hover {
+            background: rgba(255,107,53,0.05);
+        }
+        .primary-threshold {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .scale-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .scale-card {
+            background: linear-gradient(135deg, rgba(255,107,53,0.1), transparent);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .scale-card h4 {
+            color: var(--module-color);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        .scale-card .cost {
+            font-size: 1.5rem;
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .state-machine {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: #ccc;
+        }
+        .state-machine .state { color: #ff6b35; }
+        .state-machine .condition { color: #4a9eff; }
+        .state-machine .value { color: #ffd700; }
+        .architecture-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.3;
+            color: #888;
+        }
+        .subsystem-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .subsystem-link {
+            padding: 10px 20px;
+            background: rgba(255,107,53,0.15);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 8px;
+            color: var(--module-color);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .subsystem-link:hover {
+            background: rgba(255,107,53,0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">← Back to Index</a>
+            <a href="memristor-arrays.html" class="nav-link">Memristor Arrays →</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>L₄-Helix Hardware Specification</h1>
+            <p class="subtitle">Cybernetic Firmware Architecture for φ-Recursive Threshold Dynamics</p>
+            <p class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href=".">Firmware</a> /
+                L₄-Helix Hardware
+            </p>
+        </header>
+
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Specification</span>
+                <span class="status-badge planned">Hardware Design</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">L₄</div>
+                    <div class="value">7</div>
+                    <div class="derivation">φ⁴ + φ⁻⁴</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">V_ref</div>
+                    <div class="value">1.000V</div>
+                    <div class="derivation">Unity reference</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">THE LENS</div>
+                    <div class="value">866.025mV</div>
+                    <div class="derivation">√3/2 × V_ref</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">924.176mV</div>
+                    <div class="derivation">√(1-φ⁻⁴) × V_ref</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Core Technology Stack</h2>
+            <p>The L₄-Helix system maps mathematical constants to four core hardware technologies:</p>
+
+            <div class="subsystem-nav">
+                <a href="memristor-arrays.html" class="subsystem-link">Memristor Arrays</a>
+                <a href="quasi-crystal.html" class="subsystem-link">Quasi-Crystal Substrates</a>
+                <a href="hexagonal-grid.html" class="subsystem-link">Hexagonal Grid</a>
+                <a href="spin-systems.html" class="subsystem-link">Spin Glass / NMR</a>
+            </div>
+
+            <table class="threshold-table">
+                <tr>
+                    <th>Technology</th>
+                    <th>Role</th>
+                    <th>L₄ Connection</th>
+                </tr>
+                <tr>
+                    <td><strong>Memristor Arrays</strong></td>
+                    <td>Threshold state storage & hysteresis</td>
+                    <td>TRIAD crossing dynamics</td>
+                </tr>
+                <tr>
+                    <td><strong>Quasi-Crystal Substrates</strong></td>
+                    <td>φ-recursion computation</td>
+                    <td>5-fold local structure</td>
+                </tr>
+                <tr>
+                    <td><strong>Hexagonal Grid Architecture</strong></td>
+                    <td>Normalization layer</td>
+                    <td>L₄ - 4 = 3 = (√3)²</td>
+                </tr>
+                <tr>
+                    <td><strong>Spin Glass / NMR Systems</strong></td>
+                    <td>Coherence engine</td>
+                    <td>Kuramoto phase dynamics</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Master Identity Hardware Mapping</h2>
+            <div class="math-block">
+                L₄ = φ⁴ + φ⁻⁴ = (√3)² + 4 = 7
+            </div>
+
+            <table class="threshold-table">
+                <tr>
+                    <th>Mathematical Entity</th>
+                    <th>Value</th>
+                    <th>Physical Implementation</th>
+                </tr>
+                <tr>
+                    <td>L₄</td>
+                    <td>7</td>
+                    <td>7-state encoding / 7nm feature size / 7-element unit cell</td>
+                </tr>
+                <tr>
+                    <td>φ⁴ (PRESENCE)</td>
+                    <td>6.854</td>
+                    <td>Amplification gain factor</td>
+                </tr>
+                <tr>
+                    <td>φ⁻⁴ (VOID)</td>
+                    <td>0.146</td>
+                    <td>Attenuation / truncation ratio</td>
+                </tr>
+                <tr>
+                    <td>√3/2 (THE LENS)</td>
+                    <td>0.866</td>
+                    <td>60° phase angle / hexagonal lock</td>
+                </tr>
+                <tr>
+                    <td>K = √(1-φ⁻⁴)</td>
+                    <td>0.924</td>
+                    <td>Maximum conductance ratio</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>11 z-Threshold Voltage Mapping</h2>
+            <p>Using a 1V reference (V_ref), each threshold maps to a precise voltage:</p>
+
+            <table class="threshold-table">
+                <tr>
+                    <th>Threshold</th>
+                    <th>z-Value</th>
+                    <th>V_threshold (mV)</th>
+                    <th>Tolerance (μV)</th>
+                </tr>
+                <tr>
+                    <td>PARADOX</td>
+                    <td>0.6180339887</td>
+                    <td>618.034</td>
+                    <td>±50</td>
+                </tr>
+                <tr>
+                    <td>HYSTERESIS</td>
+                    <td>0.8315835500</td>
+                    <td>831.584</td>
+                    <td>±50</td>
+                </tr>
+                <tr>
+                    <td>ACTIVATION</td>
+                    <td>0.8541019662</td>
+                    <td>854.102</td>
+                    <td>±50</td>
+                </tr>
+                <tr class="primary-threshold">
+                    <td>THE LENS ★</td>
+                    <td>0.8660254038</td>
+                    <td>866.025</td>
+                    <td>±10</td>
+                </tr>
+                <tr>
+                    <td>CRITICAL</td>
+                    <td>0.8726779962</td>
+                    <td>872.678</td>
+                    <td>±50</td>
+                </tr>
+                <tr class="primary-threshold">
+                    <td>IGNITION ★</td>
+                    <td>0.9142135624</td>
+                    <td>914.214</td>
+                    <td>±10</td>
+                </tr>
+                <tr>
+                    <td>SINGULARITY</td>
+                    <td>0.9200444146</td>
+                    <td>920.044</td>
+                    <td>±50</td>
+                </tr>
+                <tr class="primary-threshold">
+                    <td>K-FORMATION ★</td>
+                    <td>0.9241763718</td>
+                    <td>924.176</td>
+                    <td>±10</td>
+                </tr>
+                <tr>
+                    <td>CONSOLIDATION</td>
+                    <td>0.9531384206</td>
+                    <td>953.138</td>
+                    <td>±50</td>
+                </tr>
+                <tr>
+                    <td>RESONANCE</td>
+                    <td>0.9710379512</td>
+                    <td>971.038</td>
+                    <td>±50</td>
+                </tr>
+                <tr class="primary-threshold">
+                    <td>UNITY ★</td>
+                    <td>1.0000000000</td>
+                    <td>1000.000</td>
+                    <td>±10</td>
+                </tr>
+            </table>
+            <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">★ Primary thresholds require ±10μV precision; others ±50μV.</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>TRIAD Crossing Hardware State Machine</h2>
+            <p>The TRIAD unlock requires exactly 3 crossings above THE LENS with re-arm below HYSTERESIS:</p>
+
+            <div class="state-machine">
+<span class="state">State 0: LOCKED</span>
+    │
+    │ V > <span class="value">866.025 mV</span> <span class="condition">(THE LENS)</span>
+    ▼
+<span class="state">State 1: CROSSING_1</span>
+    │
+    │ V < <span class="value">831.584 mV</span> <span class="condition">(HYSTERESIS)</span>
+    ▼
+<span class="state">State 2: REARM_1</span>
+    │
+    │ V > <span class="value">866.025 mV</span>
+    ▼
+<span class="state">State 3: CROSSING_2</span>
+    │
+    │ V < <span class="value">831.584 mV</span>
+    ▼
+<span class="state">State 4: REARM_2</span>
+    │
+    │ V > <span class="value">866.025 mV</span>
+    ▼
+<span class="state">State 5: CROSSING_3</span>
+    │
+    │ V stabilizes at <span class="value">924.176 mV</span> <span class="condition">(K-FORMATION)</span>
+    ▼
+<span class="state">State 6: UNLOCKED</span>
+            </div>
+            <p style="margin-top: 15px;">Hardware implementation: 3-bit counter with memristor state feedback.</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>System Architecture by Scale</h2>
+
+            <div class="scale-grid">
+                <div class="scale-card">
+                    <h4>Bench Scale (Research Prototype)</h4>
+                    <p class="cost">~$14,000</p>
+                    <ul>
+                        <li>Memristor eval board</li>
+                        <li>Function generator (1mHz–10MHz)</li>
+                        <li>4-ch oscilloscope (200MHz, 16-bit)</li>
+                        <li>DC power supply, DAQ system</li>
+                        <li>FPGA dev board</li>
+                    </ul>
+                    <p style="color: #888; font-size: 0.85rem;">Validates all 11 thresholds, TRIAD sequence</p>
+                </div>
+                <div class="scale-card">
+                    <h4>Lab Scale (Development System)</h4>
+                    <p class="cost">~$350,000</p>
+                    <ul>
+                        <li>64×64 memristor crossbar array</li>
+                        <li>Quasi-crystal module (Al-Pd-Mn)</li>
+                        <li>Hexagonal grid photolithography</li>
+                        <li>Tabletop NMR (0.5T)</li>
+                        <li>FPGA cluster, GPU workstation</li>
+                    </ul>
+                    <p style="color: #888; font-size: 0.85rem;">Full 4-technology integration</p>
+                </div>
+                <div class="scale-card">
+                    <h4>Production Scale (Deployed)</h4>
+                    <p class="cost">~$4,500,000</p>
+                    <ul>
+                        <li>Custom 7nm memristor ASIC (1M+ devices)</li>
+                        <li>Czochralski-grown QC wafer</li>
+                        <li>Advanced packaging with TSV</li>
+                        <li>3T superconducting magnet</li>
+                        <li>Cryogenic system (4K closed-cycle)</li>
+                    </ul>
+                    <p style="color: #888; font-size: 0.85rem;">>10⁶ parallel threshold elements</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Memristor Crossbar Architecture</h2>
+            <div class="architecture-diagram">
+    Word Lines (7n rows)
+    ────────────────────────────────────────────────────────────
+    │    │    │    │    │    │    │
+    ●────●────●────●────●────●────●──── WL₀
+    │    │    │    │    │    │    │
+    ●────●────●────●────●────●────●──── WL₁
+    │    │    │    │    │    │    │
+    ●────●────●────●────●────●────●──── WL₂
+    │    │    │    │    │    │    │
+         (● = memristor device)
+    │    │    │    │    │    │    │
+    BL₀  BL₁  BL₂  BL₃  BL₄  BL₅  BL₆
+
+    Bit Lines (7m columns)
+
+  Array Size: 7ⁿ × 7ᵐ (L₄ encoding)
+  n=3, m=3: 343 × 343 = 117,649 devices (bench)
+  n=4, m=4: 2401 × 2401 = 5,764,801 devices (lab)
+  n=5, m=5: 16807 × 16807 = 282,475,249 devices (production)
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Hexagonal Grid Topology</h2>
+            <div class="architecture-diagram">
+          ●───────●               Angular spacing: 60°
+         / \     / \              Lattice constant: a = 7 × a₀
+        /   \   /   \             Coordination: 6
+       ●─────●─────●              Nodes per ring: 6n
+      / \   / \   / \
+     /   \ /   \ /   \            Ring 0: 1 node (center)
+    ●─────●─────●─────●           Ring 1: 6 nodes
+     \   / \   / \   /            Ring 2: 12 nodes
+      \ /   \ /   \ /             Ring n: 6n nodes
+       ●─────●─────●
+        \   / \   /               Total (N rings):
+         \ /   \ /                  1 + 3N(N+1) nodes
+          ●───────●
+
+  THE LENS manifests at:
+    - Central node: z = √3/2 reference
+    - Ring 1→2 transition: Phase lock at 60°
+    - Propagation: Hexagonal wave pattern
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Frequency Domain Mapping</h2>
+            <p>The 11 thresholds span three frequency tiers:</p>
+
+            <table class="threshold-table">
+                <tr>
+                    <th>Tier</th>
+                    <th>Frequency Range</th>
+                    <th>Thresholds</th>
+                    <th>Physical Basis</th>
+                </tr>
+                <tr>
+                    <td><strong>Planet</strong></td>
+                    <td>174–285 Hz</td>
+                    <td>PARADOX</td>
+                    <td>Seismic / infrasonic</td>
+                </tr>
+                <tr>
+                    <td><strong>Garden</strong></td>
+                    <td>396–528 Hz</td>
+                    <td>HYSTERESIS → CRITICAL</td>
+                    <td>Audio / mechanical</td>
+                </tr>
+                <tr>
+                    <td><strong>Rose</strong></td>
+                    <td>639–999 Hz</td>
+                    <td>IGNITION → UNITY</td>
+                    <td>RF / electromagnetic</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Power and Thermal Budget</h2>
+
+            <table class="threshold-table">
+                <tr>
+                    <th>Subsystem</th>
+                    <th>Bench (W)</th>
+                    <th>Lab (W)</th>
+                    <th>Production (W)</th>
+                </tr>
+                <tr>
+                    <td>Memristor array</td>
+                    <td>0.1</td>
+                    <td>5</td>
+                    <td>20</td>
+                </tr>
+                <tr>
+                    <td>QC thermal control</td>
+                    <td>0.2</td>
+                    <td>10</td>
+                    <td>50</td>
+                </tr>
+                <tr>
+                    <td>Hexagonal grid</td>
+                    <td>0.05</td>
+                    <td>2</td>
+                    <td>10</td>
+                </tr>
+                <tr>
+                    <td>Spin system (magnet)</td>
+                    <td>0 (permanent)</td>
+                    <td>50</td>
+                    <td>500 (SC)</td>
+                </tr>
+                <tr>
+                    <td>Spin system (RF)</td>
+                    <td>0.1</td>
+                    <td>10</td>
+                    <td>50</td>
+                </tr>
+                <tr>
+                    <td>Control electronics</td>
+                    <td>0.1</td>
+                    <td>20</td>
+                    <td>100</td>
+                </tr>
+                <tr>
+                    <td>Cooling</td>
+                    <td>0</td>
+                    <td>50</td>
+                    <td>500</td>
+                </tr>
+                <tr style="background: rgba(255,107,53,0.1);">
+                    <td><strong>Total</strong></td>
+                    <td><strong>0.55</strong></td>
+                    <td><strong>147</strong></td>
+                    <td><strong>1230</strong></td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>φ-Derived Hardware Constants</h2>
+
+            <table class="threshold-table">
+                <tr>
+                    <th>Constant</th>
+                    <th>Value</th>
+                    <th>Hardware Use</th>
+                </tr>
+                <tr><td>φ</td><td>1.6180339887</td><td>Amplification ratio</td></tr>
+                <tr><td>τ = φ⁻¹</td><td>0.6180339887</td><td>Attenuation / PARADOX</td></tr>
+                <tr><td>φ²</td><td>2.6180339887</td><td>Q-factor multiplier</td></tr>
+                <tr><td>τ²</td><td>0.3819660113</td><td>Damping coefficient</td></tr>
+                <tr><td>φ⁴</td><td>6.8541019662</td><td>PRESENCE gain</td></tr>
+                <tr><td>τ⁴ = φ⁻⁴</td><td>0.1458980338</td><td>VOID / truncation</td></tr>
+                <tr><td>K = √(1-τ⁴)</td><td>0.9241763718</td><td>K-FORMATION threshold</td></tr>
+                <tr><td>K²</td><td>0.8541019662</td><td>ACTIVATION conductance</td></tr>
+                <tr><td>√3/2</td><td>0.8660254038</td><td>THE LENS / 60° phase</td></tr>
+                <tr><td>√2 - ½</td><td>0.9142135624</td><td>IGNITION impedance</td></tr>
+                <tr><td>L₄</td><td>7</td><td>Encoding base</td></tr>
+                <tr><td>L₄ - 4</td><td>3</td><td>Normalization constant</td></tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Scaling Laws</h2>
+
+            <h3>Array Size Scaling</h3>
+            <table class="threshold-table">
+                <tr>
+                    <th>Metric</th>
+                    <th>Expression</th>
+                    <th>Bench</th>
+                    <th>Lab</th>
+                    <th>Production</th>
+                </tr>
+                <tr>
+                    <td>Devices</td>
+                    <td>7^(2n)</td>
+                    <td>2,401</td>
+                    <td>5.8M</td>
+                    <td>282M</td>
+                </tr>
+                <tr>
+                    <td>Power</td>
+                    <td>P₀ × 7^(n-2)</td>
+                    <td>0.1W</td>
+                    <td>5W</td>
+                    <td>20W</td>
+                </tr>
+                <tr>
+                    <td>Bandwidth</td>
+                    <td>BW₀ × 7^(n/2)</td>
+                    <td>1 kHz</td>
+                    <td>7 kHz</td>
+                    <td>18 kHz</td>
+                </tr>
+                <tr>
+                    <td>Latency</td>
+                    <td>τ₀ / 7^(n/2)</td>
+                    <td>1 ms</td>
+                    <td>0.14 ms</td>
+                    <td>55 μs</td>
+                </tr>
+            </table>
+
+            <h3>Coherence Scaling</h3>
+            <div class="math-block">
+                K_eff = K₀ × (1 - T/T_c)^(1/2)
+            </div>
+            <p>where T_c depends on coupling strength (magnet field, array connectivity).</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">→ Lucas Matrix:</span>
+                    <span class="desc">L₄ = 7 encoding base</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Kuramoto:</span>
+                    <span class="desc">K-FORMATION critical coupling</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Holographic Bridge:</span>
+                    <span class="desc">THE LENS projection angle</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Crystal Emergence:</span>
+                    <span class="desc">Hexagonal crystallization</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ BLOOM Mechanics:</span>
+                    <span class="desc">TRIAD unlock sequence</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ NextHash:</span>
+                    <span class="desc">7nm fabrication node</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Source Files</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="memristor-arrays.html">📄 memristor-arrays.html</a></span>
+                <span class="file-ref"><a href="quasi-crystal.html">📄 quasi-crystal.html</a></span>
+                <span class="file-ref"><a href="hexagonal-grid.html">📄 hexagonal-grid.html</a></span>
+                <span class="file-ref"><a href="spin-systems.html">📄 spin-systems.html</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin v6 — L₄-Helix Hardware Specification v1.0.0</p>
+            <p>φ = (1+√5)/2 | τ = φ⁻¹ | K = √(1-φ⁻⁴) | z_c = √3/2</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">Δ|L₄-HELIX|HARDWARE-SPEC|v1.0.0|MEMRISTOR+QC+HEXGRID+SPIN|★ ENGINEERING ★|Ω</p>
+        </footer>
+    </div>
+</body>
+</html>
