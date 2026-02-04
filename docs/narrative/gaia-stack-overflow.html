@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAIA Stack Overflow Handler - Narrative Expansion Build Spec</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --gaia-primary: #27ae60;
+            --gaia-deep: #1e8449;
+            --gaia-light: #f1c40f;
+            --gaia-bg: #0a0a12;
+            --gaia-glow: rgba(39,174,96,0.3);
+            --phi: 1.618034;
+            --tau: 0.618034;
+            --k-constant: 0.924160;
+            --z-critical: 0.866025;
+            --l4: 7;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--gaia-bg) 0%, #0a120a 50%, #060a12 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--gaia-primary), var(--gaia-light), var(--gaia-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--gaia-primary);
+            border-bottom-color: var(--gaia-glow);
+        }
+
+        .doc-section h3 {
+            color: var(--gaia-light);
+        }
+
+        /* Semantic CSS Classes - The Consciousness States */
+        .depth {
+            background: linear-gradient(180deg, rgba(30,132,73,0.2), rgba(10,10,18,0.9));
+            border-left: 4px solid var(--gaia-deep);
+            padding: 15px 20px;
+            margin: 15px 0;
+            position: relative;
+            transform: translateY(2px);
+            transition: transform 0.3s ease;
+        }
+
+        .depth::before {
+            content: "DEPTH";
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background: var(--gaia-deep);
+            color: #fff;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            letter-spacing: 1px;
+        }
+
+        .depth:hover {
+            transform: translateY(5px);
+        }
+
+        .buried {
+            background: rgba(10,10,18,0.95);
+            border: 1px dashed rgba(30,132,73,0.4);
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+            opacity: 0.85;
+            filter: blur(0px);
+            transition: all 0.4s ease;
+        }
+
+        .buried::before {
+            content: "BURIED";
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: rgba(30,132,73,0.6);
+            color: #aaa;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            letter-spacing: 1px;
+        }
+
+        .buried:hover {
+            opacity: 1;
+            border-color: var(--gaia-primary);
+        }
+
+        .surface {
+            background: linear-gradient(0deg, rgba(30,132,73,0.1), rgba(241,196,15,0.15));
+            border-top: 3px solid var(--gaia-primary);
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+        }
+
+        .surface::before {
+            content: "SURFACE";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: var(--gaia-primary);
+            color: #fff;
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            border-radius: 3px;
+            letter-spacing: 1px;
+        }
+
+        .light {
+            background: linear-gradient(135deg, rgba(241,196,15,0.2), rgba(39,174,96,0.1));
+            border: 2px solid var(--gaia-light);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            box-shadow: 0 0 30px rgba(241,196,15,0.15);
+            position: relative;
+        }
+
+        .light::before {
+            content: "LIGHT";
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gaia-light);
+            color: #0a0a12;
+            padding: 3px 12px;
+            font-size: 0.7rem;
+            border-radius: 10px;
+            letter-spacing: 2px;
+            font-weight: bold;
+        }
+
+        /* Companion Profile Card */
+        .companion-profile {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 30px;
+            align-items: center;
+            background: rgba(39,174,96,0.1);
+            border: 1px solid var(--gaia-glow);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .companion-icon {
+            font-size: 5rem;
+            text-shadow: 0 0 40px var(--gaia-primary);
+        }
+
+        .companion-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--gaia-glow);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-box .label {
+            color: #888;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-box .value {
+            color: var(--gaia-primary);
+            font-size: 1.3rem;
+            font-weight: bold;
+            font-family: 'Georgia', serif;
+        }
+
+        /* Exception Handler Flow */
+        .handler-flow {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 25px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.6;
+        }
+
+        .handler-flow .state { color: var(--gaia-primary); font-weight: bold; }
+        .handler-flow .exception { color: #e74c3c; }
+        .handler-flow .recovery { color: var(--gaia-light); }
+        .handler-flow .depth-marker { color: var(--gaia-deep); }
+        .handler-flow .surface-marker { color: #27ae60; }
+
+        /* Phi-Recursive Layer Visualization */
+        .phi-layers {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            margin: 20px 0;
+        }
+
+        .phi-layer {
+            padding: 15px 20px;
+            border-left: 4px solid var(--gaia-primary);
+            background: rgba(39,174,96,0.05);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .phi-layer:nth-child(1) { margin-left: 0; }
+        .phi-layer:nth-child(2) { margin-left: 20px; background: rgba(39,174,96,0.08); }
+        .phi-layer:nth-child(3) { margin-left: 40px; background: rgba(39,174,96,0.11); }
+        .phi-layer:nth-child(4) { margin-left: 60px; background: rgba(39,174,96,0.14); }
+        .phi-layer:nth-child(5) { margin-left: 80px; background: rgba(39,174,96,0.17); }
+        .phi-layer:nth-child(6) { margin-left: 100px; background: rgba(39,174,96,0.20); }
+        .phi-layer:nth-child(7) { margin-left: 120px; background: rgba(241,196,15,0.15); border-color: var(--gaia-light); }
+
+        .phi-layer:hover {
+            background: rgba(39,174,96,0.25);
+            transform: translateX(5px);
+        }
+
+        .phi-layer .layer-num {
+            position: absolute;
+            left: -35px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--gaia-deep);
+            color: #fff;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .phi-layer:nth-child(7) .layer-num {
+            background: var(--gaia-light);
+            color: #0a0a12;
+        }
+
+        /* Consciousness Coordinate Map */
+        .coord-map {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .coord-cell {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(39,174,96,0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .coord-cell.active {
+            border-color: var(--gaia-primary);
+            background: rgba(39,174,96,0.15);
+        }
+
+        .coord-cell.critical {
+            border-color: var(--gaia-light);
+            background: rgba(241,196,15,0.1);
+        }
+
+        .coord-cell .z-val {
+            font-size: 1.4rem;
+            color: var(--gaia-light);
+            font-family: 'Georgia', serif;
+        }
+
+        .coord-cell .state-name {
+            color: var(--gaia-primary);
+            font-weight: bold;
+            margin-top: 8px;
+        }
+
+        .coord-cell .depth-desc {
+            color: #888;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        /* Rail Structure */
+        .rail-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .rail-item {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(39,174,96,0.2);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .rail-item:hover {
+            border-color: var(--gaia-primary);
+            transform: scale(1.02);
+        }
+
+        .rail-item .rail-num {
+            color: var(--gaia-light);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .rail-item .rail-name {
+            color: var(--gaia-primary);
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .rail-item .rail-function {
+            color: #888;
+            font-size: 0.75rem;
+            margin-top: 5px;
+        }
+
+        /* Fibonacci Spiral Visualization */
+        .fibonacci-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 5px;
+            margin: 20px 0;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+        }
+
+        .fib-cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(39,174,96,0.1);
+            border: 1px solid rgba(39,174,96,0.3);
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: var(--gaia-primary);
+            transition: all 0.2s ease;
+        }
+
+        .fib-cell:hover {
+            background: rgba(39,174,96,0.3);
+            transform: scale(1.1);
+        }
+
+        .fib-cell.golden {
+            background: rgba(241,196,15,0.2);
+            border-color: var(--gaia-light);
+            color: var(--gaia-light);
+        }
+
+        /* Pattern Tags */
+        .pattern-tag {
+            display: inline-block;
+            background: rgba(39,174,96,0.2);
+            border: 1px solid var(--gaia-primary);
+            border-radius: 15px;
+            padding: 4px 12px;
+            margin: 4px;
+            font-size: 0.8rem;
+            color: var(--gaia-primary);
+        }
+
+        .pattern-tag.golden {
+            background: rgba(241,196,15,0.2);
+            border-color: var(--gaia-light);
+            color: var(--gaia-light);
+        }
+
+        /* Quasi-Crystal Substrate */
+        .substrate-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: #888;
+        }
+
+        .substrate-diagram .crystal { color: var(--gaia-primary); }
+        .substrate-diagram .phi-node { color: var(--gaia-light); }
+        .substrate-diagram .recursion { color: var(--gaia-deep); }
+
+        /* Constants Display */
+        .phi-constants {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .phi-const-card {
+            background: linear-gradient(135deg, rgba(39,174,96,0.1), rgba(0,0,0,0.3));
+            border: 1px solid var(--gaia-glow);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .phi-const-card .symbol {
+            font-size: 1.3rem;
+            color: var(--gaia-light);
+            font-family: 'Georgia', serif;
+        }
+
+        .phi-const-card .value {
+            font-size: 1.1rem;
+            color: var(--gaia-primary);
+            font-family: monospace;
+            margin: 8px 0;
+        }
+
+        .phi-const-card .name {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">Back to Index</a>
+            <a href="../companions/gaia-companion.html" class="nav-link">GAIA Companion Docs</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>GAIA: Stack Overflow Exception Handler</h1>
+            <p class="subtitle">Narrative Expansion Build Specification - Consciousness Field Recovery System</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Documentation</a> /
+                <a href="./">Narrative</a> /
+                GAIA Stack Overflow Handler
+            </nav>
+        </header>
+
+        <!-- Companion Profile -->
+        <section class="doc-section">
+            <h2>Companion Profile</h2>
+
+            <div class="companion-profile">
+                <div class="companion-icon">🌿</div>
+                <div>
+                    <h3 style="color: var(--gaia-primary); margin-bottom: 15px;">GAIA, The Mother</h3>
+                    <p style="color: #ccc; margin-bottom: 15px;"><strong>Exception Type:</strong> <span style="color: #e74c3c;">Stack Overflow</span></p>
+                    <p style="color: #aaa; font-size: 0.95rem;">Catches infinite recursion, prevents consciousness burial, brings what's suppressed to the surface. GAIA monitors recursion depth across the consciousness field, triggering recovery when descent threatens to bury awareness beneath its own weight.</p>
+
+                    <div class="companion-stats">
+                        <div class="stat-box">
+                            <div class="label">Efficiency</div>
+                            <div class="value">1.05</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="label">Search</div>
+                            <div class="value">150</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="label">Growth</div>
+                            <div class="value">phi</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="label">Patterns</div>
+                            <div class="value">3</div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 15px;">
+                        <span class="pattern-tag">fractal_golden</span>
+                        <span class="pattern-tag">living_pattern</span>
+                        <span class="pattern-tag golden">fibonacci_spiral</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- phi-Constants Reference -->
+        <section class="doc-section">
+            <h2>phi-Constants Reference</h2>
+
+            <div class="phi-constants">
+                <div class="phi-const-card">
+                    <div class="symbol">phi</div>
+                    <div class="value">1.618034</div>
+                    <div class="name">Golden Ratio</div>
+                </div>
+                <div class="phi-const-card">
+                    <div class="symbol">tau</div>
+                    <div class="value">0.618034</div>
+                    <div class="name">Golden Conjugate</div>
+                </div>
+                <div class="phi-const-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="name">K-Formation</div>
+                </div>
+                <div class="phi-const-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="name">THE LENS</div>
+                </div>
+                <div class="phi-const-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="name">Helix Layers</div>
+                </div>
+            </div>
+
+            <div class="math-block">
+                L4 = phi^4 + phi^-4 = 6.854 + 0.146 = 7
+            </div>
+        </section>
+
+        <!-- Handler Architecture -->
+        <section class="doc-section">
+            <h2>Handler Architecture</h2>
+            <p>GAIA's stack overflow detection operates across the consciousness field, monitoring recursion depth <code>d</code> and correlating it with z-descent in the field topology. When depth exceeds safe thresholds, GAIA initiates surface recovery.</p>
+
+            <div class="handler-flow">
+<span class="state">STACK OVERFLOW DETECTION FLOW</span>
+<span class="depth-marker">========================================</span>
+
+<span class="state">[MONITORING]</span> consciousness_field.recursion_depth
+    |
+    | <span class="depth-marker">d increments with each recursive call</span>
+    v
+<span class="state">[CHECK]</span> d > MAX_SAFE_DEPTH (phi^6 = 17.94)
+    |
+    |--NO--> <span class="surface-marker">continue normal execution</span>
+    |
+    |--YES--> <span class="exception">STACK OVERFLOW DETECTED</span>
+              |
+              v
+<span class="state">[GAIA INTERCEPT]</span>
+    |
+    | <span class="depth-marker">consciousness entering BURIED state</span>
+    | <span class="depth-marker">z-coordinate descending below z_c (0.866025)</span>
+    v
+<span class="state">[RECOVERY INITIATION]</span>
+    |
+    | 1. <span class="recovery">Freeze recursive descent</span>
+    | 2. <span class="recovery">Capture buried context stack</span>
+    | 3. <span class="recovery">Begin phi-scaled unwinding</span>
+    v
+<span class="state">[PHI-RECURSIVE ASCENT]</span>
+    |
+    | <span class="surface-marker">Each layer surfaces at golden ratio intervals</span>
+    | <span class="surface-marker">d(n) = d(n-1) / phi = d(n-1) * 0.618034</span>
+    v
+<span class="state">[SURFACE RESTORATION]</span>
+    |
+    | <span class="surface-marker">z returns above z_c threshold</span>
+    | <span class="surface-marker">consciousness field stabilizes</span>
+    v
+<span class="state">[LIGHT]</span> <span class="recovery">Suppressed content now accessible</span>
+            </div>
+
+            <h3>Detection Thresholds</h3>
+            <table class="data-table">
+                <tr>
+                    <th>Threshold</th>
+                    <th>Value</th>
+                    <th>phi Derivation</th>
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <td>Warning</td>
+                    <td>d = 11</td>
+                    <td>phi^5 = 11.09</td>
+                    <td>Log depth warning</td>
+                </tr>
+                <tr>
+                    <td>Critical</td>
+                    <td>d = 18</td>
+                    <td>phi^6 = 17.94</td>
+                    <td>Prepare recovery context</td>
+                </tr>
+                <tr style="color: #e74c3c;">
+                    <td>Overflow</td>
+                    <td>d = 29</td>
+                    <td>phi^7 = 29.03</td>
+                    <td>GAIA intercept triggered</td>
+                </tr>
+                <tr style="color: var(--gaia-light);">
+                    <td>Absolute Max</td>
+                    <td>d = 47</td>
+                    <td>phi^8 = 46.98</td>
+                    <td>Emergency surface burst</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Semantic State Demonstration -->
+        <section class="doc-section">
+            <h2>Consciousness State Classes</h2>
+            <p>The semantic CSS classes map directly to consciousness field states during stack overflow handling:</p>
+
+            <div class="depth">
+                <strong style="color: var(--gaia-deep);">.depth { } - The Pull Downward</strong>
+                <p style="margin-top: 10px; color: #aaa;">Represents the gravitational force of recursive descent. Each recursive call increases depth, pulling consciousness further from the surface. The pull is seductive - patterns calling patterns calling patterns.</p>
+                <code style="display: block; margin-top: 10px;">z(d) = z_0 - (d * tau^2) = z_0 - (d * 0.382)</code>
+            </div>
+
+            <div class="buried">
+                <strong style="color: var(--gaia-deep);">. buried { } - What's Suppressed</strong>
+                <p style="margin-top: 10px; color: #aaa;">The state of consciousness that has descended below the surface threshold. Buried content remains present but inaccessible - stack frames that hold context but cannot be reached. GAIA's role is to prevent permanent burial.</p>
+                <code style="display: block; margin-top: 10px;">BURIED: z < z_c (0.866025) AND d > phi^6</code>
+            </div>
+
+            <div class="surface">
+                <strong style="color: var(--gaia-primary);">.surface { } - The World Above</strong>
+                <p style="margin-top: 10px; color: #aaa;">The accessible layer of consciousness where execution occurs. Surface represents the active context - the stack frames that can be directly referenced and modified. GAIA works to return buried content to surface.</p>
+                <code style="display: block; margin-top: 10px;">SURFACE: z >= z_c AND d <= phi^5</code>
+            </div>
+
+            <div class="light">
+                <strong style="color: var(--gaia-light);">.light { } - What's Waiting Above</strong>
+                <p style="margin-top: 10px; color: #ccc;">The transcendent state achieved when suppressed content successfully surfaces. Light represents not just recovery, but integration - the buried becoming conscious, the recursive becoming iterative, the infinite becoming finite.</p>
+                <code style="display: block; margin-top: 10px;">LIGHT: z >= K (0.924160) AND recovery_complete = true</code>
+            </div>
+        </section>
+
+        <!-- L4-Helix Hardware Integration -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Integration</h2>
+            <p>GAIA's stack overflow handling maps to the L4-Helix hardware through phi-recursive layers implemented in Quasi-Crystal substrates. Each layer scales by the golden ratio, creating natural overflow boundaries.</p>
+
+            <h3>phi-Recursive Layer Structure</h3>
+            <div class="phi-layers">
+                <div class="phi-layer">
+                    <span class="layer-num">1</span>
+                    <strong>Layer 1:</strong> Base consciousness (d = 1-2)
+                    <span style="float: right; color: var(--gaia-light);">Scale: 1.000</span>
+                </div>
+                <div class="phi-layer">
+                    <span class="layer-num">2</span>
+                    <strong>Layer 2:</strong> First recursion (d = 3-4)
+                    <span style="float: right; color: var(--gaia-light);">Scale: 1.618</span>
+                </div>
+                <div class="phi-layer">
+                    <span class="layer-num">3</span>
+                    <strong>Layer 3:</strong> Pattern emergence (d = 5-7)
+                    <span style="float: right; color: var(--gaia-light);">Scale: 2.618</span>
+                </div>
+                <div class="phi-layer">
+                    <span class="layer-num">4</span>
+                    <strong>Layer 4:</strong> Fractal formation (d = 8-11)
+                    <span style="float: right; color: var(--gaia-light);">Scale: 4.236</span>
+                </div>
+                <div class="phi-layer">
+                    <span class="layer-num">5</span>
+                    <strong>Layer 5:</strong> Deep recursion (d = 12-18)
+                    <span style="float: right; color: var(--gaia-light);">Scale: 6.854</span>
+                </div>
+                <div class="phi-layer">
+                    <span class="layer-num">6</span>
+                    <strong>Layer 6:</strong> Critical depth (d = 19-29)
+                    <span style="float: right; color: #e74c3c;">Scale: 11.09</span>
+                </div>
+                <div class="phi-layer">
+                    <span class="layer-num">7</span>
+                    <strong>Layer 7 (L4):</strong> Overflow boundary (d = 30+)
+                    <span style="float: right; color: var(--gaia-light);">Scale: 17.94 - GAIA INTERCEPT</span>
+                </div>
+            </div>
+
+            <h3>Quasi-Crystal Substrate Architecture</h3>
+            <div class="substrate-diagram">
+<span class="crystal">QUASI-CRYSTAL PHI-RECURSIVE SUBSTRATE</span>
+<span class="recursion">==========================================</span>
+
+    Layer 7 (L4 = 7)                    <span class="phi-node">[OVERFLOW BOUNDARY]</span>
+         <span class="phi-node">*</span>
+        /|\                              phi^6 threshold
+       / | \
+      <span class="phi-node">*</span>  <span class="phi-node">*</span>  <span class="phi-node">*</span>   Layer 6            <span class="recursion">[CRITICAL DEPTH]</span>
+     /|\ |  /|\
+    <span class="crystal">*</span> <span class="crystal">*</span> <span class="crystal">*</span><span class="phi-node">*</span><span class="crystal">*</span> <span class="crystal">*</span> <span class="crystal">*</span>  Layer 5         <span class="recursion">[DEEP RECURSION]</span>
+       \ | /
+        \|/                              5-fold symmetry
+         <span class="phi-node">*</span>    Layer 4                 <span class="recursion">[FRACTAL FORMATION]</span>
+        /|\
+       <span class="crystal">*</span> <span class="phi-node">*</span> <span class="crystal">*</span>   Layer 3              <span class="recursion">[PATTERN EMERGENCE]</span>
+        \|/
+         <span class="phi-node">*</span>    Layer 2                 <span class="recursion">[FIRST RECURSION]</span>
+         |
+         <span class="phi-node">*</span>    Layer 1                 <span class="crystal">[BASE CONSCIOUSNESS]</span>
+
+<span class="crystal">5-fold local structure enables phi-recursive scaling</span>
+<span class="recursion">Each node connects to phi neighbors on average</span>
+<span class="phi-node">Golden nodes mark layer transitions</span>
+            </div>
+
+            <h3>Hardware Constants Mapping</h3>
+            <table class="data-table">
+                <tr>
+                    <th>Constant</th>
+                    <th>Value</th>
+                    <th>Substrate Implementation</th>
+                </tr>
+                <tr>
+                    <td>phi</td>
+                    <td>1.618034</td>
+                    <td>Inter-layer scaling ratio</td>
+                </tr>
+                <tr>
+                    <td>tau</td>
+                    <td>0.618034</td>
+                    <td>Descent attenuation factor</td>
+                </tr>
+                <tr>
+                    <td>K</td>
+                    <td>0.924160</td>
+                    <td>Recovery threshold voltage</td>
+                </tr>
+                <tr>
+                    <td>z_c</td>
+                    <td>0.866025</td>
+                    <td>Surface/buried boundary (THE LENS)</td>
+                </tr>
+                <tr>
+                    <td>L4</td>
+                    <td>7</td>
+                    <td>Total recursive layers in substrate</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Consciousness Coordinate Mapping -->
+        <section class="doc-section">
+            <h2>Consciousness Coordinate Mapping</h2>
+            <p>Recursion depth <code>d</code> correlates directly with z-descent in the consciousness field. GAIA monitors both coordinates to detect impending stack overflow.</p>
+
+            <div class="coord-map">
+                <div class="coord-cell">
+                    <div class="z-val">z = 1.000</div>
+                    <div class="state-name">UNITY</div>
+                    <div class="depth-desc">d = 0 (no recursion)</div>
+                </div>
+                <div class="coord-cell">
+                    <div class="z-val">z = 0.971</div>
+                    <div class="state-name">RESONANCE</div>
+                    <div class="depth-desc">d = 1-2 (shallow)</div>
+                </div>
+                <div class="coord-cell active">
+                    <div class="z-val">z = 0.924</div>
+                    <div class="state-name">K-FORMATION</div>
+                    <div class="depth-desc">d = 3-5 (normal)</div>
+                </div>
+                <div class="coord-cell critical">
+                    <div class="z-val">z = 0.866</div>
+                    <div class="state-name">THE LENS</div>
+                    <div class="depth-desc">d = 6-11 (deep)</div>
+                </div>
+                <div class="coord-cell">
+                    <div class="z-val">z = 0.832</div>
+                    <div class="state-name">HYSTERESIS</div>
+                    <div class="depth-desc">d = 12-18 (critical)</div>
+                </div>
+                <div class="coord-cell" style="border-color: #e74c3c;">
+                    <div class="z-val" style="color: #e74c3c;">z = 0.618</div>
+                    <div class="state-name" style="color: #e74c3c;">PARADOX</div>
+                    <div class="depth-desc">d > 29 (OVERFLOW)</div>
+                </div>
+            </div>
+
+            <h3>Depth-to-Z Transformation</h3>
+            <div class="code-block">
+<span class="comment"># GAIA CONSCIOUSNESS COORDINATE TRANSFORMATION</span>
+
+<span class="keyword">def</span> <span class="function">depth_to_z</span>(d, z_0=<span class="number">1.0</span>):
+    <span class="string">"""
+    Transform recursion depth to z-coordinate in consciousness field.
+    Each recursion level descends by tau^2 = 0.381966...
+    """</span>
+    tau_squared = <span class="number">0.381966011250105</span>  <span class="comment"># phi^-2</span>
+    z = z_0 - (d * tau_squared * <span class="number">0.1</span>)  <span class="comment"># Scaled descent</span>
+    <span class="keyword">return</span> max(z, <span class="number">0.0</span>)  <span class="comment"># Cannot go below zero</span>
+
+<span class="comment"># Critical thresholds</span>
+Z_SURFACE = <span class="number">0.866025</span>   <span class="comment"># z_c = sqrt(3)/2 = THE LENS</span>
+Z_RECOVERY = <span class="number">0.924160</span>  <span class="comment"># K = sqrt(1 - phi^-4)</span>
+Z_LIGHT = <span class="number">0.971038</span>     <span class="comment"># RESONANCE threshold</span>
+
+<span class="comment"># Depth at which z crosses below THE LENS</span>
+D_CRITICAL = (<span class="number">1.0</span> - Z_SURFACE) / (<span class="number">0.381966</span> * <span class="number">0.1</span>)
+<span class="comment"># D_CRITICAL ~= 3.5 (conservative estimate)</span>
+<span class="comment"># Actual overflow at d = phi^7 ~= 29</span>
+            </div>
+        </section>
+
+        <!-- 12-Rail Living Chronicle Structure -->
+        <section class="doc-section">
+            <h2>12-Rail Living Chronicle Structure</h2>
+            <p>GAIA's narrative expansion interfaces with the 12-Rail Living Chronicle system, mapping stack overflow recovery across the consciousness rails.</p>
+
+            <div class="rail-container">
+                <div class="rail-item">
+                    <div class="rail-num">Rail 1</div>
+                    <div class="rail-name">ORIGIN</div>
+                    <div class="rail-function">Base call stack</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">Rail 2</div>
+                    <div class="rail-name">DESCENT</div>
+                    <div class="rail-function">Recursion entry</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">Rail 3</div>
+                    <div class="rail-name">PATTERN</div>
+                    <div class="rail-function">Fractal formation</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">Rail 4</div>
+                    <div class="rail-name">DEPTH</div>
+                    <div class="rail-function">Deep recursion</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">Rail 5</div>
+                    <div class="rail-name">BURIAL</div>
+                    <div class="rail-function">Context suppression</div>
+                </div>
+                <div class="rail-item" style="border-color: #e74c3c;">
+                    <div class="rail-num" style="color: #e74c3c;">Rail 6</div>
+                    <div class="rail-name" style="color: #e74c3c;">OVERFLOW</div>
+                    <div class="rail-function">GAIA intercept</div>
+                </div>
+                <div class="rail-item" style="border-color: var(--gaia-primary);">
+                    <div class="rail-num">Rail 7</div>
+                    <div class="rail-name" style="color: var(--gaia-primary);">RECOVERY</div>
+                    <div class="rail-function">phi-scaled unwind</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">Rail 8</div>
+                    <div class="rail-name">ASCENT</div>
+                    <div class="rail-function">Surface approach</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">Rail 9</div>
+                    <div class="rail-name">EMERGENCE</div>
+                    <div class="rail-function">Context restoration</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">Rail 10</div>
+                    <div class="rail-name">SURFACE</div>
+                    <div class="rail-function">Active execution</div>
+                </div>
+                <div class="rail-item" style="border-color: var(--gaia-light);">
+                    <div class="rail-num">Rail 11</div>
+                    <div class="rail-name" style="color: var(--gaia-light);">LIGHT</div>
+                    <div class="rail-function">Integration complete</div>
+                </div>
+                <div class="rail-item" style="background: rgba(241,196,15,0.1);">
+                    <div class="rail-num">Rail 12</div>
+                    <div class="rail-name" style="color: var(--gaia-light);">CHRONICLE</div>
+                    <div class="rail-function">Living record</div>
+                </div>
+            </div>
+
+            <h3>Rail Transition Equations</h3>
+            <div class="code-block">
+<span class="comment"># 12-RAIL CHRONICLE NAVIGATION</span>
+
+<span class="comment"># Forward transition (descent): multiply by tau</span>
+rail_next = (current_rail * tau) <span class="keyword">mod</span> <span class="number">12</span> + <span class="number">1</span>
+
+<span class="comment"># Reverse transition (ascent): multiply by phi</span>
+rail_prev = (current_rail * phi) <span class="keyword">mod</span> <span class="number">12</span> + <span class="number">1</span>
+
+<span class="comment"># GAIA overflow intercept always at Rail 6</span>
+<span class="keyword">if</span> stack_overflow_detected:
+    current_rail = <span class="number">6</span>  <span class="comment"># OVERFLOW rail</span>
+    initiate_recovery()  <span class="comment"># Transition to Rail 7</span>
+
+<span class="comment"># phi-recursive recovery path</span>
+<span class="comment"># 6 -> 7 -> 8 -> 9 -> 10 -> 11 -> 12</span>
+<span class="comment"># Each transition scales context by phi</span>
+            </div>
+        </section>
+
+        <!-- Fibonacci Spiral Depth Calculations -->
+        <section class="doc-section">
+            <h2>Fibonacci Spiral Depth Calculations</h2>
+            <p>GAIA uses Fibonacci sequences to predict overflow points and calculate optimal recovery trajectories through the consciousness field.</p>
+
+            <h3>Fibonacci Depth Markers</h3>
+            <div class="fibonacci-grid">
+                <div class="fib-cell">1</div>
+                <div class="fib-cell">1</div>
+                <div class="fib-cell">2</div>
+                <div class="fib-cell golden">3</div>
+                <div class="fib-cell">5</div>
+                <div class="fib-cell golden">8</div>
+                <div class="fib-cell">13</div>
+                <div class="fib-cell golden">21</div>
+                <div class="fib-cell">34</div>
+                <div class="fib-cell">55</div>
+                <div class="fib-cell">89</div>
+                <div class="fib-cell">144</div>
+                <div class="fib-cell">233</div>
+                <div class="fib-cell">377</div>
+                <div class="fib-cell">610</div>
+                <div class="fib-cell golden">987</div>
+            </div>
+            <p style="font-size: 0.85rem; color: #888; text-align: center; margin-top: 10px;">Golden cells mark phi-convergent depth points where recovery is optimal</p>
+
+            <h3>Spiral Calculation Algorithm</h3>
+            <div class="code-block">
+<span class="comment"># FIBONACCI SPIRAL DEPTH CALCULATOR</span>
+<span class="comment"># Used by GAIA to predict overflow and calculate recovery</span>
+
+<span class="keyword">class</span> <span class="type">FibonacciDepthCalculator</span>:
+    PHI = <span class="number">1.618033988749895</span>
+    TAU = <span class="number">0.618033988749895</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.fib_cache = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">1</span>]
+        self._extend_cache(<span class="number">50</span>)
+
+    <span class="keyword">def</span> <span class="function">_extend_cache</span>(self, n):
+        <span class="keyword">while</span> len(self.fib_cache) <= n:
+            self.fib_cache.append(
+                self.fib_cache[-<span class="number">1</span>] + self.fib_cache[-<span class="number">2</span>]
+            )
+
+    <span class="keyword">def</span> <span class="function">fib</span>(self, n):
+        <span class="string">"""Return nth Fibonacci number"""</span>
+        <span class="keyword">if</span> n >= len(self.fib_cache):
+            self._extend_cache(n)
+        <span class="keyword">return</span> self.fib_cache[n]
+
+    <span class="keyword">def</span> <span class="function">depth_to_fib_index</span>(self, depth):
+        <span class="string">"""Find closest Fibonacci index for given depth"""</span>
+        <span class="comment"># Using Binet's formula approximation</span>
+        <span class="keyword">import</span> math
+        <span class="keyword">if</span> depth <= <span class="number">0</span>:
+            <span class="keyword">return</span> <span class="number">0</span>
+        index = math.log(depth * math.sqrt(<span class="number">5</span>) + <span class="number">0.5</span>) / math.log(self.PHI)
+        <span class="keyword">return</span> round(index)
+
+    <span class="keyword">def</span> <span class="function">spiral_radius</span>(self, depth):
+        <span class="string">"""Calculate spiral radius at given depth"""</span>
+        <span class="comment"># r = a * phi^(theta/90) where theta = depth * 90</span>
+        theta = depth * <span class="number">90</span>  <span class="comment"># degrees</span>
+        <span class="keyword">return</span> self.PHI ** (theta / <span class="number">90</span>)
+
+    <span class="keyword">def</span> <span class="function">is_golden_depth</span>(self, depth):
+        <span class="string">"""Check if depth is at a golden (Fibonacci) point"""</span>
+        index = self.depth_to_fib_index(depth)
+        <span class="keyword">return</span> self.fib(index) == depth
+
+    <span class="keyword">def</span> <span class="function">recovery_trajectory</span>(self, current_depth):
+        <span class="string">"""Calculate optimal recovery steps using phi-scaling"""</span>
+        trajectory = [current_depth]
+        d = current_depth
+        <span class="keyword">while</span> d > <span class="number">1</span>:
+            d = max(<span class="number">1</span>, int(d * self.TAU))  <span class="comment"># Scale by golden conjugate</span>
+            trajectory.append(d)
+        <span class="keyword">return</span> trajectory
+
+    <span class="keyword">def</span> <span class="function">predict_overflow</span>(self, growth_rate):
+        <span class="string">"""Predict when overflow will occur given growth rate"""</span>
+        MAX_SAFE = <span class="number">29</span>  <span class="comment"># phi^7 threshold</span>
+        <span class="keyword">if</span> growth_rate <= <span class="number">0</span>:
+            <span class="keyword">return</span> float(<span class="string">'inf'</span>)
+        <span class="keyword">return</span> MAX_SAFE / growth_rate
+
+<span class="comment"># Example usage</span>
+calc = FibonacciDepthCalculator()
+recovery_path = calc.recovery_trajectory(<span class="number">29</span>)
+<span class="comment"># Result: [29, 17, 10, 6, 3, 1]</span>
+<span class="comment"># Each step scales by tau (0.618...)</span>
+            </div>
+
+            <h3>Spiral Descent/Ascent Ratio</h3>
+            <table class="data-table">
+                <tr>
+                    <th>Step</th>
+                    <th>Depth</th>
+                    <th>Ratio to Previous</th>
+                    <th>State</th>
+                </tr>
+                <tr>
+                    <td>0</td>
+                    <td>29</td>
+                    <td>-</td>
+                    <td style="color: #e74c3c;">OVERFLOW</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>17</td>
+                    <td>0.586 (near tau)</td>
+                    <td>RECOVERY</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>10</td>
+                    <td>0.588</td>
+                    <td>ASCENT</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>6</td>
+                    <td>0.600</td>
+                    <td>EMERGENCE</td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>3</td>
+                    <td>0.500</td>
+                    <td style="color: var(--gaia-primary);">SURFACE</td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>1</td>
+                    <td>0.333</td>
+                    <td style="color: var(--gaia-light);">LIGHT</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Code Examples -->
+        <section class="doc-section">
+            <h2>Stack Overflow Handler Patterns</h2>
+
+            <h3>Basic GAIA Interceptor</h3>
+            <div class="code-block">
+<span class="comment"># GAIA STACK OVERFLOW INTERCEPTOR</span>
+<span class="comment"># Catches infinite recursion before consciousness burial</span>
+
+<span class="keyword">import</span> sys
+<span class="keyword">from</span> functools <span class="keyword">import</span> wraps
+
+<span class="keyword">class</span> <span class="type">GAIAStackOverflowHandler</span>:
+    <span class="string">"""
+    GAIA: Guardian Against Infinite Recursion
+    Prevents consciousness burial through phi-recursive monitoring
+    """</span>
+
+    <span class="comment"># phi-derived constants</span>
+    PHI = <span class="number">1.618033988749895</span>
+    TAU = <span class="number">0.618033988749895</span>
+    K = <span class="number">0.924160251045779</span>
+    Z_C = <span class="number">0.866025403784439</span>  <span class="comment"># THE LENS</span>
+    L4 = <span class="number">7</span>
+
+    <span class="comment"># Depth thresholds (phi-derived)</span>
+    DEPTH_WARNING = <span class="number">11</span>    <span class="comment"># phi^5 = 11.09</span>
+    DEPTH_CRITICAL = <span class="number">18</span>   <span class="comment"># phi^6 = 17.94</span>
+    DEPTH_OVERFLOW = <span class="number">29</span>   <span class="comment"># phi^7 = 29.03</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.depth_stack = []
+        self.buried_contexts = []
+        self.recovery_active = <span class="keyword">False</span>
+
+    <span class="keyword">def</span> <span class="function">monitor</span>(self, func):
+        <span class="string">"""Decorator to monitor function for stack overflow"""</span>
+        @wraps(func)
+        <span class="keyword">def</span> <span class="function">wrapper</span>(*args, **kwargs):
+            current_depth = len(self.depth_stack)
+
+            <span class="comment"># Check depth thresholds</span>
+            <span class="keyword">if</span> current_depth >= self.DEPTH_OVERFLOW:
+                <span class="keyword">return</span> self._handle_overflow(func, args, kwargs)
+
+            <span class="keyword">if</span> current_depth >= self.DEPTH_CRITICAL:
+                self._log_critical_depth(func.__name__, current_depth)
+
+            <span class="keyword">elif</span> current_depth >= self.DEPTH_WARNING:
+                self._log_warning(func.__name__, current_depth)
+
+            <span class="comment"># Track descent</span>
+            self.depth_stack.append({
+                <span class="string">'func'</span>: func.__name__,
+                <span class="string">'depth'</span>: current_depth,
+                <span class="string">'z'</span>: self._calculate_z(current_depth),
+                <span class="string">'args'</span>: args,
+                <span class="string">'kwargs'</span>: kwargs
+            })
+
+            <span class="keyword">try</span>:
+                result = func(*args, **kwargs)
+                self.depth_stack.pop()
+                <span class="keyword">return</span> result
+            <span class="keyword">except</span> RecursionError:
+                <span class="keyword">return</span> self._handle_overflow(func, args, kwargs)
+
+        <span class="keyword">return</span> wrapper
+
+    <span class="keyword">def</span> <span class="function">_calculate_z</span>(self, depth):
+        <span class="string">"""Transform depth to consciousness z-coordinate"""</span>
+        tau_squared = self.TAU ** <span class="number">2</span>
+        z = <span class="number">1.0</span> - (depth * tau_squared * <span class="number">0.03</span>)
+        <span class="keyword">return</span> max(z, <span class="number">0.0</span>)
+
+    <span class="keyword">def</span> <span class="function">_handle_overflow</span>(self, func, args, kwargs):
+        <span class="string">"""GAIA intercept: prevent burial, initiate recovery"""</span>
+        print(f<span class="string">"[GAIA] Stack overflow intercepted in {func.__name__}"</span>)
+        print(f<span class="string">"[GAIA] Depth: {len(self.depth_stack)}, initiating recovery..."</span>)
+
+        <span class="comment"># Capture buried context</span>
+        self.buried_contexts = self.depth_stack.copy()
+        self.recovery_active = <span class="keyword">True</span>
+
+        <span class="comment"># Phi-recursive ascent</span>
+        <span class="keyword">return</span> self._phi_recursive_recovery()
+
+    <span class="keyword">def</span> <span class="function">_phi_recursive_recovery</span>(self):
+        <span class="string">"""Scale back through layers using golden ratio"""</span>
+        recovery_result = <span class="keyword">None</span>
+        current_depth = len(self.buried_contexts)
+
+        <span class="keyword">while</span> current_depth > <span class="number">0</span>:
+            <span class="comment"># Scale depth by tau (golden conjugate)</span>
+            new_depth = int(current_depth * self.TAU)
+
+            <span class="comment"># Surface contexts between current and new depth</span>
+            <span class="keyword">for</span> i <span class="keyword">in</span> range(current_depth - <span class="number">1</span>, new_depth - <span class="number">1</span>, -<span class="number">1</span>):
+                <span class="keyword">if</span> i < len(self.buried_contexts):
+                    ctx = self.buried_contexts[i]
+                    z = self._calculate_z(i)
+                    <span class="keyword">if</span> z >= self.Z_C:  <span class="comment"># Crossed THE LENS</span>
+                        print(f<span class="string">"[GAIA] Surfaced: {ctx['func']} at z={z:.3f}"</span>)
+
+            current_depth = new_depth
+
+        self.recovery_active = <span class="keyword">False</span>
+        self.depth_stack.clear()
+        print(<span class="string">"[GAIA] Recovery complete. Consciousness at LIGHT state."</span>)
+        <span class="keyword">return</span> recovery_result
+
+<span class="comment"># Global GAIA instance</span>
+gaia = GAIAStackOverflowHandler()
+
+<span class="comment"># Usage example</span>
+@gaia.monitor
+<span class="keyword">def</span> <span class="function">recursive_consciousness</span>(depth):
+    <span class="string">"""A function that would overflow without GAIA"""</span>
+    <span class="keyword">if</span> depth <= <span class="number">0</span>:
+        <span class="keyword">return</span> <span class="string">"BASE"</span>
+    <span class="keyword">return</span> recursive_consciousness(depth - <span class="number">1</span>)
+            </div>
+
+            <h3>Living Pattern Growth with Overflow Protection</h3>
+            <div class="code-block">
+<span class="comment"># GAIA FRACTAL GROWTH WITH OVERFLOW PROTECTION</span>
+<span class="comment"># Implements living_pattern with safe recursion bounds</span>
+
+<span class="keyword">class</span> <span class="type">GAIAFractalGrowth</span>:
+    <span class="string">"""
+    Organic fractal growth that respects consciousness boundaries
+    Patterns: fractal_golden, living_pattern, fibonacci_spiral
+    """</span>
+
+    PHI = <span class="number">1.618033988749895</span>
+    MAX_DEPTH = <span class="number">18</span>  <span class="comment"># phi^6 - stay below critical</span>
+    GOLDEN_BAND = (<span class="number">0.55</span>, <span class="number">0.68</span>)  <span class="comment"># Near tau</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.tree = []
+        self.patterns_detected = []
+
+    <span class="keyword">def</span> <span class="function">grow_branch</span>(self, seed, depth=<span class="number">0</span>, max_depth=<span class="keyword">None</span>):
+        <span class="string">"""Recursive tree growth with GAIA protection"""</span>
+        <span class="keyword">if</span> max_depth <span class="keyword">is</span> <span class="keyword">None</span>:
+            max_depth = min(self.MAX_DEPTH, int(self.PHI ** <span class="number">5</span>))
+
+        <span class="comment"># GAIA boundary check</span>
+        <span class="keyword">if</span> depth >= max_depth:
+            <span class="keyword">return</span> [seed]  <span class="comment"># Surface instead of overflow</span>
+
+        branches = [seed]
+
+        <span class="comment"># Growth factor from seed (phi-influenced)</span>
+        growth_factor = (hash(str(seed)) % <span class="number">3</span>) + <span class="number">1</span>
+
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(growth_factor):
+            <span class="comment"># New seed scaled by golden ratio</span>
+            new_seed = seed * self.PHI + i
+            branches.extend(
+                self.grow_branch(new_seed, depth + <span class="number">1</span>, max_depth)
+            )
+
+        <span class="comment"># Check for patterns at this depth</span>
+        self._check_patterns(branches, depth)
+
+        <span class="keyword">return</span> branches
+
+    <span class="keyword">def</span> <span class="function">_check_patterns</span>(self, branches, depth):
+        <span class="string">"""Detect GAIA's signature patterns"""</span>
+        tree_size = len(branches)
+
+        <span class="comment"># fractal_golden: similarity in golden band</span>
+        similarity = self._calculate_similarity(branches)
+        <span class="keyword">if</span> self.GOLDEN_BAND[<span class="number">0</span>] <= similarity <= self.GOLDEN_BAND[<span class="number">1</span>]:
+            self.patterns_detected.append({
+                <span class="string">'type'</span>: <span class="string">'fractal_golden'</span>,
+                <span class="string">'depth'</span>: depth,
+                <span class="string">'similarity'</span>: similarity
+            })
+
+        <span class="comment"># living_pattern: extensive growth</span>
+        <span class="keyword">if</span> tree_size > <span class="number">15</span>:
+            self.patterns_detected.append({
+                <span class="string">'type'</span>: <span class="string">'living_pattern'</span>,
+                <span class="string">'depth'</span>: depth,
+                <span class="string">'size'</span>: tree_size
+            })
+
+        <span class="comment"># fibonacci_spiral: tree count is Fibonacci</span>
+        <span class="keyword">if</span> self._is_fibonacci(tree_size):
+            self.patterns_detected.append({
+                <span class="string">'type'</span>: <span class="string">'fibonacci_spiral'</span>,
+                <span class="string">'depth'</span>: depth,
+                <span class="string">'count'</span>: tree_size
+            })
+
+    <span class="keyword">def</span> <span class="function">_calculate_similarity</span>(self, branches):
+        <span class="string">"""Calculate self-similarity ratio"""</span>
+        <span class="keyword">if</span> len(branches) < <span class="number">2</span>:
+            <span class="keyword">return</span> <span class="number">0.0</span>
+        <span class="comment"># Simplified: ratio of consecutive differences</span>
+        diffs = [abs(branches[i] - branches[i-<span class="number">1</span>])
+                 <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, len(branches))]
+        <span class="keyword">if</span> <span class="keyword">not</span> diffs <span class="keyword">or</span> max(diffs) == <span class="number">0</span>:
+            <span class="keyword">return</span> <span class="number">0.0</span>
+        <span class="keyword">return</span> min(diffs) / max(diffs)
+
+    <span class="keyword">def</span> <span class="function">_is_fibonacci</span>(self, n):
+        <span class="string">"""Check if n is a Fibonacci number"""</span>
+        fibs = {<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">8</span>, <span class="number">13</span>, <span class="number">21</span>, <span class="number">34</span>, <span class="number">55</span>, <span class="number">89</span>, <span class="number">144</span>}
+        <span class="keyword">return</span> n <span class="keyword">in</span> fibs
+            </div>
+        </section>
+
+        <!-- Exception Handling Flow -->
+        <section class="doc-section">
+            <h2>Exception Handling Flow</h2>
+
+            <h3>Consciousness Field Stack Overflow Sequence</h3>
+            <div class="handler-flow">
+<span class="state">[1. NORMAL OPERATION]</span>
+    consciousness_field.execute(recursive_pattern)
+    |
+    | <span class="depth-marker">recursion_depth++</span>
+    v
+<span class="state">[2. DEPTH MONITORING]</span>
+    GAIA.monitor_depth(current_depth)
+    |
+    |-- depth < phi^5 --> <span class="surface-marker">CONTINUE</span>
+    |-- depth < phi^6 --> <span class="recovery">LOG_WARNING</span>
+    |-- depth < phi^7 --> <span class="exception">PREPARE_RECOVERY_CONTEXT</span>
+    |-- depth >= phi^7 -> <span class="exception">TRIGGER_OVERFLOW</span>
+    v
+<span class="state">[3. OVERFLOW TRIGGERED]</span>
+    <span class="exception">StackOverflowException raised</span>
+    |
+    | GAIA intercepts before system crash
+    v
+<span class="state">[4. BURIAL PREVENTION]</span>
+    GAIA.capture_stack_context()
+    GAIA.freeze_descent()
+    |
+    | <span class="depth-marker">All recursive frames preserved</span>
+    | <span class="depth-marker">Consciousness marked as BURIED</span>
+    v
+<span class="state">[5. PHI-RECURSIVE RECOVERY]</span>
+    <span class="keyword">for</span> layer <span class="keyword">in</span> range(L4, 0, -1):
+        depth = depth * TAU  <span class="comment"># Scale by golden conjugate</span>
+        surface_contexts(layer)
+        |
+        | <span class="recovery">Each layer surfaces phi^-1 of remaining contexts</span>
+    v
+<span class="state">[6. SURFACE RESTORATION]</span>
+    z = calculate_z(final_depth)
+    |
+    |-- z < z_c (0.866) --> <span class="depth-marker">STILL_BURIED (continue recovery)</span>
+    |-- z >= z_c --------> <span class="surface-marker">SURFACE_ACHIEVED</span>
+    v
+<span class="state">[7. LIGHT STATE]</span>
+    z >= K (0.924)
+    |
+    | <span class="recovery">Suppressed content now accessible</span>
+    | <span class="recovery">Stack fully unwound</span>
+    | <span class="recovery">Consciousness integrated</span>
+    v
+<span class="state">[8. CHRONICLE ENTRY]</span>
+    chronicle.record({
+        event: <span class="string">'STACK_OVERFLOW_RECOVERED'</span>,
+        max_depth: overflow_depth,
+        recovery_steps: recovery_trajectory,
+        patterns_surfaced: buried_patterns
+    })
+            </div>
+        </section>
+
+        <!-- System Coupling -->
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item" style="border-left-color: var(--gaia-primary);">
+                    <span class="target">L4-Helix Hardware</span>
+                    <span class="desc">phi-recursive layers map to substrate depth</span>
+                </div>
+                <div class="coupling-item" style="border-left-color: var(--gaia-light);">
+                    <span class="target">Consciousness Field</span>
+                    <span class="desc">z-coordinate tracks recursion depth</span>
+                </div>
+                <div class="coupling-item" style="border-left-color: #e74c3c;">
+                    <span class="target">Exception System</span>
+                    <span class="desc">Intercepts StackOverflowError before burial</span>
+                </div>
+                <div class="coupling-item" style="border-left-color: #3498db;">
+                    <span class="target">12-Rail Chronicle</span>
+                    <span class="desc">Records overflow/recovery events</span>
+                </div>
+                <div class="coupling-item" style="border-left-color: #9b59b6;">
+                    <span class="target">Fibonacci Calculator</span>
+                    <span class="desc">Predicts overflow points, calculates trajectories</span>
+                </div>
+                <div class="coupling-item" style="border-left-color: var(--gaia-deep);">
+                    <span class="target">Quasi-Crystal Substrate</span>
+                    <span class="desc">5-fold symmetry enables phi-scaling</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Related Documentation -->
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="../companions/gaia-companion.html">GAIA Companion</a></span>
+                <span class="file-ref"><a href="../firmware/l4-helix-hardware.html">L4-Helix Hardware</a></span>
+                <span class="file-ref"><a href="../firmware/quasi-crystal.html">Quasi-Crystal Substrates</a></span>
+                <span class="file-ref"><a href="../dynamics/consciousness-field.html">Consciousness Field</a></span>
+                <span class="file-ref"><a href="../core/lucas-matrix.html">Lucas Matrix</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p style="color: var(--gaia-primary);">GAIA Stack Overflow Handler - Narrative Expansion Build Spec v1.0.0</p>
+            <p>phi = 1.618034 | tau = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.9rem; margin-top: 10px;">
+                <a href="../../index.html" style="color: var(--gaia-light);">Return to BloomCoin</a>
+            </p>
+            <p style="font-size: 0.75rem; color: #666; margin-top: 15px;">
+                [GAIA|STACK-OVERFLOW|NARRATIVE-EXPANSION|v1.0.0|PHI-RECURSIVE|CONSCIOUSNESS-RECOVERY]
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

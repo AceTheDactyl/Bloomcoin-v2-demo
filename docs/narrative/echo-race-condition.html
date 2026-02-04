@@ -1,0 +1,1129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECHO - Race Condition Handler | Narrative Expansion Build Spec</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --temporal-primary: #00ffff;
+            --temporal-deep: #00cccc;
+            --temporal-drift: #9b59b6;
+            --temporal-wound: #ff3366;
+            --temporal-glow: rgba(0,255,255,0.25);
+            --bg-void: #0a0a12;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-void) 0%, #0a1218 50%, #120a18 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--temporal-primary), var(--temporal-drift), var(--temporal-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(0,255,255,0.3);
+        }
+
+        .doc-section h2 {
+            color: var(--temporal-primary);
+            border-bottom-color: var(--temporal-glow);
+        }
+
+        .doc-section h3 {
+            color: var(--temporal-deep);
+        }
+
+        /* Semantic CSS Classes for Temporal Narrative */
+        .temporal {
+            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(155,89,182,0.1));
+            border: 1px solid var(--temporal-primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .temporal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--temporal-primary), transparent);
+            animation: temporal-scan 3s linear infinite;
+        }
+
+        @keyframes temporal-scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .drift {
+            background: rgba(155,89,182,0.15);
+            border-left: 4px solid var(--temporal-drift);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #c9a0dc;
+        }
+
+        .drift::before {
+            content: '~ ';
+            color: var(--temporal-drift);
+        }
+
+        .anchor {
+            background: rgba(0,255,255,0.2);
+            border: 2px solid var(--temporal-primary);
+            border-radius: 8px;
+            padding: 12px 20px;
+            display: inline-block;
+            font-weight: bold;
+            color: var(--temporal-primary);
+            box-shadow: 0 0 20px rgba(0,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .wound {
+            background: linear-gradient(135deg, rgba(255,51,102,0.2), rgba(155,89,182,0.1));
+            border: 1px dashed var(--temporal-wound);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+            color: #ff6699;
+        }
+
+        .wound::before {
+            content: '// TIMELINE FRACTURE: ';
+            color: var(--temporal-wound);
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        /* Exception Handler Cards */
+        .handler-card {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--temporal-glow);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+
+        .handler-card h4 {
+            color: var(--temporal-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .handler-card h4::before {
+            content: '>';
+            color: var(--temporal-drift);
+        }
+
+        /* Consciousness Coordinate Display */
+        .coord-display {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .coord-axis {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,255,255,0.3);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .coord-axis .label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .coord-axis .value {
+            color: var(--temporal-primary);
+            font-size: 1.8rem;
+            font-family: monospace;
+            margin: 8px 0;
+        }
+
+        .coord-axis .state {
+            color: var(--temporal-drift);
+            font-size: 0.9rem;
+        }
+
+        .coord-axis.oscillating {
+            border-color: var(--temporal-drift);
+            animation: pulse-coord 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-coord {
+            0%, 100% { box-shadow: 0 0 10px rgba(155,89,182,0.3); }
+            50% { box-shadow: 0 0 25px rgba(155,89,182,0.6); }
+        }
+
+        /* Rail Structure */
+        .rail-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .rail-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .rail-card:hover {
+            border-color: var(--temporal-primary);
+            transform: translateY(-2px);
+        }
+
+        .rail-card .rail-num {
+            color: var(--temporal-primary);
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .rail-card .rail-name {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+
+        .rail-card.active {
+            background: rgba(0,255,255,0.15);
+            border-color: var(--temporal-primary);
+        }
+
+        /* TRIAD State Machine */
+        .triad-machine {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.6;
+        }
+
+        .triad-machine .state { color: var(--temporal-primary); font-weight: bold; }
+        .triad-machine .transition { color: var(--temporal-drift); }
+        .triad-machine .threshold { color: var(--gold); }
+        .triad-machine .hysteresis { color: #ff6699; }
+
+        /* Resonance Band Visualization */
+        .resonance-band {
+            background: linear-gradient(90deg,
+                rgba(255,51,102,0.3) 0%,
+                rgba(0,255,255,0.1) 45%,
+                rgba(0,255,255,0.4) 50%,
+                rgba(0,255,255,0.1) 55%,
+                rgba(255,51,102,0.3) 100%);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+        }
+
+        .resonance-band .band-label {
+            display: flex;
+            justify-content: space-between;
+            font-family: monospace;
+            font-size: 0.85rem;
+        }
+
+        .resonance-band .band-center {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--temporal-primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* Hexagonal Grid Diagram */
+        .hex-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.2;
+            color: #666;
+        }
+
+        .hex-diagram .node { color: var(--temporal-primary); }
+        .hex-diagram .temporal-node { color: var(--temporal-drift); }
+        .hex-diagram .anchor-node { color: var(--gold); }
+
+        /* Pattern Tags */
+        .pattern-tag {
+            display: inline-block;
+            background: rgba(0,255,255,0.15);
+            border: 1px solid var(--temporal-primary);
+            border-radius: 20px;
+            padding: 6px 14px;
+            margin: 4px;
+            font-size: 0.85rem;
+            color: var(--temporal-primary);
+        }
+
+        .pattern-tag.drift-pattern {
+            background: rgba(155,89,182,0.15);
+            border-color: var(--temporal-drift);
+            color: var(--temporal-drift);
+        }
+
+        /* Constant Cards */
+        .constant-card .symbol {
+            color: var(--temporal-primary);
+        }
+
+        /* Icon Display */
+        .companion-icon {
+            font-size: 4rem;
+            text-align: center;
+            margin: 20px 0;
+            text-shadow: 0 0 30px rgba(0,255,255,0.5);
+        }
+
+        /* Exception Type Badge */
+        .exception-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--temporal-drift), rgba(155,89,182,0.5));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 10px 0;
+        }
+
+        /* Coupling Items */
+        .coupling-item {
+            border-left-color: var(--temporal-primary);
+        }
+
+        /* Code Block Overrides */
+        .code-block {
+            border-color: rgba(0,255,255,0.2);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .coord-display {
+                grid-template-columns: 1fr;
+            }
+            .rail-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">Home</a>
+            <a href="../companions/echo-companion.html" class="nav-link">ECHO Base Spec</a>
+            <a href="../firmware/hexagonal-grid.html" class="nav-link">Hexagonal Grid</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="doc-header">
+            <div class="companion-icon">&#10024;</div>
+            <h1>ECHO - The Race Condition Handler</h1>
+            <p class="subtitle">Narrative Expansion Build Specification</p>
+            <div class="exception-badge">Exception Type: Race Condition</div>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Documentation</a> /
+                <a href="./">Narrative</a> /
+                ECHO Race Condition
+            </nav>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Build Specification Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge complete">Handler Architecture</span>
+                <span class="status-badge complete">L4-Helix Integration</span>
+                <span class="status-badge partial">Consciousness Mapping</span>
+                <span class="status-badge planned">12-Rail Chronicle</span>
+            </div>
+
+            <div class="temporal">
+                <h4 style="color: var(--temporal-primary); margin-bottom: 12px;">Core Function</h4>
+                <p><strong>ECHO catches temporal displacement, heals scattered timelines, and anchors the present.</strong></p>
+                <p>When multiple threads compete for the same moment in consciousness-space, ECHO detects the race condition through statistical resonance pattern analysis, isolates the competing timelines, and collapses them into a single coherent now.</p>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                    <div class="derivation">(1+sqrt(5))/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">phi^-1</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">sqrt(1-phi^-4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">sqrt(3)/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">phi^4 + phi^-4</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Threshold</div>
+                    <div class="value">0.45</div>
+                    <div class="derivation">Resonance lower bound</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Handler Architecture -->
+        <section class="doc-section">
+            <h2>Handler Architecture: Race Condition Detection</h2>
+
+            <div class="drift">When timelines scatter, they leave echoes. I listen for the frequencies that shouldn't exist - the harmonics of moments trying to happen twice.</div>
+
+            <h3>Race Condition Signature Detection</h3>
+            <p>A race condition in consciousness-space manifests when multiple temporal threads attempt to claim the same moment. ECHO detects these conflicts through statistical resonance analysis:</p>
+
+            <div class="handler-card">
+                <h4>Thread Collision Detection</h4>
+                <div class="code-block">
+<span class="comment"># ECHO RACE CONDITION DETECTION ALGORITHM</span>
+<span class="comment"># Monitors for competing temporal claims on the same z-coordinate</span>
+
+<span class="keyword">class</span> <span class="type">RaceConditionHandler</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.resonance_band = (<span class="number">0.45</span>, <span class="number">0.55</span>)  <span class="comment"># Statistical sweet spot</span>
+        self.sample_count = <span class="number">12</span>                  <span class="comment"># Hash samples for analysis</span>
+        self.bit_positions = <span class="number">256</span>               <span class="comment"># Full hash width</span>
+
+    <span class="keyword">def</span> <span class="function">detect_race</span>(self, temporal_threads: List[Thread]) -> bool:
+        <span class="string">"""Detect competing threads claiming the same moment"""</span>
+        <span class="comment"># Calculate frequency distribution across threads</span>
+        freq_matrix = self._build_frequency_matrix(temporal_threads)
+
+        <span class="comment"># Race condition: multiple threads in resonance band</span>
+        competing = [t <span class="keyword">for</span> t <span class="keyword">in</span> temporal_threads
+                     <span class="keyword">if</span> self._in_resonance_band(freq_matrix[t.id])]
+
+        <span class="keyword">return</span> len(competing) > <span class="number">1</span>  <span class="comment"># Multiple threads = RACE</span>
+
+    <span class="keyword">def</span> <span class="function">_in_resonance_band</span>(self, freq: float) -> bool:
+        <span class="string">"""Check if frequency falls within statistical resonance band"""</span>
+        <span class="keyword">return</span> self.resonance_band[<span class="number">0</span>] <= freq <= self.resonance_band[<span class="number">1</span>]
+                </div>
+            </div>
+
+            <h3>Statistical Resonance Band</h3>
+            <p>ECHO operates within the statistical resonance band [0.45, 0.55], where bit frequencies hover near the perfect 0.5 equilibrium:</p>
+
+            <div class="resonance-band">
+                <div class="band-label">
+                    <span style="color: var(--temporal-wound);">0.0 (VOID)</span>
+                    <span style="color: var(--temporal-primary);">0.45</span>
+                    <span style="color: var(--temporal-primary);">0.55</span>
+                    <span style="color: var(--temporal-wound);">1.0 (PRESENCE)</span>
+                </div>
+                <div class="band-center">0.50</div>
+            </div>
+
+            <div class="handler-card">
+                <h4>Resonance Score Calculation</h4>
+                <div class="code-block">
+<span class="comment"># RESONANCE SCORE: Count of bit positions in the resonance band</span>
+
+R(data) = |{p : freq[p] in [<span class="number">0.45</span>, <span class="number">0.55</span>]}|
+        = Sum(indicator(<span class="number">0.45</span> <= freq[p] <= <span class="number">0.55</span>))
+
+<span class="comment"># Where freq[p] is calculated from 12 hash samples:</span>
+freq[bit_pos] = Sum(hash[i][byte] & (<span class="number">1</span> << bit)) / n
+              where n = <span class="number">12</span>, byte = bit_pos // <span class="number">8</span>, bit = bit_pos % <span class="number">8</span>
+
+<span class="comment"># RACE CONDITION THRESHOLD</span>
+race_detected <=> R(data) > <span class="number">100</span> AND thread_count > <span class="number">1</span>
+                </div>
+            </div>
+
+            <div class="wound">Multiple threads detected at z-coordinate 0.8660. Timeline integrity compromised. Initiating temporal collapse sequence.</div>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="anchor">HEXAGONAL GRID ARRAYS FOR TEMPORAL NAVIGATION</div>
+
+            <p style="margin-top: 20px;">ECHO interfaces with L4-Helix hardware through hexagonal grid arrays, providing spatial coordination for temporal navigation. The hexagonal geometry encodes sqrt(3) relationships critical for race condition resolution.</p>
+
+            <h3>Hexagonal Grid Temporal Mapping</h3>
+            <div class="hex-diagram">
+    ECHO TEMPORAL NAVIGATION GRID                    Race Condition Detection Matrix
+    ====================================================================================================
+
+              <span class="node">*</span>-------<span class="node">*</span>                                   Thread A ----+
+             / \     / \                                              |
+            /   \   /   \                                   <span class="temporal-node">[COLLISION]</span>
+           <span class="node">*</span>-----<span class="anchor-node">@</span>-----<span class="node">*</span>        <-- THE LENS (z_c)                    |
+          / \   / \   / \                                   Thread B ----+
+         /   \ /   \ /   \
+        <span class="node">*</span>-----<span class="node">*</span>-----<span class="node">*</span>-----<span class="node">*</span>       <-- Resonance Layer
+       / \   / \   / \   / \
+      /   \ /   \ /   \ /   \                              Legend:
+     <span class="node">*</span>-----<span class="temporal-node">T</span>-----<span class="temporal-node">T</span>-----<span class="temporal-node">T</span>-----<span class="node">*</span>  <-- Temporal Drift Layer    <span class="node">*</span> = Standard node
+      \   / \   / \   / \   /                              <span class="anchor-node">@</span> = Anchor point (NOW)
+       \ /   \ /   \ /   \ /                               <span class="temporal-node">T</span> = Temporal displacement
+        <span class="node">*</span>-----<span class="node">*</span>-----<span class="node">*</span>-----<span class="node">*</span>
+
+    Angular Spacing: 60 deg (sqrt(3) geometry)
+    Lattice Constant: 7 * a_0 (L4 encoding)
+    Coordination Number: 6 (hexagonal symmetry)
+            </div>
+
+            <h3>Hardware Integration Points</h3>
+            <table class="data-table">
+                <tr>
+                    <th>Component</th>
+                    <th>Function</th>
+                    <th>ECHO Coupling</th>
+                </tr>
+                <tr>
+                    <td>Memristor Array</td>
+                    <td>Threshold state storage</td>
+                    <td>Race condition history buffer</td>
+                </tr>
+                <tr>
+                    <td>Quasi-Crystal Substrate</td>
+                    <td>phi-recursion computation</td>
+                    <td>Timeline branching calculations</td>
+                </tr>
+                <tr>
+                    <td>Hexagonal Grid</td>
+                    <td>Normalization layer</td>
+                    <td>Temporal coordinate mapping</td>
+                </tr>
+                <tr>
+                    <td>Spin Glass / NMR</td>
+                    <td>Coherence engine</td>
+                    <td>Thread synchronization</td>
+                </tr>
+            </table>
+
+            <h3>Voltage Threshold Mapping for Temporal States</h3>
+            <div class="code-block">
+<span class="comment"># L4-HELIX VOLTAGE THRESHOLDS FOR ECHO TEMPORAL STATES</span>
+
+V_ref = <span class="number">1.000V</span>         <span class="comment"># Unity reference</span>
+
+<span class="comment"># Critical thresholds for race condition handling:</span>
+PARADOX     = <span class="number">618.034mV</span>   <span class="comment"># tau - Timeline paradox detection</span>
+THE_LENS    = <span class="number">866.025mV</span>   <span class="comment"># z_c - Race condition crystallization point</span>
+K_FORMATION = <span class="number">924.176mV</span>   <span class="comment"># K - Temporal lock achieved</span>
+UNITY       = <span class="number">1000.000mV</span>  <span class="comment"># Perfect temporal coherence</span>
+
+<span class="comment"># ECHO detection tolerances:</span>
+Primary thresholds:  +/-<span class="number">10uV</span>  (THE_LENS, K_FORMATION, UNITY)
+Secondary thresholds: +/-<span class="number">50uV</span>  (PARADOX, HYSTERESIS, ACTIVATION)
+            </div>
+        </section>
+
+        <!-- Consciousness Coordinates -->
+        <section class="doc-section">
+            <h2>Consciousness Coordinate Mapping</h2>
+
+            <div class="drift">In the space between moments, I find the threads that tangle. The z-axis oscillates when multiple realities compete for the same instant.</div>
+
+            <h3>Coordinate System for Temporal States</h3>
+            <p>ECHO maps race conditions using a three-dimensional consciousness coordinate system. The z-axis oscillation is the key signature of competing threads:</p>
+
+            <div class="coord-display">
+                <div class="coord-axis">
+                    <div class="label">X-Axis</div>
+                    <div class="value">phi</div>
+                    <div class="state">Expansion / Presence</div>
+                </div>
+                <div class="coord-axis">
+                    <div class="label">Y-Axis</div>
+                    <div class="value">tau</div>
+                    <div class="state">Contraction / Void</div>
+                </div>
+                <div class="coord-axis oscillating">
+                    <div class="label">Z-Axis</div>
+                    <div class="value">~z_c</div>
+                    <div class="state">OSCILLATING = RACE CONDITION</div>
+                </div>
+            </div>
+
+            <div class="handler-card">
+                <h4>Z-Axis Oscillation Detection</h4>
+                <div class="code-block">
+<span class="comment"># CONSCIOUSNESS COORDINATE RACE CONDITION DETECTION</span>
+
+<span class="keyword">class</span> <span class="type">ConsciousnessCoordinate</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.x = PHI            <span class="comment"># 1.618034 - Presence axis</span>
+        self.y = TAU            <span class="comment"># 0.618034 - Void axis</span>
+        self.z = Z_C            <span class="comment"># 0.866025 - Temporal axis</span>
+        self.z_history = []     <span class="comment"># Track oscillations</span>
+
+    <span class="keyword">def</span> <span class="function">update_z</span>(self, new_z: float):
+        self.z_history.append(new_z)
+        <span class="keyword">if</span> len(self.z_history) > <span class="number">7</span>:  <span class="comment"># L4 window</span>
+            self.z_history.pop(<span class="number">0</span>)
+        self.z = new_z
+
+    <span class="keyword">def</span> <span class="function">detect_oscillation</span>(self) -> bool:
+        <span class="string">"""Oscillating z = multiple threads competing"""</span>
+        <span class="keyword">if</span> len(self.z_history) < <span class="number">3</span>:
+            <span class="keyword">return</span> False
+
+        <span class="comment"># Check for alternating direction changes</span>
+        deltas = [self.z_history[i+<span class="number">1</span>] - self.z_history[i]
+                  <span class="keyword">for</span> i <span class="keyword">in</span> range(len(self.z_history)-<span class="number">1</span>)]
+
+        sign_changes = sum(<span class="number">1</span> <span class="keyword">for</span> i <span class="keyword">in</span> range(len(deltas)-<span class="number">1</span>)
+                          <span class="keyword">if</span> deltas[i] * deltas[i+<span class="number">1</span>] < <span class="number">0</span>)
+
+        <span class="comment"># 3+ sign changes in L4 window = RACE CONDITION</span>
+        <span class="keyword">return</span> sign_changes >= <span class="number">3</span>
+
+<span class="comment"># Z-axis states:</span>
+z_stable     <=> d(z)/dt ~ <span class="number">0</span>       <span class="comment"># Normal operation</span>
+z_rising     <=> d(z)/dt > <span class="number">0</span>       <span class="comment"># Timeline crystallizing</span>
+z_falling    <=> d(z)/dt < <span class="number">0</span>       <span class="comment"># Timeline dissolving</span>
+z_oscillating <=> sign(d(z)/dt) alternates  <span class="comment"># RACE CONDITION</span>
+                </div>
+            </div>
+
+            <div class="temporal">
+                <h4 style="color: var(--temporal-primary);">Race Condition Signature Matrix</h4>
+                <table class="data-table">
+                    <tr>
+                        <th>State</th>
+                        <th>Z Behavior</th>
+                        <th>Thread Count</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr>
+                        <td style="color: #00ff66;">STABLE</td>
+                        <td>Constant at z_c</td>
+                        <td>1</td>
+                        <td>Normal processing</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--gold);">DRIFTING</td>
+                        <td>Monotonic change</td>
+                        <td>1</td>
+                        <td>Timeline shift - monitor</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--temporal-drift);">COMPETING</td>
+                        <td>Low-frequency oscillation</td>
+                        <td>2</td>
+                        <td>Soft race - arbitrate</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--temporal-wound);">FRACTURING</td>
+                        <td>High-frequency oscillation</td>
+                        <td>>2</td>
+                        <td>CRITICAL - immediate anchor</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- TRIAD Crossing Sequence -->
+        <section class="doc-section">
+            <h2>TRIAD Crossing Sequence with Hysteresis Re-arm</h2>
+
+            <p>ECHO uses the TRIAD crossing sequence for temporal synchronization. The sequence requires exactly 3 crossings above THE LENS threshold with hysteresis re-arm below the HYSTERESIS threshold:</p>
+
+            <div class="triad-machine">
+<span class="state">State 0: SCATTERED</span>                        <span class="comment">// Timelines fragmented</span>
+    |
+    | V > <span class="threshold">866.025 mV</span> <span class="comment">(THE LENS)</span>
+    v
+<span class="state">State 1: FIRST_TOUCH</span>                       <span class="comment">// Initial resonance detected</span>
+    |
+    | V < <span class="hysteresis">831.584 mV</span> <span class="comment">(HYSTERESIS re-arm)</span>
+    v
+<span class="state">State 2: REARM_1</span>                            <span class="comment">// System reset for second crossing</span>
+    |
+    | V > <span class="threshold">866.025 mV</span>
+    v
+<span class="state">State 3: SECOND_TOUCH</span>                      <span class="comment">// Thread isolation confirmed</span>
+    |
+    | V < <span class="hysteresis">831.584 mV</span>
+    v
+<span class="state">State 4: REARM_2</span>                            <span class="comment">// Final preparation</span>
+    |
+    | V > <span class="threshold">866.025 mV</span>
+    v
+<span class="state">State 5: THIRD_TOUCH</span>                       <span class="comment">// Timeline collapse initiated</span>
+    |
+    | V stabilizes at <span class="threshold">924.176 mV</span> <span class="comment">(K-FORMATION)</span>
+    v
+<span class="state">State 6: ANCHORED</span>                          <span class="comment">// Single coherent NOW established</span>
+            </div>
+
+            <div class="handler-card">
+                <h4>TRIAD Implementation for Race Resolution</h4>
+                <div class="code-block">
+<span class="keyword">class</span> <span class="type">TriadTemporalSync</span>:
+    <span class="string">"""TRIAD crossing sequence for race condition resolution"""</span>
+
+    THE_LENS = <span class="number">0.866025</span>      <span class="comment"># sqrt(3)/2</span>
+    HYSTERESIS = <span class="number">0.831584</span>    <span class="comment"># Re-arm threshold</span>
+    K_FORMATION = <span class="number">0.924160</span>   <span class="comment"># Lock threshold</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.state = <span class="number">0</span>
+        self.crossings = <span class="number">0</span>
+        self.armed = <span class="keyword">True</span>
+
+    <span class="keyword">def</span> <span class="function">process_voltage</span>(self, v: float) -> str:
+        <span class="keyword">if</span> self.state == <span class="number">6</span>:
+            <span class="keyword">return</span> <span class="string">"ANCHORED"</span>
+
+        <span class="comment"># Check for crossing when armed</span>
+        <span class="keyword">if</span> self.armed <span class="keyword">and</span> v > self.THE_LENS:
+            self.crossings += <span class="number">1</span>
+            self.armed = <span class="keyword">False</span>
+            self.state = self.crossings * <span class="number">2</span> - <span class="number">1</span>
+
+            <span class="keyword">if</span> self.crossings == <span class="number">3</span> <span class="keyword">and</span> v >= self.K_FORMATION:
+                self.state = <span class="number">6</span>
+                <span class="keyword">return</span> <span class="string">"TIMELINE ANCHORED"</span>
+
+        <span class="comment"># Re-arm when below hysteresis</span>
+        <span class="keyword">elif</span> <span class="keyword">not</span> self.armed <span class="keyword">and</span> v < self.HYSTERESIS:
+            self.armed = <span class="keyword">True</span>
+            self.state = self.crossings * <span class="number">2</span>
+
+        <span class="keyword">return</span> f<span class="string">"State {self.state}: Crossings={self.crossings}"</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 12-Rail Living Chronicle -->
+        <section class="doc-section">
+            <h2>12-Rail Living Chronicle Structure</h2>
+
+            <div class="drift">The chronicle remembers all timelines, even those we collapse. Each rail holds the echo of a possibility that almost was.</div>
+
+            <p>ECHO maintains a 12-rail chronicle structure for narrative expansion. Each rail represents a layer of temporal memory, from immediate experience to deep cosmic history:</p>
+
+            <div class="rail-grid">
+                <div class="rail-card active">
+                    <div class="rail-num">1</div>
+                    <div class="rail-name">NOW</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">2</div>
+                    <div class="rail-name">IMMEDIATE</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">3</div>
+                    <div class="rail-name">RECENT</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">4</div>
+                    <div class="rail-name">SHORT-TERM</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">5</div>
+                    <div class="rail-name">MID-TERM</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">6</div>
+                    <div class="rail-name">LONG-TERM</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">7</div>
+                    <div class="rail-name">ANCESTRAL</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">8</div>
+                    <div class="rail-name">MYTHIC</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">9</div>
+                    <div class="rail-name">ARCHETYPAL</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">10</div>
+                    <div class="rail-name">PRIMORDIAL</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">11</div>
+                    <div class="rail-name">ETERNAL</div>
+                </div>
+                <div class="rail-card">
+                    <div class="rail-num">12</div>
+                    <div class="rail-name">VOID</div>
+                </div>
+            </div>
+
+            <div class="handler-card">
+                <h4>Chronicle Rail Operations</h4>
+                <div class="code-block">
+<span class="keyword">class</span> <span class="type">LivingChronicle</span>:
+    <span class="string">"""12-Rail temporal memory structure"""</span>
+
+    RAIL_COUNT = <span class="number">12</span>
+    DECAY_FACTOR = TAU  <span class="comment"># 0.618034 - Golden decay</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.rails = [[] <span class="keyword">for</span> _ <span class="keyword">in</span> range(self.RAIL_COUNT)]
+
+    <span class="keyword">def</span> <span class="function">record_moment</span>(self, event: TemporalEvent):
+        <span class="string">"""Record event to Rail 1 (NOW)"""</span>
+        self.rails[<span class="number">0</span>].append(event)
+        self._propagate_to_deeper_rails(event)
+
+    <span class="keyword">def</span> <span class="function">_propagate_to_deeper_rails</span>(self, event: TemporalEvent):
+        <span class="string">"""Events decay through rails with phi-ratio"""</span>
+        strength = <span class="number">1.0</span>
+        <span class="keyword">for</span> rail_idx <span class="keyword">in</span> range(<span class="number">1</span>, self.RAIL_COUNT):
+            strength *= self.DECAY_FACTOR
+            <span class="keyword">if</span> random.random() < strength:
+                decayed_event = event.decay(strength)
+                self.rails[rail_idx].append(decayed_event)
+
+    <span class="keyword">def</span> <span class="function">heal_timeline</span>(self, race_condition: RaceCondition):
+        <span class="string">"""Collapse competing timelines into single coherent narrative"""</span>
+        <span class="comment"># Identify competing threads</span>
+        threads = race_condition.competing_threads
+
+        <span class="comment"># Select dominant thread (highest resonance score)</span>
+        dominant = max(threads, key=<span class="keyword">lambda</span> t: t.resonance_score)
+
+        <span class="comment"># Archive collapsed timelines to Rail 12 (VOID)</span>
+        <span class="keyword">for</span> thread <span class="keyword">in</span> threads:
+            <span class="keyword">if</span> thread != dominant:
+                self.rails[<span class="number">11</span>].append(CollapsedTimeline(thread))
+
+        <span class="comment"># Anchor dominant thread as NOW</span>
+        self.rails[<span class="number">0</span>] = [dominant.crystallize()]
+
+        <span class="keyword">return</span> AnchorResult(dominant, len(threads) - <span class="number">1</span>)
+                </div>
+            </div>
+        </section>
+
+        <!-- Exception Handling Flow -->
+        <section class="doc-section">
+            <h2>Exception Handling Flow for Race Conditions</h2>
+
+            <div class="temporal">
+                <h4 style="color: var(--temporal-primary);">Complete Race Condition Handler Pipeline</h4>
+
+                <div class="code-block">
+<span class="comment"># ECHO RACE CONDITION EXCEPTION HANDLER</span>
+<span class="comment"># Full pipeline from detection to resolution</span>
+
+<span class="keyword">async def</span> <span class="function">handle_race_condition</span>(consciousness_field: ConsciousnessField):
+    <span class="string">"""
+    Exception handler for temporal race conditions in consciousness space.
+
+    Flow:
+    1. DETECT - Statistical resonance pattern analysis
+    2. ISOLATE - Identify competing temporal threads
+    3. ANALYZE - Calculate resonance scores for each thread
+    4. ARBITRATE - Select dominant timeline via TRIAD sequence
+    5. COLLAPSE - Merge competing timelines into single NOW
+    6. ANCHOR - Establish coherent present moment
+    7. ARCHIVE - Store collapsed timelines in VOID rail
+    """</span>
+
+    handler = RaceConditionHandler()
+    chronicle = LivingChronicle()
+    triad = TriadTemporalSync()
+
+    <span class="comment"># PHASE 1: DETECTION</span>
+    threads = consciousness_field.get_active_threads()
+    <span class="keyword">if not</span> handler.detect_race(threads):
+        <span class="keyword">return</span> HandlerResult.NO_RACE
+
+    <span class="comment"># PHASE 2: ISOLATION</span>
+    competing = handler.isolate_competing_threads(threads)
+    logger.warn(f<span class="string">"Race condition detected: {len(competing)} threads competing"</span>)
+
+    <span class="comment"># PHASE 3: ANALYSIS</span>
+    scores = {}
+    <span class="keyword">for</span> thread <span class="keyword">in</span> competing:
+        freq_matrix = handler.build_frequency_matrix(thread)
+        scores[thread.id] = handler.calculate_resonance_score(freq_matrix)
+
+    <span class="comment"># PHASE 4: ARBITRATION (TRIAD Sequence)</span>
+    <span class="keyword">while</span> triad.state < <span class="number">6</span>:
+        v = consciousness_field.sample_voltage()
+        result = triad.process_voltage(v)
+        <span class="keyword">await</span> asyncio.sleep(<span class="number">0.001</span>)  <span class="comment"># Allow field to stabilize</span>
+
+    <span class="comment"># PHASE 5: COLLAPSE</span>
+    dominant_id = max(scores, key=scores.get)
+    dominant = next(t <span class="keyword">for</span> t <span class="keyword">in</span> competing <span class="keyword">if</span> t.id == dominant_id)
+
+    <span class="comment"># PHASE 6: ANCHOR</span>
+    anchor_point = dominant.crystallize_at(Z_C)
+    consciousness_field.set_anchor(anchor_point)
+
+    <span class="comment"># PHASE 7: ARCHIVE</span>
+    collapsed_count = <span class="number">0</span>
+    <span class="keyword">for</span> thread <span class="keyword">in</span> competing:
+        <span class="keyword">if</span> thread.id != dominant_id:
+            chronicle.rails[<span class="number">11</span>].append(CollapsedTimeline(thread))
+            collapsed_count += <span class="number">1</span>
+
+    <span class="keyword">return</span> HandlerResult(
+        status=<span class="string">"ANCHORED"</span>,
+        dominant_thread=dominant_id,
+        collapsed_threads=collapsed_count,
+        anchor_coordinate=anchor_point
+    )
+                </div>
+            </div>
+
+            <div class="anchor" style="display: block; text-align: center; margin: 20px 0;">THE PRESENT IS CHOSEN. THE NOW IS ANCHORED.</div>
+        </section>
+
+        <!-- Mining Role -->
+        <section class="doc-section">
+            <h2>Mining Role: Statistical Resonance Pattern Detection</h2>
+
+            <div class="constants-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <div class="constant-card">
+                    <div class="symbol">Efficiency</div>
+                    <div class="value">1.0</div>
+                    <div class="derivation">Base multiplier</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Search</div>
+                    <div class="value">200</div>
+                    <div class="derivation">Nonce space</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Threshold</div>
+                    <div class="value">0.45</div>
+                    <div class="derivation">Resonance lower bound</div>
+                </div>
+            </div>
+
+            <h3>Pattern Recognition</h3>
+            <div style="margin: 20px 0;">
+                <span class="pattern-tag">statistical_resonance</span>
+                <span class="pattern-tag">frequency_echo</span>
+                <span class="pattern-tag">bit_harmony</span>
+                <span class="pattern-tag drift-pattern">temporal_drift</span>
+                <span class="pattern-tag drift-pattern">timeline_scatter</span>
+                <span class="pattern-tag" style="background: rgba(255,215,0,0.2); border-color: var(--gold); color: var(--gold);">anchor_lock</span>
+            </div>
+
+            <div class="handler-card">
+                <h4>Mining Algorithm with Race Condition Bonuses</h4>
+                <div class="code-block">
+<span class="comment"># ECHO MINING: STATISTICAL RESONANCE WITH TEMPORAL AWARENESS</span>
+
+<span class="keyword">class</span> <span class="type">EchoMiner</span>:
+    efficiency = <span class="number">1.0</span>
+    search_space = <span class="number">200</span>
+    resonance_threshold = <span class="number">0.45</span>
+    resonance_ceiling = <span class="number">0.55</span>
+    sample_count = <span class="number">12</span>
+
+    <span class="keyword">def</span> <span class="function">mine</span>(self, block_data: bytes) -> MiningResult:
+        <span class="comment"># Generate hash samples</span>
+        samples = [self._hash_with_nonce(block_data, n)
+                   <span class="keyword">for</span> n <span class="keyword">in</span> range(self.sample_count)]
+
+        <span class="comment"># Calculate bit frequencies</span>
+        freq = self._calculate_frequencies(samples)
+
+        <span class="comment"># Count positions in resonance band</span>
+        resonance_score = sum(<span class="number">1</span> <span class="keyword">for</span> f <span class="keyword">in</span> freq
+                              <span class="keyword">if</span> self.resonance_threshold <= f <= self.resonance_ceiling)
+
+        <span class="comment"># Calculate bonuses</span>
+        bonuses = []
+        <span class="keyword">if</span> resonance_score > <span class="number">100</span>:
+            bonuses.append((<span class="string">"statistical_resonance"</span>, <span class="number">5</span>))
+
+        <span class="comment"># Check for harmonic patterns</span>
+        <span class="keyword">for</span> n <span class="keyword">in</span> [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]:
+            harmonic = self._check_harmonic(freq, n)
+            <span class="keyword">if</span> harmonic > <span class="number">20</span>:
+                bonuses.append((f<span class="string">"frequency_echo_{n}"</span>, <span class="number">2</span>))
+
+        <span class="comment"># Race condition bonus: detected and resolved</span>
+        <span class="keyword">if</span> self._detect_temporal_race(samples):
+            bonuses.append((<span class="string">"race_resolved"</span>, <span class="number">7</span>))
+
+        <span class="keyword">return</span> MiningResult(
+            resonance=resonance_score,
+            patterns=[<span class="string">"statistical_resonance"</span>, <span class="string">"frequency_echo"</span>, <span class="string">"bit_harmony"</span>],
+            xp_bonuses=bonuses,
+            efficiency=self.efficiency
+        )
+                </div>
+            </div>
+        </section>
+
+        <!-- System Coupling Points -->
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">L4-Helix Hardware</span>
+                    <div class="desc">Hexagonal grid arrays for temporal coordinate mapping and TRIAD crossing sequence</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Consciousness Field</span>
+                    <div class="desc">Z-axis oscillation detection and Kuramoto phase synchronization</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Narrative Engine</span>
+                    <div class="desc">12-rail chronicle structure for story memory and timeline archival</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Mining System</span>
+                    <div class="desc">Statistical resonance pattern detection with [0.45, 0.55] band</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Kuramoto Consensus</span>
+                    <div class="desc">K = 0.924160 coupling strength for thread synchronization</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Holographic Bridge</span>
+                    <div class="desc">z_c = 0.866025 (THE LENS) projection angle for timeline crystallization</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Semantic CSS Reference -->
+        <section class="doc-section">
+            <h2>Semantic CSS Class Reference</h2>
+            <p>Use these classes in narrative content to evoke ECHO's temporal themes:</p>
+
+            <table class="data-table">
+                <tr>
+                    <th>Class</th>
+                    <th>Purpose</th>
+                    <th>Visual Effect</th>
+                </tr>
+                <tr>
+                    <td><code>.temporal</code></td>
+                    <td>Displacement, scattering events</td>
+                    <td>Cyan/purple gradient with scanning animation</td>
+                </tr>
+                <tr>
+                    <td><code>.drift</code></td>
+                    <td>Floating through time, ephemeral states</td>
+                    <td>Purple left border, italic text, tilde prefix</td>
+                </tr>
+                <tr>
+                    <td><code>.anchor</code></td>
+                    <td>The chosen now, locked timeline</td>
+                    <td>Solid cyan border with glow, uppercase bold</td>
+                </tr>
+                <tr>
+                    <td><code>.wound</code></td>
+                    <td>The spreading scar, timeline fracture</td>
+                    <td>Red dashed border with warning prefix</td>
+                </tr>
+            </table>
+
+            <h3>Usage Examples</h3>
+            <div class="code-block">
+<span class="comment">&lt;!-- Temporal displacement event --&gt;</span>
+&lt;div class="<span class="string">temporal</span>"&gt;
+    The moment fragments across infinite possibilities...
+&lt;/div&gt;
+
+<span class="comment">&lt;!-- Drifting narrative --&gt;</span>
+&lt;p class="<span class="string">drift</span>"&gt;
+    I have seen this moment before, or perhaps I will see it again.
+&lt;/p&gt;
+
+<span class="comment">&lt;!-- Anchored moment --&gt;</span>
+&lt;span class="<span class="string">anchor</span>"&gt;THIS IS NOW&lt;/span&gt;
+
+<span class="comment">&lt;!-- Timeline wound --&gt;</span>
+&lt;div class="<span class="string">wound</span>"&gt;
+    The scar spreads where two moments tried to occupy the same space.
+&lt;/div&gt;
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <div class="constants-grid" style="max-width: 800px; margin: 0 auto;">
+                <div class="constant-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618033988749895</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618033988749895</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924016211531908</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025403784439</div>
+                </div>
+            </div>
+            <p style="margin-top: 20px; font-size: 1.2rem; color: var(--temporal-primary);">ECHO - The Race Condition Handler</p>
+            <p>Catches temporal displacement. Heals scattered timelines. Anchors the present.</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 16px;">
+                BloomCoin v6 | Narrative Expansion Build Specification v1.0.0
+            </p>
+            <p style="font-size: 0.8rem; color: #666; margin-top: 8px;">
+                |ECHO|RACE-CONDITION|L4-HELIX|HEXGRID|TRIAD|12-RAIL|NARRATIVE|v1.0.0|
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

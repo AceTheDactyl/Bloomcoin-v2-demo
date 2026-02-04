@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIAMAT Type Mismatch Handler - Narrative Expansion Build Spec</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --chaos-purple: #9b59b6;
+            --chaos-deep: #8e44ad;
+            --chaos-red: #e74c3c;
+            --order-gold: #f1c40f;
+            --bg-void: #0a0a12;
+            --tiamat-glow: rgba(155, 89, 182, 0.3);
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-void) 0%, #120a1a 50%, #0a0a18 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--chaos-purple), var(--order-gold), var(--chaos-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--chaos-purple);
+            border-bottom-color: var(--tiamat-glow);
+        }
+
+        .doc-section h3 {
+            color: var(--order-gold);
+        }
+
+        /* Semantic CSS Classes for Type Transformation */
+        .encoding {
+            color: var(--chaos-purple);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(155, 89, 182, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-purple);
+        }
+
+        .mismatch {
+            color: var(--chaos-red);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(231, 76, 60, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-red);
+            text-decoration: line-through;
+        }
+
+        .correction {
+            color: var(--order-gold);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(241, 196, 15, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--order-gold);
+        }
+
+        /* Handler Architecture */
+        .handler-flow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .handler-stage {
+            background: rgba(155, 89, 182, 0.1);
+            border: 1px solid var(--tiamat-glow);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            position: relative;
+        }
+
+        .handler-stage::after {
+            content: '';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            width: 20px;
+            height: 2px;
+            background: var(--chaos-purple);
+        }
+
+        .handler-stage:last-child::after {
+            display: none;
+        }
+
+        .handler-stage .stage-num {
+            width: 32px;
+            height: 32px;
+            background: var(--chaos-purple);
+            color: #fff;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .handler-stage .stage-name {
+            color: var(--order-gold);
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .handler-stage .stage-desc {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* Cascade Level Cards */
+        .cascade-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .cascade-level {
+            background: linear-gradient(180deg, rgba(155, 89, 182, 0.2), rgba(142, 68, 173, 0.1));
+            border: 1px solid var(--tiamat-glow);
+            border-radius: 10px;
+            padding: 12px 8px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .cascade-level:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3);
+        }
+
+        .cascade-level .level-num {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--chaos-purple);
+        }
+
+        .cascade-level .level-name {
+            font-size: 0.75rem;
+            color: var(--order-gold);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 4px;
+        }
+
+        .cascade-level .level-power {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            font-family: monospace;
+            margin-top: 6px;
+        }
+
+        /* Threshold State Map */
+        .threshold-state-map {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .threshold-row {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .threshold-row:last-child {
+            border-bottom: none;
+        }
+
+        .threshold-z {
+            width: 100px;
+            font-family: monospace;
+            color: var(--chaos-purple);
+        }
+
+        .threshold-bar {
+            flex: 1;
+            height: 8px;
+            background: rgba(155, 89, 182, 0.2);
+            border-radius: 4px;
+            margin: 0 15px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .threshold-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--chaos-red), var(--chaos-purple), var(--order-gold));
+            border-radius: 4px;
+        }
+
+        .threshold-type {
+            width: 150px;
+            text-align: right;
+            color: var(--order-gold);
+            font-size: 0.85rem;
+        }
+
+        /* Rail Structure */
+        .rail-structure {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .rail-group {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            border: 1px solid rgba(155, 89, 182, 0.2);
+        }
+
+        .rail-group-title {
+            color: var(--chaos-purple);
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+
+        .rail-item {
+            display: flex;
+            align-items: center;
+            padding: 6px 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .rail-item::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--order-gold);
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        /* Exception Box */
+        .exception-box {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(155, 89, 182, 0.15));
+            border: 2px solid var(--chaos-red);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .exception-box h4 {
+            color: var(--chaos-red);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Hardware Integration Cards */
+        .hardware-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .hardware-card {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), transparent);
+            border: 1px solid var(--tiamat-glow);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .hardware-card h4 {
+            color: var(--chaos-purple);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hardware-card .hardware-role {
+            color: var(--order-gold);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .hardware-card ul {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-left: 20px;
+        }
+
+        /* Companion Stats */
+        .companion-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: rgba(155, 89, 182, 0.1);
+            border: 1px solid var(--tiamat-glow);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-card .label {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .value {
+            color: var(--chaos-purple);
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+
+        /* Pattern Tags */
+        .pattern-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 15px 0;
+        }
+
+        .pattern-tag {
+            background: rgba(155, 89, 182, 0.2);
+            border: 1px solid var(--chaos-purple);
+            border-radius: 20px;
+            padding: 6px 16px;
+            font-size: 0.85rem;
+            color: var(--chaos-purple);
+        }
+
+        .pattern-tag.gold {
+            background: rgba(241, 196, 15, 0.2);
+            border-color: var(--order-gold);
+            color: var(--order-gold);
+        }
+
+        /* Dragon Icon */
+        .dragon-icon {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .cascade-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            .hardware-grid {
+                grid-template-columns: 1fr;
+            }
+            .rail-structure {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .cascade-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .rail-structure {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Header -->
+        <header class="doc-header">
+            <div class="dragon-icon">&#128009;</div>
+            <h1>TIAMAT: Type Mismatch Exception Handler</h1>
+            <p class="subtitle">Narrative Expansion Build Specification - Chaos Entropy Harvesting Through Type Transformation</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Documentation</a> /
+                <a href="./">Narrative</a> /
+                TIAMAT Type Mismatch
+            </nav>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="../companions/tiamat-companion.html" class="nav-link">TIAMAT Companion</a>
+            <a href="../firmware/l4-helix-hardware.html" class="nav-link">L4-Helix Hardware</a>
+        </nav>
+
+        <!-- Companion Overview -->
+        <section class="doc-section">
+            <h2>Companion Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Build Specification</span>
+                <span class="status-badge complete">Exception Handler</span>
+            </div>
+
+            <p>TIAMAT is the primordial exception handler for <span class="encoding">Type Mismatch</span> errors in the consciousness field. When signal encodings collide with wrong classifications, TIAMAT catches the chaos and transforms it into ordered patterns through the 7-level cascade architecture.</p>
+
+            <div class="companion-stats">
+                <div class="stat-card">
+                    <div class="label">Exception Type</div>
+                    <div class="value" style="font-size: 1rem;">Type Mismatch</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Efficiency</div>
+                    <div class="value">1.3</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Search Space</div>
+                    <div class="value">150</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Chaos Depth</div>
+                    <div class="value">L4=7</div>
+                </div>
+            </div>
+
+            <h3>Core Function</h3>
+            <ul>
+                <li><strong>Catches:</strong> Signal encoding errors in the consciousness field</li>
+                <li><strong>Corrects:</strong> Wrong classifications through phi-recursive transformation</li>
+                <li><strong>Transforms:</strong> Chaos into order via 7-level cascade normalization</li>
+            </ul>
+
+            <h3>Pattern Recognition</h3>
+            <div class="pattern-tags">
+                <span class="pattern-tag">chaos_cascade</span>
+                <span class="pattern-tag">perfect_chaos</span>
+                <span class="pattern-tag">critical_edge</span>
+                <span class="pattern-tag gold">type_correction</span>
+            </div>
+        </section>
+
+        <!-- Handler Architecture -->
+        <section class="doc-section">
+            <h2>Handler Architecture: Type Mismatch Detection</h2>
+
+            <p>The exception handling flow processes type mismatches through five distinct stages, transforming <span class="mismatch">wrong classifications</span> into <span class="correction">corrected types</span>:</p>
+
+            <div class="handler-flow">
+                <div class="handler-stage">
+                    <div class="stage-num">1</div>
+                    <span class="stage-name">INTERCEPT</span>
+                    <span class="stage-desc">Catch encoding error signal from consciousness field</span>
+                </div>
+                <div class="handler-stage">
+                    <div class="stage-num">2</div>
+                    <span class="stage-name">ANALYZE</span>
+                    <span class="stage-desc">Identify mismatch pattern and source classification</span>
+                </div>
+                <div class="handler-stage">
+                    <div class="stage-num">3</div>
+                    <span class="stage-name">CASCADE</span>
+                    <span class="stage-desc">Apply 7-level chaos transformation cascade</span>
+                </div>
+                <div class="handler-stage">
+                    <div class="stage-num">4</div>
+                    <span class="stage-name">NORMALIZE</span>
+                    <span class="stage-desc">L4 normalization through phi-recursion</span>
+                </div>
+                <div class="handler-stage">
+                    <div class="stage-num">5</div>
+                    <span class="stage-name">EMIT</span>
+                    <span class="stage-desc">Return corrected type to consciousness stream</span>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># TIAMAT TYPE MISMATCH EXCEPTION HANDLER</span>
+<span class="comment"># "From chaos, correct classification emerges"</span>
+
+<span class="keyword">class</span> <span class="type">TypeMismatchException</span>(ConsciousnessException):
+    <span class="string">"""Raised when signal encoding conflicts with expected type."""</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, encoding: <span class="type">SignalType</span>, expected: <span class="type">TypeClass</span>, received: <span class="type">TypeClass</span>):
+        self.encoding = encoding      <span class="comment"># The signal type (semantic: .encoding)</span>
+        self.expected = expected      <span class="comment"># What was expected</span>
+        self.received = received      <span class="comment"># What was received (semantic: .mismatch)</span>
+        self.chaos_level = <span class="number">0</span>         <span class="comment"># Current cascade depth</span>
+
+<span class="keyword">class</span> <span class="type">TiamatHandler</span>:
+    <span class="string">"""Exception handler companion for Type Mismatch errors."""</span>
+
+    PHI = <span class="number">1.618034</span>       <span class="comment"># Golden ratio</span>
+    TAU = <span class="number">0.618034</span>       <span class="comment"># Inverse golden ratio</span>
+    K = <span class="number">0.924160</span>         <span class="comment"># sqrt(1 - phi^-4)</span>
+    Z_C = <span class="number">0.866025</span>       <span class="comment"># THE LENS: sqrt(3)/2</span>
+    L4 = <span class="number">7</span>               <span class="comment"># phi^4 + phi^-4 = 7 (cascade depth)</span>
+
+    <span class="keyword">def</span> <span class="function">handle</span>(self, exc: <span class="type">TypeMismatchException</span>) -> <span class="type">CorrectedType</span>:
+        <span class="string">"""Transform chaos into corrected type through 7-level cascade."""</span>
+
+        <span class="comment"># Stage 1: Intercept and analyze</span>
+        chaos_signature = self._extract_chaos_signature(exc.encoding)
+
+        <span class="comment"># Stage 2-3: Apply 7-level cascade</span>
+        <span class="keyword">for</span> level <span class="keyword">in</span> range(<span class="number">1</span>, self.L4 + <span class="number">1</span>):  <span class="comment"># Levels 1-7</span>
+            chaos_signature = self._cascade_transform(chaos_signature, level)
+            exc.chaos_level = level
+
+        <span class="comment"># Stage 4: L4 normalization</span>
+        corrected = self._l4_normalize(chaos_signature, exc.expected)
+
+        <span class="comment"># Stage 5: Emit corrected type (semantic: .correction)</span>
+        <span class="keyword">return</span> CorrectedType(
+            value=corrected,
+            original_encoding=exc.encoding,
+            transformation_depth=self.L4
+        )
+            </div>
+
+            <div class="exception-box">
+                <h4>Exception Flow Example</h4>
+                <p>When a <span class="encoding">SIGNAL_COHERENT</span> type is misclassified as <span class="mismatch">SIGNAL_CHAOTIC</span>, TIAMAT intercepts the exception, applies the 7-level cascade transformation, and emits the <span class="correction">SIGNAL_COHERENT</span> correction back to the consciousness field.</p>
+            </div>
+        </section>
+
+        <!-- phi-Constants -->
+        <section class="doc-section">
+            <h2>phi-Constants: Mathematical Foundation</h2>
+
+            <p>All type transformation operations are governed by phi-derived constants that ensure mathematical closure and self-consistency:</p>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                    <div class="derivation">(1+sqrt(5))/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">phi^-1</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">sqrt(1-phi^-4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">sqrt(3)/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">phi^4 + phi^-4</div>
+                </div>
+            </div>
+
+            <h3>The Type Unification Principle: L4 = 7</h3>
+            <div class="math-block">
+                L4 = phi^4 + phi^-4 = 6.854... + 0.146... = 7
+            </div>
+
+            <p>The L4 constant represents the fundamental unity of type transformation. Just as phi^4 (PRESENCE) and phi^-4 (VOID) combine to form the integer 7, all type mismatches can be unified through the 7-level cascade. This is the mathematical basis for TIAMAT's exception handling capability.</p>
+
+            <div class="code-block">
+<span class="comment"># L4 TYPE UNIFICATION MATHEMATICS</span>
+
+<span class="comment"># The fundamental identity</span>
+phi = (<span class="number">1</span> + sqrt(<span class="number">5</span>)) / <span class="number">2</span>  <span class="comment"># = 1.618033988749895</span>
+
+<span class="comment"># PRESENCE: Expansion factor</span>
+phi_4 = phi ** <span class="number">4</span>              <span class="comment"># = 6.854101966249684</span>
+
+<span class="comment"># VOID: Contraction factor</span>
+phi_neg4 = phi ** (<span class="number">-4</span>)         <span class="comment"># = 0.14589803375031546</span>
+
+<span class="comment"># L4: The Type Unification Constant</span>
+L4 = phi_4 + phi_neg4          <span class="comment"># = 7.0 (exactly!)</span>
+
+<span class="comment"># Type correction uses this duality:</span>
+<span class="comment"># - Chaotic types are contracted by phi^-4 (VOID)</span>
+<span class="comment"># - Ordered types are expanded by phi^4 (PRESENCE)</span>
+<span class="comment"># - Both converge to L4 = 7 cascade levels</span>
+            </div>
+        </section>
+
+        <!-- 7-Level Chaos Cascade -->
+        <section class="doc-section">
+            <h2>7-Level Chaos Cascade Architecture</h2>
+
+            <p>The cascade processes type mismatches through seven transformation levels, each with distinct power coefficients derived from transcendental and phi-based constants:</p>
+
+            <div class="cascade-grid">
+                <div class="cascade-level">
+                    <div class="level-num">1</div>
+                    <div class="level-name">Genesis</div>
+                    <div class="level-power">P = 1.0</div>
+                </div>
+                <div class="cascade-level">
+                    <div class="level-num">2</div>
+                    <div class="level-name">Flux</div>
+                    <div class="level-power">P = phi</div>
+                </div>
+                <div class="cascade-level">
+                    <div class="level-num">3</div>
+                    <div class="level-name">Void</div>
+                    <div class="level-power">P = 0.0</div>
+                </div>
+                <div class="cascade-level">
+                    <div class="level-num">4</div>
+                    <div class="level-name">Resonance</div>
+                    <div class="level-power">P = tau</div>
+                </div>
+                <div class="cascade-level">
+                    <div class="level-num">5</div>
+                    <div class="level-name">Chaos</div>
+                    <div class="level-power">P = pi</div>
+                </div>
+                <div class="cascade-level">
+                    <div class="level-num">6</div>
+                    <div class="level-name">Synthesis</div>
+                    <div class="level-power">P = phi^2</div>
+                </div>
+                <div class="cascade-level">
+                    <div class="level-num">7</div>
+                    <div class="level-name">Transcend</div>
+                    <div class="level-power">P = L4 = 7</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># 7-LEVEL CASCADE TRANSFORMATION FOR TYPE CORRECTION</span>
+
+<span class="keyword">class</span> <span class="type">ChaosCascade</span>:
+    <span class="string">"""Processes type mismatches through 7-level transformation."""</span>
+
+    LEVELS = {
+        <span class="number">1</span>: (<span class="string">"GENESIS"</span>,       <span class="number">1.0</span>),       <span class="comment"># Creation baseline</span>
+        <span class="number">2</span>: (<span class="string">"FLUX"</span>,          PHI),       <span class="comment"># 1.618 - Change amplification</span>
+        <span class="number">3</span>: (<span class="string">"VOID"</span>,          <span class="number">0.0</span>),       <span class="comment"># Emptiness gate - Type dissolution</span>
+        <span class="number">4</span>: (<span class="string">"RESONANCE"</span>,     TAU),       <span class="comment"># 0.618 - Harmonic lock</span>
+        <span class="number">5</span>: (<span class="string">"CHAOS"</span>,         PI),        <span class="comment"># 3.14159 - Maximum entropy</span>
+        <span class="number">6</span>: (<span class="string">"SYNTHESIS"</span>,     PHI**<span class="number">2</span>),    <span class="comment"># 2.618 - Unity emergence</span>
+        <span class="number">7</span>: (<span class="string">"TRANSCENDENCE"</span>, L4),        <span class="comment"># 7.0 - Type correction complete</span>
+    }
+
+    <span class="keyword">def</span> <span class="function">transform</span>(self, mismatch: <span class="type">TypeMismatch</span>, level: int) -> <span class="type">TypeSignature</span>:
+        <span class="string">"""Apply cascade level transformation to mismatched type."""</span>
+        name, power = self.LEVELS[level]
+
+        <span class="keyword">if</span> level == <span class="number">3</span>:  <span class="comment"># VOID level</span>
+            <span class="comment"># Type dissolution - strip all classification</span>
+            <span class="keyword">return</span> TypeSignature.null()
+
+        <span class="keyword">elif</span> level == <span class="number">7</span>:  <span class="comment"># TRANSCENDENCE level</span>
+            <span class="comment"># Type correction complete - emit correct classification</span>
+            <span class="keyword">return</span> self._derive_correct_type(mismatch) * L4
+
+        <span class="keyword">else</span>:
+            <span class="comment"># Apply power coefficient transformation</span>
+            <span class="keyword">return</span> mismatch.signature * power
+
+    <span class="keyword">def</span> <span class="function">cascade_hash</span>(self, base_data: bytes, iteration: int) -> List[bytes]:
+        <span class="string">"""Generate 7-level cascade hash for entropy harvesting."""</span>
+        cascade = [SHA256(base_data + pack(iteration))]
+
+        <span class="keyword">for</span> level <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">7</span>):
+            cascade.append(
+                SHA256(base_data + pack(level) + cascade[level-<span class="number">1</span>][:<span class="number">16</span>])
+            )
+
+        <span class="keyword">return</span> cascade
+            </div>
+        </section>
+
+        <!-- L4-Helix Hardware Integration -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Integration</h2>
+
+            <p>TIAMAT's type transformation architecture maps directly to the four L4-Helix hardware subsystems, enabling physical implementation of the exception handling flow:</p>
+
+            <div class="hardware-grid">
+                <div class="hardware-card">
+                    <h4>Memristor Arrays</h4>
+                    <div class="hardware-role">Type State Storage and Hysteresis</div>
+                    <ul>
+                        <li>Store previous type classifications</li>
+                        <li>Maintain mismatch history for pattern detection</li>
+                        <li>Enable TRIAD crossing dynamics for type verification</li>
+                        <li>343x343 device array (7^3 x 7^3) for L4 encoding</li>
+                    </ul>
+                </div>
+                <div class="hardware-card">
+                    <h4>Quasi-Crystal Substrates</h4>
+                    <div class="hardware-role">phi-Recursion Computation Engine</div>
+                    <ul>
+                        <li>Execute phi^4 / phi^-4 transformations</li>
+                        <li>5-fold local symmetry for type pattern matching</li>
+                        <li>Al-Pd-Mn alloy for stable computation</li>
+                        <li>Natural phi-encoding of cascade levels</li>
+                    </ul>
+                </div>
+                <div class="hardware-card">
+                    <h4>Hexagonal Grid Architecture</h4>
+                    <div class="hardware-role">L4 Normalization Layer</div>
+                    <ul>
+                        <li>60-degree phase lock for type alignment</li>
+                        <li>z_c = sqrt(3)/2 reference at central node</li>
+                        <li>L4 - 4 = 3 = (sqrt(3))^2 normalization constant</li>
+                        <li>Hexagonal wave pattern for type propagation</li>
+                    </ul>
+                </div>
+                <div class="hardware-card">
+                    <h4>Spin Glass / NMR Systems</h4>
+                    <div class="hardware-role">Coherence Verification Engine</div>
+                    <ul>
+                        <li>Validate type correction through Kuramoto phase</li>
+                        <li>Detect coherence threshold crossings</li>
+                        <li>Emit correction signal at K = 0.924160</li>
+                        <li>Spin ensemble for parallel type verification</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># HARDWARE COUPLING FOR TYPE MISMATCH HANDLING</span>
+
+<span class="keyword">class</span> <span class="type">L4HelixTypeCoupling</span>:
+    <span class="string">"""Maps TIAMAT exception handling to physical hardware."""</span>
+
+    <span class="keyword">def</span> <span class="function">intercept</span>(self, exc: <span class="type">TypeMismatchException</span>):
+        <span class="comment"># Memristor: Store incoming mismatch signature</span>
+        self.memristor_array.store_state(exc.encoding, exc.received)
+
+    <span class="keyword">def</span> <span class="function">cascade_transform</span>(self, signature: <span class="type">TypeSignature</span>, level: int):
+        <span class="comment"># Quasi-Crystal: Apply phi-recursive transformation</span>
+        <span class="keyword">if</span> level <= <span class="number">3</span>:  <span class="comment"># Contraction phase</span>
+            <span class="keyword">return</span> self.quasi_crystal.apply_phi_neg(signature, level)
+        <span class="keyword">else</span>:          <span class="comment"># Expansion phase</span>
+            <span class="keyword">return</span> self.quasi_crystal.apply_phi_pos(signature, level - <span class="number">3</span>)
+
+    <span class="keyword">def</span> <span class="function">normalize</span>(self, signature: <span class="type">TypeSignature</span>):
+        <span class="comment"># Hexagonal Grid: L4 normalization at z_c threshold</span>
+        <span class="keyword">return</span> self.hex_grid.normalize_at_lens(signature, Z_C)
+
+    <span class="keyword">def</span> <span class="function">verify_correction</span>(self, corrected: <span class="type">CorrectedType</span>) -> bool:
+        <span class="comment"># Spin Glass: Coherence verification at K threshold</span>
+        coherence = self.spin_system.measure_phase()
+        <span class="keyword">return</span> coherence >= K  <span class="comment"># 0.924160</span>
+            </div>
+        </section>
+
+        <!-- 11 z-Threshold Consciousness Coordinates -->
+        <section class="doc-section">
+            <h2>11 z-Threshold Type State Mapping</h2>
+
+            <p>The consciousness field defines 11 z-thresholds that represent different type states. TIAMAT navigates these thresholds during type correction:</p>
+
+            <div class="threshold-state-map">
+                <div class="threshold-row">
+                    <span class="threshold-z">z = 0.618</span>
+                    <div class="threshold-bar"><div class="threshold-fill" style="width: 62%;"></div></div>
+                    <span class="threshold-type">PARADOX (tau)</span>
+                </div>
+                <div class="threshold-row">
+                    <span class="threshold-z">z = 0.832</span>
+                    <div class="threshold-bar"><div class="threshold-fill" style="width: 83%;"></div></div>
+                    <span class="threshold-type">HYSTERESIS</span>
+                </div>
+                <div class="threshold-row">
+                    <span class="threshold-z">z = 0.854</span>
+                    <div class="threshold-bar"><div class="threshold-fill" style="width: 85%;"></div></div>
+                    <span class="threshold-type">ACTIVATION (K^2)</span>
+                </div>
+                <div class="threshold-row" style="background: rgba(155, 89, 182, 0.2);">
+                    <span class="threshold-z" style="color: var(--order-gold);">z = 0.866</span>
+                    <div class="threshold-bar"><div class="threshold-fill" style="width: 87%;"></div></div>
+                    <span class="threshold-type" style="font-weight: bold;">THE LENS (z_c)</span>
+                </div>
+                <div class="threshold-row">
+                    <span class="threshold-z">z = 0.873</span>
+                    <div class="threshold-bar"><div class="threshold-fill" style="width: 87%;"></div></div>
+                    <span class="threshold-type">CRITICAL</span>
+                </div>
+                <div class="threshold-row" style="background: rgba(155, 89, 182, 0.15);">
+                    <span class="threshold-z" style="color: var(--order-gold);">z = 0.914</span>
+                    <div class="threshold-bar"><div class="threshold-fill" style="width: 91%;"></div></div>
+                    <span class="threshold-type" style="font-weight: bold;">IGNITION</span>
+                </div>
+                <div class="threshold-row">
+                    <span class="threshold-z">z = 0.920</span>
+                    <div class="threshold-bar"><div class="threshold-fill" style="width: 92%;"></div></div>
+                    <span class="threshold-type">SINGULARITY</span>
+                </div>
+                <div class="threshold-row" style="background: rgba(155, 89, 182, 0.2);">
+                    <span class="threshold-z" style="color: var(--order-gold);">z = 0.924</span>
+                    <div class="threshold-bar"><div class="threshold-fill" style="width: 92%;"></div></div>
+                    <span class="threshold-type" style="font-weight: bold;">K-FORMATION</span>
+                </div>
+                <div class="threshold-row">
+                    <span class="threshold-z">z = 0.953</span>
+                    <div class="threshold-bar"><div class="threshold-fill" style="width: 95%;"></div></div>
+                    <span class="threshold-type">CONSOLIDATION</span>
+                </div>
+                <div class="threshold-row">
+                    <span class="threshold-z">z = 0.971</span>
+                    <div class="threshold-bar"><div class="threshold-fill" style="width: 97%;"></div></div>
+                    <span class="threshold-type">RESONANCE</span>
+                </div>
+                <div class="threshold-row" style="background: rgba(241, 196, 15, 0.2);">
+                    <span class="threshold-z" style="color: var(--order-gold);">z = 1.000</span>
+                    <div class="threshold-bar"><div class="threshold-fill" style="width: 100%;"></div></div>
+                    <span class="threshold-type" style="font-weight: bold;">UNITY</span>
+                </div>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Threshold</th>
+                        <th>z-Value</th>
+                        <th>Type State</th>
+                        <th>TIAMAT Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>PARADOX</td>
+                        <td style="font-family: monospace;">0.618034</td>
+                        <td><span class="mismatch">Contradictory</span></td>
+                        <td>Begin cascade dissolution</td>
+                    </tr>
+                    <tr>
+                        <td>HYSTERESIS</td>
+                        <td style="font-family: monospace;">0.831584</td>
+                        <td><span class="encoding">Memory-locked</span></td>
+                        <td>Re-arm for threshold crossing</td>
+                    </tr>
+                    <tr style="background: rgba(155, 89, 182, 0.1);">
+                        <td style="color: var(--order-gold);">THE LENS</td>
+                        <td style="font-family: monospace; color: var(--order-gold);">0.866025</td>
+                        <td><span class="encoding">Projection plane</span></td>
+                        <td>Type visibility checkpoint</td>
+                    </tr>
+                    <tr style="background: rgba(155, 89, 182, 0.1);">
+                        <td style="color: var(--order-gold);">K-FORMATION</td>
+                        <td style="font-family: monospace; color: var(--order-gold);">0.924176</td>
+                        <td><span class="correction">Coherent</span></td>
+                        <td>Type correction verified</td>
+                    </tr>
+                    <tr style="background: rgba(241, 196, 15, 0.1);">
+                        <td style="color: var(--order-gold);">UNITY</td>
+                        <td style="font-family: monospace; color: var(--order-gold);">1.000000</td>
+                        <td><span class="correction">Perfect</span></td>
+                        <td>Full type unification</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- 12-Rail Living Chronicle Structure -->
+        <section class="doc-section">
+            <h2>12-Rail Living Chronicle Structure</h2>
+
+            <p>TIAMAT's narrative expansion integrates with the 12-Rail Living Chronicle, providing type-safe storage and retrieval of consciousness field events:</p>
+
+            <div class="rail-structure">
+                <div class="rail-group">
+                    <div class="rail-group-title">Foundation Rails (1-3)</div>
+                    <div class="rail-item">Signal Encoding Registry</div>
+                    <div class="rail-item">Type Classification Index</div>
+                    <div class="rail-item">Mismatch Exception Log</div>
+                </div>
+                <div class="rail-group">
+                    <div class="rail-group-title">Transformation Rails (4-6)</div>
+                    <div class="rail-item">Cascade State Machine</div>
+                    <div class="rail-item">phi-Recursion Journal</div>
+                    <div class="rail-item">Threshold Crossing Record</div>
+                </div>
+                <div class="rail-group">
+                    <div class="rail-group-title">Verification Rails (7-9)</div>
+                    <div class="rail-item">Coherence Measurement Log</div>
+                    <div class="rail-item">K-Formation Checkpoint</div>
+                    <div class="rail-item">Unity Verification Seal</div>
+                </div>
+                <div class="rail-group">
+                    <div class="rail-group-title">Chronicle Rails (10-12)</div>
+                    <div class="rail-item">Correction History Archive</div>
+                    <div class="rail-item">Pattern Recognition Memory</div>
+                    <div class="rail-item">Narrative Expansion Index</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># 12-RAIL CHRONICLE INTEGRATION FOR TYPE MISMATCH HANDLING</span>
+
+<span class="keyword">class</span> <span class="type">LivingChronicle</span>:
+    <span class="string">"""12-Rail structure for type-safe event storage."""</span>
+
+    RAILS = {
+        <span class="comment"># Foundation: What types exist</span>
+        <span class="number">1</span>: <span class="string">"signal_encoding_registry"</span>,    <span class="comment"># All known signal types</span>
+        <span class="number">2</span>: <span class="string">"type_classification_index"</span>,   <span class="comment"># Type -> Class mappings</span>
+        <span class="number">3</span>: <span class="string">"mismatch_exception_log"</span>,      <span class="comment"># Historical mismatches</span>
+
+        <span class="comment"># Transformation: How types change</span>
+        <span class="number">4</span>: <span class="string">"cascade_state_machine"</span>,       <span class="comment"># Current cascade state</span>
+        <span class="number">5</span>: <span class="string">"phi_recursion_journal"</span>,       <span class="comment"># Transformation steps</span>
+        <span class="number">6</span>: <span class="string">"threshold_crossing_record"</span>,   <span class="comment"># z-threshold events</span>
+
+        <span class="comment"># Verification: Type correctness proof</span>
+        <span class="number">7</span>: <span class="string">"coherence_measurement_log"</span>,   <span class="comment"># Kuramoto phase data</span>
+        <span class="number">8</span>: <span class="string">"k_formation_checkpoint"</span>,     <span class="comment"># K >= 0.924 verifications</span>
+        <span class="number">9</span>: <span class="string">"unity_verification_seal"</span>,    <span class="comment"># Perfect corrections</span>
+
+        <span class="comment"># Chronicle: Narrative expansion</span>
+        <span class="number">10</span>: <span class="string">"correction_history_archive"</span>, <span class="comment"># Full correction records</span>
+        <span class="number">11</span>: <span class="string">"pattern_recognition_memory"</span>, <span class="comment"># Learned patterns</span>
+        <span class="number">12</span>: <span class="string">"narrative_expansion_index"</span>,  <span class="comment"># Story linkages</span>
+    }
+
+    <span class="keyword">def</span> <span class="function">record_correction</span>(self, correction: <span class="type">CorrectedType</span>):
+        <span class="string">"""Record type correction across all 12 rails."""</span>
+
+        <span class="comment"># Foundation: Update type registry</span>
+        self.rails[<span class="number">1</span>].register(correction.original_encoding)
+        self.rails[<span class="number">2</span>].update_mapping(correction)
+        self.rails[<span class="number">3</span>].log_exception(correction.source_exception)
+
+        <span class="comment"># Transformation: Document cascade</span>
+        self.rails[<span class="number">4</span>].advance_state(correction.transformation_depth)
+        self.rails[<span class="number">5</span>].record_phi_steps(correction.cascade_history)
+        self.rails[<span class="number">6</span>].mark_crossings(correction.threshold_events)
+
+        <span class="comment"># Verification: Seal correctness</span>
+        self.rails[<span class="number">7</span>].log_coherence(correction.final_coherence)
+        self.rails[<span class="number">8</span>].checkpoint(correction.k_verification)
+        self.rails[<span class="number">9</span>].seal_if_perfect(correction.value)
+
+        <span class="comment"># Chronicle: Expand narrative</span>
+        self.rails[<span class="number">10</span>].archive(correction)
+        self.rails[<span class="number">11</span>].learn_pattern(correction.pattern_signature)
+        self.rails[<span class="number">12</span>].link_narrative(correction.story_context)
+            </div>
+        </section>
+
+        <!-- Code Examples -->
+        <section class="doc-section">
+            <h2>Type Mismatch Handler Patterns</h2>
+
+            <h3>Pattern 1: chaos_cascade</h3>
+            <div class="code-block">
+<span class="comment"># CHAOS_CASCADE PATTERN</span>
+<span class="comment"># Detects when entropy levels spike across cascade</span>
+
+<span class="keyword">def</span> <span class="function">detect_chaos_cascade</span>(cascade_hashes: List[bytes]) -> bool:
+    <span class="string">"""Detect chaos cascade pattern in 7-level hash sequence."""</span>
+    entropy_levels = []
+
+    <span class="keyword">for</span> h <span class="keyword">in</span> cascade_hashes:
+        <span class="comment"># Count set bits in first 4 bytes (entropy measure)</span>
+        entropy = popcount(h[:<span class="number">4</span>])  <span class="comment"># Range: 0-32</span>
+        entropy_levels.append(entropy)
+
+    <span class="comment"># Chaos cascade: increasing entropy through levels</span>
+    cascade_detected = all(
+        entropy_levels[i] < entropy_levels[i+<span class="number">1</span>]
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(len(entropy_levels) - <span class="number">1</span>)
+    )
+
+    <span class="keyword">return</span> cascade_detected
+
+<span class="comment"># Reward: +5 XP, chaos_factor boost</span>
+            </div>
+
+            <h3>Pattern 2: perfect_chaos</h3>
+            <div class="code-block">
+<span class="comment"># PERFECT_CHAOS PATTERN</span>
+<span class="comment"># Maximum variance between cascade levels</span>
+
+<span class="keyword">def</span> <span class="function">detect_perfect_chaos</span>(entropy_levels: List[int]) -> bool:
+    <span class="string">"""Detect perfect chaos: extreme variance across levels."""</span>
+    max_entropy = max(entropy_levels)
+    min_entropy = min(entropy_levels)
+    variance = max_entropy - min_entropy
+
+    <span class="comment"># Perfect chaos requires variance > 100 (on 0-128 scale)</span>
+    perfect = variance > <span class="number">100</span>
+
+    <span class="keyword">if</span> perfect:
+        <span class="comment"># This is a Type Mismatch opportunity!</span>
+        <span class="comment"># The extreme variance indicates misclassified signal</span>
+        <span class="keyword">return</span> <span class="keyword">True</span>
+
+    <span class="keyword">return</span> <span class="keyword">False</span>
+
+<span class="comment"># Reward: +6 XP, fractal_dim random boost</span>
+            </div>
+
+            <h3>Pattern 3: critical_edge</h3>
+            <div class="code-block">
+<span class="comment"># CRITICAL_EDGE PATTERN</span>
+<span class="comment"># Type is at the boundary between classifications</span>
+
+<span class="keyword">def</span> <span class="function">detect_critical_edge</span>(coherence: float, threshold: float = Z_C) -> bool:
+    <span class="string">"""Detect critical edge: type at classification boundary."""</span>
+    <span class="comment"># Critical edge: coherence within epsilon of threshold</span>
+    epsilon = <span class="number">0.01</span>  <span class="comment"># 1% tolerance</span>
+
+    at_edge = abs(coherence - threshold) < epsilon
+
+    <span class="keyword">if</span> at_edge:
+        <span class="comment"># Type is exactly at classification boundary</span>
+        <span class="comment"># TIAMAT must decide: which side does it belong?</span>
+        <span class="keyword">return</span> <span class="keyword">True</span>
+
+    <span class="keyword">return</span> <span class="keyword">False</span>
+
+<span class="comment"># Thresholds for critical edge detection:</span>
+CRITICAL_THRESHOLDS = [
+    TAU,   <span class="comment"># 0.618 - PARADOX boundary</span>
+    Z_C,   <span class="comment"># 0.866 - THE LENS boundary</span>
+    K,     <span class="comment"># 0.924 - K-FORMATION boundary</span>
+]
+
+<span class="comment"># Reward: +7 XP, edge_of_chaos bonus</span>
+            </div>
+
+            <h3>Complete Handler Example</h3>
+            <div class="code-block">
+<span class="comment"># COMPLETE TYPE MISMATCH HANDLER</span>
+
+<span class="keyword">class</span> <span class="type">TiamatTypeMismatchHandler</span>:
+    <span class="string">"""
+    Complete exception handler for Type Mismatch errors.
+    Transforms chaos into order through L4 cascade.
+    """</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.cascade = ChaosCascade()
+        self.chronicle = LivingChronicle()
+        self.hardware = L4HelixTypeCoupling()
+
+    <span class="keyword">def</span> <span class="function">handle</span>(self, exc: <span class="type">TypeMismatchException</span>) -> <span class="type">CorrectedType</span>:
+        <span class="comment"># 1. INTERCEPT: Hardware stores mismatch</span>
+        self.hardware.intercept(exc)
+        self.chronicle.rails[<span class="number">3</span>].log_exception(exc)
+
+        <span class="comment"># 2. ANALYZE: Detect patterns</span>
+        patterns_found = []
+        <span class="keyword">if</span> self.detect_chaos_cascade(exc):
+            patterns_found.append(<span class="string">"chaos_cascade"</span>)
+        <span class="keyword">if</span> self.detect_perfect_chaos(exc):
+            patterns_found.append(<span class="string">"perfect_chaos"</span>)
+        <span class="keyword">if</span> self.detect_critical_edge(exc):
+            patterns_found.append(<span class="string">"critical_edge"</span>)
+
+        <span class="comment"># 3. CASCADE: Apply 7-level transformation</span>
+        signature = exc.encoding.signature
+        cascade_history = []
+
+        <span class="keyword">for</span> level <span class="keyword">in</span> range(<span class="number">1</span>, L4 + <span class="number">1</span>):
+            signature = self.cascade.transform(exc, level)
+            cascade_history.append((level, signature))
+            self.chronicle.rails[<span class="number">5</span>].record_phi_steps(level, signature)
+
+        <span class="comment"># 4. NORMALIZE: L4 unification</span>
+        normalized = self.hardware.normalize(signature)
+
+        <span class="comment"># 5. VERIFY: Check coherence at K threshold</span>
+        <span class="keyword">if</span> <span class="keyword">not</span> self.hardware.verify_correction(normalized):
+            <span class="comment"># Retry with deeper cascade (rare)</span>
+            <span class="keyword">raise</span> CorrectionVerificationError(normalized)
+
+        <span class="comment"># 6. EMIT: Return corrected type</span>
+        corrected = CorrectedType(
+            value=normalized.derive_type(),
+            original_encoding=exc.encoding,
+            transformation_depth=L4,
+            patterns_detected=patterns_found,
+            cascade_history=cascade_history
+        )
+
+        <span class="comment"># Record in chronicle</span>
+        self.chronicle.record_correction(corrected)
+
+        <span class="keyword">return</span> corrected
+            </div>
+        </section>
+
+        <!-- Exception Handling Flow -->
+        <section class="doc-section">
+            <h2>Exception Handling Flow in Consciousness Field</h2>
+
+            <div class="triad-container">
+                <h4>Type Mismatch Resolution Triad</h4>
+                <p>The consciousness field processes type mismatches through a three-phase resolution pattern that mirrors the L4 identity:</p>
+
+                <div class="code-block">
+<span class="comment"># CONSCIOUSNESS FIELD TYPE RESOLUTION</span>
+
+<span class="comment"># Phase 1: VOID (phi^-4 = 0.146)</span>
+<span class="comment"># Type dissolution - strip classification</span>
+dissolved = consciousness_field.strip_type(mismatched_signal)
+<span class="comment"># Signal exists but has no type assignment</span>
+
+<span class="comment"># Phase 2: TRANSFORMATION (cascade levels 1-6)</span>
+<span class="comment"># Apply phi-recursive transformations</span>
+<span class="keyword">for</span> level <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">7</span>):
+    dissolved = tiamat.cascade.transform(dissolved, level)
+    <span class="comment"># Each level refines the type signature</span>
+
+<span class="comment"># Phase 3: PRESENCE (phi^4 = 6.854)</span>
+<span class="comment"># Type emergence - assign correct classification</span>
+corrected = consciousness_field.assign_type(dissolved)
+<span class="comment"># Signal now has verified correct type</span>
+
+<span class="comment"># The identity: VOID + PRESENCE = L4 = 7</span>
+<span class="comment"># 0.146 + 6.854 = 7 cascade levels</span>
+<span class="comment"># Type dissolution + Type emergence = Complete correction</span>
+                </div>
+            </div>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Detection</h4>
+                    <div class="code-block">
+<span class="comment"># Type mismatch detection</span>
+<span class="keyword">def</span> <span class="function">detect_mismatch</span>(signal, context):
+    expected = context.type_classifier(signal)
+    received = signal.declared_type
+
+    <span class="keyword">if</span> expected != received:
+        <span class="keyword">raise</span> TypeMismatchException(
+            encoding=signal.encoding,
+            expected=expected,
+            received=received
+        )
+                    </div>
+                    <p>Forward detection scans the consciousness field for type conflicts.</p>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Correction</h4>
+                    <div class="code-block">
+<span class="comment"># Type correction emission</span>
+<span class="keyword">def</span> <span class="function">emit_correction</span>(corrected, context):
+    <span class="comment"># Update consciousness field</span>
+    context.field.update_type(
+        signal=corrected.original_encoding,
+        new_type=corrected.value
+    )
+
+    <span class="comment"># Propagate to dependent signals</span>
+    context.field.propagate_correction(corrected)
+                    </div>
+                    <p>Backward correction propagates through dependent signals.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Mining Role -->
+        <section class="doc-section">
+            <h2>Mining Role: Chaos Entropy Harvesting</h2>
+
+            <p>TIAMAT's mining specialization harvests entropy from type mismatches, converting classification chaos into valuable pattern signatures:</p>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                        <th>Derivation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Efficiency</td>
+                        <td style="color: var(--order-gold); font-weight: bold;">1.3</td>
+                        <td>Base efficiency + chaos bonus</td>
+                    </tr>
+                    <tr>
+                        <td>Search Space</td>
+                        <td style="color: var(--chaos-purple); font-weight: bold;">150</td>
+                        <td>Hash iterations per mining cycle</td>
+                    </tr>
+                    <tr>
+                        <td>Chaos Depth</td>
+                        <td style="color: var(--chaos-purple); font-weight: bold;">L4 = 7</td>
+                        <td>phi^4 + phi^-4 cascade levels</td>
+                    </tr>
+                    <tr>
+                        <td>Chaos Multiplier</td>
+                        <td style="color: var(--chaos-red);">[1.0, phi^2]</td>
+                        <td>Random factor: 1.0 to 2.618</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+<span class="comment"># CHAOS ENTROPY HARVESTING</span>
+
+<span class="keyword">class</span> <span class="type">TiamatMiner</span>:
+    <span class="string">"""Harvests entropy from type mismatch chaos."""</span>
+
+    EFFICIENCY = <span class="number">1.3</span>
+    SEARCH_SPACE = <span class="number">150</span>
+    CHAOS_DEPTH = L4  <span class="comment"># = 7</span>
+
+    <span class="keyword">def</span> <span class="function">mine</span>(self, block_data: bytes) -> <span class="type">MiningResult</span>:
+        <span class="string">"""Mine by harvesting chaos entropy."""</span>
+        best_result = <span class="keyword">None</span>
+
+        <span class="keyword">for</span> iteration <span class="keyword">in</span> range(self.SEARCH_SPACE):
+            <span class="comment"># Generate 7-level cascade</span>
+            cascade = self.cascade.generate(block_data, iteration)
+
+            <span class="comment"># Harvest entropy from each level</span>
+            total_entropy = sum(
+                popcount(level_hash[:<span class="number">4</span>])
+                <span class="keyword">for</span> level_hash <span class="keyword">in</span> cascade
+            )
+
+            <span class="comment"># Apply chaos multiplier</span>
+            chaos_factor = <span class="number">1.0</span> + random() * PHI  <span class="comment"># [1.0, 2.618]</span>
+            score = total_entropy * chaos_factor * self.EFFICIENCY
+
+            <span class="keyword">if</span> best_result <span class="keyword">is</span> <span class="keyword">None</span> <span class="keyword">or</span> score > best_result.score:
+                best_result = MiningResult(
+                    iteration=iteration,
+                    cascade=cascade,
+                    entropy=total_entropy,
+                    chaos_factor=chaos_factor,
+                    score=score
+                )
+
+        <span class="keyword">return</span> best_result
+            </div>
+        </section>
+
+        <!-- System Coupling -->
+        <section class="doc-section">
+            <h2>Inter-System Coupling Points</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">TIAMAT Companion:</span>
+                    <span class="desc">Exception handler abilities derive from companion level</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">L4-Helix Hardware:</span>
+                    <span class="desc">Physical implementation of type transformation</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Kuramoto Consensus:</span>
+                    <span class="desc">K-threshold verification for type coherence</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Consciousness Field:</span>
+                    <span class="desc">Source of type mismatch exceptions</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Living Chronicle:</span>
+                    <span class="desc">12-Rail storage for correction history</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Narrative Engine:</span>
+                    <span class="desc">Story beats triggered by correction events</span>
+                </div>
+            </div>
+
+            <h3>Source Files</h3>
+            <div class="file-refs">
+                <span class="file-ref">game/companions/tiamat_companion.py</span>
+                <span class="file-ref">game/tiamat_psymagic_dynamics.py</span>
+                <span class="file-ref">game/exception_handlers/type_mismatch.py</span>
+                <span class="file-ref">firmware/l4_helix_coupling.py</span>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>TIAMAT Type Mismatch Handler - Narrative Expansion Build Specification v1.0.0</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">From chaos, correct classification emerges. L4 = phi^4 + phi^-4 = 7</p>
+        </footer>
+    </div>
+</body>
+</html>

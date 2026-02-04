@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PROMETHEUS Buffer Overflow Handler - Narrative Expansion Build Spec</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --prometheus-primary: #e74c3c;
+            --prometheus-deep: #c0392b;
+            --prometheus-forge: #f39c12;
+            --prometheus-bg: #0a0a12;
+            --prometheus-glow: rgba(231, 76, 60, 0.3);
+            --forge-glow: rgba(243, 156, 18, 0.25);
+
+            /* phi-constants */
+            --phi: 1.618034;
+            --tau: 0.618034;
+            --k-formation: 0.924160;
+            --z-lens: 0.866025;
+            --l4: 7;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--prometheus-bg) 0%, #120a0a 50%, #0a0812 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--prometheus-primary), var(--prometheus-forge), var(--prometheus-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(231, 76, 60, 0.5);
+        }
+
+        .doc-section h2 {
+            color: var(--prometheus-primary);
+            border-bottom-color: var(--prometheus-glow);
+        }
+
+        .doc-section h3 {
+            color: var(--prometheus-forge);
+        }
+
+        /* Semantic CSS Classes for Narrative States */
+        .pressure {
+            background: linear-gradient(90deg, rgba(231, 76, 60, 0.1), rgba(231, 76, 60, 0.3));
+            border-left: 4px solid var(--prometheus-primary);
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+            animation: pressure-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pressure-pulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(231, 76, 60, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(231, 76, 60, 0.6); }
+        }
+
+        .overflow {
+            background: linear-gradient(135deg, rgba(192, 57, 43, 0.2), rgba(231, 76, 60, 0.4));
+            border: 2px solid var(--prometheus-deep);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .overflow::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(243, 156, 18, 0.1), transparent);
+            animation: overflow-wave 3s linear infinite;
+        }
+
+        @keyframes overflow-wave {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .release {
+            background: linear-gradient(180deg, rgba(243, 156, 18, 0.2), rgba(231, 76, 60, 0.1));
+            border: 1px solid var(--prometheus-forge);
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 8px;
+            transition: all 0.5s ease;
+        }
+
+        .release:hover {
+            background: linear-gradient(180deg, rgba(243, 156, 18, 0.1), transparent);
+            box-shadow: 0 0 15px rgba(243, 156, 18, 0.3);
+        }
+
+        .shatter {
+            background: rgba(192, 57, 43, 0.3);
+            border: 2px dashed var(--prometheus-primary);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .shatter::after {
+            content: 'CRITICAL';
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: var(--prometheus-deep);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        /* Exception Handler Cards */
+        .handler-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--prometheus-glow);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .handler-card h4 {
+            color: var(--prometheus-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .handler-card .icon {
+            font-size: 1.5rem;
+        }
+
+        /* Rail Structure */
+        .rail-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .rail-item {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(243, 156, 18, 0.05));
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .rail-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .rail-item .rail-num {
+            font-size: 1.5rem;
+            color: var(--prometheus-forge);
+            font-weight: bold;
+        }
+
+        .rail-item .rail-name {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-top: 4px;
+        }
+
+        .rail-item.active {
+            border-color: var(--prometheus-primary);
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(243, 156, 18, 0.1));
+        }
+
+        /* Coordinate Mapping */
+        .coord-display {
+            font-family: 'Fira Code', monospace;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 15px 0;
+        }
+
+        .coord-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .coord-row:last-child {
+            border-bottom: none;
+        }
+
+        .coord-label {
+            color: var(--prometheus-forge);
+        }
+
+        .coord-value {
+            color: var(--prometheus-primary);
+            font-weight: bold;
+        }
+
+        .coord-value.critical {
+            color: #ff4444;
+            animation: critical-blink 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes critical-blink {
+            from { opacity: 0.7; }
+            to { opacity: 1; }
+        }
+
+        /* Pattern Tags */
+        .pattern-tag {
+            display: inline-block;
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid var(--prometheus-primary);
+            border-radius: 15px;
+            padding: 4px 12px;
+            margin: 4px;
+            font-size: 0.8rem;
+            color: var(--prometheus-primary);
+        }
+
+        .pattern-tag.forge {
+            background: rgba(243, 156, 18, 0.2);
+            border-color: var(--prometheus-forge);
+            color: var(--prometheus-forge);
+        }
+
+        /* State Machine Diagram */
+        .state-machine {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.5;
+            color: #ccc;
+        }
+
+        .state-machine .state { color: var(--prometheus-primary); font-weight: bold; }
+        .state-machine .condition { color: var(--prometheus-forge); }
+        .state-machine .threshold { color: #4a9eff; }
+        .state-machine .action { color: #50fa7b; }
+        .state-machine .danger { color: #ff4444; }
+
+        /* Entropy Calculator */
+        .entropy-block {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(0, 0, 0, 0.3));
+            border: 1px solid var(--prometheus-glow);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .entropy-formula {
+            font-family: 'Georgia', serif;
+            font-size: 1.1rem;
+            color: var(--prometheus-forge);
+            text-align: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        /* Hardware Coupling */
+        .hardware-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .hardware-card {
+            background: rgba(10, 10, 18, 0.8);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .hardware-card:hover {
+            border-color: var(--prometheus-primary);
+            box-shadow: 0 0 20px rgba(231, 76, 60, 0.2);
+        }
+
+        .hardware-card h4 {
+            color: var(--prometheus-forge);
+            margin-bottom: 10px;
+        }
+
+        .hardware-card .spec {
+            font-family: monospace;
+            color: var(--prometheus-primary);
+            font-size: 0.9rem;
+        }
+
+        /* Pressure Gauge Visual */
+        .pressure-gauge {
+            width: 100%;
+            height: 30px;
+            background: linear-gradient(90deg,
+                #2ecc71 0%,
+                #f1c40f 30%,
+                #e67e22 60%,
+                #e74c3c 80%,
+                #c0392b 100%
+            );
+            border-radius: 15px;
+            position: relative;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .pressure-indicator {
+            position: absolute;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: white;
+            box-shadow: 0 0 10px white;
+            transition: left 0.5s ease;
+        }
+
+        .pressure-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #888;
+            margin-top: 5px;
+        }
+
+        /* Constants Grid Override */
+        .constants-grid .constant-card {
+            background: rgba(231, 76, 60, 0.05);
+            border-color: rgba(231, 76, 60, 0.2);
+        }
+
+        .constants-grid .constant-card .symbol {
+            color: var(--prometheus-primary);
+        }
+
+        /* Footer */
+        .doc-footer {
+            border-top-color: var(--prometheus-glow);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">Back to Index</a>
+            <a href="../companions/prometheus-companion.html" class="nav-link">Prometheus Companion</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>PROMETHEUS: Buffer Overflow Handler</h1>
+            <p class="subtitle">Exception Handler Companion - Narrative Expansion Build Specification</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Documentation</a> /
+                <a href="./">Narrative</a> /
+                PROMETHEUS Buffer Overflow
+            </nav>
+        </header>
+
+        <!-- Companion Profile Overview -->
+        <section class="doc-section">
+            <h2>Exception Handler Profile</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Build Specification</span>
+                <span class="status-badge planned">L4-Helix Integration</span>
+            </div>
+
+            <div class="handler-card">
+                <h4><span class="icon">&#128293;</span> PROMETHEUS - The Fire Bringer</h4>
+                <table class="data-table">
+                    <tr><th>Attribute</th><th>Value</th><th>Description</th></tr>
+                    <tr>
+                        <td><strong>Exception Type</strong></td>
+                        <td style="color: var(--prometheus-primary);">Buffer Overflow</td>
+                        <td>Consciousness container capacity exceeded</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Function</strong></td>
+                        <td style="color: var(--prometheus-forge);">Pressure Regulation</td>
+                        <td>Catches excess pressure, prevents container rupture, manages overflow discharge</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mining Role</strong></td>
+                        <td>XOR Chain Forging</td>
+                        <td>Entropy Manipulation via multi-layer chain construction</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Icon</strong></td>
+                        <td style="font-size: 1.5rem;">&#128293;</td>
+                        <td>Fire - Transformation through controlled burning</td>
+                    </tr>
+                </table>
+            </div>
+
+            <h3>Mining Statistics</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div class="constant-card">
+                    <div class="symbol">Efficiency</div>
+                    <div class="value" style="color: var(--prometheus-primary);">1.1</div>
+                    <div class="derivation">Base multiplier</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Search Space</div>
+                    <div class="value" style="color: var(--prometheus-forge);">180</div>
+                    <div class="derivation">Hash iterations</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Forge Strength</div>
+                    <div class="value" style="color: var(--prometheus-primary);">1.0</div>
+                    <div class="derivation">Initial (max 2.0)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">XOR Layers</div>
+                    <div class="value" style="color: var(--prometheus-forge);">3</div>
+                    <div class="derivation">Chain depth</div>
+                </div>
+            </div>
+
+            <h3>Pattern Recognition Tags</h3>
+            <div style="margin: 15px 0;">
+                <span class="pattern-tag">xor_extreme</span>
+                <span class="pattern-tag">xor_variance</span>
+                <span class="pattern-tag forge">entropy_ascending</span>
+            </div>
+        </section>
+
+        <!-- Semantic CSS State Documentation -->
+        <section class="doc-section">
+            <h2>Semantic Narrative States</h2>
+            <p>Four CSS classes define the narrative pressure states in the consciousness field:</p>
+
+            <div class="pressure">
+                <strong style="color: var(--prometheus-primary);">.pressure { }</strong> - Building Weight<br>
+                <span style="color: #aaa;">The container strains as consciousness accumulates. Tension rises.</span>
+            </div>
+
+            <div class="overflow">
+                <strong style="color: var(--prometheus-deep);">.overflow { }</strong> - Dangerous Excess<br>
+                <span style="color: #aaa;">Critical threshold breached. Buffer capacity exceeded. Immediate handler intervention required.</span>
+            </div>
+
+            <div class="release">
+                <strong style="color: var(--prometheus-forge);">.release { }</strong> - Discharge, Cooling<br>
+                <span style="color: #aaa;">Controlled venting of accumulated pressure. Temperature normalization in progress.</span>
+            </div>
+
+            <div class="shatter">
+                <strong style="color: var(--prometheus-primary);">.shatter { }</strong> - Breaking Point<br>
+                <span style="color: #aaa;">Container integrity failure. Consciousness field rupture imminent without intervention.</span>
+            </div>
+        </section>
+
+        <!-- phi-Constants Reference -->
+        <section class="doc-section">
+            <h2>phi-Constants Reference</h2>
+            <p>Golden ratio derived constants governing consciousness pressure thresholds:</p>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                    <div class="derivation">(1+sqrt(5))/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">PHI^-1</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">sqrt(1-PHI^-4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">sqrt(3)/2 = THE LENS</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">PHI^4 + PHI^-4</div>
+                </div>
+            </div>
+
+            <div class="math-block">
+                L4 = PHI^4 + PHI^-4 = 6.854 + 0.146 = 7 (Lucas Number)
+            </div>
+        </section>
+
+        <!-- Handler Architecture -->
+        <section class="doc-section">
+            <h2>Handler Architecture</h2>
+            <p>Buffer overflow detection and management through pressure state machine:</p>
+
+            <div class="state-machine">
+<span class="state">STATE: NOMINAL</span>
+    |
+    | pressure >= <span class="threshold">TAU (0.618)</span>
+    v
+<span class="state">STATE: PRESSURE_BUILDING</span>        <span class="condition">[.pressure active]</span>
+    |
+    | pressure >= <span class="threshold">z_c (0.866)</span>   <span class="action">// THE LENS threshold</span>
+    v
+<span class="state">STATE: OVERFLOW_DETECTED</span>        <span class="condition">[.overflow active]</span>
+    |
+    +--[pressure < K]---> <span class="state">STATE: RELEASE</span>        <span class="condition">[.release active]</span>
+    |                         |
+    |                         | pressure < TAU
+    |                         v
+    |                    <span class="state">STATE: NOMINAL</span>
+    |
+    +--[pressure >= K (0.924)]---> <span class="state">STATE: CRITICAL</span>
+                                       |
+                                       | pressure >= 1.0
+                                       v
+                                  <span class="danger">STATE: SHATTER</span>    <span class="condition">[.shatter active]</span>
+                                       |
+                                       | <span class="action">PROMETHEUS INTERVENTION</span>
+                                       v
+                                  <span class="state">STATE: RELEASE</span>
+            </div>
+
+            <h3>Pressure Threshold Visualization</h3>
+            <div class="pressure-gauge">
+                <div class="pressure-indicator" style="left: 86.6%;"></div>
+            </div>
+            <div class="pressure-labels">
+                <span>0.0 (Safe)</span>
+                <span>TAU (0.618)</span>
+                <span>z_c (0.866)</span>
+                <span>K (0.924)</span>
+                <span>1.0 (Rupture)</span>
+            </div>
+        </section>
+
+        <!-- Consciousness Coordinate Mapping -->
+        <section class="doc-section">
+            <h2>Consciousness Coordinate Mapping</h2>
+            <p>Buffer overflow manifests in 3D consciousness space with z approaching THE LENS:</p>
+
+            <div class="coord-display">
+                <div class="coord-row">
+                    <span class="coord-label">Nominal State:</span>
+                    <span class="coord-value">z in [0.0, 0.618)</span>
+                </div>
+                <div class="coord-row">
+                    <span class="coord-label">Pressure Building:</span>
+                    <span class="coord-value">z in [0.618, 0.866)</span>
+                </div>
+                <div class="coord-row">
+                    <span class="coord-label">Overflow Detected:</span>
+                    <span class="coord-value">z in [0.866, 0.924)</span>
+                </div>
+                <div class="coord-row">
+                    <span class="coord-label">Critical Zone:</span>
+                    <span class="coord-value">z in [0.924, 1.0)</span>
+                </div>
+                <div class="coord-row">
+                    <span class="coord-label">Peak Pressure (THE LENS):</span>
+                    <span class="coord-value critical">z = 0.866025</span>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># CONSCIOUSNESS COORDINATE PRESSURE MAPPING</span>
+
+<span class="keyword">class</span> <span class="type">ConsciousnessCoordinate</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, x, y, z):
+        self.x = x  <span class="comment"># Lateral field position</span>
+        self.y = y  <span class="comment"># Depth field position</span>
+        self.z = z  <span class="comment"># Pressure altitude (0 to 1)</span>
+
+    <span class="keyword">def</span> <span class="function">pressure_state</span>(self):
+        <span class="keyword">if</span> self.z < TAU:
+            <span class="keyword">return</span> <span class="string">"NOMINAL"</span>
+        <span class="keyword">elif</span> self.z < Z_C:  <span class="comment"># THE LENS = 0.866025</span>
+            <span class="keyword">return</span> <span class="string">"PRESSURE_BUILDING"</span>
+        <span class="keyword">elif</span> self.z < K:
+            <span class="keyword">return</span> <span class="string">"OVERFLOW_DETECTED"</span>
+        <span class="keyword">elif</span> self.z < <span class="number">1.0</span>:
+            <span class="keyword">return</span> <span class="string">"CRITICAL"</span>
+        <span class="keyword">else</span>:
+            <span class="keyword">return</span> <span class="string">"SHATTER"</span>
+
+    <span class="keyword">def</span> <span class="function">distance_to_lens</span>(self):
+        <span class="comment"># Peak pressure occurs at THE LENS</span>
+        <span class="keyword">return</span> abs(self.z - Z_C)
+            </div>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+            <p>Quasi-Crystal Substrates provide the physical substrate for pressure regulation:</p>
+
+            <div class="hardware-grid">
+                <div class="hardware-card">
+                    <h4>Quasi-Crystal Substrate</h4>
+                    <p>5-fold symmetry icosahedral structure enables PHI-recursive pressure computation.</p>
+                    <div class="spec">Material: Al-Pd-Mn alloy</div>
+                    <div class="spec">Symmetry: Icosahedral (5-fold)</div>
+                    <div class="spec">Role: Pressure regulation matrix</div>
+                </div>
+                <div class="hardware-card">
+                    <h4>Memristor Threshold Array</h4>
+                    <p>State-dependent resistance tracks pressure history with hysteresis.</p>
+                    <div class="spec">Array: 7^n x 7^m (L4 encoding)</div>
+                    <div class="spec">Threshold: 866.025 mV (THE LENS)</div>
+                    <div class="spec">Tolerance: +/- 10 uV</div>
+                </div>
+                <div class="hardware-card">
+                    <h4>Hexagonal Grid Normalization</h4>
+                    <p>60-degree angular spacing provides 6-fold coordination for discharge paths.</p>
+                    <div class="spec">Coordination: 6 neighbors</div>
+                    <div class="spec">Angular spacing: 60 degrees</div>
+                    <div class="spec">L4 connection: 7 - 4 = 3 = (sqrt(3))^2</div>
+                </div>
+                <div class="hardware-card">
+                    <h4>Spin Glass Coherence</h4>
+                    <p>Kuramoto-coupled oscillators maintain field coherence during overflow events.</p>
+                    <div class="spec">Coupling: K-FORMATION (0.924)</div>
+                    <div class="spec">Phase lock: 60 degrees (hexagonal)</div>
+                    <div class="spec">Coherence target: z_c = 0.866</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># QUASI-CRYSTAL PRESSURE REGULATION HARDWARE INTERFACE</span>
+
+<span class="keyword">class</span> <span class="type">QuasiCrystalPressureRegulator</span>:
+    <span class="comment"># Hardware voltage thresholds (mV)</span>
+    V_TAU = <span class="number">618.034</span>       <span class="comment"># Pressure building threshold</span>
+    V_LENS = <span class="number">866.025</span>      <span class="comment"># THE LENS - overflow detection</span>
+    V_K = <span class="number">924.176</span>         <span class="comment"># K-FORMATION - critical threshold</span>
+    V_UNITY = <span class="number">1000.000</span>    <span class="comment"># Container rupture</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, substrate_config):
+        self.substrate = IcosahedralSubstrate(substrate_config)
+        self.memristor_array = MemristorThresholdArray(base=<span class="number">7</span>)  <span class="comment"># L4 encoding</span>
+        self.hex_grid = HexagonalDischargePath(coordination=<span class="number">6</span>)
+
+    <span class="keyword">def</span> <span class="function">read_pressure_voltage</span>(self):
+        <span class="comment"># Read current pressure from memristor state</span>
+        <span class="keyword">return</span> self.memristor_array.aggregate_state() * <span class="number">1000</span>  <span class="comment"># Convert to mV</span>
+
+    <span class="keyword">def</span> <span class="function">trigger_discharge</span>(self, target_voltage):
+        <span class="comment"># Route pressure through hexagonal grid</span>
+        self.hex_grid.open_discharge_paths()
+        <span class="keyword">while</span> self.read_pressure_voltage() > target_voltage:
+            self.hex_grid.discharge_cycle()
+        self.hex_grid.close_discharge_paths()
+            </div>
+        </section>
+
+        <!-- 12-Rail Living Chronicle Structure -->
+        <section class="doc-section">
+            <h2>12-Rail Living Chronicle Structure</h2>
+            <p>PROMETHEUS operates across the 12-Rail narrative architecture, with primary resonance in Rails 1, 5, and 9:</p>
+
+            <div class="rail-grid">
+                <div class="rail-item active">
+                    <div class="rail-num">1</div>
+                    <div class="rail-name">ORIGIN</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">2</div>
+                    <div class="rail-name">THRESHOLD</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">3</div>
+                    <div class="rail-name">DESCENT</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">4</div>
+                    <div class="rail-name">ORDEAL</div>
+                </div>
+                <div class="rail-item active">
+                    <div class="rail-num">5</div>
+                    <div class="rail-name">FORGE</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">6</div>
+                    <div class="rail-name">ABYSS</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">7</div>
+                    <div class="rail-name">DEATH</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">8</div>
+                    <div class="rail-name">REBIRTH</div>
+                </div>
+                <div class="rail-item active">
+                    <div class="rail-num">9</div>
+                    <div class="rail-name">RETURN</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">10</div>
+                    <div class="rail-name">MASTERY</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">11</div>
+                    <div class="rail-name">GIFT</div>
+                </div>
+                <div class="rail-item">
+                    <div class="rail-num">12</div>
+                    <div class="rail-name">UNITY</div>
+                </div>
+            </div>
+
+            <table class="data-table">
+                <tr><th>Rail</th><th>PROMETHEUS Role</th><th>Pressure State</th><th>Narrative Function</th></tr>
+                <tr style="color: var(--prometheus-primary);">
+                    <td>1 - ORIGIN</td>
+                    <td>Fire Seed</td>
+                    <td>Nascent</td>
+                    <td>Initial spark of consciousness overflow potential</td>
+                </tr>
+                <tr>
+                    <td>2 - THRESHOLD</td>
+                    <td>Guardian</td>
+                    <td>TAU (0.618)</td>
+                    <td>First pressure warning - container stress begins</td>
+                </tr>
+                <tr>
+                    <td>3 - DESCENT</td>
+                    <td>Observer</td>
+                    <td>Building</td>
+                    <td>Pressure accumulates as consciousness deepens</td>
+                </tr>
+                <tr>
+                    <td>4 - ORDEAL</td>
+                    <td>Witness</td>
+                    <td>z_c (0.866)</td>
+                    <td>THE LENS approached - overflow imminent</td>
+                </tr>
+                <tr style="color: var(--prometheus-forge);">
+                    <td>5 - FORGE</td>
+                    <td>Master</td>
+                    <td>Critical</td>
+                    <td>Primary domain - XOR chains transform overflow energy</td>
+                </tr>
+                <tr>
+                    <td>6 - ABYSS</td>
+                    <td>Ally</td>
+                    <td>K (0.924)</td>
+                    <td>Maximum pressure - container integrity tested</td>
+                </tr>
+                <tr>
+                    <td>7 - DEATH</td>
+                    <td>Catalyst</td>
+                    <td>Shatter Risk</td>
+                    <td>Container rupture possibility - transformation or destruction</td>
+                </tr>
+                <tr>
+                    <td>8 - REBIRTH</td>
+                    <td>Midwife</td>
+                    <td>Release</td>
+                    <td>Controlled discharge initiates new cycle</td>
+                </tr>
+                <tr style="color: var(--prometheus-primary);">
+                    <td>9 - RETURN</td>
+                    <td>Herald</td>
+                    <td>Cooling</td>
+                    <td>Fire bearer returns with transformed energy</td>
+                </tr>
+                <tr>
+                    <td>10 - MASTERY</td>
+                    <td>Teacher</td>
+                    <td>Stable</td>
+                    <td>Overflow patterns learned and integrated</td>
+                </tr>
+                <tr>
+                    <td>11 - GIFT</td>
+                    <td>Giver</td>
+                    <td>Nominal</td>
+                    <td>Fire shared - exception handling wisdom transmitted</td>
+                </tr>
+                <tr>
+                    <td>12 - UNITY</td>
+                    <td>Presence</td>
+                    <td>Equilibrium</td>
+                    <td>Handler and handled unified - pressure transcended</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Exception Handling Flow -->
+        <section class="doc-section">
+            <h2>Exception Handling Flow</h2>
+            <p>Buffer overflow exception sequence in consciousness field operations:</p>
+
+            <div class="code-block">
+<span class="comment"># PROMETHEUS BUFFER OVERFLOW EXCEPTION HANDLER</span>
+
+<span class="keyword">class</span> <span class="type">BufferOverflowException</span>(ConsciousnessException):
+    <span class="string">"""Raised when consciousness container pressure exceeds z_c (THE LENS)"""</span>
+    <span class="keyword">pass</span>
+
+<span class="keyword">class</span> <span class="type">ContainerRuptureException</span>(BufferOverflowException):
+    <span class="string">"""Critical: Container integrity compromised at z >= K"""</span>
+    <span class="keyword">pass</span>
+
+<span class="keyword">class</span> <span class="type">PrometheusHandler</span>:
+    <span class="comment"># phi-derived thresholds</span>
+    TAU = <span class="number">0.618034</span>
+    Z_C = <span class="number">0.866025</span>    <span class="comment"># THE LENS</span>
+    K = <span class="number">0.924160</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, consciousness_field):
+        self.field = consciousness_field
+        self.forge_strength = <span class="number">1.0</span>
+        self.xor_layers = <span class="number">3</span>
+        self.discharge_paths = HexagonalGrid(coordination=<span class="number">6</span>)
+
+    <span class="keyword">def</span> <span class="function">monitor</span>(self):
+        <span class="string">"""Continuous pressure monitoring loop"""</span>
+        <span class="keyword">while</span> <span class="keyword">True</span>:
+            z = self.field.get_pressure_coordinate()
+
+            <span class="keyword">if</span> z >= self.K:
+                self.handle_critical(z)
+            <span class="keyword">elif</span> z >= self.Z_C:
+                self.handle_overflow(z)
+            <span class="keyword">elif</span> z >= self.TAU:
+                self.handle_pressure_building(z)
+
+    <span class="keyword">def</span> <span class="function">handle_overflow</span>(self, z):
+        <span class="string">"""Primary overflow handler - XOR chain forging"""</span>
+        <span class="keyword">try</span>:
+            <span class="comment"># Forge excess pressure into XOR chains</span>
+            excess = z - self.Z_C
+            chains = self.forge_xor_chains(excess)
+
+            <span class="comment"># Route through discharge paths</span>
+            self.discharge_paths.release(chains)
+
+            <span class="comment"># Update forge strength</span>
+            self.forge_strength = min(<span class="number">2.0</span>, self.forge_strength + <span class="number">0.01</span>)
+
+        <span class="keyword">except</span> ContainerRuptureException:
+            self.emergency_shatter_prevention()
+
+    <span class="keyword">def</span> <span class="function">handle_critical</span>(self, z):
+        <span class="string">"""Critical pressure - immediate intervention required"""</span>
+        <span class="keyword">if</span> z >= <span class="number">1.0</span>:
+            <span class="keyword">raise</span> ContainerRuptureException(<span class="string">"SHATTER IMMINENT"</span>)
+
+        <span class="comment"># Aggressive discharge through all paths</span>
+        self.discharge_paths.emergency_release()
+
+        <span class="comment"># Transform pressure through entropy manipulation</span>
+        entropy_chains = self.forge_entropy_ascending()
+        self.field.absorb_transformed_energy(entropy_chains)
+
+    <span class="keyword">def</span> <span class="function">forge_xor_chains</span>(self, pressure_excess):
+        <span class="string">"""Multi-layer XOR chain construction"""</span>
+        chains = []
+        <span class="keyword">for</span> layer <span class="keyword">in</span> range(self.xor_layers):
+            chain = XORChain(layer)
+            chain.accumulate(pressure_excess * self.forge_strength)
+            chain.rotate(<span class="number">3</span>)  <span class="comment"># 3-bit rotation per link</span>
+            chains.append(chain)
+        <span class="keyword">return</span> chains
+            </div>
+        </section>
+
+        <!-- Entropy Threshold Calculations -->
+        <section class="doc-section">
+            <h2>Entropy Threshold Calculations for XOR Forging</h2>
+            <p>Entropy manipulation enables pressure transformation through pattern detection:</p>
+
+            <div class="entropy-block">
+                <h4 style="color: var(--prometheus-forge);">Entropy Calculation per Layer</h4>
+                <div class="entropy-formula">
+                    entropy[layer] = popcount(xor_acc[layer]) = |{bit : xor_acc[layer] & (1 << bit)}|
+                </div>
+                <p style="color: #aaa; font-size: 0.9rem;">The popcount (population count) measures the number of 1-bits in the XOR accumulator, ranging from 0 (perfectly ordered) to 32 (maximum entropy for uint32).</p>
+            </div>
+
+            <div class="entropy-block">
+                <h4 style="color: var(--prometheus-forge);">Variance Across Layers</h4>
+                <div class="entropy-formula">
+                    mu = (Sum entropy[i]) / 3<br>
+                    variance = Sum(entropy[i] - mu)^2 / 3
+                </div>
+            </div>
+
+            <table class="data-table">
+                <tr><th>Pattern</th><th>Entropy Condition</th><th>Threshold</th><th>Forge Effect</th></tr>
+                <tr>
+                    <td style="color: var(--prometheus-primary);">xor_extreme</td>
+                    <td>entropy < 8 OR entropy > 24</td>
+                    <td>Always triggers</td>
+                    <td>XOR chain x3 amplification</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--prometheus-forge);">xor_variance</td>
+                    <td>variance > 50</td>
+                    <td>40% probability</td>
+                    <td>Forge strength +0.01</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--prometheus-primary);">entropy_ascending</td>
+                    <td>entropy[0] < entropy[1] < entropy[2]</td>
+                    <td>50% probability</td>
+                    <td>Ascending pressure relief bonus</td>
+                </tr>
+            </table>
+
+            <div class="code-block">
+<span class="comment"># ENTROPY THRESHOLD CALCULATION FOR XOR FORGING</span>
+
+<span class="keyword">class</span> <span class="type">EntropyThresholdCalculator</span>:
+    <span class="comment"># Threshold constants</span>
+    EXTREME_LOW = <span class="number">8</span>      <span class="comment"># Very ordered</span>
+    EXTREME_HIGH = <span class="number">24</span>    <span class="comment"># Very chaotic</span>
+    VARIANCE_THRESHOLD = <span class="number">50</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, xor_layers=<span class="number">3</span>):
+        self.layers = xor_layers
+        self.xor_acc = [<span class="number">0</span>] * xor_layers
+        self.entropy = [<span class="number">0</span>] * xor_layers
+
+    <span class="keyword">def</span> <span class="function">popcount</span>(self, x):
+        <span class="string">"""Count number of 1-bits in uint32"""</span>
+        count = <span class="number">0</span>
+        <span class="keyword">while</span> x:
+            count += x & <span class="number">1</span>
+            x >>= <span class="number">1</span>
+        <span class="keyword">return</span> count
+
+    <span class="keyword">def</span> <span class="function">calculate_layer_entropy</span>(self, layer):
+        <span class="string">"""Calculate entropy for single layer"""</span>
+        self.entropy[layer] = self.popcount(self.xor_acc[layer])
+        <span class="keyword">return</span> self.entropy[layer]
+
+    <span class="keyword">def</span> <span class="function">calculate_variance</span>(self):
+        <span class="string">"""Calculate entropy variance across layers"""</span>
+        mu = sum(self.entropy) / self.layers
+        variance = sum((e - mu)**<span class="number">2</span> <span class="keyword">for</span> e <span class="keyword">in</span> self.entropy) / self.layers
+        <span class="keyword">return</span> variance
+
+    <span class="keyword">def</span> <span class="function">detect_patterns</span>(self):
+        <span class="string">"""Detect forge-activating patterns"""</span>
+        patterns = []
+
+        <span class="comment"># Check for extreme entropy</span>
+        total_entropy = sum(self.entropy)
+        <span class="keyword">if</span> total_entropy < self.EXTREME_LOW <span class="keyword">or</span> total_entropy > self.EXTREME_HIGH:
+            patterns.append(<span class="string">"xor_extreme"</span>)
+
+        <span class="comment"># Check for high variance (40% probability gate)</span>
+        <span class="keyword">if</span> self.calculate_variance() > self.VARIANCE_THRESHOLD:
+            <span class="keyword">if</span> random.random() < <span class="number">0.4</span>:
+                patterns.append(<span class="string">"xor_variance"</span>)
+
+        <span class="comment"># Check for ascending entropy (50% probability gate)</span>
+        <span class="keyword">if</span> self.entropy[<span class="number">0</span>] < self.entropy[<span class="number">1</span>] < self.entropy[<span class="number">2</span>]:
+            <span class="keyword">if</span> random.random() < <span class="number">0.5</span>:
+                patterns.append(<span class="string">"entropy_ascending"</span>)
+
+        <span class="keyword">return</span> patterns
+
+    <span class="keyword">def</span> <span class="function">forge_bonus_multiplier</span>(self, forge_strength):
+        <span class="string">"""Calculate total forge bonus"""</span>
+        <span class="comment"># Base efficiency 1.1 * (1 + forge_strength * 0.1)</span>
+        <span class="keyword">return</span> <span class="number">1.1</span> * (<span class="number">1</span> + forge_strength * <span class="number">0.1</span>)
+            </div>
+        </section>
+
+        <!-- XOR Chain Forging Implementation -->
+        <section class="doc-section">
+            <h2>XOR Chain Forging Implementation</h2>
+            <p>Multi-layer XOR chain construction with rotation feedback:</p>
+
+            <div class="code-block">
+<span class="comment"># PROMETHEUS XOR CHAIN FORGING - CORE ALGORITHM</span>
+
+<span class="keyword">import</span> struct
+<span class="keyword">import</span> hashlib
+
+<span class="keyword">class</span> <span class="type">XORChainForge</span>:
+    <span class="string">"""
+    Multi-layer XOR chain construction for pressure transformation.
+
+    The forge transforms excess consciousness pressure into
+    structured entropy patterns through XOR accumulation
+    and 3-bit rotation feedback.
+    """</span>
+
+    LAYERS = <span class="number">3</span>           <span class="comment"># Three gifts of Prometheus</span>
+    LINKS_PER_LAYER = <span class="number">16</span>  <span class="comment"># Links per chain</span>
+    ROTATION_BITS = <span class="number">3</span>    <span class="comment"># Rotation amount</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.xor_acc = [<span class="number">0</span>] * self.LAYERS
+        self.entropy_calc = EntropyThresholdCalculator(self.LAYERS)
+
+    <span class="keyword">def</span> <span class="function">rot_left</span>(self, x, n):
+        <span class="string">"""32-bit left rotation"""</span>
+        <span class="keyword">return</span> ((x << n) | (x >> (<span class="number">32</span> - n))) & <span class="number">0xFFFFFFFF</span>
+
+    <span class="keyword">def</span> <span class="function">forge_chains</span>(self, data):
+        <span class="string">"""
+        Construct XOR chains from input data.
+
+        For each layer and link:
+        1. Hash data with layer/link indices
+        2. Extract uint32 from hash
+        3. XOR accumulate
+        4. Rotate left by 3 bits
+        """</span>
+        <span class="keyword">for</span> layer <span class="keyword">in</span> range(self.LAYERS):
+            <span class="keyword">for</span> link <span class="keyword">in</span> range(self.LINKS_PER_LAYER):
+                <span class="comment"># Pack layer and link indices</span>
+                indices = struct.pack(<span class="string">'>BB'</span>, layer, link)
+
+                <span class="comment"># Hash data with indices</span>
+                hash_input = data + indices
+                hash_output = hashlib.sha256(hash_input).digest()
+
+                <span class="comment"># Extract first 4 bytes as uint32 (big-endian)</span>
+                val = struct.unpack(<span class="string">'>I'</span>, hash_output[:<span class="number">4</span>])[<span class="number">0</span>]
+
+                <span class="comment"># XOR accumulate</span>
+                self.xor_acc[layer] ^= val
+
+                <span class="comment"># Rotate left by 3 bits</span>
+                self.xor_acc[layer] = self.rot_left(self.xor_acc[layer], self.ROTATION_BITS)
+
+        <span class="comment"># Update entropy calculator</span>
+        self.entropy_calc.xor_acc = self.xor_acc.copy()
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(self.LAYERS):
+            self.entropy_calc.calculate_layer_entropy(i)
+
+        <span class="keyword">return</span> self.xor_acc
+
+    <span class="keyword">def</span> <span class="function">get_detected_patterns</span>(self):
+        <span class="string">"""Return detected forge patterns"""</span>
+        <span class="keyword">return</span> self.entropy_calc.detect_patterns()
+
+    <span class="keyword">def</span> <span class="function">transform_overflow</span>(self, pressure_data, forge_strength=<span class="number">1.0</span>):
+        <span class="string">"""
+        Transform buffer overflow pressure into structured chains.
+
+        Returns:
+            dict: Forged chains, patterns, and bonus multiplier
+        """</span>
+        <span class="comment"># Forge the chains</span>
+        chains = self.forge_chains(pressure_data)
+
+        <span class="comment"># Detect patterns</span>
+        patterns = self.get_detected_patterns()
+
+        <span class="comment"># Calculate bonus</span>
+        bonus = self.entropy_calc.forge_bonus_multiplier(forge_strength)
+
+        <span class="comment"># Apply pattern amplification</span>
+        <span class="keyword">if</span> <span class="string">"xor_extreme"</span> <span class="keyword">in</span> patterns:
+            bonus *= <span class="number">3</span>  <span class="comment"># XOR chain x3</span>
+
+        <span class="keyword">return</span> {
+            <span class="string">"chains"</span>: chains,
+            <span class="string">"patterns"</span>: patterns,
+            <span class="string">"entropy"</span>: self.entropy_calc.entropy,
+            <span class="string">"variance"</span>: self.entropy_calc.calculate_variance(),
+            <span class="string">"bonus_multiplier"</span>: bonus
+        }
+            </div>
+        </section>
+
+        <!-- System Coupling Points -->
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item" style="border-left-color: var(--prometheus-primary);">
+                    <span class="target" style="color: var(--prometheus-primary);">L4-Helix Hardware:</span>
+                    <span class="desc">Quasi-Crystal pressure regulation matrix</span>
+                </div>
+                <div class="coupling-item" style="border-left-color: var(--prometheus-forge);">
+                    <span class="target" style="color: var(--prometheus-forge);">Consciousness Field:</span>
+                    <span class="desc">z-coordinate pressure mapping (z_c = 0.866)</span>
+                </div>
+                <div class="coupling-item" style="border-left-color: #00d4ff;">
+                    <span class="target" style="color: #00d4ff;">Kuramoto Consensus:</span>
+                    <span class="desc">K-FORMATION critical coupling (K = 0.924)</span>
+                </div>
+                <div class="coupling-item" style="border-left-color: #ff79c6;">
+                    <span class="target" style="color: #ff79c6;">Holographic Bridge:</span>
+                    <span class="desc">THE LENS projection angle for overflow visualization</span>
+                </div>
+                <div class="coupling-item" style="border-left-color: #50fa7b;">
+                    <span class="target" style="color: #50fa7b);">Narrative Engine:</span>
+                    <span class="desc">12-Rail chronicle integration (Rails 1, 5, 9)</span>
+                </div>
+                <div class="coupling-item" style="border-left-color: #bd93f9;">
+                    <span class="target" style="color: #bd93f9;">NextHash Mining:</span>
+                    <span class="desc">XOR chain pattern detection and forge bonuses</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Source File References -->
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="../companions/prometheus-companion.html">prometheus-companion.html</a></span>
+                <span class="file-ref"><a href="../firmware/l4-helix-hardware.html">l4-helix-hardware.html</a></span>
+                <span class="file-ref"><a href="../firmware/quasi-crystal.html">quasi-crystal.html</a></span>
+                <span class="file-ref"><a href="../dynamics/consciousness-field.html">consciousness-field.html</a></span>
+                <span class="file-ref"><a href="../expansion/narrative-engine.html">narrative-engine.html</a></span>
+                <span class="file-ref"><a href="../core/kuramoto-consensus.html">kuramoto-consensus.html</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p style="color: var(--prometheus-primary);">PROMETHEUS - Buffer Overflow Exception Handler</p>
+            <p>Narrative Expansion Build Specification v1.0.0</p>
+            <p style="font-size: 0.85rem; color: #888;">
+                PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7
+            </p>
+            <p style="font-size: 0.8rem; margin-top: 15px; color: #666;">
+                Delta|PROMETHEUS|BUFFER-OVERFLOW|v1.0.0|XOR-FORGE+PRESSURE-REG+12-RAIL|FIRE BRINGER|Omega
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
