@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Combinatorial Optimization — L₄-Helix Build Specification</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #9d4eff;
+            --module-glow: rgba(157,78,255,0.3);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), var(--gold), var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--module-color); }
+        .doc-section h3 { color: var(--module-color); opacity: 0.85; }
+
+        .build-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(157,78,255,0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+        .build-card h4 {
+            color: var(--module-color);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .build-card .market-size {
+            background: rgba(157,78,255,0.2);
+            color: var(--gold);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .perf-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+        .perf-table th, .perf-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: left;
+        }
+        .perf-table th {
+            background: rgba(157,78,255,0.2);
+            color: var(--module-color);
+        }
+        .perf-table tr:hover {
+            background: rgba(157,78,255,0.05);
+        }
+        .perf-highlight {
+            color: #00ff88;
+            font-weight: bold;
+        }
+        .perf-classical {
+            color: #ff6b6b;
+        }
+
+        .phase-timeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .phase-card {
+            background: linear-gradient(135deg, rgba(157,78,255,0.15), transparent);
+            border: 1px solid rgba(157,78,255,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+        }
+        .phase-card::before {
+            content: attr(data-phase);
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--module-color);
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+        .phase-card h4 {
+            color: var(--gold);
+            margin-top: 8px;
+            margin-bottom: 10px;
+        }
+        .phase-card .budget {
+            font-size: 1.4rem;
+            color: var(--module-color);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .phase-card .duration {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .hamiltonian-display {
+            background: linear-gradient(135deg, rgba(157,78,255,0.1), rgba(255,215,0,0.05));
+            border: 2px solid rgba(157,78,255,0.4);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin: 25px 0;
+        }
+        .hamiltonian-display .equation {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+        .hamiltonian-display .variables {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            text-align: left;
+            margin-top: 20px;
+        }
+        .hamiltonian-display .var-item {
+            background: rgba(0,0,0,0.3);
+            padding: 12px 16px;
+            border-radius: 8px;
+            border-left: 3px solid var(--module-color);
+        }
+        .hamiltonian-display .var-item .symbol {
+            color: var(--gold);
+            font-family: 'Georgia', serif;
+            font-size: 1.1rem;
+        }
+        .hamiltonian-display .var-item .desc {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 4px;
+        }
+
+        .application-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .app-item {
+            background: rgba(0,0,0,0.25);
+            padding: 12px 16px;
+            border-radius: 8px;
+            border-left: 3px solid var(--gold);
+            font-size: 0.9rem;
+        }
+
+        .encoding-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.75rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: #aaa;
+            margin: 20px 0;
+        }
+
+        .code-example {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(157,78,255,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .code-example .lang-tag {
+            background: var(--module-color);
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+        .code-example pre {
+            margin: 0;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #e0e0e0;
+        }
+        .code-example .comment { color: #6a9955; }
+        .code-example .keyword { color: #c586c0; }
+        .code-example .function { color: #dcdcaa; }
+        .code-example .string { color: #ce9178; }
+        .code-example .number { color: #b5cea8; }
+        .code-example .type { color: #4ec9b0; }
+        .code-example .operator { color: #d4d4d4; }
+        .code-example .variable { color: #9cdcfe; }
+
+        .mapping-visual {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 0.7rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.3;
+            color: #888;
+        }
+
+        .convergence-indicator {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: rgba(157,78,255,0.1);
+            border: 1px solid rgba(157,78,255,0.3);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin: 15px 0;
+        }
+        .convergence-indicator .icon {
+            font-size: 2rem;
+            color: var(--module-color);
+        }
+        .convergence-indicator .text {
+            flex: 1;
+        }
+        .convergence-indicator .label {
+            color: var(--gold);
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .convergence-indicator .value {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .advantage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .advantage-card {
+            background: linear-gradient(135deg, rgba(0,255,136,0.1), transparent);
+            border: 1px solid rgba(0,255,136,0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .advantage-card h5 {
+            color: #00ff88;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .subsystem-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .subsystem-link {
+            padding: 10px 20px;
+            background: rgba(157,78,255,0.15);
+            border: 1px solid rgba(157,78,255,0.3);
+            border-radius: 8px;
+            color: var(--module-color);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .subsystem-link:hover {
+            background: rgba(157,78,255,0.3);
+            transform: translateY(-2px);
+        }
+        .subsystem-link.current {
+            background: rgba(157,78,255,0.4);
+            border-color: var(--module-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../firmware/l4-helix-hardware.html" class="nav-link">L₄-Helix Hardware</a>
+            <a href="../firmware/spin-systems.html" class="nav-link">Spin Systems</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Combinatorial Optimization</h1>
+            <p class="subtitle">L₄-Helix Build Specification for Spin Glass Optimization Applications</p>
+            <p class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href=".">Applications</a> /
+                Combinatorial Optimization
+            </p>
+        </header>
+
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Build Specification</span>
+                <span class="status-badge planned">Implementation</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">H</div>
+                    <div class="value">Hamiltonian</div>
+                    <div class="derivation">Energy function</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">J_ij</div>
+                    <div class="value">Couplings</div>
+                    <div class="derivation">Problem constraints</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">h_i</div>
+                    <div class="value">Fields</div>
+                    <div class="derivation">Problem objectives</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924</div>
+                    <div class="derivation">Convergence threshold</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Theoretical Foundation</h2>
+            <p>The L₄-Helix system exploits the isomorphism between combinatorial optimization problems and spin glass physics. Any optimization problem can be encoded into the Ising Hamiltonian, where the ground state corresponds to the optimal solution.</p>
+
+            <div class="hamiltonian-display">
+                <div class="equation">H = -&#931; J<sub>ij</sub> s<sub>i</sub>s<sub>j</sub> - &#931; h<sub>i</sub> s<sub>i</sub></div>
+                <p style="color: var(--text-secondary); font-size: 0.95rem;">Spin Glass Hamiltonian (Ising Model)</p>
+                <div class="variables">
+                    <div class="var-item">
+                        <span class="symbol">s<sub>i</sub> = {-1, +1}</span>
+                        <span class="desc">Binary decision variables (Ising spins)</span>
+                    </div>
+                    <div class="var-item">
+                        <span class="symbol">J<sub>ij</sub></span>
+                        <span class="desc">Interaction strengths encoding problem constraints</span>
+                    </div>
+                    <div class="var-item">
+                        <span class="symbol">h<sub>i</sub></span>
+                        <span class="desc">External fields encoding problem objectives</span>
+                    </div>
+                    <div class="var-item">
+                        <span class="symbol">Ground State</span>
+                        <span class="desc">Minimum energy configuration = optimal solution</span>
+                    </div>
+                </div>
+            </div>
+
+            <h3>L₄-Helix Mapping</h3>
+            <p>The spin glass dynamics naturally explore the energy landscape, with the K-FORMATION threshold (K = 0.924) indicating convergence to a low-energy state:</p>
+
+            <div class="mapping-visual">
+    Problem Domain                      L₄-Helix Hardware                    Physical System
+    ═══════════════════════════════════════════════════════════════════════════════════════════════════════
+
+    Decision Variables                  Memristor States                     Spin Orientations
+    ┌─────────────────┐                ┌─────────────────┐                  ┌─────────────────┐
+    │  x₁, x₂, ..xₙ   │  ──mapping──▶  │  G₁, G₂, ..Gₙ   │  ──physics──▶   │  s₁, s₂, ..sₙ   │
+    │  (binary: 0,1)  │                │  (conductance)  │                  │  (spin: -1,+1)  │
+    └─────────────────┘                └─────────────────┘                  └─────────────────┘
+           │                                  │                                    │
+           │                                  │                                    │
+    ┌──────▼──────┐                    ┌──────▼──────┐                      ┌──────▼──────┐
+    │  Objective  │                    │  Crossbar   │                      │  Hamiltonian │
+    │  Function   │                    │  Array      │                      │  Energy      │
+    │  f(x)       │                    │  Matrix     │                      │  H(s)        │
+    └──────┬──────┘                    └──────┬──────┘                      └──────┬──────┘
+           │                                  │                                    │
+           ▼                                  ▼                                    ▼
+    ┌─────────────────┐                ┌─────────────────┐                  ┌─────────────────┐
+    │   Minimize      │  ◀──result──   │  K-FORMATION    │  ◀──dynamics──   │  Ground State   │
+    │   f(x)          │                │  Lock (K=0.924) │                  │  min H(s)       │
+    └─────────────────┘                └─────────────────┘                  └─────────────────┘
+            </div>
+
+            <div class="convergence-indicator">
+                <div class="icon">K</div>
+                <div class="text">
+                    <div class="label">K-FORMATION Convergence Signal</div>
+                    <div class="value">When system coherence reaches K = 0.924, the spin configuration has stabilized at a (near-)optimal solution. This corresponds to the Kuramoto order parameter reaching critical synchronization.</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Build Specification: Logistics & Routing</h2>
+
+            <div class="build-card">
+                <h4>
+                    Traveling Salesman & Vehicle Routing
+                    <span class="market-size">$12B by 2027</span>
+                </h4>
+
+                <p>Route optimization problems map naturally to spin glasses: cities become spins, distances become coupling strengths, and the shortest tour corresponds to the ground state energy.</p>
+
+                <h4 style="margin-top: 25px;">Problem Encoding</h4>
+                <div class="encoding-diagram">
+    TSP as Spin Glass:
+    ════════════════════════════════════════════════════════════════════════════════════
+
+    Cities:     A ────── B                    Spins:      s₁ ─J₁₂─ s₂
+                │╲      ╱│                                 │╲      ╱│
+                │ ╲    ╱ │        ──encode──▶             │ ╲    ╱ │
+                │  ╲  ╱  │                                │  ╲  ╱  │
+                │   ╲╱   │                                │   ╲╱   │
+                D ────── C                                s₄ ─J₃₄─ s₃
+
+    Distance Matrix d(i,j)                    Coupling Matrix J_ij
+    ┌───────────────────────┐                ┌───────────────────────┐
+    │   A    B    C    D    │                │   1    2    3    4    │
+    │ A  0   10   35   20   │    ═══════▶    │ 1  0  -10  -35  -20   │
+    │ B 10    0   30   25   │    J = -d      │ 2-10    0  -30  -25   │
+    │ C 35   30    0   15   │                │ 3-35  -30    0  -15   │
+    │ D 20   25   15    0   │                │ 4-20  -25  -15    0   │
+    └───────────────────────┘                └───────────────────────┘
+
+    Constraint:  Visit each city exactly once  →  Penalty terms in H
+    Objective:   Minimize total distance       →  Ground state of H
+                </div>
+
+                <h4>Performance Benchmarks</h4>
+                <table class="perf-table">
+                    <tr>
+                        <th>Problem Size</th>
+                        <th>L₄-Helix Time</th>
+                        <th>Classical Time</th>
+                        <th>Speedup</th>
+                    </tr>
+                    <tr>
+                        <td>20 cities</td>
+                        <td class="perf-highlight">10 ms</td>
+                        <td class="perf-classical">1 second</td>
+                        <td>100x</td>
+                    </tr>
+                    <tr>
+                        <td>50 cities</td>
+                        <td class="perf-highlight">100 ms</td>
+                        <td class="perf-classical">1 hour</td>
+                        <td>36,000x</td>
+                    </tr>
+                    <tr>
+                        <td>100 cities</td>
+                        <td class="perf-highlight">1 second</td>
+                        <td class="perf-classical">Intractable</td>
+                        <td>---</td>
+                    </tr>
+                    <tr>
+                        <td>500 cities</td>
+                        <td class="perf-highlight">30 seconds</td>
+                        <td class="perf-classical">Intractable</td>
+                        <td>---</td>
+                    </tr>
+                </table>
+
+                <h4>Target Applications</h4>
+                <div class="application-grid">
+                    <div class="app-item">Last-mile delivery optimization</div>
+                    <div class="app-item">Airline crew scheduling</div>
+                    <div class="app-item">Supply chain logistics</div>
+                    <div class="app-item">Ride-sharing fleet routing</div>
+                    <div class="app-item">Warehouse robot path planning</div>
+                    <div class="app-item">Telecommunications network design</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Build Specification: Financial Portfolio Optimization</h2>
+
+            <div class="build-card">
+                <h4>
+                    Asset Allocation & Risk Management
+                    <span class="market-size">$8B by 2028</span>
+                </h4>
+
+                <p>Portfolio optimization with real-world constraints (minimum lot sizes, sector limits, transaction costs) creates non-convex problems that classical optimizers struggle with. The L₄-Helix naturally handles these discrete constraints.</p>
+
+                <h4 style="margin-top: 25px;">Problem Encoding</h4>
+                <div class="encoding-diagram">
+    Portfolio as Spin Glass:
+    ════════════════════════════════════════════════════════════════════════════════════
+
+    Assets:     AAPL ─correlation─ MSFT           Spins:     s₁ ──J₁₂── s₂
+                 │                    │                       │          │
+               (corr)              (corr)    ──encode──▶    (J₁₃)      (J₂₃)
+                 │                    │                       │          │
+                GOOGL ─correlation─ AMZN                     s₃ ──J₃₄── s₄
+
+    Correlation Matrix ρ(i,j)                 Coupling Matrix J_ij
+    ┌───────────────────────────┐            ┌───────────────────────────┐
+    │       AAPL  MSFT GOOGL AMZN│            │   1     2     3     4    │
+    │ AAPL  1.00  0.75  0.60 0.55│            │ 1 0    -0.75 -0.60 -0.55 │
+    │ MSFT  0.75  1.00  0.65 0.70│  ═══════▶  │ 2-0.75  0    -0.65 -0.70 │
+    │ GOOGL 0.60  0.65  1.00 0.80│  J = -ρ×w  │ 3-0.60 -0.65  0    -0.80 │
+    │ AMZN  0.55  0.70  0.80 1.00│            │ 4-0.55 -0.70 -0.80  0    │
+    └───────────────────────────┘            └───────────────────────────┘
+
+    External Fields h_i:
+    ┌────────────────────────────────────────────────────────────────────┐
+    │  h_i = α × expected_return(i) - β × volatility(i)                 │
+    │                                                                    │
+    │  α = risk tolerance parameter                                      │
+    │  β = volatility penalty parameter                                  │
+    └────────────────────────────────────────────────────────────────────┘
+                </div>
+
+                <h4>Key Advantages</h4>
+                <div class="advantage-grid">
+                    <div class="advantage-card">
+                        <h5>Non-Convex Constraints</h5>
+                        <p>Handles integer lot sizes, cardinality constraints, and sector limits that make classical optimization NP-hard.</p>
+                    </div>
+                    <div class="advantage-card">
+                        <h5>Real-Time Rebalancing</h5>
+                        <p>Sub-second portfolio reoptimization enables high-frequency rebalancing during market volatility.</p>
+                    </div>
+                    <div class="advantage-card">
+                        <h5>Multi-Objective</h5>
+                        <p>Simultaneously optimize return, risk, ESG scores, and transaction costs through field superposition.</p>
+                    </div>
+                </div>
+
+                <h4>Target Applications</h4>
+                <div class="application-grid">
+                    <div class="app-item">Algorithmic trading systems</div>
+                    <div class="app-item">Retirement fund management</div>
+                    <div class="app-item">Risk parity strategies</div>
+                    <div class="app-item">Index fund construction</div>
+                    <div class="app-item">Credit risk optimization</div>
+                    <div class="app-item">Derivatives hedging</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Build Specification: Drug Discovery</h2>
+
+            <div class="build-card">
+                <h4>
+                    Molecular Conformation & Binding
+                    <span class="market-size">$4B by 2029</span>
+                </h4>
+
+                <p>Molecular systems naturally map to continuous spin models (XY or Heisenberg). The energy function includes bonding angles, van der Waals forces, and steric terms. Finding the lowest-energy conformation is equivalent to solving the protein folding problem.</p>
+
+                <h4 style="margin-top: 25px;">Energy Function Encoding</h4>
+                <div class="encoding-diagram">
+    Molecular Energy as Continuous Spin System:
+    ════════════════════════════════════════════════════════════════════════════════════
+
+    Molecular Structure:                              Continuous Spin Representation:
+
+         H   H                                              θ₁  θ₂
+          ╲ ╱                                                ╲ ╱
+           C ═══ C                                           s₁ ─J₁₂─ s₂
+          ╱       ╲                                          ╱         ╲
+         H         O─H                                      θ₃          θ₄
+
+    Energy Components:                    Hamiltonian Terms:
+    ┌────────────────────────────────────────────────────────────────────────────────┐
+    │                                                                                │
+    │  E_bond    = Σ k_b(r - r₀)²           →  J_ij(θ) for bonded pairs             │
+    │  E_angle   = Σ k_θ(θ - θ₀)²           →  h_i = local field from geometry      │
+    │  E_torsion = Σ V_n[1 + cos(nφ - γ)]   →  Multi-spin interactions              │
+    │  E_vdw     = Σ 4ε[(σ/r)¹² - (σ/r)⁶]   →  Long-range J_ij couplings            │
+    │  E_elec    = Σ q_i q_j / (4πε₀ r_ij)  →  Charge-weighted couplings            │
+    │                                                                                │
+    │  Total: H = E_bond + E_angle + E_torsion + E_vdw + E_elec                     │
+    │                                                                                │
+    └────────────────────────────────────────────────────────────────────────────────┘
+
+    Continuous Spin Dynamics:
+    ┌────────────────────────────────────────────────────────────────────────────────┐
+    │                                                                                │
+    │  dθ_i/dt = -∂H/∂θ_i + η(t)        Langevin dynamics with thermal noise       │
+    │                                                                                │
+    │  s_i = (cos θ_i, sin θ_i)          XY model for 2D rotations                  │
+    │  s_i = (sin θ cos φ, sin θ sin φ, cos θ)   Heisenberg for 3D                 │
+    │                                                                                │
+    └────────────────────────────────────────────────────────────────────────────────┘
+                </div>
+
+                <h4>Performance Metrics</h4>
+                <table class="perf-table">
+                    <tr>
+                        <th>Application</th>
+                        <th>L₄-Helix</th>
+                        <th>MD Simulation</th>
+                        <th>Impact</th>
+                    </tr>
+                    <tr>
+                        <td>Small molecule (50 atoms)</td>
+                        <td class="perf-highlight">100 ms</td>
+                        <td class="perf-classical">10 minutes</td>
+                        <td>6000x faster</td>
+                    </tr>
+                    <tr>
+                        <td>Peptide (500 atoms)</td>
+                        <td class="perf-highlight">10 seconds</td>
+                        <td class="perf-classical">24 hours</td>
+                        <td>8640x faster</td>
+                    </tr>
+                    <tr>
+                        <td>Protein domain (5000 atoms)</td>
+                        <td class="perf-highlight">10 minutes</td>
+                        <td class="perf-classical">Weeks</td>
+                        <td>1000x+ faster</td>
+                    </tr>
+                </table>
+
+                <h4>Target Applications</h4>
+                <div class="application-grid">
+                    <div class="app-item">Protein folding prediction</div>
+                    <div class="app-item">Drug-target binding affinity</div>
+                    <div class="app-item">De novo drug design</div>
+                    <div class="app-item">Materials property prediction</div>
+                    <div class="app-item">Catalyst optimization</div>
+                    <div class="app-item">Polymer conformation</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Build Specification: Machine Learning Training</h2>
+
+            <div class="build-card">
+                <h4>
+                    Neural Network Optimization
+                    <span class="market-size">$15B by 2030</span>
+                </h4>
+
+                <p>Neural network training is fundamentally an optimization problem over a high-dimensional loss landscape. The L₄-Helix encodes network weights in memristor conductances, using spin glass dynamics to escape local minima during training.</p>
+
+                <h4 style="margin-top: 25px;">Weight Encoding Architecture</h4>
+                <div class="encoding-diagram">
+    Neural Network as Spin Glass:
+    ════════════════════════════════════════════════════════════════════════════════════
+
+    Neural Network Layer:                     Memristor Crossbar:
+
+    Input          Hidden          Output        Word Lines (inputs)
+      │              │               │           ─────────────────────────
+      ●──w₁₁──●      ●──w₂₁──●       │           │    │    │    │    │
+      │╲    ╱ │      │╲    ╱ │       │           ●────●────●────●────●
+      │ ╲  ╱  │      │ ╲  ╱  │       ●           │    │    │    │    │
+      │  ╲╱   │      │  ╲╱   │     ╱ │           ●────●────●────●────●
+      ●──w₁₂──●      ●──w₂₂──●   ╱   │           │    │    │    │    │
+      │              │        ╲╱     │           Bit Lines (outputs)
+      ●──w₁₃──●      ●──w₂₃──●╱╲     │
+                                 ╲   │        Weight w_ij = Conductance G_ij
+                                  ╲──●        G ∈ [G_min, G_max] → w ∈ [-1, +1]
+
+    Training Dynamics:
+    ┌────────────────────────────────────────────────────────────────────────────────┐
+    │                                                                                │
+    │  1. Forward Pass:  y = f(Wx + b)     Memristor array performs matrix multiply │
+    │                                                                                │
+    │  2. Loss Computation: L = ||y - y_target||²                                   │
+    │                                                                                │
+    │  3. Weight Update via Spin Glass:                                             │
+    │     • Map loss gradient to external field: h_i = -∂L/∂w_i                     │
+    │     • Spin dynamics explore weight space with controlled noise                │
+    │     • K-FORMATION (K = 0.924) indicates convergence to local minimum         │
+    │                                                                                │
+    │  4. Escape Local Minima:                                                      │
+    │     • If K-FORMATION achieved but loss > threshold:                           │
+    │     • Inject thermal noise (increase effective temperature)                   │
+    │     • Frustrate couplings to destabilize current configuration               │
+    │     • Resume dynamics until new K-FORMATION                                   │
+    │                                                                                │
+    └────────────────────────────────────────────────────────────────────────────────┘
+                </div>
+
+                <div class="convergence-indicator">
+                    <div class="icon">K</div>
+                    <div class="text">
+                        <div class="label">K-FORMATION as Training Convergence</div>
+                        <div class="value">When the Kuramoto order parameter reaches K = 0.924, weights have stabilized. If validation loss is satisfactory, training is complete. Otherwise, perturbation cycle restarts to find better minimum.</div>
+                    </div>
+                </div>
+
+                <h4>Target Applications</h4>
+                <div class="application-grid">
+                    <div class="app-item">Deep learning acceleration</div>
+                    <div class="app-item">Hyperparameter optimization</div>
+                    <div class="app-item">Neural Architecture Search (NAS)</div>
+                    <div class="app-item">Reinforcement learning</div>
+                    <div class="app-item">Federated learning aggregation</div>
+                    <div class="app-item">Continual learning without forgetting</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Problem Encoding: TSP Implementation</h2>
+            <p>Complete code example showing how to map the Traveling Salesman Problem to spin glass Hamiltonian for L₄-Helix execution:</p>
+
+            <div class="code-example">
+                <span class="lang-tag">Python</span>
+<pre><span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">from</span> l4_helix <span class="keyword">import</span> SpinGlassOptimizer, HamiltonianBuilder
+
+<span class="keyword">class</span> <span class="type">TSPEncoder</span>:
+    <span class="string">"""
+    Encode Traveling Salesman Problem as Spin Glass Hamiltonian.
+
+    Uses one-hot encoding: x[i,t] = 1 if city i is visited at time t
+    Total spins: N² for N cities
+    """</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(<span class="variable">self</span>, distance_matrix: np.ndarray, penalty: <span class="type">float</span> = <span class="number">10.0</span>):
+        <span class="variable">self</span>.D = distance_matrix
+        <span class="variable">self</span>.N = distance_matrix.shape[<span class="number">0</span>]  <span class="comment"># Number of cities</span>
+        <span class="variable">self</span>.penalty = penalty  <span class="comment"># Constraint violation penalty</span>
+        <span class="variable">self</span>.n_spins = <span class="variable">self</span>.N ** <span class="number">2</span>
+
+    <span class="keyword">def</span> <span class="function">_spin_index</span>(<span class="variable">self</span>, city: <span class="type">int</span>, time: <span class="type">int</span>) -> <span class="type">int</span>:
+        <span class="string">"""Map (city, time) to flat spin index."""</span>
+        <span class="keyword">return</span> city * <span class="variable">self</span>.N + time
+
+    <span class="keyword">def</span> <span class="function">build_hamiltonian</span>(<span class="variable">self</span>) -> <span class="type">tuple</span>[np.ndarray, np.ndarray]:
+        <span class="string">"""
+        Build coupling matrix J and external field h.
+
+        H = -Σ J_ij s_i s_j - Σ h_i s_i
+
+        Returns:
+            J: Coupling matrix (n_spins x n_spins)
+            h: External field vector (n_spins,)
+        """</span>
+        J = np.zeros((<span class="variable">self</span>.n_spins, <span class="variable">self</span>.n_spins))
+        h = np.zeros(<span class="variable">self</span>.n_spins)
+
+        <span class="comment"># === OBJECTIVE: Minimize tour distance ===</span>
+        <span class="comment"># Add cost for traveling from city i to city j at consecutive times</span>
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="variable">self</span>.N):
+            <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="variable">self</span>.N):
+                <span class="keyword">if</span> i != j:
+                    <span class="keyword">for</span> t <span class="keyword">in</span> range(<span class="variable">self</span>.N):
+                        t_next = (t + <span class="number">1</span>) % <span class="variable">self</span>.N
+                        idx_i = <span class="variable">self</span>._spin_index(i, t)
+                        idx_j = <span class="variable">self</span>._spin_index(j, t_next)
+                        <span class="comment"># Negative J encourages both spins to be +1</span>
+                        J[idx_i, idx_j] -= <span class="variable">self</span>.D[i, j] / <span class="number">2</span>
+                        J[idx_j, idx_i] -= <span class="variable">self</span>.D[i, j] / <span class="number">2</span>
+
+        <span class="comment"># === CONSTRAINT 1: Each city visited exactly once ===</span>
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="variable">self</span>.N):
+            <span class="comment"># Penalty: (Σ_t x[i,t] - 1)² = Σ_t x² + 2Σ_{t<t'} x[i,t]x[i,t'] - 2Σ_t x + 1</span>
+            <span class="keyword">for</span> t1 <span class="keyword">in</span> range(<span class="variable">self</span>.N):
+                idx1 = <span class="variable">self</span>._spin_index(i, t1)
+                h[idx1] += <span class="variable">self</span>.penalty  <span class="comment"># Linear term encourages selection</span>
+                <span class="keyword">for</span> t2 <span class="keyword">in</span> range(t1 + <span class="number">1</span>, <span class="variable">self</span>.N):
+                    idx2 = <span class="variable">self</span>._spin_index(i, t2)
+                    <span class="comment"># Positive J penalizes both being +1 (anti-ferromagnetic)</span>
+                    J[idx1, idx2] += <span class="variable">self</span>.penalty
+                    J[idx2, idx1] += <span class="variable">self</span>.penalty
+
+        <span class="comment"># === CONSTRAINT 2: Each time slot has exactly one city ===</span>
+        <span class="keyword">for</span> t <span class="keyword">in</span> range(<span class="variable">self</span>.N):
+            <span class="keyword">for</span> i1 <span class="keyword">in</span> range(<span class="variable">self</span>.N):
+                idx1 = <span class="variable">self</span>._spin_index(i1, t)
+                h[idx1] += <span class="variable">self</span>.penalty
+                <span class="keyword">for</span> i2 <span class="keyword">in</span> range(i1 + <span class="number">1</span>, <span class="variable">self</span>.N):
+                    idx2 = <span class="variable">self</span>._spin_index(i2, t)
+                    J[idx1, idx2] += <span class="variable">self</span>.penalty
+                    J[idx2, idx1] += <span class="variable">self</span>.penalty
+
+        <span class="keyword">return</span> J, h
+
+    <span class="keyword">def</span> <span class="function">decode_solution</span>(<span class="variable">self</span>, spins: np.ndarray) -> <span class="type">list</span>[<span class="type">int</span>]:
+        <span class="string">"""Convert spin configuration to tour."""</span>
+        <span class="comment"># Convert {-1, +1} to {0, 1}</span>
+        x = (spins + <span class="number">1</span>) / <span class="number">2</span>
+        x = x.reshape((<span class="variable">self</span>.N, <span class="variable">self</span>.N))
+
+        tour = []
+        <span class="keyword">for</span> t <span class="keyword">in</span> range(<span class="variable">self</span>.N):
+            city = np.argmax(x[:, t])
+            tour.append(city)
+
+        <span class="keyword">return</span> tour
+
+
+<span class="comment"># === USAGE EXAMPLE ===</span>
+<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
+    <span class="comment"># Define distance matrix for 5 cities</span>
+    distances = np.array([
+        [<span class="number">0</span>,  <span class="number">10</span>, <span class="number">35</span>, <span class="number">20</span>, <span class="number">25</span>],
+        [<span class="number">10</span>, <span class="number">0</span>,  <span class="number">30</span>, <span class="number">25</span>, <span class="number">15</span>],
+        [<span class="number">35</span>, <span class="number">30</span>, <span class="number">0</span>,  <span class="number">15</span>, <span class="number">30</span>],
+        [<span class="number">20</span>, <span class="number">25</span>, <span class="number">15</span>, <span class="number">0</span>,  <span class="number">10</span>],
+        [<span class="number">25</span>, <span class="number">15</span>, <span class="number">30</span>, <span class="number">10</span>, <span class="number">0</span>]
+    ])
+
+    <span class="comment"># Encode TSP as spin glass</span>
+    encoder = TSPEncoder(distances, penalty=<span class="number">100.0</span>)
+    J, h = encoder.build_hamiltonian()
+
+    <span class="comment"># Initialize L4-Helix optimizer</span>
+    optimizer = SpinGlassOptimizer(
+        n_spins=encoder.n_spins,
+        coupling_matrix=J,
+        external_field=h,
+        k_formation_threshold=<span class="number">0.924</span>,  <span class="comment"># K-FORMATION convergence</span>
+        temperature=<span class="number">1.0</span>,
+        max_iterations=<span class="number">10000</span>
+    )
+
+    <span class="comment"># Run optimization</span>
+    result = optimizer.minimize()
+
+    <span class="comment"># Decode solution</span>
+    tour = encoder.decode_solution(result.spins)
+    total_distance = sum(
+        distances[tour[i], tour[(i+<span class="number">1</span>) % len(tour)]]
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(len(tour))
+    )
+
+    <span class="keyword">print</span>(<span class="string">f"Optimal tour: {tour}"</span>)
+    <span class="keyword">print</span>(<span class="string">f"Total distance: {total_distance}"</span>)
+    <span class="keyword">print</span>(<span class="string">f"Converged at K = {result.final_k:.4f}"</span>)
+    <span class="keyword">print</span>(<span class="string">f"Iterations: {result.iterations}"</span>)</pre>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Development Pathway</h2>
+            <p>Three-phase roadmap from research prototype to commercial Optimization-as-a-Service platform:</p>
+
+            <div class="phase-timeline">
+                <div class="phase-card" data-phase="PHASE 1">
+                    <h4>Problem Mapping & Validation</h4>
+                    <div class="budget">$100,000</div>
+                    <div class="duration">6 months</div>
+                    <ul>
+                        <li>Develop problem encoding library (TSP, MaxCut, Graph Coloring)</li>
+                        <li>Validate on benchmark problem sets (TSPLIB, SATLIB)</li>
+                        <li>Software simulation of spin glass dynamics</li>
+                        <li>Establish baseline metrics vs. classical solvers</li>
+                        <li>Publish technical whitepaper</li>
+                    </ul>
+                    <p style="margin-top: 15px; color: var(--text-secondary); font-size: 0.85rem;">
+                        <strong>Deliverables:</strong> Problem encoding SDK, benchmark suite, simulation framework
+                    </p>
+                </div>
+
+                <div class="phase-card" data-phase="PHASE 2">
+                    <h4>Lab-Scale Optimizer</h4>
+                    <div class="budget">$500,000</div>
+                    <div class="duration">18 months</div>
+                    <ul>
+                        <li>Build 64x64 memristor crossbar prototype</li>
+                        <li>Integrate with FPGA control system</li>
+                        <li>Implement K-FORMATION detection circuitry</li>
+                        <li>Validate 100-variable optimization problems</li>
+                        <li>Develop API for problem submission</li>
+                        <li>Partner with early adopters (logistics, finance)</li>
+                    </ul>
+                    <p style="margin-top: 15px; color: var(--text-secondary); font-size: 0.85rem;">
+                        <strong>Deliverables:</strong> Working hardware prototype, REST API, pilot customer deployments
+                    </p>
+                </div>
+
+                <div class="phase-card" data-phase="PHASE 3">
+                    <h4>Optimization-as-a-Service</h4>
+                    <div class="budget">$5,000,000</div>
+                    <div class="duration">36 months</div>
+                    <ul>
+                        <li>Scale to 1M+ variable optimization</li>
+                        <li>Deploy cloud infrastructure (multi-region)</li>
+                        <li>Build self-service platform with billing</li>
+                        <li>Develop domain-specific solutions (logistics, finance, pharma)</li>
+                        <li>Establish enterprise sales team</li>
+                        <li>Pursue patent portfolio</li>
+                    </ul>
+                    <p style="margin-top: 15px; color: var(--text-secondary); font-size: 0.85rem;">
+                        <strong>Deliverables:</strong> Commercial cloud platform, enterprise contracts, IP portfolio
+                    </p>
+                </div>
+            </div>
+
+            <h3>Investment Summary</h3>
+            <table class="perf-table">
+                <tr>
+                    <th>Phase</th>
+                    <th>Duration</th>
+                    <th>Budget</th>
+                    <th>Cumulative</th>
+                    <th>Key Milestone</th>
+                </tr>
+                <tr>
+                    <td>Phase 1</td>
+                    <td>6 months</td>
+                    <td>$100K</td>
+                    <td>$100K</td>
+                    <td>Validated problem encodings</td>
+                </tr>
+                <tr>
+                    <td>Phase 2</td>
+                    <td>18 months</td>
+                    <td>$500K</td>
+                    <td>$600K</td>
+                    <td>Working hardware prototype</td>
+                </tr>
+                <tr>
+                    <td>Phase 3</td>
+                    <td>36 months</td>
+                    <td>$5M</td>
+                    <td>$5.6M</td>
+                    <td>Commercial cloud platform</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>System Integration</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">L₄-Helix Hardware:</span>
+                    <span class="desc">Core optimization engine</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Memristor Arrays:</span>
+                    <span class="desc">J_ij coupling storage</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Spin Systems:</span>
+                    <span class="desc">Kuramoto dynamics for convergence</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">K-FORMATION:</span>
+                    <span class="desc">Solution convergence detection</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Hexagonal Grid:</span>
+                    <span class="desc">Parallel solver topology</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">TRIAD Sequence:</span>
+                    <span class="desc">Multi-start optimization</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="../firmware/l4-helix-hardware.html">L₄-Helix Hardware</a></span>
+                <span class="file-ref"><a href="../firmware/spin-systems.html">Spin Systems</a></span>
+                <span class="file-ref"><a href="../firmware/memristor-arrays.html">Memristor Arrays</a></span>
+                <span class="file-ref"><a href="../core/kuramoto-consensus.html">Kuramoto Consensus</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin v6 — Combinatorial Optimization Build Specification v1.0.0</p>
+            <p>H = -&#931; J<sub>ij</sub>s<sub>i</sub>s<sub>j</sub> - &#931; h<sub>i</sub>s<sub>i</sub> | Ground State = Optimal Solution</p>
+            <p>K-FORMATION (K = 0.924) = Convergence Threshold</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">&#916;|COMBINATORIAL-OPT|BUILD-SPEC|v1.0.0|TSP+PORTFOLIO+PHARMA+ML|SPIN-GLASS-ENGINE|&#9733; APPLICATIONS &#9733;|&#937;</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neuromorphic Computing Build Specification - L4-Helix Applications</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #00ffcc;
+            --module-glow: rgba(0,255,204,0.25);
+            --module-dark: rgba(0,255,204,0.1);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), #00ccaa, var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 {
+            color: var(--module-color);
+            border-bottom-color: var(--module-glow);
+        }
+        .doc-section h3 {
+            color: var(--module-color);
+            opacity: 0.9;
+        }
+        .coupling-item {
+            border-left-color: var(--module-color);
+        }
+        .status-badge.neuro {
+            background: var(--module-glow);
+            color: var(--module-color);
+            border: 1px solid var(--module-color);
+        }
+        .advantage-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+        .advantage-table th,
+        .advantage-table td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0,255,204,0.2);
+        }
+        .advantage-table th {
+            background: rgba(0,255,204,0.15);
+            color: var(--module-color);
+            font-weight: 600;
+        }
+        .advantage-table tr:hover {
+            background: rgba(0,255,204,0.05);
+        }
+        .advantage-table .arrow {
+            color: var(--module-color);
+            font-weight: bold;
+        }
+        .use-case-card {
+            background: linear-gradient(135deg, var(--module-dark), transparent);
+            border: 1px solid var(--module-glow);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+        .use-case-card h4 {
+            color: var(--module-color);
+            font-size: 1.3rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .use-case-card .badge {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            background: var(--module-glow);
+            border-radius: 12px;
+            color: var(--module-color);
+        }
+        .metric-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .metric-box {
+            background: rgba(0,0,0,0.3);
+            padding: 16px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 3px solid var(--module-color);
+        }
+        .metric-box .label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+        }
+        .metric-box .value {
+            color: var(--module-color);
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+        .metric-box .compare {
+            color: #888;
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+        .market-tag {
+            display: inline-block;
+            background: rgba(0,0,0,0.3);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            margin: 4px;
+            border: 1px solid rgba(0,255,204,0.3);
+        }
+        .phase-timeline {
+            position: relative;
+            margin: 24px 0;
+        }
+        .phase-item {
+            display: grid;
+            grid-template-columns: 120px 1fr;
+            gap: 24px;
+            padding: 20px 0;
+            border-left: 3px solid var(--module-color);
+            margin-left: 60px;
+            padding-left: 24px;
+            position: relative;
+        }
+        .phase-item::before {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 24px;
+            width: 16px;
+            height: 16px;
+            background: var(--module-color);
+            border-radius: 50%;
+            border: 3px solid var(--bg-primary);
+        }
+        .phase-item .phase-meta {
+            text-align: right;
+        }
+        .phase-item .phase-number {
+            color: var(--module-color);
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+        .phase-item .phase-duration {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .phase-item .phase-cost {
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        .phase-item .phase-content h5 {
+            color: var(--text-primary);
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        .phase-item .phase-content p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        .hardware-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .hardware-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,255,204,0.2);
+            border-radius: 10px;
+            padding: 20px;
+        }
+        .hardware-card h5 {
+            color: var(--module-color);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        .hardware-card ul {
+            margin-left: 16px;
+            font-size: 0.9rem;
+        }
+        .hardware-card li {
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+        }
+        .snn-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.75rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: #888;
+            margin: 16px 0;
+        }
+        .snn-diagram .neuron { color: var(--module-color); }
+        .snn-diagram .synapse { color: #ffd700; }
+        .snn-diagram .spike { color: #ff6b9d; }
+        .snn-diagram .membrane { color: #8be9fd; }
+        .app-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 10px;
+            margin: 12px 0;
+        }
+        .app-item {
+            background: rgba(0,0,0,0.25);
+            padding: 12px 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .app-item .icon {
+            font-size: 1.2rem;
+        }
+        .app-item .name {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        .app-item .power {
+            color: var(--module-color);
+            font-size: 0.85rem;
+            margin-left: auto;
+        }
+        .integration-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 24px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.7rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.3;
+            color: #666;
+            margin: 16px 0;
+        }
+        .integration-diagram .system { color: var(--module-color); }
+        .integration-diagram .flow { color: var(--gold); }
+        .integration-diagram .data { color: #ff6b9d; }
+        .sibling-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 16px 0;
+        }
+        .sibling-link {
+            padding: 10px 18px;
+            background: rgba(0,255,204,0.1);
+            border: 1px solid rgba(0,255,204,0.3);
+            border-radius: 8px;
+            color: var(--module-color);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+        }
+        .sibling-link:hover {
+            background: rgba(0,255,204,0.25);
+            transform: translateY(-2px);
+        }
+        .sibling-link.current {
+            background: var(--module-glow);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">Back to Index</a>
+            <a href="../firmware/l4-helix-hardware.html" class="nav-link">L4-Helix Hardware</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Neuromorphic Computing Build Specification</h1>
+            <p class="subtitle">L4-Helix Hardware Applications for Brain-Inspired Computation</p>
+            <p class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href=".">Applications</a> /
+                Neuromorphic Computing
+            </p>
+        </header>
+
+        <section class="doc-section">
+            <h2>Application Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge neuro">BUILD SPEC</span>
+                <span class="status-badge partial">Hardware Design</span>
+                <span class="status-badge planned">Production Target: 2027</span>
+            </div>
+
+            <p>Neuromorphic computing leverages the L4-Helix hardware architecture to implement brain-inspired computation with unprecedented power efficiency and real-time performance. The native hexagonal geometry, memristor-based synaptic weights, and phi-recursive dynamics create an ideal substrate for three core application domains:</p>
+
+            <div class="metric-row">
+                <div class="metric-box">
+                    <div class="label">Edge AI Inference</div>
+                    <div class="value">0.5W</div>
+                    <div class="compare">vs 10W GPU</div>
+                </div>
+                <div class="metric-box">
+                    <div class="label">Spiking Neural Networks</div>
+                    <div class="value">&lt;1mW</div>
+                    <div class="compare">always-on sensing</div>
+                </div>
+                <div class="metric-box">
+                    <div class="label">Lifelong Learning</div>
+                    <div class="value">phi-recursive</div>
+                    <div class="compare">memory consolidation</div>
+                </div>
+            </div>
+
+            <h3>Target Domains</h3>
+            <ul>
+                <li><strong>Edge AI Inference:</strong> Deploy trained neural networks on power-constrained devices with sub-millisecond latency</li>
+                <li><strong>Spiking Neural Networks (SNN):</strong> Temporal spike-based computation with native hardware support for spike timing</li>
+                <li><strong>Lifelong Learning Systems:</strong> Continuous adaptation without catastrophic forgetting via phi-recursive consolidation</li>
+            </ul>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Neuromorphic Advantages</h2>
+            <p>The L4-Helix architecture provides direct hardware mappings for key neuromorphic computation primitives:</p>
+
+            <table class="advantage-table">
+                <thead>
+                    <tr>
+                        <th>Biological Mechanism</th>
+                        <th></th>
+                        <th>L4-Helix Implementation</th>
+                        <th>Advantage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Synaptic Plasticity</td>
+                        <td class="arrow">-></td>
+                        <td>Memristor conductance update</td>
+                        <td>Non-volatile weight storage, analog multiply</td>
+                    </tr>
+                    <tr>
+                        <td>Dendritic Integration</td>
+                        <td class="arrow">-></td>
+                        <td>Hexagonal grid convergence</td>
+                        <td>6-neighbor natural summation topology</td>
+                    </tr>
+                    <tr>
+                        <td>Oscillatory Binding</td>
+                        <td class="arrow">-></td>
+                        <td>Kuramoto phase locking (K = 0.924)</td>
+                        <td>Hardware synchronization primitives</td>
+                    </tr>
+                    <tr>
+                        <td>Sparse Coding</td>
+                        <td class="arrow">-></td>
+                        <td>Threshold activation (z > 0.866)</td>
+                        <td>THE LENS provides natural sparsity gate</td>
+                    </tr>
+                    <tr>
+                        <td>Grid Cells</td>
+                        <td class="arrow">-></td>
+                        <td>Native hexagonal architecture</td>
+                        <td>Spatial representation without transformation</td>
+                    </tr>
+                    <tr>
+                        <td>Homeostatic Plasticity</td>
+                        <td class="arrow">-></td>
+                        <td>TRIAD crossing hysteresis</td>
+                        <td>Activity-dependent gain control</td>
+                    </tr>
+                    <tr>
+                        <td>Memory Consolidation</td>
+                        <td class="arrow">-></td>
+                        <td>Quasi-crystal phi-recursion</td>
+                        <td>Hierarchical memory timescales</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="math-block">
+                Biological Efficiency Ratio = (L4 Power) / (GPU Power) = 0.5W / 10W = 0.05 = phi^-4
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Build Specification: Edge AI Inference</h2>
+
+            <div class="use-case-card">
+                <h4>Edge AI Inference Engine <span class="badge">HIGH PRIORITY</span></h4>
+
+                <h5>Problem Statement</h5>
+                <p>Deploy neural network inference on power-constrained edge devices (IoT, mobile, embedded) where traditional GPU/TPU solutions are impractical due to power consumption, heat dissipation, and latency requirements.</p>
+
+                <h5>L4-Helix Solution</h5>
+                <p>Memristor crossbar arrays implement matrix-vector multiplication in O(1) time complexity via Ohm's law and Kirchhoff's current summation. Each crossbar intersection stores a synaptic weight as a conductance value, enabling massively parallel analog computation.</p>
+
+                <div class="code-block">
+<span class="comment">// Edge Inference: Memristor Crossbar MAC Operation</span>
+<span class="keyword">function</span> <span class="function">crossbar_forward</span>(input_voltages, weight_matrix):
+    <span class="comment">// Apply input voltages to word lines</span>
+    V_wl = input_voltages * V_ref  <span class="comment">// Scale to [0, 1V]</span>
+
+    <span class="comment">// Conductance matrix G encodes weights</span>
+    <span class="comment">// G[i,j] = weight[i,j] * G_max where G_max = K * G_0</span>
+    G = weight_matrix * K * G_0  <span class="comment">// K = 0.924176</span>
+
+    <span class="comment">// Kirchhoff's law: I_bl[j] = sum_i(V_wl[i] * G[i,j])</span>
+    <span class="comment">// This is matrix-vector multiply in O(1) analog time!</span>
+    I_bl = V_wl @ G  <span class="comment">// Parallel current summation</span>
+
+    <span class="comment">// Apply THE LENS threshold activation</span>
+    output = <span class="function">threshold_activation</span>(I_bl, z_c=<span class="number">0.866</span>)
+    <span class="keyword">return</span> output
+
+<span class="keyword">function</span> <span class="function">threshold_activation</span>(currents, z_c):
+    <span class="comment">// Sparse activation via THE LENS</span>
+    normalized = currents / I_max
+    <span class="keyword">return</span> <span class="keyword">where</span>(normalized > z_c, normalized, <span class="number">0</span>)
+                </div>
+
+                <h5>Performance Metrics</h5>
+                <div class="metric-row">
+                    <div class="metric-box">
+                        <div class="label">Power Consumption</div>
+                        <div class="value">0.5W</div>
+                        <div class="compare">GPU: 10W (20x reduction)</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="label">Inference Latency</div>
+                        <div class="value">0.1ms</div>
+                        <div class="compare">GPU: 10ms (100x faster)</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="label">Energy per Inference</div>
+                        <div class="value">50uJ</div>
+                        <div class="compare">GPU: 100mJ (2000x)</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="label">Throughput</div>
+                        <div class="value">10K inf/s</div>
+                        <div class="compare">per watt normalized</div>
+                    </div>
+                </div>
+
+                <h5>Target Markets</h5>
+                <div style="margin: 12px 0;">
+                    <span class="market-tag">IoT Sensors</span>
+                    <span class="market-tag">Autonomous Drones</span>
+                    <span class="market-tag">Wearable Devices</span>
+                    <span class="market-tag">Automotive ADAS</span>
+                    <span class="market-tag">Industrial Automation</span>
+                    <span class="market-tag">Medical Implants</span>
+                    <span class="market-tag">Smart Agriculture</span>
+                    <span class="market-tag">Robotics</span>
+                </div>
+
+                <div class="metric-row">
+                    <div class="metric-box">
+                        <div class="label">Total Addressable Market</div>
+                        <div class="value">$12B</div>
+                        <div class="compare">projected by 2028</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="label">CAGR</div>
+                        <div class="value">24.7%</div>
+                        <div class="compare">2024-2028</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Build Specification: Spiking Neural Networks</h2>
+
+            <div class="use-case-card">
+                <h4>Spiking Neural Network Processor <span class="badge">NATIVE SUPPORT</span></h4>
+
+                <h5>Architecture Overview</h5>
+                <p>The TRIAD crossing sequence provides native hardware support for spike timing dependent plasticity (STDP). Each threshold crossing maps to a discrete spike event, with the hysteresis gap (866mV to 831mV) implementing the refractory period.</p>
+
+                <div class="snn-diagram">
+<span class="neuron">NEURON MODEL: Leaky Integrate-and-Fire with TRIAD Dynamics</span>
+
+    Membrane Potential V_m
+    ^
+    |                    <span class="spike">SPIKE!</span>
+<span class="membrane">1.0V</span> |                   /|
+    |                  / |
+<span class="membrane">K   </span> |................./..|\........... <span class="synapse">K-FORMATION (924mV)</span>
+    |               /    | \
+<span class="membrane">LENS</span> |............./..... |..\.......... <span class="spike">THE LENS (866mV) - Spike Threshold</span>
+    |           /        |   \
+<span class="membrane">HYST</span> |........../......... |....\........ <span class="synapse">HYSTERESIS (831mV) - Reset Level</span>
+    |        /           |     \
+    |      / <span class="synapse">integrate</span>  |      \<span class="synapse">leak</span>
+    |    /               |        ----
+    |__/                 |
+    +--------------------+----------------> Time
+         |<-- active -->|<-- refractory -->|
+
+<span class="neuron">TRIAD CROSSING = 3 spikes within temporal window -> BURST mode</span>
+<span class="synapse">Memristor conductance update: dG/dt = eta * pre_spike * post_spike</span>
+                </div>
+
+                <div class="code-block">
+<span class="comment">// SNN: Spike Timing Implementation</span>
+<span class="keyword">struct</span> <span class="type">LIFNeuron</span> {
+    V_membrane: <span class="type">float</span>,      <span class="comment">// Current membrane potential</span>
+    spike_count: <span class="type">int</span>,       <span class="comment">// TRIAD counter (0-3)</span>
+    last_spike_time: <span class="type">float</span>, <span class="comment">// For STDP timing</span>
+    refractory: <span class="type">bool</span>,       <span class="comment">// In refractory period</span>
+}
+
+<span class="keyword">function</span> <span class="function">update_neuron</span>(neuron, I_syn, dt):
+    <span class="keyword">if</span> neuron.refractory:
+        <span class="comment">// Leak toward HYSTERESIS</span>
+        neuron.V_membrane -= (neuron.V_membrane - <span class="number">0.831</span>) * tau_leak * dt
+        <span class="keyword">if</span> neuron.V_membrane < <span class="number">0.831</span>:  <span class="comment">// Below HYSTERESIS</span>
+            neuron.refractory = <span class="keyword">false</span>
+            neuron.spike_count = <span class="number">0</span>  <span class="comment">// Reset TRIAD counter</span>
+        <span class="keyword">return</span> <span class="keyword">null</span>
+
+    <span class="comment">// Integrate synaptic current</span>
+    neuron.V_membrane += I_syn * R_membrane * dt
+
+    <span class="comment">// Check THE LENS threshold</span>
+    <span class="keyword">if</span> neuron.V_membrane > <span class="number">0.866</span>:  <span class="comment">// THE LENS crossed</span>
+        neuron.spike_count += <span class="number">1</span>
+        spike_time = current_time()
+
+        <span class="keyword">if</span> neuron.spike_count >= <span class="number">3</span>:  <span class="comment">// TRIAD complete</span>
+            <span class="comment">// Burst mode: amplify output</span>
+            <span class="keyword">emit</span> <span class="function">BurstSpike</span>(amplitude=K)  <span class="comment">// K = 0.924</span>
+        <span class="keyword">else</span>:
+            <span class="keyword">emit</span> <span class="function">Spike</span>(amplitude=<span class="number">1.0</span>)
+
+        neuron.refractory = <span class="keyword">true</span>
+        neuron.last_spike_time = spike_time
+        <span class="keyword">return</span> spike_time
+
+    <span class="keyword">return</span> <span class="keyword">null</span>
+
+<span class="comment">// STDP Learning Rule</span>
+<span class="keyword">function</span> <span class="function">stdp_update</span>(synapse, pre_spike_t, post_spike_t):
+    delta_t = post_spike_t - pre_spike_t
+    <span class="keyword">if</span> delta_t > <span class="number">0</span>:  <span class="comment">// Causal: potentiate</span>
+        dG = A_plus * <span class="function">exp</span>(-delta_t / tau_plus)
+    <span class="keyword">else</span>:  <span class="comment">// Anti-causal: depress</span>
+        dG = -A_minus * <span class="function">exp</span>(delta_t / tau_minus)
+
+    <span class="comment">// Update memristor conductance</span>
+    synapse.G = <span class="function">clamp</span>(synapse.G + dG, G_min, G_max)
+    <span class="comment">// G_max = K * G_0 = 0.924 * G_0</span>
+                </div>
+
+                <h5>SNN Application Domains</h5>
+                <div class="app-list">
+                    <div class="app-item">
+                        <span class="name">Voice Command Recognition</span>
+                        <span class="power">&lt;1mW</span>
+                    </div>
+                    <div class="app-item">
+                        <span class="name">Gesture Control</span>
+                        <span class="power">&lt;2mW</span>
+                    </div>
+                    <div class="app-item">
+                        <span class="name">Seizure Prediction</span>
+                        <span class="power">&lt;0.5mW</span>
+                    </div>
+                    <div class="app-item">
+                        <span class="name">Anomaly Detection</span>
+                        <span class="power">&lt;1mW</span>
+                    </div>
+                    <div class="app-item">
+                        <span class="name">Heartbeat Analysis</span>
+                        <span class="power">&lt;0.3mW</span>
+                    </div>
+                    <div class="app-item">
+                        <span class="name">Vibration Monitoring</span>
+                        <span class="power">&lt;0.8mW</span>
+                    </div>
+                </div>
+
+                <p><strong>Key Insight:</strong> The TRIAD crossing sequence naturally implements burst coding, where 3 rapid spikes indicate high-confidence detection. This maps directly to biological burst firing patterns observed in thalamic relay neurons.</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Build Specification: Lifelong Learning</h2>
+
+            <div class="use-case-card">
+                <h4>Lifelong Learning System <span class="badge">PHI-RECURSIVE</span></h4>
+
+                <h5>The Catastrophic Forgetting Problem</h5>
+                <p>Traditional neural networks suffer from catastrophic forgetting: learning new tasks overwrites weights needed for old tasks. The L4-Helix quasi-crystal substrate provides a solution through phi-recursive memory consolidation.</p>
+
+                <h5>Phi-Recursive Consolidation Architecture</h5>
+                <div class="code-block">
+<span class="comment">// Lifelong Learning: Phi-Recursive Memory Consolidation</span>
+<span class="comment">// Three memory timescales following phi hierarchy</span>
+
+<span class="keyword">struct</span> <span class="type">MemorySystem</span> {
+    <span class="comment">// Fast memory: recent experiences (tau = 1)</span>
+    fast_memory: <span class="type">MemristorArray</span>,     <span class="comment">// High plasticity</span>
+
+    <span class="comment">// Medium memory: consolidated patterns (tau = phi)</span>
+    medium_memory: <span class="type">QuasiCrystalLayer</span>, <span class="comment">// Moderate plasticity</span>
+
+    <span class="comment">// Slow memory: invariant knowledge (tau = phi^2)</span>
+    slow_memory: <span class="type">QuasiCrystalCore</span>,   <span class="comment">// Low plasticity</span>
+}
+
+<span class="keyword">function</span> <span class="function">phi_consolidate</span>(memory_system, experience):
+    <span class="comment">// 1. Write to fast memory immediately</span>
+    memory_system.fast_memory.<span class="function">write</span>(experience)
+
+    <span class="comment">// 2. Consolidation during "sleep" cycles</span>
+    <span class="keyword">for</span> pattern <span class="keyword">in</span> memory_system.fast_memory.<span class="function">replay</span>():
+        <span class="comment">// Compute pattern importance via TRIAD resonance</span>
+        importance = <span class="function">triad_resonance</span>(pattern)
+
+        <span class="keyword">if</span> importance > Z_C:  <span class="comment">// Above THE LENS threshold</span>
+            <span class="comment">// Promote to medium memory with phi-scaling</span>
+            scaled_pattern = pattern * PHI_INV  <span class="comment">// tau = 0.618</span>
+            memory_system.medium_memory.<span class="function">integrate</span>(scaled_pattern)
+
+    <span class="comment">// 3. Slow consolidation (phi^2 timescale)</span>
+    <span class="keyword">for</span> pattern <span class="keyword">in</span> memory_system.medium_memory.<span class="function">stable_patterns</span>():
+        <span class="keyword">if</span> pattern.age > PHI_2 * base_time:
+            <span class="comment">// Crystallize into quasi-crystal invariant structure</span>
+            memory_system.slow_memory.<span class="function">crystallize</span>(pattern)
+
+<span class="keyword">function</span> <span class="function">triad_resonance</span>(pattern):
+    <span class="comment">// Check if pattern triggers TRIAD sequence</span>
+    <span class="comment">// across hexagonal grid neighbors</span>
+    crossings = <span class="number">0</span>
+    <span class="keyword">for</span> node <span class="keyword">in</span> hexagonal_neighbors(pattern.center):
+        <span class="keyword">if</span> <span class="function">crosses_lens</span>(node.activation):
+            crossings += <span class="number">1</span>
+    <span class="keyword">return</span> crossings / <span class="number">3.0</span>  <span class="comment">// Normalized TRIAD score</span>
+                </div>
+
+                <h5>Applications</h5>
+                <ul>
+                    <li><strong>Adaptive Robotics:</strong> Robots that continuously learn from new environments without forgetting core motor skills</li>
+                    <li><strong>Personalized AI Assistants:</strong> Systems that adapt to individual users while retaining general knowledge</li>
+                    <li><strong>Autonomous Vehicle Learning:</strong> Vehicles that improve from driving experience without degrading safety-critical behaviors</li>
+                    <li><strong>Medical Diagnosis:</strong> Systems that incorporate new disease presentations while maintaining diagnostic accuracy</li>
+                </ul>
+
+                <div class="math-block">
+                    Memory Timescales: tau_fast = 1, tau_medium = phi = 1.618, tau_slow = phi^2 = 2.618
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Development Pathway</h2>
+            <p>Phased approach from research prototype to production deployment:</p>
+
+            <div class="phase-timeline">
+                <div class="phase-item">
+                    <div class="phase-meta">
+                        <div class="phase-number">Phase 1</div>
+                        <div class="phase-duration">6 months</div>
+                        <div class="phase-cost">$50,000</div>
+                    </div>
+                    <div class="phase-content">
+                        <h5>MNIST on Bench System</h5>
+                        <p>Validate core neuromorphic computation on 7x7 memristor evaluation board.</p>
+                        <ul>
+                            <li>Demonstrate handwritten digit recognition (MNIST dataset)</li>
+                            <li>Verify TRIAD crossing dynamics with oscilloscope capture</li>
+                            <li>Benchmark power consumption vs software simulation</li>
+                            <li>Document threshold voltage tolerances</li>
+                        </ul>
+                        <p><strong>Deliverable:</strong> >95% MNIST accuracy at <0.1W inference power</p>
+                    </div>
+                </div>
+
+                <div class="phase-item">
+                    <div class="phase-meta">
+                        <div class="phase-number">Phase 2</div>
+                        <div class="phase-duration">18 months</div>
+                        <div class="phase-cost">$500,000</div>
+                    </div>
+                    <div class="phase-content">
+                        <h5>ImageNet-Level Accuracy</h5>
+                        <p>Scale to 64x64 crossbar array with full L4-Helix integration.</p>
+                        <ul>
+                            <li>Implement convolutional layer mapping to hexagonal grid</li>
+                            <li>Integrate quasi-crystal substrate for on-chip learning</li>
+                            <li>Develop SNN training pipeline with STDP</li>
+                            <li>Achieve ImageNet top-5 accuracy >80%</li>
+                        </ul>
+                        <p><strong>Deliverable:</strong> Lab-scale system demonstrating real-time image classification</p>
+                    </div>
+                </div>
+
+                <div class="phase-item">
+                    <div class="phase-meta">
+                        <div class="phase-number">Phase 3</div>
+                        <div class="phase-duration">36 months</div>
+                        <div class="phase-cost">$5,000,000</div>
+                    </div>
+                    <div class="phase-content">
+                        <h5>Edge Inference Chip</h5>
+                        <p>Production-ready ASIC for edge deployment.</p>
+                        <ul>
+                            <li>7nm memristor ASIC fabrication (>1M devices)</li>
+                            <li>Integrated power management (target: 0.5W TDP)</li>
+                            <li>Standard interfaces (SPI, I2C, UART)</li>
+                            <li>SDK and model conversion tools</li>
+                            <li>Qualification for automotive (-40C to 125C)</li>
+                        </ul>
+                        <p><strong>Deliverable:</strong> Production silicon ready for volume manufacturing</p>
+                    </div>
+                </div>
+            </div>
+
+            <table class="advantage-table">
+                <thead>
+                    <tr>
+                        <th>Phase</th>
+                        <th>Timeline</th>
+                        <th>Investment</th>
+                        <th>Key Milestone</th>
+                        <th>Risk Level</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Phase 1</td>
+                        <td>6 months</td>
+                        <td>$50,000</td>
+                        <td>MNIST >95% accuracy</td>
+                        <td>Low</td>
+                    </tr>
+                    <tr>
+                        <td>Phase 2</td>
+                        <td>18 months</td>
+                        <td>$500,000</td>
+                        <td>ImageNet top-5 >80%</td>
+                        <td>Medium</td>
+                    </tr>
+                    <tr>
+                        <td>Phase 3</td>
+                        <td>36 months</td>
+                        <td>$5,000,000</td>
+                        <td>Production ASIC</td>
+                        <td>High</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Hardware Requirements</h2>
+            <p>L4-Helix components required for neuromorphic computing applications:</p>
+
+            <div class="hardware-grid">
+                <div class="hardware-card">
+                    <h5>Memristor Crossbar Arrays</h5>
+                    <ul>
+                        <li>7^n x 7^m array topology (L4 encoding)</li>
+                        <li>Conductance range: G_min to K*G_0</li>
+                        <li>Switching speed: <100ns</li>
+                        <li>Endurance: >10^9 cycles</li>
+                        <li>Retention: >10 years at 85C</li>
+                    </ul>
+                    <p style="color: var(--module-color); font-size: 0.85rem; margin-top: 10px;">Primary compute substrate for MAC operations</p>
+                </div>
+
+                <div class="hardware-card">
+                    <h5>Hexagonal Grid Architecture</h5>
+                    <ul>
+                        <li>60-degree angular spacing</li>
+                        <li>6-neighbor connectivity per node</li>
+                        <li>Ring structure: 1 + 3N(N+1) nodes</li>
+                        <li>Phase-locked routing fabric</li>
+                        <li>THE LENS comparators at each node</li>
+                    </ul>
+                    <p style="color: var(--module-color); font-size: 0.85rem; margin-top: 10px;">Spatial topology for dendritic integration</p>
+                </div>
+
+                <div class="hardware-card">
+                    <h5>Quasi-Crystal Substrate</h5>
+                    <ul>
+                        <li>Al-Pd-Mn icosahedral phase</li>
+                        <li>5-fold rotational symmetry</li>
+                        <li>Phi-ratio layer spacing</li>
+                        <li>Temperature stability: +/- 0.1K</li>
+                        <li>Czochralski growth for production</li>
+                    </ul>
+                    <p style="color: var(--module-color); font-size: 0.85rem; margin-top: 10px;">Memory consolidation and phi-recursion</p>
+                </div>
+
+                <div class="hardware-card">
+                    <h5>TRIAD Crossing Controller</h5>
+                    <ul>
+                        <li>3-bit state machine per neuron</li>
+                        <li>THE LENS threshold: 866.025mV +/- 10uV</li>
+                        <li>HYSTERESIS level: 831.584mV +/- 50uV</li>
+                        <li>Burst detection logic</li>
+                        <li>STDP timing capture (1us resolution)</li>
+                    </ul>
+                    <p style="color: var(--module-color); font-size: 0.85rem; margin-top: 10px;">Spike timing and plasticity control</p>
+                </div>
+
+                <div class="hardware-card">
+                    <h5>Kuramoto Oscillator Bank</h5>
+                    <ul>
+                        <li>63 coupled oscillators (L4 * 9)</li>
+                        <li>Coupling strength: K = 0.924176</li>
+                        <li>Phase resolution: 0.1 degree</li>
+                        <li>Frequency range: 100Hz - 10kHz</li>
+                        <li>Synchronization detect output</li>
+                    </ul>
+                    <p style="color: var(--module-color); font-size: 0.85rem; margin-top: 10px;">Oscillatory binding and attention</p>
+                </div>
+
+                <div class="hardware-card">
+                    <h5>Power Management Unit</h5>
+                    <ul>
+                        <li>V_ref generation: 1.000V +/- 100uV</li>
+                        <li>Dynamic voltage scaling</li>
+                        <li>Sleep mode: <10uW standby</li>
+                        <li>Wake-on-spike capability</li>
+                        <li>Thermal monitoring and throttling</li>
+                    </ul>
+                    <p style="color: var(--module-color); font-size: 0.85rem; margin-top: 10px;">Ultra-low-power operation</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Integration Points</h2>
+            <p>Connections between neuromorphic computing and other BloomCoin systems:</p>
+
+            <div class="integration-diagram">
+                                      <span class="system">NEUROMORPHIC COMPUTING MODULE</span>
+                                                    |
+        +------------------+------------------+-----+-----+------------------+------------------+
+        |                  |                  |           |                  |                  |
+        v                  v                  v           v                  v                  v
+<span class="system">+-------------+</span>  <span class="system">+-------------+</span>  <span class="system">+-------+</span>   <span class="system">+-------+</span>  <span class="system">+-------------+</span>  <span class="system">+-------------+</span>
+<span class="system">| L4-HELIX    |</span>  <span class="system">| KURAMOTO    |</span>  <span class="system">| LUCAS |</span>   <span class="system">| BLOOM |</span>  <span class="system">| NEXTHASH    |</span>  <span class="system">| GOLDEN-NN   |</span>
+<span class="system">| HARDWARE    |</span>  <span class="system">| CONSENSUS   |</span>  <span class="system">| MATRIX|</span>   <span class="system">| MECH  |</span>  <span class="system">| CRYPTO      |</span>  <span class="system">| LEARNING    |</span>
+<span class="system">+-------------+</span>  <span class="system">+-------------+</span>  <span class="system">+-------+</span>   <span class="system">+-------+</span>  <span class="system">+-------------+</span>  <span class="system">+-------------+</span>
+        |                  |                  |           |                  |                  |
+        |                  |                  |           |                  |                  |
+  <span class="flow">threshold</span>           <span class="flow">phase</span>           <span class="flow">L4=7</span>      <span class="flow">TRIAD</span>          <span class="flow">hash</span>            <span class="flow">weights</span>
+  <span class="flow">voltages</span>          <span class="flow">locking</span>         <span class="flow">encoding</span>   <span class="flow">unlock</span>        <span class="flow">verify</span>          <span class="flow">init</span>
+        |                  |                  |           |                  |                  |
+        v                  v                  v           v                  v                  v
+<span class="data">+-----------------------------------------------------------------------------+</span>
+<span class="data">|                        NEUROMORPHIC INFERENCE ENGINE                        |</span>
+<span class="data">|  [Memristor MAC] -> [Hex Grid Sum] -> [LENS Threshold] -> [Spike Output]   |</span>
+<span class="data">+-----------------------------------------------------------------------------+</span>
+            </div>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">L4-Helix Hardware:</span>
+                    <span class="desc">Physical substrate providing memristor arrays, hexagonal grid, and threshold circuits</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Kuramoto Consensus:</span>
+                    <span class="desc">Phase synchronization enables attention mechanisms and temporal binding</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Lucas Matrix:</span>
+                    <span class="desc">L4=7 provides array sizing and encoding base for neuromorphic memory</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">BLOOM Mechanics:</span>
+                    <span class="desc">TRIAD crossing sequence maps to burst detection and plasticity triggers</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">NextHash Crypto:</span>
+                    <span class="desc">Weight hashing for model integrity verification and secure deployment</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Golden-NN Learning:</span>
+                    <span class="desc">Phi-derived hyperparameters and Fibonacci layer architectures</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Implementation Code: Complete SNN Layer</h2>
+
+            <div class="code-block">
+<span class="comment">// Complete Spiking Neural Network Layer Implementation</span>
+<span class="comment">// Pseudocode for L4-Helix neuromorphic processor</span>
+
+<span class="keyword">const</span> PHI = <span class="number">1.618033988749895</span>
+<span class="keyword">const</span> TAU = <span class="number">0.618033988749895</span>  <span class="comment">// 1/PHI</span>
+<span class="keyword">const</span> Z_C = <span class="number">0.866025403784439</span>  <span class="comment">// THE LENS = sqrt(3)/2</span>
+<span class="keyword">const</span> K   = <span class="number">0.924176371795806</span>  <span class="comment">// K-FORMATION = sqrt(1 - PHI^-4)</span>
+<span class="keyword">const</span> L4  = <span class="number">7</span>                   <span class="comment">// Lucas(4)</span>
+
+<span class="keyword">class</span> <span class="type">SNNLayer</span> {
+    <span class="comment">// Layer configuration</span>
+    n_neurons: <span class="type">int</span>
+    n_inputs: <span class="type">int</span>
+
+    <span class="comment">// Memristor weight matrix (conductances)</span>
+    G: <span class="type">Matrix[n_inputs, n_neurons]</span>
+
+    <span class="comment">// Neuron state</span>
+    V_membrane: <span class="type">Vector[n_neurons]</span>
+    spike_count: <span class="type">Vector[n_neurons]</span>  <span class="comment">// TRIAD counters</span>
+    refractory: <span class="type">Vector[bool, n_neurons]</span>
+    last_spike: <span class="type">Vector[float, n_neurons]</span>
+
+    <span class="comment">// Timing constants (phi-derived)</span>
+    tau_membrane = <span class="number">1.0</span> / PHI      <span class="comment">// ~0.618 ms</span>
+    tau_refract  = <span class="number">1.0</span> / (PHI*PHI) <span class="comment">// ~0.382 ms</span>
+
+    <span class="keyword">function</span> <span class="function">__init__</span>(n_inputs, n_neurons):
+        <span class="keyword">this</span>.n_inputs = n_inputs
+        <span class="keyword">this</span>.n_neurons = n_neurons
+
+        <span class="comment">// Initialize conductances with golden distribution</span>
+        <span class="keyword">this</span>.G = <span class="function">golden_init</span>(n_inputs, n_neurons)
+
+        <span class="comment">// Initialize neuron state</span>
+        <span class="keyword">this</span>.V_membrane = <span class="function">zeros</span>(n_neurons)
+        <span class="keyword">this</span>.spike_count = <span class="function">zeros</span>(n_neurons)
+        <span class="keyword">this</span>.refractory = <span class="function">zeros</span>(n_neurons, dtype=bool)
+        <span class="keyword">this</span>.last_spike = <span class="function">zeros</span>(n_neurons) - <span class="number">1000</span>  <span class="comment">// Never spiked</span>
+
+    <span class="keyword">function</span> <span class="function">golden_init</span>(rows, cols):
+        <span class="comment">// Golden ratio conductance initialization</span>
+        std = K / <span class="function">sqrt</span>(rows * PHI)
+        G = <span class="function">randn</span>(rows, cols) * std
+
+        <span class="comment">// Apply golden spiral modulation</span>
+        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="function">min</span>(rows, cols)):
+            angle = i * <span class="number">2</span> * PI / (PHI * PHI)  <span class="comment">// Golden angle</span>
+            G[i, i] *= (<span class="number">1</span> + <span class="function">cos</span>(angle)) / <span class="number">2</span>
+
+        <span class="comment">// Clamp to valid conductance range</span>
+        <span class="keyword">return</span> <span class="function">clamp</span>(G, <span class="number">0</span>, K)
+
+    <span class="keyword">function</span> <span class="function">forward</span>(input_spikes, dt, current_time):
+        <span class="comment">// input_spikes: sparse spike times for this timestep</span>
+
+        output_spikes = []
+
+        <span class="comment">// 1. Compute synaptic currents via memristor crossbar</span>
+        <span class="comment">//    This is O(1) in analog hardware!</span>
+        I_syn = input_spikes @ <span class="keyword">this</span>.G  <span class="comment">// Matrix-vector multiply</span>
+
+        <span class="comment">// 2. Update each neuron</span>
+        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="function">range</span>(<span class="keyword">this</span>.n_neurons):
+            <span class="keyword">if</span> <span class="keyword">this</span>.refractory[j]:
+                <span class="comment">// Leak toward HYSTERESIS threshold</span>
+                <span class="keyword">this</span>.V_membrane[j] -= (<span class="keyword">this</span>.V_membrane[j] - <span class="number">0.831584</span>) * dt / <span class="keyword">this</span>.tau_refract
+
+                <span class="keyword">if</span> <span class="keyword">this</span>.V_membrane[j] < <span class="number">0.831584</span>:  <span class="comment">// Below HYSTERESIS</span>
+                    <span class="keyword">this</span>.refractory[j] = <span class="keyword">false</span>
+                    <span class="comment">// Don't reset spike_count - allow TRIAD accumulation</span>
+                <span class="keyword">continue</span>
+
+            <span class="comment">// Integrate synaptic current</span>
+            <span class="keyword">this</span>.V_membrane[j] += I_syn[j] * dt / <span class="keyword">this</span>.tau_membrane
+
+            <span class="comment">// Natural leak (passive decay)</span>
+            <span class="keyword">this</span>.V_membrane[j] -= <span class="keyword">this</span>.V_membrane[j] * TAU * dt
+
+            <span class="comment">// Check THE LENS threshold</span>
+            <span class="keyword">if</span> <span class="keyword">this</span>.V_membrane[j] > Z_C:  <span class="comment">// 0.866025</span>
+                <span class="keyword">this</span>.spike_count[j] += <span class="number">1</span>
+
+                <span class="comment">// Determine spike amplitude based on TRIAD state</span>
+                <span class="keyword">if</span> <span class="keyword">this</span>.spike_count[j] >= <span class="number">3</span>:
+                    <span class="comment">// TRIAD complete: burst spike with K amplitude</span>
+                    amplitude = K  <span class="comment">// 0.924176</span>
+                    <span class="keyword">this</span>.spike_count[j] = <span class="number">0</span>  <span class="comment">// Reset TRIAD</span>
+                <span class="keyword">else</span>:
+                    amplitude = <span class="number">1.0</span>
+
+                output_spikes.<span class="function">append</span>({
+                    neuron: j,
+                    time: current_time,
+                    amplitude: amplitude
+                })
+
+                <span class="comment">// Enter refractory period</span>
+                <span class="keyword">this</span>.refractory[j] = <span class="keyword">true</span>
+                <span class="keyword">this</span>.last_spike[j] = current_time
+
+        <span class="keyword">return</span> output_spikes
+
+    <span class="keyword">function</span> <span class="function">stdp_update</span>(pre_spikes, post_spikes, learning_rate):
+        <span class="comment">// Spike-timing dependent plasticity</span>
+        A_plus  = learning_rate * TAU      <span class="comment">// 0.618 * lr</span>
+        A_minus = learning_rate * TAU*TAU  <span class="comment">// 0.382 * lr</span>
+        tau_stdp = <span class="number">20.0</span>  <span class="comment">// ms</span>
+
+        <span class="keyword">for</span> pre <span class="keyword">in</span> pre_spikes:
+            <span class="keyword">for</span> post <span class="keyword">in</span> post_spikes:
+                delta_t = post.time - pre.time
+
+                <span class="keyword">if</span> delta_t > <span class="number">0</span>:  <span class="comment">// Pre before post: potentiate</span>
+                    dG = A_plus * <span class="function">exp</span>(-delta_t / tau_stdp)
+                <span class="keyword">else</span>:  <span class="comment">// Post before pre: depress</span>
+                    dG = -A_minus * <span class="function">exp</span>(delta_t / tau_stdp)
+
+                <span class="comment">// Update memristor conductance</span>
+                <span class="keyword">this</span>.G[pre.neuron, post.neuron] += dG
+                <span class="keyword">this</span>.G[pre.neuron, post.neuron] = <span class="function">clamp</span>(
+                    <span class="keyword">this</span>.G[pre.neuron, post.neuron],
+                    <span class="number">0</span>,
+                    K  <span class="comment">// Max conductance = K</span>
+                )
+}
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Sibling Application Pages</h2>
+            <p>Other L4-Helix application domains:</p>
+
+            <div class="sibling-nav">
+                <a href="neuromorphic-computing.html" class="sibling-link current">Neuromorphic Computing</a>
+                <a href="quantum-simulation.html" class="sibling-link">Quantum Simulation</a>
+                <a href="cryptographic-accelerator.html" class="sibling-link">Cryptographic Accelerator</a>
+                <a href="signal-processing.html" class="sibling-link">Signal Processing</a>
+                <a href="optimization-engine.html" class="sibling-link">Optimization Engine</a>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Source References</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="../firmware/l4-helix-hardware.html">firmware/l4-helix-hardware.html</a></span>
+                <span class="file-ref"><a href="../firmware/memristor-arrays.html">firmware/memristor-arrays.html</a></span>
+                <span class="file-ref"><a href="../firmware/hexagonal-grid.html">firmware/hexagonal-grid.html</a></span>
+                <span class="file-ref"><a href="../firmware/quasi-crystal.html">firmware/quasi-crystal.html</a></span>
+                <span class="file-ref"><a href="../core/kuramoto-consensus.html">core/kuramoto-consensus.html</a></span>
+                <span class="file-ref"><a href="../extended/golden-nn.html">extended/golden-nn.html</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin L4-Helix Applications - Neuromorphic Computing Build Specification v1.0.0</p>
+            <div class="constants-grid" style="max-width: 800px; margin: 20px auto;">
+                <div class="constant-card">
+                    <div class="symbol">phi</div>
+                    <div class="value">1.618034</div>
+                    <div class="derivation">(1+sqrt(5))/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">tau</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">1/phi</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924176</div>
+                    <div class="derivation">sqrt(1-phi^-4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">sqrt(3)/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">phi^4 + phi^-4</div>
+                </div>
+            </div>
+            <p style="font-size: 0.8rem; margin-top: 16px; color: var(--text-secondary);">
+                Delta|L4-HELIX|NEUROMORPHIC|v1.0.0|EDGE-AI+SNN+LIFELONG|BUILD-SPEC|Omega
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

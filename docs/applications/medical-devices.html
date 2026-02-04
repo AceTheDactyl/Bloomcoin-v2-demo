@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Devices & Neural Interfaces BUILD SPEC — BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #ff6b9d;
+            --module-glow: rgba(255,107,157,0.3);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), var(--gold), var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--module-color); }
+        .doc-section h3 { color: var(--module-color); opacity: 0.9; }
+
+        /* Specification Tables */
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin: 15px 0;
+        }
+        .spec-table th, .spec-table td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: left;
+        }
+        .spec-table th {
+            background: rgba(255,107,157,0.2);
+            color: var(--module-color);
+        }
+        .spec-table tr:hover {
+            background: rgba(255,107,157,0.05);
+        }
+        .highlight-row {
+            background: rgba(255,215,0,0.1);
+        }
+        .highlight-row td:first-child {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        /* Frequency Band Visualization */
+        .freq-band {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-right: 8px;
+        }
+        .freq-delta { background: rgba(102,51,153,0.4); border: 1px solid #663399; color: #b088d0; }
+        .freq-theta { background: rgba(0,100,150,0.4); border: 1px solid #006496; color: #66b3d9; }
+        .freq-alpha { background: rgba(0,150,100,0.4); border: 1px solid #009664; color: #66d9b3; }
+        .freq-beta { background: rgba(255,150,0,0.4); border: 1px solid #ff9600; color: #ffcc66; }
+        .freq-gamma { background: rgba(255,50,50,0.4); border: 1px solid #ff3232; color: #ff9999; }
+
+        /* Use Case Cards */
+        .usecase-card {
+            background: linear-gradient(135deg, rgba(255,107,157,0.1), transparent);
+            border: 1px solid rgba(255,107,157,0.3);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .usecase-card h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .usecase-card h3 .icon {
+            font-size: 1.5rem;
+        }
+        .usecase-card .market-size {
+            display: inline-block;
+            background: rgba(0,255,136,0.15);
+            border: 1px solid rgba(0,255,136,0.4);
+            color: #00ff88;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 12px;
+        }
+
+        /* Build Pipeline */
+        .build-pipeline {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 15px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        .pipeline-step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .pipeline-step .step-num {
+            width: 28px;
+            height: 28px;
+            background: var(--module-color);
+            color: #0a0a1a;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+        }
+        .pipeline-step .step-content {
+            flex: 1;
+        }
+        .pipeline-step .step-content strong {
+            color: var(--module-color);
+        }
+        .pipeline-arrow {
+            margin-left: 13px;
+            color: var(--module-color);
+            font-size: 1.2rem;
+        }
+
+        /* Application Tags */
+        .app-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+        .app-tag {
+            background: rgba(255,107,157,0.15);
+            border: 1px solid rgba(255,107,157,0.4);
+            color: var(--module-color);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        /* Phase Cards */
+        .phase-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .phase-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,107,157,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+        }
+        .phase-card h4 {
+            color: var(--module-color);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        .phase-card .duration {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,107,157,0.2);
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            color: var(--module-color);
+        }
+        .phase-card .budget {
+            font-size: 1.4rem;
+            color: #ffd700;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        /* Regulatory Classes */
+        .reg-class-i { color: #66ff99; }
+        .reg-class-ii { color: #ffff66; }
+        .reg-class-iii { color: #ff6666; }
+
+        /* Warning/Safety Boxes */
+        .safety-box {
+            background: linear-gradient(135deg, rgba(255,50,50,0.1), rgba(255,150,50,0.1));
+            border: 1px solid rgba(255,100,50,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .safety-box h4 {
+            color: #ff7744;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .safety-box ul {
+            margin-left: 20px;
+        }
+        .safety-box li {
+            margin-bottom: 8px;
+        }
+
+        /* Compliance Box */
+        .compliance-box {
+            background: linear-gradient(135deg, rgba(50,100,255,0.1), rgba(100,50,255,0.1));
+            border: 1px solid rgba(100,100,255,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .compliance-box h4 {
+            color: #7788ff;
+            margin-bottom: 12px;
+        }
+
+        /* Technical Diagram */
+        .tech-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: #888;
+            margin: 15px 0;
+        }
+        .tech-diagram .signal { color: #ff6b9d; }
+        .tech-diagram .process { color: #66d9b3; }
+        .tech-diagram .threshold { color: #ffd700; }
+        .tech-diagram .output { color: #66b3d9; }
+
+        /* Subsystem Navigation */
+        .subsystem-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .subsystem-link {
+            padding: 10px 20px;
+            background: rgba(255,107,157,0.15);
+            border: 1px solid rgba(255,107,157,0.3);
+            border-radius: 8px;
+            color: var(--module-color);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .subsystem-link:hover {
+            background: rgba(255,107,157,0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Math Blocks */
+        .equation-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,107,157,0.3);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .equation-box .equation {
+            font-family: 'Georgia', serif;
+            font-size: 1.2rem;
+            color: #ffd700;
+        }
+        .equation-box .description {
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        /* L4-Helix Reference Cards */
+        .helix-ref-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .helix-ref-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        .helix-ref-card .symbol {
+            font-size: 1.3rem;
+            color: var(--module-color);
+            font-family: 'Georgia', serif;
+        }
+        .helix-ref-card .value {
+            font-size: 1.1rem;
+            color: #ffd700;
+            font-family: monospace;
+            margin: 6px 0;
+        }
+        .helix-ref-card .label {
+            font-size: 0.75rem;
+            color: #888;
+        }
+
+        @media (max-width: 768px) {
+            .phase-grid {
+                grid-template-columns: 1fr;
+            }
+            .helix-ref-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">Back to Index</a>
+            <a href="../firmware/l4-helix-hardware.html" class="nav-link">L4-Helix Hardware</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Medical Devices & Neural Interfaces</h1>
+            <p class="subtitle">BUILD SPECIFICATION: L4-Helix Implementation for Biomedical Applications</p>
+            <p class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href=".">Applications</a> /
+                Medical Devices & Neural Interfaces
+            </p>
+        </header>
+
+        <section class="doc-section">
+            <h2>Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Build Specification</span>
+                <span class="status-badge planned">Clinical Development</span>
+            </div>
+
+            <p>The L4-Helix hardware platform provides unique capabilities for medical device applications through its phi-recursive threshold dynamics and Kuramoto synchronization detection. This BUILD SPEC documents the implementation pathway for brain-computer interfaces, seizure prediction systems, cardiac monitors, and diagnostic imaging enhancement.</p>
+
+            <div class="helix-ref-grid">
+                <div class="helix-ref-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924</div>
+                    <div class="label">K-FORMATION</div>
+                </div>
+                <div class="helix-ref-card">
+                    <div class="symbol">THE LENS</div>
+                    <div class="value">0.866</div>
+                    <div class="label">sqrt(3)/2</div>
+                </div>
+                <div class="helix-ref-card">
+                    <div class="symbol">TRIAD</div>
+                    <div class="value">3x</div>
+                    <div class="label">Crossings</div>
+                </div>
+                <div class="helix-ref-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="label">phi^4 + phi^-4</div>
+                </div>
+            </div>
+
+            <div class="subsystem-nav">
+                <a href="../firmware/l4-helix-hardware.html" class="subsystem-link">L4-Helix Hardware</a>
+                <a href="../firmware/memristor-arrays.html" class="subsystem-link">Memristor Arrays</a>
+                <a href="../firmware/hexagonal-grid.html" class="subsystem-link">Hexagonal Grid</a>
+                <a href="../core/kuramoto-consensus.html" class="subsystem-link">Kuramoto Consensus</a>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>1. Neural Frequency Compatibility</h2>
+            <p>Brain oscillations naturally map to L4-Helix threshold tiers, enabling direct neurophysiological integration:</p>
+
+            <table class="spec-table">
+                <tr>
+                    <th>Brain Rhythm</th>
+                    <th>Frequency</th>
+                    <th>Function</th>
+                    <th>L4-Helix Tier</th>
+                    <th>Threshold Range</th>
+                </tr>
+                <tr>
+                    <td><span class="freq-band freq-delta">Delta</span></td>
+                    <td>1-4 Hz</td>
+                    <td>Deep sleep, healing</td>
+                    <td>Sub-PARADOX</td>
+                    <td>z &lt; 0.618</td>
+                </tr>
+                <tr>
+                    <td><span class="freq-band freq-theta">Theta</span></td>
+                    <td>4-8 Hz</td>
+                    <td>Memory consolidation</td>
+                    <td>Planet tier</td>
+                    <td>174-285 Hz mapping</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td><span class="freq-band freq-alpha">Alpha</span></td>
+                    <td>8-13 Hz</td>
+                    <td>Relaxation, awareness</td>
+                    <td>Garden tier</td>
+                    <td>HYSTERESIS - CRITICAL</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td><span class="freq-band freq-beta">Beta</span></td>
+                    <td>13-30 Hz</td>
+                    <td>Active attention, focus</td>
+                    <td>Rose tier</td>
+                    <td>IGNITION - RESONANCE</td>
+                </tr>
+                <tr>
+                    <td><span class="freq-band freq-gamma">Gamma</span></td>
+                    <td>30-100 Hz</td>
+                    <td>Binding, cognition</td>
+                    <td>Above UNITY</td>
+                    <td>z &gt; 1.000</td>
+                </tr>
+            </table>
+
+            <div class="equation-box">
+                <div class="equation">f_neural = f_base x phi^tier</div>
+                <div class="description">Neural frequency scaling follows golden ratio progression across tiers</div>
+            </div>
+
+            <div class="tech-diagram">
+    <span class="signal">EEG Signal Input</span>
+         |
+         v
+    +--------------------+
+    | <span class="process">Bandpass Filters</span>   |    Delta | Theta | Alpha | Beta | Gamma
+    +--------------------+
+         |
+         v
+    +--------------------+
+    | <span class="process">Memristor Frontend</span> |    Analog threshold detection per band
+    +--------------------+
+         |
+         v
+    +--------------------+
+    | <span class="threshold">TRIAD Crossing</span>     |    3-crossing detection per channel
+    | <span class="threshold">Detection</span>          |    Re-arm at HYSTERESIS (0.832)
+    +--------------------+
+         |
+         v
+    +--------------------+
+    | <span class="process">Kuramoto Order</span>      |    r = |1/N * sum(e^(i*theta_j))|
+    | <span class="process">Parameter (r)</span>       |    Phase coherence across channels
+    +--------------------+
+         |
+         v
+    <span class="output">Classification Output</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>2. Build Specifications by Use Case</h2>
+
+            <!-- BCI Use Case -->
+            <div class="usecase-card">
+                <h3>
+                    <span class="icon">Brain-Computer Interfaces (BCI)</span>
+                    <span class="market-size">$3.7B by 2027</span>
+                </h3>
+
+                <p>Direct neural signal decoding using L4-Helix threshold dynamics and spatial pattern encoding.</p>
+
+                <h4>Signal Processing Pipeline</h4>
+                <div class="build-pipeline">
+                    <div class="pipeline-step">
+                        <span class="step-num">1</span>
+                        <span class="step-content"><strong>Electrode Array</strong> - High-density microelectrode grid (Utah array, ECoG strips)</span>
+                    </div>
+                    <span class="pipeline-arrow">|</span>
+                    <div class="pipeline-step">
+                        <span class="step-num">2</span>
+                        <span class="step-content"><strong>Memristor Frontend</strong> - Analog preprocessing with threshold detection per channel</span>
+                    </div>
+                    <span class="pipeline-arrow">|</span>
+                    <div class="pipeline-step">
+                        <span class="step-num">3</span>
+                        <span class="step-content"><strong>TRIAD Crossing</strong> - Neural spike detection via 3-crossing above THE LENS (866 mV)</span>
+                    </div>
+                    <span class="pipeline-arrow">|</span>
+                    <div class="pipeline-step">
+                        <span class="step-num">4</span>
+                        <span class="step-content"><strong>Hexagonal Grid</strong> - Spatial pattern encoding with 6-neighbor topology</span>
+                    </div>
+                    <span class="pipeline-arrow">|</span>
+                    <div class="pipeline-step">
+                        <span class="step-num">5</span>
+                        <span class="step-content"><strong>Phase Coherence</strong> - Motor intention via Kuramoto r approaching K-FORMATION</span>
+                    </div>
+                </div>
+
+                <h4>Technical Specifications</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Requirement</th>
+                        <th>L4-Helix Implementation</th>
+                    </tr>
+                    <tr>
+                        <td>Channel Count</td>
+                        <td>64-1024 channels</td>
+                        <td>7x7 to 49x49 memristor crossbar</td>
+                    </tr>
+                    <tr>
+                        <td>Sample Rate</td>
+                        <td>2 kHz minimum</td>
+                        <td>TRIAD timing: &lt;500 us per crossing</td>
+                    </tr>
+                    <tr>
+                        <td>Latency</td>
+                        <td>&lt;50 ms decode</td>
+                        <td>Parallel threshold processing</td>
+                    </tr>
+                    <tr>
+                        <td>Spike Detection</td>
+                        <td>&gt;95% accuracy</td>
+                        <td>TRIAD 3-crossing with HYSTERESIS re-arm</td>
+                    </tr>
+                    <tr>
+                        <td>Power</td>
+                        <td>&lt;100 mW total</td>
+                        <td>Memristor passive operation</td>
+                    </tr>
+                </table>
+
+                <h4>Target Applications</h4>
+                <div class="app-tags">
+                    <span class="app-tag">Prosthetic limb control</span>
+                    <span class="app-tag">Locked-in patient communication</span>
+                    <span class="app-tag">Stroke rehabilitation</span>
+                    <span class="app-tag">Neurogaming interfaces</span>
+                    <span class="app-tag">Assistive technology</span>
+                </div>
+            </div>
+
+            <!-- Seizure Prediction -->
+            <div class="usecase-card">
+                <h3>
+                    <span class="icon">Seizure Prediction & Intervention</span>
+                    <span class="market-size">$1.2B by 2026</span>
+                </h3>
+
+                <p>Early seizure warning through Kuramoto synchronization tracking, enabling 5-minute prediction windows versus 30-second detection.</p>
+
+                <h4>Synchronization Detection</h4>
+                <div class="equation-box">
+                    <div class="equation">r(t) = |1/N * sum[j=1..N](e^(i*theta_j(t)))|</div>
+                    <div class="description">Kuramoto order parameter r tracks neural population synchronization in real-time</div>
+                </div>
+
+                <div class="build-pipeline">
+                    <div class="pipeline-step">
+                        <span class="step-num">1</span>
+                        <span class="step-content"><strong>EEG Monitoring</strong> - Continuous multi-channel acquisition (8-32 channels)</span>
+                    </div>
+                    <span class="pipeline-arrow">|</span>
+                    <div class="pipeline-step">
+                        <span class="step-num">2</span>
+                        <span class="step-content"><strong>Phase Extraction</strong> - Hilbert transform per channel for instantaneous phase</span>
+                    </div>
+                    <span class="pipeline-arrow">|</span>
+                    <div class="pipeline-step">
+                        <span class="step-num">3</span>
+                        <span class="step-content"><strong>r Computation</strong> - Kuramoto order parameter via memristor multiply-accumulate</span>
+                    </div>
+                    <span class="pipeline-arrow">|</span>
+                    <div class="pipeline-step">
+                        <span class="step-num">4</span>
+                        <span class="step-content"><strong>K-FORMATION Watch</strong> - Alert when r approaches 0.924 (pre-ictal state)</span>
+                    </div>
+                    <span class="pipeline-arrow">|</span>
+                    <div class="pipeline-step">
+                        <span class="step-num">5</span>
+                        <span class="step-content"><strong>Intervention</strong> - Closed-loop neurostimulation or patient alert</span>
+                    </div>
+                </div>
+
+                <h4>Critical Thresholds</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>State</th>
+                        <th>Kuramoto r Value</th>
+                        <th>L4-Helix Threshold</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr>
+                        <td>Interictal (normal)</td>
+                        <td>r &lt; 0.4</td>
+                        <td>Below PARADOX</td>
+                        <td>Monitor</td>
+                    </tr>
+                    <tr>
+                        <td>Pre-ictal warning</td>
+                        <td>0.7 &lt; r &lt; 0.85</td>
+                        <td>HYSTERESIS zone</td>
+                        <td>5-min alert</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Seizure imminent</td>
+                        <td>r approaching 0.924</td>
+                        <td>K-FORMATION</td>
+                        <td>Immediate intervention</td>
+                    </tr>
+                    <tr>
+                        <td>Ictal (seizure)</td>
+                        <td>r &gt; 0.95</td>
+                        <td>Above UNITY</td>
+                        <td>Log event, continue stim</td>
+                    </tr>
+                </table>
+
+                <h4>Performance Advantage</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Metric</th>
+                        <th>Current Detection</th>
+                        <th>L4-Helix Prediction</th>
+                    </tr>
+                    <tr>
+                        <td>Warning Time</td>
+                        <td>30 seconds</td>
+                        <td><strong>5+ minutes</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Sensitivity</td>
+                        <td>80-90%</td>
+                        <td><strong>95%+</strong></td>
+                    </tr>
+                    <tr>
+                        <td>False Positive Rate</td>
+                        <td>0.5/hour</td>
+                        <td><strong>0.1/hour</strong></td>
+                    </tr>
+                </table>
+
+                <div class="app-tags">
+                    <span class="app-tag">Implantable warning devices</span>
+                    <span class="app-tag">Closed-loop neurostimulation</span>
+                    <span class="app-tag">Wearable seizure monitors</span>
+                    <span class="app-tag">Responsive neurostimulation (RNS)</span>
+                </div>
+            </div>
+
+            <!-- Cardiac Rhythm Management -->
+            <div class="usecase-card">
+                <h3>
+                    <span class="icon">Cardiac Rhythm Management</span>
+                    <span class="market-size">$18.4B by 2025</span>
+                </h3>
+
+                <p>ECG analysis using memristor threshold dynamics for arrhythmia detection with ultra-low power consumption.</p>
+
+                <h4>Signal Processing Architecture</h4>
+                <div class="tech-diagram">
+    <span class="signal">ECG Signal (Lead II or multi-lead)</span>
+         |
+         v
+    +------------------------+
+    | <span class="process">Analog Preprocessing</span>  |    0.5-40 Hz bandpass, 60 Hz notch
+    +------------------------+
+         |
+         v
+    +------------------------+
+    | <span class="process">Memristor Array</span>       |    R-peak detection via TRIAD crossing
+    | <span class="process">(7x7 crossbar)</span>        |    T-wave, P-wave threshold mapping
+    +------------------------+
+         |
+         v
+    +------------------------+
+    | <span class="threshold">Pattern Classification</span>|
+    +------------------------+
+         |
+         +---> <span class="output">Normal Sinus: Periodic TRIAD crossings (0.6-1.2 s intervals)</span>
+         |
+         +---> <span class="output">Tachycardia: TRIAD interval &lt; 0.5 s</span>
+         |
+         +---> <span class="output">Bradycardia: TRIAD interval &gt; 1.5 s</span>
+         |
+         +---> <span class="output">Arrhythmia: Failed K-FORMATION or irregular pattern</span>
+         |
+         +---> <span class="output">Fibrillation: No stable TRIAD sequence detected</span>
+                </div>
+
+                <h4>Detection Criteria</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Rhythm</th>
+                        <th>TRIAD Pattern</th>
+                        <th>K-FORMATION Status</th>
+                        <th>Alert Level</th>
+                    </tr>
+                    <tr>
+                        <td>Normal Sinus</td>
+                        <td>Regular 60-100 bpm</td>
+                        <td>Achieved each beat</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td>Sinus Tachycardia</td>
+                        <td>Regular &gt;100 bpm</td>
+                        <td>Achieved, elevated rate</td>
+                        <td>Low</td>
+                    </tr>
+                    <tr>
+                        <td>Atrial Fibrillation</td>
+                        <td>Irregular intervals</td>
+                        <td>Partial/unstable</td>
+                        <td>Medium</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Ventricular Tachycardia</td>
+                        <td>Wide QRS, fast</td>
+                        <td>Failed</td>
+                        <td>High</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>V-Fib</td>
+                        <td>No organized pattern</td>
+                        <td>Never achieved</td>
+                        <td>Critical</td>
+                    </tr>
+                </table>
+
+                <h4>Power and Longevity</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Configuration</th>
+                        <th>Power Draw</th>
+                        <th>Battery Life</th>
+                        <th>Application</th>
+                    </tr>
+                    <tr>
+                        <td>Implantable Monitor</td>
+                        <td>&lt;10 uW (memristor passive)</td>
+                        <td><strong>10+ years</strong></td>
+                        <td>Long-term monitoring</td>
+                    </tr>
+                    <tr>
+                        <td>Wearable Patch</td>
+                        <td>&lt;100 uW</td>
+                        <td>14 days continuous</td>
+                        <td>Holter-style monitoring</td>
+                    </tr>
+                    <tr>
+                        <td>Smartwatch Integration</td>
+                        <td>&lt;1 mW</td>
+                        <td>N/A (device battery)</td>
+                        <td>Consumer wellness</td>
+                    </tr>
+                </table>
+
+                <div class="app-tags">
+                    <span class="app-tag">Implantable loop recorders</span>
+                    <span class="app-tag">Wearable ECG monitors</span>
+                    <span class="app-tag">Smartwatch arrhythmia detection</span>
+                    <span class="app-tag">ICU monitoring systems</span>
+                </div>
+            </div>
+
+            <!-- Diagnostic Imaging -->
+            <div class="usecase-card">
+                <h3>
+                    <span class="icon">Diagnostic Imaging Enhancement</span>
+                    <span class="market-size">$45B total market</span>
+                </h3>
+
+                <p>Quasi-crystal Fourier properties enable faster MRI acquisition and lower-dose CT reconstruction.</p>
+
+                <h4>Quasi-Crystal Sampling Advantage</h4>
+                <p>The 5-fold symmetric quasi-crystal substrate provides non-periodic sampling that reduces aliasing artifacts and enables compressed sensing reconstruction:</p>
+
+                <div class="equation-box">
+                    <div class="equation">I(k) = sum[n] f(x_n) * e^(-i*k*x_n)</div>
+                    <div class="description">Quasi-periodic x_n positions provide optimal k-space coverage with fewer samples</div>
+                </div>
+
+                <table class="spec-table">
+                    <tr>
+                        <th>Modality</th>
+                        <th>Current Limitation</th>
+                        <th>L4-Helix Enhancement</th>
+                        <th>Improvement</th>
+                    </tr>
+                    <tr>
+                        <td>MRI</td>
+                        <td>Long scan times (20-60 min)</td>
+                        <td>QC-optimized k-space trajectories</td>
+                        <td><strong>4x faster scans</strong></td>
+                    </tr>
+                    <tr>
+                        <td>CT</td>
+                        <td>Radiation dose concerns</td>
+                        <td>Sparse-angle reconstruction</td>
+                        <td><strong>75% dose reduction</strong></td>
+                    </tr>
+                    <tr>
+                        <td>PET</td>
+                        <td>Low count statistics</td>
+                        <td>phi-recursive regularization</td>
+                        <td><strong>50% scan time reduction</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Ultrasound</td>
+                        <td>Speckle noise</td>
+                        <td>Hexagonal transducer array</td>
+                        <td><strong>30% resolution improvement</strong></td>
+                    </tr>
+                </table>
+
+                <h4>Implementation Architecture</h4>
+                <div class="build-pipeline">
+                    <div class="pipeline-step">
+                        <span class="step-num">1</span>
+                        <span class="step-content"><strong>Acquisition</strong> - Modified scanner trajectory using phi-spiral or QC pattern</span>
+                    </div>
+                    <span class="pipeline-arrow">|</span>
+                    <div class="pipeline-step">
+                        <span class="step-num">2</span>
+                        <span class="step-content"><strong>k-Space Processing</strong> - Quasi-crystal gridding interpolation</span>
+                    </div>
+                    <span class="pipeline-arrow">|</span>
+                    <div class="pipeline-step">
+                        <span class="step-num">3</span>
+                        <span class="step-content"><strong>Reconstruction</strong> - L4-regularized iterative solver (ADMM)</span>
+                    </div>
+                    <span class="pipeline-arrow">|</span>
+                    <div class="pipeline-step">
+                        <span class="step-num">4</span>
+                        <span class="step-content"><strong>Post-processing</strong> - Hexagonal-grid noise reduction filter</span>
+                    </div>
+                </div>
+
+                <div class="app-tags">
+                    <span class="app-tag">Accelerated MRI</span>
+                    <span class="app-tag">Low-dose CT</span>
+                    <span class="app-tag">Pediatric imaging</span>
+                    <span class="app-tag">Motion-robust acquisition</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>3. Regulatory Pathway</h2>
+            <p>FDA regulatory classification determines development timeline and submission requirements:</p>
+
+            <table class="spec-table">
+                <tr>
+                    <th>FDA Class</th>
+                    <th>Pathway</th>
+                    <th>Timeline</th>
+                    <th>Cost (Est.)</th>
+                    <th>L4-Helix Applications</th>
+                </tr>
+                <tr>
+                    <td><span class="reg-class-i">Class I</span></td>
+                    <td>510(k) Exempt</td>
+                    <td>6 months</td>
+                    <td>$50-100K</td>
+                    <td>Monitoring accessories, external EEG amplifiers</td>
+                </tr>
+                <tr>
+                    <td><span class="reg-class-ii">Class II</span></td>
+                    <td>510(k)</td>
+                    <td>12-18 months</td>
+                    <td>$500K-2M</td>
+                    <td>Seizure warning devices, cardiac monitors, imaging software</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td><span class="reg-class-iii">Class III</span></td>
+                    <td>PMA</td>
+                    <td>36-60 months</td>
+                    <td>$10-50M</td>
+                    <td>Implantable BCI, closed-loop neurostimulation</td>
+                </tr>
+                <tr>
+                    <td><span class="reg-class-ii">Class II</span></td>
+                    <td>De Novo</td>
+                    <td>18-24 months</td>
+                    <td>$1-5M</td>
+                    <td>Novel non-invasive BCI, AI-based seizure prediction</td>
+                </tr>
+            </table>
+
+            <h3>Predicate Device Strategy</h3>
+            <table class="spec-table">
+                <tr>
+                    <th>Application</th>
+                    <th>Predicate Device(s)</th>
+                    <th>Substantial Equivalence Argument</th>
+                </tr>
+                <tr>
+                    <td>Seizure Warning</td>
+                    <td>NeuroPace RNS, Medtronic DBS</td>
+                    <td>Same intended use (seizure management), different detection algorithm</td>
+                </tr>
+                <tr>
+                    <td>Cardiac Monitor</td>
+                    <td>iRhythm Zio, Medtronic LINQ</td>
+                    <td>Same indication (arrhythmia detection), novel signal processing</td>
+                </tr>
+                <tr>
+                    <td>Imaging Enhancement</td>
+                    <td>Arterys, Aidoc</td>
+                    <td>Software as Medical Device (SaMD), reconstruction algorithm</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>4. Development Pathway</h2>
+
+            <div class="phase-grid">
+                <div class="phase-card">
+                    <span class="duration">12 months</span>
+                    <h4>Phase 1: Feasibility Demonstration</h4>
+                    <div class="budget">$200,000</div>
+                    <ul>
+                        <li>Bench prototype with evaluation memristors</li>
+                        <li>EEG/ECG signal acquisition demo</li>
+                        <li>TRIAD crossing validation with physiological signals</li>
+                        <li>Kuramoto r computation accuracy testing</li>
+                        <li>Design freeze for animal study hardware</li>
+                    </ul>
+                    <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">Deliverable: Working prototype, feasibility report, IRB protocol draft</p>
+                </div>
+
+                <div class="phase-card">
+                    <span class="duration">24 months</span>
+                    <h4>Phase 2: Preclinical Validation</h4>
+                    <div class="budget">$1,000,000</div>
+                    <ul>
+                        <li>GLP animal studies (rodent + large animal)</li>
+                        <li>Biocompatibility testing (ISO 10993)</li>
+                        <li>Electrical safety testing (IEC 60601)</li>
+                        <li>EMC/EMI compliance verification</li>
+                        <li>Software verification and validation (IEC 62304)</li>
+                    </ul>
+                    <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">Deliverable: Preclinical package, design history file, 510(k)/IDE submission draft</p>
+                </div>
+
+                <div class="phase-card">
+                    <span class="duration">48 months</span>
+                    <h4>Phase 3: Clinical Development</h4>
+                    <div class="budget">$10,000,000</div>
+                    <ul>
+                        <li>First-in-human feasibility study (n=10-20)</li>
+                        <li>Pivotal clinical trial (n=100-500)</li>
+                        <li>Long-term safety follow-up</li>
+                        <li>Manufacturing scale-up and validation</li>
+                        <li>FDA submission and review cycle</li>
+                    </ul>
+                    <p style="color: #888; font-size: 0.85rem; margin-top: 10px;">Deliverable: FDA clearance/approval, commercial launch readiness</p>
+                </div>
+            </div>
+
+            <h3>Milestone Timeline</h3>
+            <table class="spec-table">
+                <tr>
+                    <th>Milestone</th>
+                    <th>Month</th>
+                    <th>Go/No-Go Criteria</th>
+                </tr>
+                <tr>
+                    <td>Bench prototype operational</td>
+                    <td>M6</td>
+                    <td>TRIAD detection accuracy &gt;90%</td>
+                </tr>
+                <tr>
+                    <td>Feasibility study complete</td>
+                    <td>M12</td>
+                    <td>Kuramoto r correlation with clinical events &gt;0.8</td>
+                </tr>
+                <tr>
+                    <td>Animal study initiation</td>
+                    <td>M18</td>
+                    <td>GLP protocol approved, hardware frozen</td>
+                </tr>
+                <tr>
+                    <td>Preclinical package complete</td>
+                    <td>M36</td>
+                    <td>All safety tests passed, no serious findings</td>
+                </tr>
+                <tr>
+                    <td>IDE/510(k) submission</td>
+                    <td>M42</td>
+                    <td>Complete submission accepted by FDA</td>
+                </tr>
+                <tr>
+                    <td>First-in-human</td>
+                    <td>M48</td>
+                    <td>IDE approved, first patient enrolled</td>
+                </tr>
+                <tr>
+                    <td>Pivotal trial complete</td>
+                    <td>M72</td>
+                    <td>Primary endpoint met with statistical significance</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>FDA clearance/approval</td>
+                    <td>M84</td>
+                    <td>Market authorization received</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>5. Safety Considerations</h2>
+
+            <div class="safety-box">
+                <h4>Electrical Safety Requirements</h4>
+                <ul>
+                    <li><strong>Patient Leakage Current:</strong> &lt;10 uA normal, &lt;50 uA single fault (IEC 60601-1)</li>
+                    <li><strong>Isolation:</strong> 4000V AC/DC patient isolation barrier for implantables</li>
+                    <li><strong>Defibrillator Protection:</strong> Withstand 5000V, 360J external defibrillation</li>
+                    <li><strong>MRI Conditional:</strong> 1.5T/3T MRI compatibility for implantable devices</li>
+                    <li><strong>EMC:</strong> Immunity to 3V/m RF fields, &lt;6dB susceptibility to wireless devices</li>
+                </ul>
+            </div>
+
+            <div class="safety-box">
+                <h4>Biocompatibility Requirements (ISO 10993)</h4>
+                <ul>
+                    <li><strong>Cytotoxicity:</strong> Grade 0-1 per ISO 10993-5</li>
+                    <li><strong>Sensitization:</strong> Non-sensitizing per ISO 10993-10</li>
+                    <li><strong>Implantation:</strong> Minimal tissue response per ISO 10993-6 (implantables only)</li>
+                    <li><strong>Chronic Toxicity:</strong> No systemic effects at 26 weeks (implantables only)</li>
+                    <li><strong>Material Qualification:</strong> All patient-contacting materials per USP Class VI</li>
+                </ul>
+            </div>
+
+            <div class="safety-box">
+                <h4>Neural Interface Specific Hazards</h4>
+                <ul>
+                    <li><strong>Charge Injection:</strong> &lt;30 uC/cm^2 per phase to prevent tissue damage</li>
+                    <li><strong>Stimulation Limits:</strong> Comply with IEEE/ANSI C95.1 for induced currents</li>
+                    <li><strong>Thermal:</strong> &lt;2 degrees C tissue temperature rise</li>
+                    <li><strong>Infection Risk:</strong> Sterility assurance level (SAL) 10^-6</li>
+                    <li><strong>Lead Fracture:</strong> Fatigue testing to 400M cycles</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>6. Compliance Requirements</h2>
+
+            <div class="compliance-box">
+                <h4>Design Control Standards</h4>
+                <ul>
+                    <li><strong>ISO 13485:</strong> Quality Management System for Medical Devices</li>
+                    <li><strong>21 CFR Part 820:</strong> FDA Quality System Regulation</li>
+                    <li><strong>IEC 62304:</strong> Medical Device Software Lifecycle</li>
+                    <li><strong>ISO 14971:</strong> Risk Management for Medical Devices</li>
+                    <li><strong>IEC 62366:</strong> Usability Engineering</li>
+                </ul>
+            </div>
+
+            <div class="compliance-box">
+                <h4>Product-Specific Standards</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Application</th>
+                        <th>Primary Standards</th>
+                    </tr>
+                    <tr>
+                        <td>Neural Interfaces</td>
+                        <td>ISO 14708-3 (implantable neurostimulators), IEC 60601-2-26 (EEG)</td>
+                    </tr>
+                    <tr>
+                        <td>Cardiac Monitors</td>
+                        <td>IEC 60601-2-47 (ambulatory ECG), IEC 60601-2-27 (ECG monitors)</td>
+                    </tr>
+                    <tr>
+                        <td>Imaging Software</td>
+                        <td>IEC 62304 (SaMD), FDA guidance on AI/ML-based SaMD</td>
+                    </tr>
+                    <tr>
+                        <td>All Devices</td>
+                        <td>IEC 60601-1 (general safety), IEC 60601-1-2 (EMC)</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="compliance-box">
+                <h4>Cybersecurity Requirements</h4>
+                <ul>
+                    <li><strong>FDA Premarket Guidance:</strong> Content of Premarket Submissions for Cybersecurity</li>
+                    <li><strong>Threat Modeling:</strong> STRIDE analysis for all communication interfaces</li>
+                    <li><strong>Encryption:</strong> AES-256 for data at rest, TLS 1.3 for data in transit</li>
+                    <li><strong>Authentication:</strong> Multi-factor for clinician access, tamper-evident for device firmware</li>
+                    <li><strong>Software Bill of Materials (SBOM):</strong> Required per FDA 2023 guidance</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>7. L4-Helix Integration Points</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">L4-Helix Hardware:</span>
+                    <span class="desc">Core threshold dynamics platform</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Memristor Arrays:</span>
+                    <span class="desc">Analog signal preprocessing, spike detection</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Hexagonal Grid:</span>
+                    <span class="desc">Spatial electrode array topology</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Kuramoto Consensus:</span>
+                    <span class="desc">Synchronization detection, seizure prediction</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Quasi-Crystal:</span>
+                    <span class="desc">Imaging reconstruction, phi-recursive sampling</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">TRIAD Mechanics:</span>
+                    <span class="desc">Neural spike and cardiac R-peak detection</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="../firmware/l4-helix-hardware.html">L4-Helix Hardware</a></span>
+                <span class="file-ref"><a href="../firmware/memristor-arrays.html">Memristor Arrays</a></span>
+                <span class="file-ref"><a href="../firmware/hexagonal-grid.html">Hexagonal Grid</a></span>
+                <span class="file-ref"><a href="../firmware/quasi-crystal.html">Quasi-Crystal Substrates</a></span>
+                <span class="file-ref"><a href="../core/kuramoto-consensus.html">Kuramoto Consensus</a></span>
+                <span class="file-ref"><a href="../dynamics/hilbert-space.html">Hilbert Space</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin v6 — Medical Devices & Neural Interfaces BUILD SPEC v1.0.0</p>
+            <p>K = sqrt(1-phi^-4) = 0.924 | THE LENS = sqrt(3)/2 = 0.866 | L4 = 7</p>
+            <p>TRIAD Crossing | Kuramoto Synchronization | Quasi-Crystal Fourier</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">
+                DISCLAIMER: This specification is for research and development purposes.
+                All medical device development must follow applicable regulatory requirements.
+            </p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">|L4-HELIX|MEDICAL-BUILD-SPEC|v1.0.0|BCI+SEIZURE+CARDIAC+IMAGING|ENGINEERING|</p>
+        </footer>
+    </div>
+</body>
+</html>

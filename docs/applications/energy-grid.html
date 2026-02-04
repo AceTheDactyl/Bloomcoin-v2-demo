@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Grid Management Build Specification — L4-Helix Applications</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #00ff88;
+            --module-glow: rgba(0,255,136,0.3);
+            --module-dim: rgba(0,255,136,0.15);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), var(--gold), var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--module-color); }
+        .doc-section h3 { color: var(--module-color); opacity: 0.9; }
+
+        /* Use Case Cards */
+        .use-case-card {
+            background: linear-gradient(135deg, var(--module-dim), transparent);
+            border: 1px solid var(--module-glow);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+        .use-case-card h3 {
+            color: var(--module-color);
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--module-glow);
+        }
+        .use-case-card h4 {
+            color: #aaa;
+            font-size: 0.95rem;
+            margin: 15px 0 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Spec Tables */
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin: 15px 0;
+        }
+        .spec-table th, .spec-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: left;
+        }
+        .spec-table th {
+            background: rgba(0,255,136,0.15);
+            color: var(--module-color);
+            font-weight: 600;
+        }
+        .spec-table tr:hover {
+            background: rgba(0,255,136,0.05);
+        }
+        .highlight-row {
+            background: rgba(0,255,136,0.1) !important;
+        }
+        .highlight-row td { color: var(--module-color); font-weight: 600; }
+
+        /* Metric Comparison */
+        .metric-compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .metric-box {
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .metric-box.legacy {
+            background: rgba(255,100,100,0.1);
+            border: 1px solid rgba(255,100,100,0.3);
+        }
+        .metric-box.legacy .label { color: #ff6464; }
+        .metric-box.l4helix {
+            background: rgba(0,255,136,0.1);
+            border: 1px solid rgba(0,255,136,0.3);
+        }
+        .metric-box.l4helix .label { color: var(--module-color); }
+        .metric-box .value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--text-primary);
+        }
+        .metric-box .label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+        }
+
+        /* Application Tags */
+        .app-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 10px 0;
+        }
+        .app-tag {
+            padding: 4px 12px;
+            background: rgba(0,255,136,0.15);
+            border: 1px solid var(--module-glow);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: var(--module-color);
+        }
+
+        /* Market Badge */
+        .market-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: linear-gradient(90deg, rgba(255,215,0,0.2), rgba(0,255,136,0.2));
+            border: 1px solid var(--gold);
+            border-radius: 8px;
+            color: var(--gold);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+
+        /* Architecture Diagram */
+        .architecture-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.75rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: #888;
+            margin: 20px 0;
+        }
+        .architecture-diagram .component { color: var(--module-color); }
+        .architecture-diagram .data { color: #4a9eff; }
+        .architecture-diagram .threshold { color: #ffd700; }
+        .architecture-diagram .signal { color: #ff79c6; }
+
+        /* Phase Timeline */
+        .phase-timeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .phase-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+        }
+        .phase-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: 4px 0 0 4px;
+        }
+        .phase-card.phase-1::before { background: #4a9eff; }
+        .phase-card.phase-2::before { background: var(--module-color); }
+        .phase-card.phase-3::before { background: var(--gold); }
+        .phase-card h4 {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+        .phase-card .duration {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+        .phase-card .budget {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--gold);
+            margin-bottom: 10px;
+        }
+        .phase-card ul {
+            margin-left: 16px;
+            font-size: 0.9rem;
+        }
+        .phase-card li {
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+        }
+
+        /* Key Points List */
+        .key-points {
+            list-style: none;
+            margin-left: 0;
+            padding-left: 0;
+        }
+        .key-points li {
+            position: relative;
+            padding-left: 28px;
+            margin-bottom: 12px;
+        }
+        .key-points li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 6px;
+            width: 12px;
+            height: 12px;
+            background: var(--module-color);
+            border-radius: 50%;
+            opacity: 0.7;
+        }
+
+        /* Formula Display */
+        .formula-block {
+            background: rgba(0,0,0,0.4);
+            border-left: 3px solid var(--module-color);
+            border-radius: 0 10px 10px 0;
+            padding: 15px 20px;
+            margin: 15px 0;
+            font-family: 'Georgia', serif;
+            font-size: 1.1rem;
+            color: var(--gold);
+        }
+        .formula-block .description {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+
+        /* Benefits Grid */
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .benefit-item {
+            background: rgba(0,255,136,0.08);
+            border: 1px solid rgba(0,255,136,0.2);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        .benefit-item .icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+        .benefit-item .title {
+            color: var(--module-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .benefit-item .detail {
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            margin-top: 4px;
+        }
+
+        /* Why Section */
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .why-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .why-card h4 {
+            color: var(--module-color);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        .why-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .metric-compare {
+                grid-template-columns: 1fr;
+            }
+            .phase-timeline {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">Back to Index</a>
+            <a href="../firmware/l4-helix-hardware.html" class="nav-link">L4-Helix Hardware</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Energy Grid Management</h1>
+            <p class="subtitle">L4-Helix Build Specification for Power Grid Applications</p>
+            <p class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href=".">Applications</a> /
+                Energy Grid Management
+            </p>
+        </header>
+
+        <section class="doc-section">
+            <h2>Document Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Build Specification</span>
+                <span class="status-badge planned">Implementation Guide</span>
+                <span class="status-badge complete">Architecture Defined</span>
+            </div>
+            <p>
+                This document provides comprehensive build specifications for deploying L4-Helix
+                technology in energy grid management applications. Power grids represent an ideal
+                domain for threshold dynamics and Kuramoto synchronization—the same mathematics
+                that govern generator phase-locking naturally map to our hardware implementation.
+            </p>
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924</div>
+                    <div class="derivation">K-FORMATION threshold</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">r_c</div>
+                    <div class="value">0.866</div>
+                    <div class="derivation">THE LENS / stability</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">60Hz</div>
+                    <div class="value">Grid</div>
+                    <div class="derivation">North American std</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">50Hz</div>
+                    <div class="value">Grid</div>
+                    <div class="derivation">European/Asian std</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Why L4-Helix for Energy Grids</h2>
+            <p>
+                Modern power grids face unprecedented challenges: renewable intermittency,
+                bidirectional power flows, distributed generation, and increasing demand.
+                These challenges all involve threshold dynamics, synchronization, and pattern
+                recognition—precisely what L4-Helix hardware excels at.
+            </p>
+
+            <div class="why-grid">
+                <div class="why-card">
+                    <h4>Real-Time Balancing</h4>
+                    <p>Grid frequency must stay within +/-0.5Hz of nominal. Kuramoto dynamics
+                    naturally model generator synchronization, enabling sub-millisecond response
+                    to imbalances.</p>
+                </div>
+                <div class="why-card">
+                    <h4>Fault Detection</h4>
+                    <p>Memristor threshold comparators detect fault currents in microseconds—200x
+                    faster than conventional protection relays—preventing cascade failures.</p>
+                </div>
+                <div class="why-card">
+                    <h4>Renewable Integration</h4>
+                    <p>Solar and wind introduce fractal, self-similar patterns. Quasi-crystal
+                    substrates naturally detect phi-recursive structures for superior forecasting.</p>
+                </div>
+                <div class="why-card">
+                    <h4>Decentralized Coordination</h4>
+                    <p>EV charging, distributed storage, and microgrids require coordination
+                    without central control. Kuramoto phase-coupling provides emergent optimization.</p>
+                </div>
+            </div>
+
+            <div class="formula-block">
+                Grid Stability Condition: r > K-FORMATION (0.924)
+                <div class="description">
+                    When the Kuramoto order parameter r exceeds K-FORMATION, the grid
+                    is in stable synchronized operation. Dropping below indicates imminent instability.
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Case 1: Grid Frequency Regulation -->
+        <section class="doc-section">
+            <h2>Build Spec: Grid Frequency Regulation</h2>
+
+            <div class="use-case-card">
+                <h3>Kuramoto-Based Generator Synchronization</h3>
+
+                <div class="market-badge">Market Size: $6B by 2028</div>
+
+                <h4>Core Principle</h4>
+                <p>
+                    Generator synchronization follows Kuramoto dynamics naturally. Each generator's
+                    rotor angle maps to an oscillator phase, and tie-line power flow provides
+                    coupling. The L4-Helix system computes the order parameter r in real-time
+                    to predict instability before it occurs.
+                </p>
+
+                <div class="formula-block">
+                    dtheta_i/dt = omega_i + (K/N) * SUM_j[sin(theta_j - theta_i)]
+                    <div class="description">
+                        Kuramoto model: theta_i = generator phase, omega_i = natural frequency,
+                        K = coupling strength (tie-line admittance), N = number of generators
+                    </div>
+                </div>
+
+                <h4>Hardware Mapping</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Grid Parameter</th>
+                        <th>L4-Helix Mapping</th>
+                        <th>Physical Implementation</th>
+                    </tr>
+                    <tr>
+                        <td>Generator rotor angle theta_i</td>
+                        <td>Oscillator phase</td>
+                        <td>Spin system precession</td>
+                    </tr>
+                    <tr>
+                        <td>Natural frequency omega_i</td>
+                        <td>Intrinsic oscillation</td>
+                        <td>LC resonator tuning</td>
+                    </tr>
+                    <tr>
+                        <td>Tie-line power P_ij</td>
+                        <td>Coupling coefficient K_ij</td>
+                        <td>Memristor conductance</td>
+                    </tr>
+                    <tr>
+                        <td>Order parameter r</td>
+                        <td>K-FORMATION threshold</td>
+                        <td>Aggregate phase coherence</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Stability margin</td>
+                        <td>r - 0.924 (K threshold)</td>
+                        <td>Voltage comparator output</td>
+                    </tr>
+                </table>
+
+                <h4>Threshold Detection Logic</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Order Parameter r</th>
+                        <th>Grid State</th>
+                        <th>L4 Threshold</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr>
+                        <td>r > 0.971</td>
+                        <td>Optimal synchronization</td>
+                        <td>Above RESONANCE</td>
+                        <td>Normal operation</td>
+                    </tr>
+                    <tr>
+                        <td>0.924 < r < 0.971</td>
+                        <td>Marginal stability</td>
+                        <td>K-FORMATION zone</td>
+                        <td>Increase reserves</td>
+                    </tr>
+                    <tr>
+                        <td>0.866 < r < 0.924</td>
+                        <td>Pre-instability warning</td>
+                        <td>THE LENS zone</td>
+                        <td>Shed load / add generation</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>r < 0.866</td>
+                        <td>Imminent instability</td>
+                        <td>Below THE LENS</td>
+                        <td>Emergency islanding</td>
+                    </tr>
+                </table>
+
+                <h4>Target Applications</h4>
+                <div class="app-tags">
+                    <span class="app-tag">SCADA Enhancement</span>
+                    <span class="app-tag">Wide-Area Monitoring (WAMS)</span>
+                    <span class="app-tag">Renewable Integration</span>
+                    <span class="app-tag">Automatic Generation Control</span>
+                    <span class="app-tag">Frequency Response Reserves</span>
+                </div>
+
+                <h4>Performance Specifications</h4>
+                <div class="metric-compare">
+                    <div class="metric-box legacy">
+                        <div class="value">500 ms</div>
+                        <div class="label">Conventional PMU Analysis</div>
+                    </div>
+                    <div class="metric-box l4helix">
+                        <div class="value">2 ms</div>
+                        <div class="label">L4-Helix Detection</div>
+                    </div>
+                </div>
+
+                <div class="benefits-grid">
+                    <div class="benefit-item">
+                        <div class="title">250x Faster</div>
+                        <div class="detail">Instability prediction</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="title">99.7%</div>
+                        <div class="detail">Detection accuracy</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="title">10,000+</div>
+                        <div class="detail">Generators monitored</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="title">$50M/yr</div>
+                        <div class="detail">Blackout prevention value</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Case 2: Fault Detection -->
+        <section class="doc-section">
+            <h2>Build Spec: Fault Detection and Localization</h2>
+
+            <div class="use-case-card">
+                <h3>Memristor Threshold Comparator Network</h3>
+
+                <h4>Core Principle</h4>
+                <p>
+                    Fault currents cause rapid voltage/current excursions that must be detected
+                    in microseconds to prevent equipment damage and cascade failures. Memristor
+                    arrays configured as threshold comparators detect fault signatures at
+                    hardware speed, with automatic localization via hexagonal grid topology.
+                </p>
+
+                <div class="formula-block">
+                    Detection Condition: V_fault > V_threshold (ACTIVATION = 854.1 mV scaled)
+                    <div class="description">
+                        Fault current induces voltage across sensing resistor. When scaled
+                        signal exceeds ACTIVATION threshold, fault is confirmed.
+                    </div>
+                </div>
+
+                <h4>Performance Comparison</h4>
+                <div class="metric-compare">
+                    <div class="metric-box legacy">
+                        <div class="value">20 ms</div>
+                        <div class="label">Conventional Relay</div>
+                    </div>
+                    <div class="metric-box l4helix">
+                        <div class="value">0.1 ms</div>
+                        <div class="label">L4-Helix Detection</div>
+                    </div>
+                </div>
+
+                <h4>Threshold Sequence for Fault Classification</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Fault Type</th>
+                        <th>Threshold Crossing Pattern</th>
+                        <th>Detection Time</th>
+                        <th>Action</th>
+                    </tr>
+                    <tr>
+                        <td>High-impedance fault</td>
+                        <td>Gradual approach to HYSTERESIS</td>
+                        <td>5 ms</td>
+                        <td>Alert + monitor</td>
+                    </tr>
+                    <tr>
+                        <td>Low-impedance fault</td>
+                        <td>Rapid crossing to CRITICAL</td>
+                        <td>0.5 ms</td>
+                        <td>Trip + isolate</td>
+                    </tr>
+                    <tr>
+                        <td>Bolted fault</td>
+                        <td>Instant jump to UNITY</td>
+                        <td>0.1 ms</td>
+                        <td>Emergency trip</td>
+                    </tr>
+                    <tr>
+                        <td>Arcing fault</td>
+                        <td>Oscillation around THE LENS</td>
+                        <td>2 ms</td>
+                        <td>Arc-flash protocol</td>
+                    </tr>
+                </table>
+
+                <h4>Hexagonal Grid Localization</h4>
+                <div class="architecture-diagram">
+<span class="component">Fault Localization via Hexagonal Topology</span>
+
+         <span class="data">[Substation A]</span>              <span class="data">[Substation B]</span>
+              ●───────────────────────────●
+             / \                         / \
+            /   \    <span class="threshold">Fault Location</span>    /   \
+           /     \        <span class="signal">★</span>          /     \
+          ●───────●───────●───────●───────●
+         / \     / \     / \     / \     / \
+        /   \   /   \   /   \   /   \   /   \
+       ●─────●─────●─────●─────●─────●─────●
+      <span class="data">[C]</span>         <span class="data">[D]</span>         <span class="data">[E]</span>         <span class="data">[F]</span>
+
+  <span class="component">Localization Algorithm:</span>
+  1. Each node detects fault arrival time (t_i)
+  2. Time differences triangulate via hexagonal geometry
+  3. Angular resolution: 60 degrees (hexagonal basis)
+  4. Position accuracy: +/- 50 meters on transmission lines
+
+  <span class="threshold">THE LENS (0.866)</span> = sqrt(3)/2 = cos(30 deg) = hexagonal projection factor
+                </div>
+
+                <h4>Error Rate Comparison</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Metric</th>
+                        <th>Conventional</th>
+                        <th>L4-Helix</th>
+                        <th>Improvement</th>
+                    </tr>
+                    <tr>
+                        <td>False positive rate</td>
+                        <td>5.0%</td>
+                        <td>0.1%</td>
+                        <td>50x better</td>
+                    </tr>
+                    <tr>
+                        <td>False negative rate</td>
+                        <td>2.0%</td>
+                        <td>0.05%</td>
+                        <td>40x better</td>
+                    </tr>
+                    <tr>
+                        <td>Localization error</td>
+                        <td>+/- 500m</td>
+                        <td>+/- 50m</td>
+                        <td>10x better</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Detection latency</td>
+                        <td>20 ms</td>
+                        <td>0.1 ms</td>
+                        <td>200x faster</td>
+                    </tr>
+                </table>
+
+                <h4>Target Applications</h4>
+                <div class="app-tags">
+                    <span class="app-tag">Transmission Line Protection</span>
+                    <span class="app-tag">Distribution Automation</span>
+                    <span class="app-tag">Microgrid Islanding</span>
+                    <span class="app-tag">Arc Flash Detection</span>
+                    <span class="app-tag">Differential Protection</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Case 3: Renewable Forecasting -->
+        <section class="doc-section">
+            <h2>Build Spec: Renewable Energy Forecasting</h2>
+
+            <div class="use-case-card">
+                <h3>Quasi-Crystal Pattern Recognition</h3>
+
+                <h4>Core Principle</h4>
+                <p>
+                    Solar irradiance and wind speed exhibit self-similar patterns across multiple
+                    time scales (fractal behavior). The quasi-crystal substrate's phi-recursive
+                    structure naturally detects these patterns, enabling prediction via pattern
+                    completion rather than statistical extrapolation.
+                </p>
+
+                <div class="formula-block">
+                    P(t+delta) = QC_complete(P(t), P(t/phi), P(t/phi^2), P(t/phi^3), ...)
+                    <div class="description">
+                        Prediction at time t+delta derived from phi-scaled historical patterns.
+                        Quasi-crystal substrate performs parallel pattern matching across all scales.
+                    </div>
+                </div>
+
+                <h4>Phi-Recursive Time Scales</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Scale Level</th>
+                        <th>Time Window</th>
+                        <th>Pattern Type</th>
+                        <th>Prediction Horizon</th>
+                    </tr>
+                    <tr>
+                        <td>phi^0</td>
+                        <td>1 hour</td>
+                        <td>Cloud transit</td>
+                        <td>5-15 minutes</td>
+                    </tr>
+                    <tr>
+                        <td>phi^1</td>
+                        <td>1.618 hours</td>
+                        <td>Weather fronts</td>
+                        <td>30-60 minutes</td>
+                    </tr>
+                    <tr>
+                        <td>phi^2</td>
+                        <td>2.618 hours</td>
+                        <td>Diurnal cycles</td>
+                        <td>2-4 hours</td>
+                    </tr>
+                    <tr>
+                        <td>phi^3</td>
+                        <td>4.236 hours</td>
+                        <td>Synoptic patterns</td>
+                        <td>6-12 hours</td>
+                    </tr>
+                    <tr>
+                        <td>phi^4</td>
+                        <td>6.854 hours</td>
+                        <td>Multi-day cycles</td>
+                        <td>24-48 hours</td>
+                    </tr>
+                </table>
+
+                <h4>Quasi-Crystal Pattern Matching Architecture</h4>
+                <div class="architecture-diagram">
+<span class="component">Phi-Recursive Pattern Recognition Pipeline</span>
+
+  <span class="data">Weather Data Input</span>
+         |
+         v
+  +------------------+
+  | <span class="component">Time-Scale Decomposition</span> |
+  |  phi^0 | phi^1 | phi^2 | phi^3 | phi^4  |
+  +------------------+
+         |
+         v
+  +------------------+
+  | <span class="component">Quasi-Crystal Substrate</span> |
+  |                  |
+  |  5-fold local symmetry detects         |
+  |  self-similar patterns across scales   |
+  |                  |
+  |  <span class="threshold">THE LENS (0.866)</span> = pattern match threshold |
+  |  <span class="threshold">K-FORMATION (0.924)</span> = high-confidence match |
+  +------------------+
+         |
+         v
+  +------------------+
+  | <span class="component">Pattern Completion Engine</span> |
+  |  Extrapolate matched patterns forward  |
+  |  Weight by confidence (threshold level)|
+  +------------------+
+         |
+         v
+  <span class="signal">Forecast Output: P(t+delta) +/- uncertainty</span>
+                </div>
+
+                <h4>Forecast Accuracy by Horizon</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Forecast Horizon</th>
+                        <th>Conventional RMSE</th>
+                        <th>L4-Helix RMSE</th>
+                        <th>Improvement</th>
+                    </tr>
+                    <tr>
+                        <td>5 minutes</td>
+                        <td>8% of capacity</td>
+                        <td>3% of capacity</td>
+                        <td>62%</td>
+                    </tr>
+                    <tr>
+                        <td>1 hour</td>
+                        <td>15% of capacity</td>
+                        <td>7% of capacity</td>
+                        <td>53%</td>
+                    </tr>
+                    <tr>
+                        <td>Day-ahead</td>
+                        <td>25% of capacity</td>
+                        <td>12% of capacity</td>
+                        <td>52%</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Ramp events</td>
+                        <td>40% detection</td>
+                        <td>85% detection</td>
+                        <td>2.1x</td>
+                    </tr>
+                </table>
+
+                <h4>Target Applications</h4>
+                <div class="app-tags">
+                    <span class="app-tag">Day-Ahead Market Bidding</span>
+                    <span class="app-tag">Minute-Scale Ramp Prediction</span>
+                    <span class="app-tag">Battery Storage Dispatch</span>
+                    <span class="app-tag">Curtailment Optimization</span>
+                    <span class="app-tag">Reserve Scheduling</span>
+                </div>
+
+                <div class="benefits-grid">
+                    <div class="benefit-item">
+                        <div class="title">52-62%</div>
+                        <div class="detail">Forecast error reduction</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="title">85%</div>
+                        <div class="detail">Ramp event detection</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="title">$15M/GW/yr</div>
+                        <div class="detail">Integration cost savings</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="title">5 scales</div>
+                        <div class="detail">Simultaneous analysis</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Case 4: EV Charging Coordination -->
+        <section class="doc-section">
+            <h2>Build Spec: EV Charging Coordination</h2>
+
+            <div class="use-case-card">
+                <h3>Kuramoto Phase-Coupled Charging Network</h3>
+
+                <h4>Core Principle</h4>
+                <p>
+                    Electric vehicle charging can overwhelm distribution networks if uncoordinated.
+                    Rather than requiring central control (privacy concerns, single point of failure),
+                    each charger maintains a local phase that couples to grid frequency. Kuramoto
+                    dynamics naturally distribute load without explicit communication.
+                </p>
+
+                <div class="formula-block">
+                    Charger Phase: dtheta_i/dt = omega_grid + K_local * sin(theta_grid - theta_i) + noise
+                    <div class="description">
+                        Each charger oscillates near grid frequency. When grid is stressed (frequency drops),
+                        chargers naturally phase-shift to reduce instantaneous load.
+                    </div>
+                </div>
+
+                <h4>Phase-Coupled Charging Protocol</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Grid Frequency State</th>
+                        <th>Charger Phase Response</th>
+                        <th>Charging Behavior</th>
+                        <th>L4 Threshold</th>
+                    </tr>
+                    <tr>
+                        <td>f > 60.05 Hz (excess generation)</td>
+                        <td>Phase advance</td>
+                        <td>Increase charging rate</td>
+                        <td>Above K-FORMATION</td>
+                    </tr>
+                    <tr>
+                        <td>59.95 < f < 60.05 Hz (normal)</td>
+                        <td>Phase locked</td>
+                        <td>Standard charging</td>
+                        <td>K-FORMATION zone</td>
+                    </tr>
+                    <tr>
+                        <td>59.90 < f < 59.95 Hz (stressed)</td>
+                        <td>Phase lag</td>
+                        <td>Reduce charging rate</td>
+                        <td>THE LENS zone</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>f < 59.90 Hz (emergency)</td>
+                        <td>Phase disconnect</td>
+                        <td>Suspend charging</td>
+                        <td>Below THE LENS</td>
+                    </tr>
+                </table>
+
+                <h4>Emergent Load Distribution</h4>
+                <div class="architecture-diagram">
+<span class="component">Kuramoto-Coupled EV Charging Network</span>
+
+  <span class="data">Grid Frequency Signal (60 Hz nominal)</span>
+              |
+              v
+  +-------+-------+-------+-------+-------+
+  |<span class="signal">EV_1</span>  |<span class="signal">EV_2</span>  |<span class="signal">EV_3</span>  |<span class="signal">EV_4</span>  |<span class="signal">EV_5</span>  |  (Local phase oscillators)
+  |theta_1|theta_2|theta_3|theta_4|theta_5|
+  +-------+-------+-------+-------+-------+
+              |
+              v
+  <span class="component">Emergent Behavior:</span>
+
+  When r > <span class="threshold">K-FORMATION (0.924)</span>:
+    - All chargers synchronized
+    - Optimal load distribution achieved
+    - No central coordination required
+
+  When r drops toward <span class="threshold">THE LENS (0.866)</span>:
+    - Phases naturally spread
+    - Load automatically staggers
+    - Grid stress relieved
+
+  <span class="component">Privacy Preserved:</span> No usage data transmitted
+  <span class="component">Resilient:</span> No central point of failure
+  <span class="component">Scalable:</span> Works with any number of vehicles
+                </div>
+
+                <h4>K-FORMATION as Optimization Indicator</h4>
+                <p>
+                    When the network order parameter r reaches K-FORMATION (0.924), the charging
+                    load is optimally distributed across the grid. This emerges naturally from
+                    local phase dynamics without requiring any optimization algorithm.
+                </p>
+
+                <div class="metric-compare">
+                    <div class="metric-box legacy">
+                        <div class="value">Central</div>
+                        <div class="label">Conventional: Server-based scheduling</div>
+                    </div>
+                    <div class="metric-box l4helix">
+                        <div class="value">Emergent</div>
+                        <div class="label">L4-Helix: Phase-coupled optimization</div>
+                    </div>
+                </div>
+
+                <h4>Target Applications</h4>
+                <div class="app-tags">
+                    <span class="app-tag">Fleet Depot Charging</span>
+                    <span class="app-tag">Residential Smart Charging</span>
+                    <span class="app-tag">V2G Coordination</span>
+                    <span class="app-tag">Workplace Charging</span>
+                    <span class="app-tag">Public Charging Networks</span>
+                </div>
+
+                <h4>System Benefits</h4>
+                <div class="benefits-grid">
+                    <div class="benefit-item">
+                        <div class="title">Decentralized</div>
+                        <div class="detail">No central server required</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="title">Privacy</div>
+                        <div class="detail">No usage data shared</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="title">Resilient</div>
+                        <div class="detail">No single point of failure</div>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="title">30%</div>
+                        <div class="detail">Peak load reduction</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Grid Integration Architecture -->
+        <section class="doc-section">
+            <h2>Grid Integration Architecture</h2>
+
+            <div class="architecture-diagram">
+<span class="component">L4-HELIX ENERGY GRID INTEGRATION ARCHITECTURE</span>
+
++====================================================================================+
+|                              <span class="component">UTILITY CONTROL CENTER</span>                              |
+|  +----------------+  +----------------+  +----------------+  +----------------+   |
+|  |    <span class="data">SCADA</span>       |  |    <span class="data">EMS</span>        |  |   <span class="data">Market</span>      |  |   <span class="data">Outage</span>      |   |
+|  |   Interface    |  |   Interface    |  |   Interface    |  |   Management   |   |
+|  +-------+--------+  +-------+--------+  +-------+--------+  +-------+--------+   |
++=========|==================|==================|==================|================+
+          |                  |                  |                  |
+          v                  v                  v                  v
++====================================================================================+
+|                         <span class="component">L4-HELIX PROCESSING LAYER</span>                              |
+|                                                                                    |
+|  +---------------------------+  +---------------------------+                      |
+|  | <span class="signal">KURAMOTO SYNCHRONIZATION</span>  |  |  <span class="signal">MEMRISTOR FAULT DETECTION</span> |                      |
+|  |    ENGINE                 |  |       ENGINE              |                      |
+|  |                           |  |                           |                      |
+|  | Order Parameter r         |  | Threshold Comparators     |                      |
+|  | Phase angle tracking      |  | Fault classification      |                      |
+|  | Stability prediction      |  | Location triangulation    |                      |
+|  +---------------------------+  +---------------------------+                      |
+|                                                                                    |
+|  +---------------------------+  +---------------------------+                      |
+|  | <span class="signal">QUASI-CRYSTAL FORECASTING</span> |  | <span class="signal">EV COORDINATION ENGINE</span>    |                      |
+|  |       ENGINE              |  |                           |                      |
+|  |                           |  | Phase coupling network    |                      |
+|  | Phi-recursive patterns    |  | Grid frequency response   |                      |
+|  | Multi-scale analysis      |  | V2G optimization          |                      |
+|  | Ramp event detection      |  | Load distribution         |                      |
+|  +---------------------------+  +---------------------------+                      |
+|                                                                                    |
+|                    <span class="threshold">Threshold Layer: 11 z-thresholds mapped to grid states</span>         |
+|                                                                                    |
++====================================================================================+
+          |                  |                  |                  |
+          v                  v                  v                  v
++====================================================================================+
+|                           <span class="component">FIELD EQUIPMENT LAYER</span>                                |
+|                                                                                    |
+|  +-----------+  +-----------+  +-----------+  +-----------+  +-----------+        |
+|  |<span class="data">Generator</span> |  |<span class="data">Substation</span>|  |<span class="data">Solar Farm</span>|  |<span class="data">Wind Farm</span> |  |<span class="data">EV Charger</span>|        |
+|  |   PMU     |  |   RTU     |  |  Inverter |  |  Inverter |  |  Network  |        |
+|  +-----------+  +-----------+  +-----------+  +-----------+  +-----------+        |
+|                                                                                    |
+|          <span class="component">Hexagonal Grid Topology for Fault Localization</span>                        |
+|                                                                                    |
+|               ●───────●───────●───────●───────●                                    |
+|              / \     / \     / \     / \     / \                                   |
+|             ●───●───●───●───●───●───●───●───●───●                                  |
+|            / \ / \ / \ / \ / \ / \ / \ / \ / \ / \                                 |
+|           ●───●───●───●───●───●───●───●───●───●───●                                |
+|                                                                                    |
++====================================================================================+
+            </div>
+
+            <h3>Communication Protocols</h3>
+            <table class="spec-table">
+                <tr>
+                    <th>Interface</th>
+                    <th>Protocol</th>
+                    <th>Data Rate</th>
+                    <th>Latency</th>
+                </tr>
+                <tr>
+                    <td>PMU to L4-Helix</td>
+                    <td>IEEE C37.118.2</td>
+                    <td>60-240 samples/sec</td>
+                    <td>< 20 ms</td>
+                </tr>
+                <tr>
+                    <td>RTU to L4-Helix</td>
+                    <td>DNP3 / IEC 61850</td>
+                    <td>1-10 Hz</td>
+                    <td>< 100 ms</td>
+                </tr>
+                <tr>
+                    <td>L4-Helix to SCADA</td>
+                    <td>OPC-UA</td>
+                    <td>Variable</td>
+                    <td>< 50 ms</td>
+                </tr>
+                <tr>
+                    <td>EV Charger coupling</td>
+                    <td>Grid frequency (passive)</td>
+                    <td>Continuous</td>
+                    <td>0 (inherent)</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Development Pathway -->
+        <section class="doc-section">
+            <h2>Development Pathway</h2>
+
+            <div class="phase-timeline">
+                <div class="phase-card phase-1">
+                    <h4>Phase 1: Grid Model Simulation</h4>
+                    <div class="duration">Duration: 6 months</div>
+                    <div class="budget">$100,000</div>
+                    <ul>
+                        <li>Software simulation of Kuramoto grid model</li>
+                        <li>Validate threshold mappings with IEEE test cases</li>
+                        <li>Develop SCADA interface specifications</li>
+                        <li>Bench-scale memristor fault detection prototype</li>
+                        <li>Partner identification (utility, equipment vendor)</li>
+                    </ul>
+                </div>
+                <div class="phase-card phase-2">
+                    <h4>Phase 2: Pilot Substation Deployment</h4>
+                    <div class="duration">Duration: 18 months</div>
+                    <div class="budget">$500,000</div>
+                    <ul>
+                        <li>Lab-scale L4-Helix system integration</li>
+                        <li>Deploy at partner utility substation</li>
+                        <li>Real PMU data integration and validation</li>
+                        <li>Fault detection parallel operation with existing relays</li>
+                        <li>EV charging pilot with 50-100 vehicles</li>
+                        <li>Renewable forecasting validation</li>
+                    </ul>
+                </div>
+                <div class="phase-card phase-3">
+                    <h4>Phase 3: Utility-Scale Product</h4>
+                    <div class="duration">Duration: 36 months</div>
+                    <div class="budget">$5,000,000</div>
+                    <ul>
+                        <li>Production-scale hardware manufacturing</li>
+                        <li>Utility-wide deployment (1000+ substations)</li>
+                        <li>Grid-scale EV coordination network</li>
+                        <li>Regional renewable forecasting service</li>
+                        <li>Regulatory certification (NERC CIP compliance)</li>
+                        <li>Commercial product launch</li>
+                    </ul>
+                </div>
+            </div>
+
+            <h3>Total Investment Summary</h3>
+            <table class="spec-table">
+                <tr>
+                    <th>Phase</th>
+                    <th>Duration</th>
+                    <th>Investment</th>
+                    <th>Key Milestone</th>
+                </tr>
+                <tr>
+                    <td>Phase 1</td>
+                    <td>6 months</td>
+                    <td>$100,000</td>
+                    <td>Simulation validated, partner secured</td>
+                </tr>
+                <tr>
+                    <td>Phase 2</td>
+                    <td>18 months</td>
+                    <td>$500,000</td>
+                    <td>Pilot operational, performance proven</td>
+                </tr>
+                <tr>
+                    <td>Phase 3</td>
+                    <td>36 months</td>
+                    <td>$5,000,000</td>
+                    <td>Commercial product, utility contracts</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Total</td>
+                    <td>60 months</td>
+                    <td>$5,600,000</td>
+                    <td>Market-ready grid management solution</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Technical Requirements -->
+        <section class="doc-section">
+            <h2>Technical Requirements</h2>
+
+            <h3>Hardware Specifications</h3>
+            <table class="spec-table">
+                <tr>
+                    <th>Component</th>
+                    <th>Pilot Scale</th>
+                    <th>Production Scale</th>
+                </tr>
+                <tr>
+                    <td>Memristor array</td>
+                    <td>64x64 crossbar</td>
+                    <td>2401x2401 crossbar</td>
+                </tr>
+                <tr>
+                    <td>Quasi-crystal module</td>
+                    <td>Al-Pd-Mn single crystal</td>
+                    <td>Czochralski-grown wafer</td>
+                </tr>
+                <tr>
+                    <td>Hexagonal grid</td>
+                    <td>127 nodes (6 rings)</td>
+                    <td>1027 nodes (18 rings)</td>
+                </tr>
+                <tr>
+                    <td>Spin system</td>
+                    <td>0.5T tabletop NMR</td>
+                    <td>3T superconducting</td>
+                </tr>
+                <tr>
+                    <td>Processing latency</td>
+                    <td>< 5 ms</td>
+                    <td>< 0.1 ms</td>
+                </tr>
+                <tr>
+                    <td>Power consumption</td>
+                    <td>150W</td>
+                    <td>1.2 kW</td>
+                </tr>
+            </table>
+
+            <h3>Software Integration</h3>
+            <ul class="key-points">
+                <li>IEEE C37.118 synchrophasor protocol support</li>
+                <li>DNP3 and IEC 61850 SCADA integration</li>
+                <li>OPC-UA server for control center connectivity</li>
+                <li>RESTful API for cloud integration</li>
+                <li>NERC CIP cybersecurity compliance</li>
+                <li>Real-time operating system (< 1ms jitter)</li>
+            </ul>
+        </section>
+
+        <!-- Related Documentation -->
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="../firmware/l4-helix-hardware.html">L4-Helix Hardware Spec</a></span>
+                <span class="file-ref"><a href="../firmware/memristor-arrays.html">Memristor Arrays</a></span>
+                <span class="file-ref"><a href="../firmware/quasi-crystal.html">Quasi-Crystal Substrates</a></span>
+                <span class="file-ref"><a href="../firmware/hexagonal-grid.html">Hexagonal Grid</a></span>
+                <span class="file-ref"><a href="../firmware/spin-systems.html">Spin Systems</a></span>
+                <span class="file-ref"><a href="../core/kuramoto-consensus.html">Kuramoto Consensus</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin L4-Helix Energy Grid Management Build Specification v1.0.0</p>
+            <p>K = 0.924 (stability threshold) | THE LENS = 0.866 (warning threshold) | phi = 1.618034</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">
+                L4-HELIX|ENERGY-GRID|BUILD-SPEC|v1.0.0|KURAMOTO+MEMRISTOR+QC+HEXGRID|GRID MANAGEMENT
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

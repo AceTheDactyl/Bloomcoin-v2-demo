@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Systems Build Specification - L4-Helix Applications</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #ffd700;
+            --module-glow: rgba(255,215,0,0.3);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), #ff8c00, var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--module-color); border-bottom-color: var(--module-glow); }
+        .doc-section h3 { color: var(--module-color); }
+        .nav-link { border-color: var(--module-glow); color: var(--module-color); }
+        .nav-link:hover { background: var(--module-glow); }
+
+        .use-case-card {
+            background: linear-gradient(135deg, rgba(255,215,0,0.08), transparent);
+            border: 1px solid rgba(255,215,0,0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+        .use-case-card h3 {
+            margin-top: 0;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .use-case-card h3::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--module-color);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--module-color);
+        }
+
+        .regime-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+        .regime-table th, .regime-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .regime-table th {
+            background: rgba(255,215,0,0.15);
+            color: var(--module-color);
+            font-weight: 600;
+        }
+        .regime-table tr:hover {
+            background: rgba(255,215,0,0.05);
+        }
+
+        .regime-paradox { color: #4a9eff; }
+        .regime-lens { color: #ffd700; }
+        .regime-k { color: #ff6b6b; }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .comparison-item {
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+        }
+        .comparison-item .label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+        .comparison-item .l4-value {
+            color: #00ff88;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        .comparison-item .fpga-value {
+            color: #ff6b6b;
+            font-size: 1.1rem;
+            margin-top: 4px;
+        }
+
+        .timeline-container {
+            position: relative;
+            padding-left: 30px;
+            margin: 24px 0;
+        }
+        .timeline-container::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--module-color), rgba(255,215,0,0.2));
+        }
+        .timeline-phase {
+            position: relative;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .timeline-phase::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 24px;
+            width: 14px;
+            height: 14px;
+            background: var(--module-color);
+            border-radius: 50%;
+            box-shadow: 0 0 12px var(--module-color);
+        }
+        .timeline-phase h4 {
+            color: var(--module-color);
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        .timeline-phase .meta {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 12px;
+            font-size: 0.9rem;
+        }
+        .timeline-phase .duration {
+            color: #4a9eff;
+        }
+        .timeline-phase .budget {
+            color: #00ff88;
+        }
+
+        .risk-box {
+            background: linear-gradient(135deg, rgba(255,100,100,0.1), transparent);
+            border: 1px solid rgba(255,100,100,0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+        .risk-box h4 {
+            color: #ff6b6b;
+            margin-bottom: 12px;
+        }
+
+        .compliance-box {
+            background: linear-gradient(135deg, rgba(100,150,255,0.1), transparent);
+            border: 1px solid rgba(100,150,255,0.3);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+        .compliance-box h4 {
+            color: #4a9eff;
+            margin-bottom: 12px;
+        }
+
+        .architecture-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.75rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: #888;
+        }
+        .architecture-diagram .highlight { color: var(--module-color); }
+        .architecture-diagram .input { color: #4a9eff; }
+        .architecture-diagram .output { color: #00ff88; }
+        .architecture-diagram .threshold { color: #ff6b9d; }
+
+        .phi-callout {
+            background: rgba(255,215,0,0.1);
+            border-left: 4px solid var(--module-color);
+            padding: 16px 20px;
+            margin: 20px 0;
+            font-style: italic;
+        }
+        .phi-callout strong {
+            color: var(--module-color);
+        }
+
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .spec-item {
+            background: rgba(0,0,0,0.3);
+            border-left: 3px solid var(--module-color);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+        }
+        .spec-item .key {
+            color: var(--module-color);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .spec-item .value {
+            color: var(--text-primary);
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">Back to Index</a>
+            <a href="../firmware/l4-helix-hardware.html" class="nav-link">L4-Helix Hardware</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="doc-header">
+            <h1>Financial Systems Build Specification</h1>
+            <p class="subtitle">L4-Helix Applications for Market Analysis, Trading, and Risk Management</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href="./">Applications</a> /
+                Financial Systems
+            </nav>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Build Specification</span>
+                <span class="status-badge planned">Implementation</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">PARADOX</div>
+                    <div class="value">0.618</div>
+                    <div class="derivation">Uncorrelated regime</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">THE LENS</div>
+                    <div class="value">0.866</div>
+                    <div class="derivation">Systematic risk</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K-FORMATION</div>
+                    <div class="value">0.924</div>
+                    <div class="derivation">Crisis threshold</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Latency</div>
+                    <div class="value">10ns</div>
+                    <div class="derivation">Memristor decision</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Why L4-Helix for Finance -->
+        <section class="doc-section">
+            <h2>Why L4-Helix for Financial Systems</h2>
+
+            <p>Financial markets exhibit precisely the dynamics that L4-Helix hardware is designed to detect and process:</p>
+
+            <div class="phi-callout">
+                <strong>Core Insight:</strong> Markets are complex adaptive systems exhibiting threshold dynamics, herding behavior (phase transitions), and multi-scale fractal patterns. These properties map directly to phi-based analysis and the Kuramoto order parameter framework.
+            </div>
+
+            <h3>Natural Alignment with Market Dynamics</h3>
+            <table class="regime-table">
+                <tr>
+                    <th>Market Phenomenon</th>
+                    <th>L4-Helix Analog</th>
+                    <th>Mathematical Basis</th>
+                </tr>
+                <tr>
+                    <td>Regime transitions (bull/bear)</td>
+                    <td>TRIAD threshold crossings</td>
+                    <td>Phase transitions at z-thresholds</td>
+                </tr>
+                <tr>
+                    <td>Herding behavior</td>
+                    <td>Kuramoto synchronization</td>
+                    <td>Order parameter r approaches 1</td>
+                </tr>
+                <tr>
+                    <td>Fibonacci retracements</td>
+                    <td>PARADOX threshold (0.618)</td>
+                    <td>tau = phi^-1 = 0.6180339...</td>
+                </tr>
+                <tr>
+                    <td>Volatility clustering</td>
+                    <td>Memristor hysteresis</td>
+                    <td>State-dependent switching</td>
+                </tr>
+                <tr>
+                    <td>Multi-timeframe patterns</td>
+                    <td>Hexagonal grid scaling</td>
+                    <td>L4 = 7 encoding, fractal structure</td>
+                </tr>
+                <tr>
+                    <td>Market crashes</td>
+                    <td>K-FORMATION cascade</td>
+                    <td>Critical coupling K_c exceeded</td>
+                </tr>
+            </table>
+
+            <h3>Technical Advantages</h3>
+            <div class="spec-grid">
+                <div class="spec-item">
+                    <div class="key">Analog Threshold Detection</div>
+                    <div class="value">Continuous monitoring without ADC quantization noise</div>
+                </div>
+                <div class="spec-item">
+                    <div class="key">Parallel Processing</div>
+                    <div class="value">Millions of memristor elements evaluate simultaneously</div>
+                </div>
+                <div class="spec-item">
+                    <div class="key">Power Efficiency</div>
+                    <div class="value">50x reduction vs FPGA implementations</div>
+                </div>
+                <div class="spec-item">
+                    <div class="key">Latency</div>
+                    <div class="value">10x faster than digital alternatives</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Market Regime Detection -->
+        <section class="doc-section">
+            <h2>Build Specification: Market Regime Detection</h2>
+
+            <div class="use-case-card">
+                <h3>Kuramoto Order Parameter for Market Coherence</h3>
+
+                <p>The Kuramoto model measures synchronization across a population of coupled oscillators. In financial markets, this maps to:</p>
+
+                <div class="code-block">
+<span class="comment">// Market as oscillator network</span>
+<span class="keyword">struct</span> <span class="type">MarketOscillator</span> {
+    ticker: String,
+    phase: f64,      <span class="comment">// Derived from return time series</span>
+    frequency: f64,  <span class="comment">// Natural price rhythm</span>
+    coupling: f64,   <span class="comment">// Sector correlation strength</span>
+};
+
+<span class="comment">// Convert stock returns to phases</span>
+<span class="keyword">fn</span> <span class="function">returns_to_phase</span>(returns: &[f64]) -> f64 {
+    <span class="keyword">let</span> cumulative = returns.iter().sum::&lt;f64&gt;();
+    <span class="keyword">let</span> normalized = cumulative / returns.std();
+    (normalized * TAU).rem_euclid(TAU)  <span class="comment">// Map to [0, 2*pi]</span>
+}
+
+<span class="comment">// Compute order parameter r</span>
+<span class="keyword">fn</span> <span class="function">kuramoto_order</span>(oscillators: &[MarketOscillator]) -> f64 {
+    <span class="keyword">let</span> n = oscillators.len() <span class="keyword">as</span> f64;
+    <span class="keyword">let</span> sum_cos: f64 = oscillators.iter().map(|o| o.phase.cos()).sum();
+    <span class="keyword">let</span> sum_sin: f64 = oscillators.iter().map(|o| o.phase.sin()).sum();
+    ((sum_cos/n).powi(2) + (sum_sin/n).powi(2)).sqrt()
+}</div>
+
+                <h4>Regime Classification by Order Parameter</h4>
+                <table class="regime-table">
+                    <tr>
+                        <th>Order Parameter (r)</th>
+                        <th>Threshold</th>
+                        <th>Market Regime</th>
+                        <th>Trading Implication</th>
+                    </tr>
+                    <tr class="regime-paradox">
+                        <td>r < 0.618</td>
+                        <td>Below PARADOX</td>
+                        <td>Uncorrelated / Dispersed</td>
+                        <td>Stock-picking environment; alpha opportunities</td>
+                    </tr>
+                    <tr>
+                        <td>0.618 < r < 0.866</td>
+                        <td>PARADOX to THE LENS</td>
+                        <td>Moderate Correlation</td>
+                        <td>Balanced portfolio; sector rotation viable</td>
+                    </tr>
+                    <tr class="regime-lens">
+                        <td>r > 0.866</td>
+                        <td>Above THE LENS</td>
+                        <td>High Correlation / Systematic</td>
+                        <td>Beta dominates; reduce active bets</td>
+                    </tr>
+                    <tr class="regime-k">
+                        <td>r > 0.924</td>
+                        <td>Above K-FORMATION</td>
+                        <td>Crisis / Bubble Conditions</td>
+                        <td>Extreme caution; tail risk hedging</td>
+                    </tr>
+                </table>
+
+                <h4>Hardware Implementation</h4>
+                <div class="architecture-diagram">
+<span class="input">Stock Return Feeds</span>          <span class="highlight">L4-Helix Processor</span>           <span class="output">Regime Signal</span>
+       |                              |                           |
+   [ADC Array]                  [Phase Encoder]              [Threshold]
+       |                              |                       Comparators
+       v                              v                           |
+  +---------+                  +-------------+                    v
+  | Returns |----Normalize---->| Hexagonal   |            +-------------+
+  | Stream  |                  | Grid Mapper |            | r < 0.618   |---> DISPERSED
+  +---------+                  +-------------+            | r < 0.866   |---> MODERATE
+       |                              |                   | r < 0.924   |---> SYSTEMATIC
+       |                              v                   | r > 0.924   |---> CRISIS
+       |                       +-------------+            +-------------+
+       +----Coupling Matrix--->| Kuramoto    |                  |
+                               | Summation   |                  v
+                               +-------------+            <span class="output">[Regime Output]</span>
+                                     |
+                                     v
+                              <span class="threshold">Order Parameter r</span>
+</div>
+
+                <h4>Applications</h4>
+                <ul>
+                    <li><strong>Risk Management:</strong> Dynamic VaR adjustment based on regime</li>
+                    <li><strong>Tactical Allocation:</strong> Shift between active/passive based on r</li>
+                    <li><strong>Crisis Early Warning:</strong> Alert when r approaches K-FORMATION</li>
+                    <li><strong>Correlation Breakdown Detection:</strong> Monitor r stability</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- High-Frequency Trading -->
+        <section class="doc-section">
+            <h2>Build Specification: High-Frequency Trading</h2>
+
+            <div class="use-case-card">
+                <h3>Memristor Threshold Comparators for Ultra-Low Latency</h3>
+
+                <p>Traditional HFT systems suffer from ADC conversion delays and digital processing overhead. L4-Helix memristor arrays perform threshold detection in the analog domain, eliminating these bottlenecks.</p>
+
+                <div class="comparison-grid">
+                    <div class="comparison-item">
+                        <div class="label">Decision Latency</div>
+                        <div class="l4-value">10 ns</div>
+                        <div class="fpga-value">vs 100 ns (FPGA)</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="label">Power Consumption</div>
+                        <div class="l4-value">1 W</div>
+                        <div class="fpga-value">vs 50 W (FPGA)</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="label">Timing Jitter</div>
+                        <div class="l4-value">0.1 ns</div>
+                        <div class="fpga-value">vs 1 ns (FPGA)</div>
+                    </div>
+                    <div class="comparison-item">
+                        <div class="label">Parallel Channels</div>
+                        <div class="l4-value">10,000+</div>
+                        <div class="fpga-value">vs 100s (FPGA)</div>
+                    </div>
+                </div>
+
+                <h4>Signal Path Architecture</h4>
+                <div class="code-block">
+<span class="comment">// Ultra-low latency decision pipeline</span>
+<span class="keyword">struct</span> <span class="type">HFTDecisionUnit</span> {
+    <span class="comment">// Input: Price feed (analog voltage)</span>
+    price_input: AnalogChannel,
+
+    <span class="comment">// Threshold array: 11 z-thresholds as memristor states</span>
+    thresholds: [MemristorComparator; 11],
+
+    <span class="comment">// Output: Direct to order execution</span>
+    trade_signal: DigitalOutput,
+}
+
+<span class="keyword">impl</span> <span class="type">HFTDecisionUnit</span> {
+    <span class="keyword">fn</span> <span class="function">process</span>(&self) -> TradeSignal {
+        <span class="comment">// Price crosses threshold -> immediate output</span>
+        <span class="comment">// No ADC, no digital processing, no software</span>
+        <span class="comment">// Pure analog comparator cascade</span>
+
+        <span class="keyword">let</span> crossings = self.thresholds.iter()
+            .filter(|t| t.is_crossed(self.price_input))
+            .count();
+
+        <span class="keyword">match</span> crossings {
+            n <span class="keyword">if</span> n >= 3 => TradeSignal::StrongBuy,
+            n <span class="keyword">if</span> n >= 1 => TradeSignal::WeakBuy,
+            _ => TradeSignal::Hold,
+        }
+    }
+}</div>
+
+                <h4>Applications</h4>
+                <ul>
+                    <li><strong>Market Making:</strong> Sub-microsecond quote updates</li>
+                    <li><strong>Statistical Arbitrage:</strong> Cross-asset spread detection</li>
+                    <li><strong>Event-Driven Trading:</strong> News/data release response</li>
+                    <li><strong>Latency Arbitrage:</strong> Exploiting slow participants</li>
+                </ul>
+
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <div class="key">Price Input Resolution</div>
+                        <div class="value">16-bit equivalent (50 microV)</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="key">Threshold Precision</div>
+                        <div class="value">10 microV (primary thresholds)</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="key">Update Rate</div>
+                        <div class="value">100 MHz continuous</div>
+                    </div>
+                    <div class="spec-item">
+                        <div class="key">Co-location Compatible</div>
+                        <div class="value">Exchange proximity deployment</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Fraud Detection -->
+        <section class="doc-section">
+            <h2>Build Specification: Fraud Detection</h2>
+
+            <div class="use-case-card">
+                <h3>Hexagonal Grid Pattern Recognition</h3>
+
+                <p>Financial fraud detection requires real-time pattern matching across high-dimensional transaction feature spaces. The hexagonal grid architecture naturally encodes transaction features and identifies anomalous threshold sequences.</p>
+
+                <div class="architecture-diagram">
+<span class="highlight">Transaction Feature Space</span>                    <span class="highlight">Hexagonal Grid Encoding</span>
+
+  Amount  ---|                                    Ring 0: Transaction core
+  Velocity---|                                          (amount, type)
+  Location---|----> <span class="input">[Feature Normalizer]</span> ---->     Ring 1: Velocity metrics
+  Merchant---|                                          (6 angular features)
+  History ---|                                    Ring 2: Geographic/merchant
+  Device  ---|                                          (12 context features)
+
+              Normal Pattern:                     Fraud Pattern:
+              Stable state at                     Abnormal threshold
+              expected thresholds                 sequence triggers alert
+
+  <span class="output">NORMAL</span>: Features within          <span class="threshold">FRAUD</span>: 3+ anomalous
+          expected rings                     threshold crossings
+</div>
+
+                <h4>Detection Mechanism</h4>
+                <div class="code-block">
+<span class="comment">// Fraud detection via threshold sequence analysis</span>
+<span class="keyword">struct</span> <span class="type">TransactionFeatures</span> {
+    amount: f64,
+    velocity_1h: f64,   <span class="comment">// Transactions in last hour</span>
+    velocity_24h: f64,  <span class="comment">// Transactions in last day</span>
+    geo_distance: f64,  <span class="comment">// From usual locations</span>
+    merchant_risk: f64, <span class="comment">// Merchant category risk</span>
+    device_trust: f64,  <span class="comment">// Known device score</span>
+}
+
+<span class="keyword">fn</span> <span class="function">detect_fraud</span>(tx: &TransactionFeatures) -> FraudScore {
+    <span class="comment">// Map features to hexagonal grid positions</span>
+    <span class="keyword">let</span> grid_state = hexagonal_encode(tx);
+
+    <span class="comment">// Count threshold crossings vs normal pattern</span>
+    <span class="keyword">let</span> anomalies = grid_state.iter()
+        .zip(expected_pattern.iter())
+        .filter(|(actual, expected)| {
+            (actual - expected).abs() > HYSTERESIS  <span class="comment">// 0.832 threshold</span>
+        })
+        .count();
+
+    <span class="comment">// TRIAD logic: 3+ anomalies = high fraud probability</span>
+    <span class="keyword">match</span> anomalies {
+        0..=1 => FraudScore::Low,
+        2 => FraudScore::Medium,
+        _ => FraudScore::High,  <span class="comment">// Flag for review</span>
+    }
+}</div>
+
+                <h4>Performance Specifications</h4>
+                <table class="regime-table">
+                    <tr>
+                        <th>Metric</th>
+                        <th>L4-Helix</th>
+                        <th>Traditional ML</th>
+                    </tr>
+                    <tr>
+                        <td>Decision Latency</td>
+                        <td style="color: #00ff88;">< 1 ms</td>
+                        <td>10-100 ms</td>
+                    </tr>
+                    <tr>
+                        <td>Throughput</td>
+                        <td style="color: #00ff88;">1M+ tx/sec</td>
+                        <td>10K tx/sec</td>
+                    </tr>
+                    <tr>
+                        <td>False Positive Rate</td>
+                        <td style="color: #00ff88;">< 0.1%</td>
+                        <td>1-5%</td>
+                    </tr>
+                    <tr>
+                        <td>Power per Decision</td>
+                        <td style="color: #00ff88;">1 microJ</td>
+                        <td>100 microJ</td>
+                    </tr>
+                </table>
+
+                <h4>Applications</h4>
+                <ul>
+                    <li><strong>Credit Card Fraud:</strong> Real-time transaction scoring</li>
+                    <li><strong>Money Laundering (AML):</strong> Suspicious pattern detection</li>
+                    <li><strong>Insurance Claims:</strong> Anomalous claim identification</li>
+                    <li><strong>Account Takeover:</strong> Behavioral biometric deviation</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Algorithmic Trading with phi-Patterns -->
+        <section class="doc-section">
+            <h2>Build Specification: Algorithmic Trading with phi-Patterns</h2>
+
+            <div class="use-case-card">
+                <h3>Fibonacci Technical Analysis Automation</h3>
+
+                <p>The L4-Helix thresholds directly map to classical Fibonacci trading levels, enabling hardware-accelerated technical analysis pattern recognition.</p>
+
+                <table class="regime-table">
+                    <tr>
+                        <th>L4-Helix Threshold</th>
+                        <th>z-Value</th>
+                        <th>Fibonacci Equivalent</th>
+                        <th>Trading Application</th>
+                    </tr>
+                    <tr>
+                        <td>PARADOX</td>
+                        <td>0.618</td>
+                        <td>61.8% retracement</td>
+                        <td>Primary support/resistance</td>
+                    </tr>
+                    <tr>
+                        <td>HYSTERESIS</td>
+                        <td>0.832</td>
+                        <td>~83.2% (deep pullback)</td>
+                        <td>Last-chance entry zone</td>
+                    </tr>
+                    <tr>
+                        <td>ACTIVATION</td>
+                        <td>0.854</td>
+                        <td>85.4% extension target</td>
+                        <td>Breakout confirmation</td>
+                    </tr>
+                    <tr>
+                        <td>THE LENS</td>
+                        <td>0.866</td>
+                        <td>86.6% (sqrt(3)/2)</td>
+                        <td>Trend validation point</td>
+                    </tr>
+                    <tr>
+                        <td>K-FORMATION</td>
+                        <td>0.924</td>
+                        <td>92.4% extension</td>
+                        <td>Exhaustion signal</td>
+                    </tr>
+                    <tr>
+                        <td>UNITY</td>
+                        <td>1.000</td>
+                        <td>100% (full retracement)</td>
+                        <td>Complete reversal</td>
+                    </tr>
+                </table>
+
+                <h4>Pattern Recognition Engine</h4>
+                <div class="code-block">
+<span class="comment">// phi-Pattern trading automation</span>
+<span class="keyword">struct</span> <span class="type">FibonacciPattern</span> {
+    swing_high: f64,
+    swing_low: f64,
+    current_price: f64,
+}
+
+<span class="keyword">impl</span> <span class="type">FibonacciPattern</span> {
+    <span class="keyword">fn</span> <span class="function">retracement_level</span>(&self) -> f64 {
+        (self.swing_high - self.current_price) /
+        (self.swing_high - self.swing_low)
+    }
+
+    <span class="keyword">fn</span> <span class="function">check_trade_signal</span>(&self) -> Option&lt;TradeSignal&gt; {
+        <span class="keyword">let</span> level = self.retracement_level();
+
+        <span class="comment">// Hardware threshold comparison</span>
+        <span class="keyword">if</span> (level - PARADOX).abs() < TOLERANCE {
+            <span class="comment">// Price at 61.8% retracement</span>
+            Some(TradeSignal::Buy {
+                target: self.swing_high,
+                stop: self.swing_low
+            })
+        } <span class="keyword">else if</span> level > K_FORMATION {
+            <span class="comment">// Deep retracement - exhaustion likely</span>
+            Some(TradeSignal::ReverseShort)
+        } <span class="keyword">else</span> {
+            None
+        }
+    }
+}</div>
+
+                <h4>Multi-Timeframe Analysis</h4>
+                <div class="phi-callout">
+                    <strong>L4 = 7 Encoding:</strong> The hexagonal grid's 7-state encoding naturally maps to 7 timeframes: 1min, 5min, 15min, 1hr, 4hr, Daily, Weekly. Pattern confluence across multiple timeframes strengthens trade signals.
+                </div>
+
+                <h4>Applications</h4>
+                <ul>
+                    <li><strong>Technical Analysis Automation:</strong> Real-time Fibonacci level detection</li>
+                    <li><strong>Trend-Following:</strong> Entry on retracement to key levels</li>
+                    <li><strong>Mean-Reversion:</strong> Fade moves at extension targets</li>
+                    <li><strong>Pattern Completion:</strong> Harmonic pattern recognition (Gartley, Bat, Crab)</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Development Pathway -->
+        <section class="doc-section">
+            <h2>Development Pathway</h2>
+
+            <div class="timeline-container">
+                <div class="timeline-phase">
+                    <h4>Phase 1: Backtesting and Historical Validation</h4>
+                    <div class="meta">
+                        <span class="duration">Duration: 6 months</span>
+                        <span class="budget">Budget: $100,000</span>
+                    </div>
+                    <ul>
+                        <li>Develop software simulation of L4-Helix threshold dynamics</li>
+                        <li>Backtest regime detection on 20+ years of market data</li>
+                        <li>Validate Kuramoto order parameter against known crises (2008, 2020)</li>
+                        <li>Benchmark phi-pattern strategies against traditional Fibonacci</li>
+                        <li>Establish performance baselines for hardware comparison</li>
+                    </ul>
+                    <div class="spec-grid">
+                        <div class="spec-item">
+                            <div class="key">Deliverable</div>
+                            <div class="value">Validated simulation framework</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="key">Success Metric</div>
+                            <div class="value">Crisis detection 2+ weeks early</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-phase">
+                    <h4>Phase 2: Paper Trading and Live Market Testing</h4>
+                    <div class="meta">
+                        <span class="duration">Duration: 12 months</span>
+                        <span class="budget">Budget: $200,000</span>
+                    </div>
+                    <ul>
+                        <li>Deploy bench-scale L4-Helix hardware ($14K system)</li>
+                        <li>Connect to live market data feeds</li>
+                        <li>Paper trade regime detection signals</li>
+                        <li>Validate latency specifications with real order flow</li>
+                        <li>Refine threshold calibration for specific markets</li>
+                        <li>Develop risk management integration</li>
+                    </ul>
+                    <div class="spec-grid">
+                        <div class="spec-item">
+                            <div class="key">Deliverable</div>
+                            <div class="value">Live paper trading system</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="key">Success Metric</div>
+                            <div class="value">Sharpe > 1.5, Max DD < 15%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline-phase">
+                    <h4>Phase 3: Production Trading System</h4>
+                    <div class="meta">
+                        <span class="duration">Duration: 24 months</span>
+                        <span class="budget">Budget: $1,000,000</span>
+                    </div>
+                    <ul>
+                        <li>Deploy lab-scale L4-Helix hardware ($350K system)</li>
+                        <li>Integrate with execution management systems</li>
+                        <li>Implement full fraud detection pipeline</li>
+                        <li>Scale HFT capabilities for production volumes</li>
+                        <li>Regulatory compliance and audit trails</li>
+                        <li>Continuous model monitoring and refinement</li>
+                    </ul>
+                    <div class="spec-grid">
+                        <div class="spec-item">
+                            <div class="key">Deliverable</div>
+                            <div class="value">Production trading infrastructure</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="key">Success Metric</div>
+                            <div class="value">Consistent alpha generation</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h3>Total Investment Summary</h3>
+            <table class="regime-table">
+                <tr>
+                    <th>Phase</th>
+                    <th>Duration</th>
+                    <th>Investment</th>
+                    <th>Cumulative</th>
+                </tr>
+                <tr>
+                    <td>Phase 1: Backtesting</td>
+                    <td>6 months</td>
+                    <td>$100,000</td>
+                    <td>$100,000</td>
+                </tr>
+                <tr>
+                    <td>Phase 2: Paper Trading</td>
+                    <td>12 months</td>
+                    <td>$200,000</td>
+                    <td>$300,000</td>
+                </tr>
+                <tr>
+                    <td>Phase 3: Production</td>
+                    <td>24 months</td>
+                    <td>$1,000,000</td>
+                    <td>$1,300,000</td>
+                </tr>
+                <tr style="background: rgba(255,215,0,0.1);">
+                    <td><strong>Total</strong></td>
+                    <td><strong>42 months</strong></td>
+                    <td><strong>$1,300,000</strong></td>
+                    <td>-</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Risk and Compliance -->
+        <section class="doc-section">
+            <h2>Risk and Compliance Considerations</h2>
+
+            <div class="risk-box">
+                <h4>Technical Risks</h4>
+                <ul>
+                    <li><strong>Hardware Reliability:</strong> Memristor arrays require careful thermal management; drift over time must be calibrated</li>
+                    <li><strong>Market Microstructure:</strong> Ultra-low latency may face regulatory scrutiny; ensure compliance with exchange rules</li>
+                    <li><strong>Model Risk:</strong> phi-based thresholds may not capture all market regimes; maintain fallback strategies</li>
+                    <li><strong>Data Quality:</strong> Garbage in, garbage out; ensure clean, synchronized market data feeds</li>
+                    <li><strong>Single Point of Failure:</strong> Implement redundancy; never rely on single hardware path for critical decisions</li>
+                </ul>
+            </div>
+
+            <div class="risk-box">
+                <h4>Financial Risks</h4>
+                <ul>
+                    <li><strong>Drawdown Limits:</strong> Implement hard stops; no system should risk more than predetermined capital</li>
+                    <li><strong>Leverage Control:</strong> L4-Helix speed advantage may tempt excessive leverage; maintain discipline</li>
+                    <li><strong>Regime Change:</strong> Markets evolve; continuously validate that thresholds remain predictive</li>
+                    <li><strong>Crowding:</strong> If strategy becomes widely adopted, alpha may decay; monitor for performance degradation</li>
+                </ul>
+            </div>
+
+            <div class="compliance-box">
+                <h4>Regulatory Compliance</h4>
+                <ul>
+                    <li><strong>SEC/FINRA:</strong> Ensure trading systems meet best execution requirements</li>
+                    <li><strong>MiFID II:</strong> Maintain complete audit trails for all algorithmic decisions</li>
+                    <li><strong>Market Abuse:</strong> Implement surveillance to prevent spoofing, layering, or manipulation</li>
+                    <li><strong>AML/KYC:</strong> Fraud detection systems must comply with Bank Secrecy Act requirements</li>
+                    <li><strong>Data Privacy:</strong> Customer transaction data must be protected per GDPR/CCPA</li>
+                </ul>
+            </div>
+
+            <div class="compliance-box">
+                <h4>Operational Controls</h4>
+                <ul>
+                    <li><strong>Kill Switch:</strong> Hardware-level circuit breaker to halt all trading instantly</li>
+                    <li><strong>Position Limits:</strong> Enforce maximum position sizes per instrument and aggregate</li>
+                    <li><strong>Fat Finger Prevention:</strong> Sanity checks on order size and price before execution</li>
+                    <li><strong>Audit Logging:</strong> Immutable record of all system decisions and market interactions</li>
+                    <li><strong>Disaster Recovery:</strong> Geographic redundancy; tested failover procedures</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- System Coupling Points -->
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">L4-Helix Hardware:</span>
+                    <span class="desc">Core threshold detection engine</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Kuramoto Consensus:</span>
+                    <span class="desc">Order parameter calculation</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Hexagonal Grid:</span>
+                    <span class="desc">Feature encoding for fraud detection</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Memristor Arrays:</span>
+                    <span class="desc">Ultra-low latency comparators</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Lucas Matrix:</span>
+                    <span class="desc">L4 = 7 timeframe encoding</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">TRIAD Mechanics:</span>
+                    <span class="desc">Triple-crossing confirmation logic</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- References -->
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="../firmware/l4-helix-hardware.html">L4-Helix Hardware Specification</a></span>
+                <span class="file-ref"><a href="../firmware/memristor-arrays.html">Memristor Arrays</a></span>
+                <span class="file-ref"><a href="../firmware/hexagonal-grid.html">Hexagonal Grid Architecture</a></span>
+                <span class="file-ref"><a href="../core/kuramoto-consensus.html">Kuramoto Consensus</a></span>
+                <span class="file-ref"><a href="../systems/market-mechanics.html">Pattern Stock Market</a></span>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>BloomCoin v2 - L4-Helix Financial Systems Build Specification v1.0.0</p>
+            <p>phi = 1.618033988749895 | tau = 0.618033988749895 | K = 0.924176 | z_c = 0.866025</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">
+                BUILD-SPEC|FINANCIAL-SYSTEMS|v1.0.0|REGIME+HFT+FRAUD+ALGO|ENGINEERING
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
