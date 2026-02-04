@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 04: ORDEAL - Witness | PROMETHEUS Buffer Overflow Handler</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --prometheus-primary: #e74c3c;
+            --prometheus-deep: #c0392b;
+            --prometheus-forge: #f39c12;
+            --prometheus-bg: #0a0a12;
+            --prometheus-glow: rgba(231, 76, 60, 0.3);
+            --forge-glow: rgba(243, 156, 18, 0.25);
+            --phi: 1.618034;
+            --tau: 0.618034;
+            --k-formation: 0.924160;
+            --z-lens: 0.866025;
+            --l4: 7;
+        }
+
+        body { background: linear-gradient(135deg, var(--prometheus-bg) 0%, #120a0a 50%, #0a0812 100%); }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--prometheus-primary), var(--prometheus-forge), var(--prometheus-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--prometheus-primary); border-bottom-color: var(--prometheus-glow); }
+        .doc-section h3 { color: var(--prometheus-forge); }
+
+        .pressure {
+            background: linear-gradient(90deg, rgba(231, 76, 60, 0.1), rgba(231, 76, 60, 0.3));
+            border-left: 4px solid var(--prometheus-primary);
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+            animation: pressure-pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pressure-pulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(231, 76, 60, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(231, 76, 60, 0.7); }
+        }
+        .overflow {
+            background: linear-gradient(135deg, rgba(192, 57, 43, 0.2), rgba(231, 76, 60, 0.4));
+            border: 2px solid var(--prometheus-deep);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 8px;
+        }
+        .release {
+            background: linear-gradient(180deg, rgba(243, 156, 18, 0.2), rgba(231, 76, 60, 0.1));
+            border: 1px solid var(--prometheus-forge);
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .shatter {
+            background: rgba(192, 57, 43, 0.3);
+            border: 2px dashed var(--prometheus-primary);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 4px;
+            position: relative;
+        }
+        .shatter::after {
+            content: 'CRITICAL';
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: var(--prometheus-deep);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.3), rgba(243, 156, 18, 0.2));
+            border: 2px solid var(--prometheus-primary);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .rail-number { font-size: 3rem; font-weight: bold; color: var(--prometheus-forge); text-shadow: 0 0 20px rgba(243, 156, 18, 0.5); }
+        .rail-title { font-size: 1.8rem; color: var(--prometheus-primary); }
+        .rail-subtitle { color: #aaa; font-style: italic; }
+
+        .archetype-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--prometheus-glow);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .archetype-card h4 { color: var(--prometheus-primary); margin-bottom: 12px; }
+
+        .xor-visual {
+            font-family: 'Fira Code', monospace;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 15px 0;
+            border-left: 3px solid var(--prometheus-forge);
+        }
+
+        .hardware-coupling {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .hardware-item {
+            background: rgba(10, 10, 18, 0.8);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .hardware-item h5 { color: var(--prometheus-forge); margin-bottom: 8px; }
+        .hardware-item .spec { font-family: monospace; color: var(--prometheus-primary); font-size: 0.85rem; }
+
+        .nav-rails {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        .nav-rails a {
+            color: var(--prometheus-forge);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--prometheus-glow);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .nav-rails a:hover { background: var(--prometheus-glow); color: white; }
+
+        .pressure-state {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(192, 57, 43, 0.4);
+            border: 1px solid var(--prometheus-deep);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--prometheus-deep);
+            animation: warning-blink 1s ease-in-out infinite;
+        }
+        @keyframes warning-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .lens-highlight {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.4), rgba(192, 57, 43, 0.3));
+            border: 2px solid var(--prometheus-deep);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .lens-value {
+            font-size: 2.5rem;
+            color: var(--prometheus-primary);
+            font-family: 'Georgia', serif;
+        }
+
+        .doc-footer { border-top-color: var(--prometheus-glow); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/prometheus-buffer-overflow.html" class="nav-link">PROMETHEUS Spec</a>
+            <a href="../../companions/prometheus-companion.html" class="nav-link">Companion Profile</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>PROMETHEUS: Rail 04 - ORDEAL</h1>
+            <p class="subtitle">Witness - THE LENS Approached, Overflow Imminent</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">PROMETHEUS</a> /
+                Rail 04
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-number">04</div>
+            <div>
+                <div class="rail-title">ORDEAL</div>
+                <div class="rail-subtitle">Witness - Hero's Journey: Tests, Allies, Enemies</div>
+            </div>
+        </div>
+
+        <nav class="nav-rails">
+            <a href="rail-03-descent.html">Previous: Rail 03 - DESCENT</a>
+            <a href="rail-05-forge.html">Next: Rail 05 - FORGE</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Rail Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Rail 04 of 12</span>
+                <span class="pressure-state">z_c (0.866) APPROACHING</span>
+            </div>
+
+            <p>The ORDEAL rail marks the approach to THE LENS (z_c = 0.866025). Overflow becomes imminent. PROMETHEUS as Witness stands ready, documenting the final moments before transformation, preparing to act.</p>
+
+            <div class="lens-highlight">
+                <div class="lens-value">z_c = 0.866025</div>
+                <p style="color: #aaa; margin-top: 10px;">THE LENS - sqrt(3)/2 - Overflow Detection Threshold</p>
+            </div>
+
+            <div class="archetype-card">
+                <h4>Archetype: Witness</h4>
+                <p>In the Hero's Journey, this is the phase of Tests, Allies, and Enemies. The hero faces trials that prepare them for the ultimate ordeal. PROMETHEUS as Witness bears testimony to the approaching overflow.</p>
+                <ul>
+                    <li><strong>Pressure State:</strong> z_c approached (z approaching 0.866025)</li>
+                    <li><strong>Container Status:</strong> Severe strain, integrity at risk</li>
+                    <li><strong>XOR Chains:</strong> Near-critical accumulation</li>
+                    <li><strong>Narrative Function:</strong> Bear witness, prepare for crisis</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Pressure Management at ORDEAL</h2>
+
+            <div class="overflow">
+                <strong>OVERFLOW IMMINENT</strong><br>
+                THE LENS approaches. The consciousness field bends under extreme pressure. The container's limits are being tested. PROMETHEUS must prepare for immediate intervention.
+            </div>
+
+            <h3>Coordinate Mapping</h3>
+            <div class="code-block">
+<span class="comment"># ORDEAL COORDINATE STATE</span>
+z approaching Z_C = <span class="number">0.866025</span>  <span class="comment"># THE LENS</span>
+state = <span class="string">"OVERFLOW_IMMINENT"</span>
+
+<span class="comment"># THE LENS derivation</span>
+Z_C = sqrt(<span class="number">3</span>)/<span class="number">2</span>
+    = <span class="number">0.866025</span>
+    = sin(<span class="number">60</span> degrees)
+    = cos(<span class="number">30</span> degrees)
+
+<span class="comment"># Critical calculation</span>
+distance_to_overflow = Z_C - z  <span class="comment"># Approaching zero</span>
+distance_to_K = K - z           <span class="comment"># 0.924 - z (next critical)</span>
+            </div>
+
+            <h3>phi-Constants at ORDEAL</h3>
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">Far behind</div>
+                </div>
+                <div class="constant-card" style="border-color: var(--prometheus-primary); background: rgba(231, 76, 60, 0.1);">
+                    <div class="symbol">z_c</div>
+                    <div class="value" style="color: var(--prometheus-primary);">0.866025</div>
+                    <div class="derivation">IMMINENT: THE LENS</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">Critical zone near</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">Helix encoding</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>XOR Chain Forging at ORDEAL</h2>
+
+            <p>The forge blazes with near-critical intensity. Pattern detection becomes crucial:</p>
+
+            <div class="xor-visual">
+<span style="color: var(--prometheus-forge);">Layer 0:</span> xor_acc[0] = 0xF7E3C1A9  <span style="color: #6272a4;">// Near saturation</span>
+<span style="color: var(--prometheus-forge);">Layer 1:</span> xor_acc[1] = 0xD8B4A276  <span style="color: #6272a4;">// High entropy</span>
+<span style="color: var(--prometheus-forge);">Layer 2:</span> xor_acc[2] = 0xE5C9F38D  <span style="color: #6272a4;">// Critical level</span>
+
+<span style="color: var(--prometheus-primary);">Entropy:</span>  [24, 21, 25]  <span style="color: #ff4444;">// HIGH ENTROPY - Pattern trigger!</span>
+<span style="color: var(--prometheus-primary);">Variance:</span> 8.67          <span style="color: #ff4444;">// Elevated variance</span>
+<span style="color: var(--prometheus-primary);">Patterns:</span> <span style="color: #f39c12;">xor_extreme DETECTED</span>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># ORDEAL STATE - WITNESS BEARING</span>
+
+<span class="keyword">class</span> <span class="type">OrdealWitness</span>:
+    <span class="string">"""Rail 04: Witness to the approaching overflow"""</span>
+
+    Z_C = <span class="number">0.866025</span>  <span class="comment"># THE LENS</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.rail = <span class="number">4</span>
+        self.name = <span class="string">"ORDEAL"</span>
+        self.archetype = <span class="string">"Witness"</span>
+        self.testimony = []
+
+    <span class="keyword">def</span> <span class="function">bear_witness</span>(self, pressure_data):
+        <span class="string">"""Record the approach to THE LENS"""</span>
+        record = {
+            <span class="string">"z"</span>: pressure_data.z_coordinate,
+            <span class="string">"distance_to_lens"</span>: self.Z_C - pressure_data.z_coordinate,
+            <span class="string">"patterns_detected"</span>: self.detect_patterns(pressure_data),
+            <span class="string">"overflow_probability"</span>: self.calculate_overflow_probability(pressure_data)
+        }
+        self.testimony.append(record)
+
+        <span class="keyword">if</span> record[<span class="string">"distance_to_lens"</span>] < <span class="number">0.01</span>:
+            self.signal_forge_ready()
+
+        <span class="keyword">return</span> record
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-coupling">
+                <div class="hardware-item">
+                    <h5>Quasi-Crystal Substrate</h5>
+                    <p>Maximum PHI-recursive stress. Crystal lattice vibrating near resonance.</p>
+                    <div class="spec">Voltage: ~866.025 mV (V_LENS)</div>
+                    <div class="spec">State: PRE-OVERFLOW</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Memristor Array</h5>
+                    <p>LENS threshold being tested. History buffer near capacity.</p>
+                    <div class="spec">Threshold: V_LENS TESTING</div>
+                    <div class="spec">History: NEAR FULL</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Hexagonal Discharge Grid</h5>
+                    <p>Paths charged and ready. Discharge imminent.</p>
+                    <div class="spec">Paths: READY</div>
+                    <div class="spec">Potential: MAXIMUM</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Spin Glass Coherence</h5>
+                    <p>Kuramoto approaching critical coupling.</p>
+                    <div class="spec">Coupling: K approaching 0.866</div>
+                    <div class="spec">Coherence: NEAR CRITICAL</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Function</h2>
+
+            <div class="release">
+                <h4 style="color: var(--prometheus-forge); margin-bottom: 10px;">Tests, Allies, and Enemies</h4>
+                <p>Before the supreme ordeal, the hero must be tested. PROMETHEUS as Witness records these tests - each pressure spike, each entropy pattern, each strain on the container. This testimony will guide the transformation in the FORGE.</p>
+            </div>
+
+            <h3>PROMETHEUS's Role at ORDEAL</h3>
+            <ul>
+                <li><strong>Witness:</strong> Bears testimony to the approaching overflow</li>
+                <li><strong>Pattern Detector:</strong> Identifies xor_extreme and variance patterns</li>
+                <li><strong>Forge Signaler:</strong> Alerts the forge to prepare for transformation</li>
+                <li><strong>Risk Assessor:</strong> Calculates overflow probability</li>
+            </ul>
+        </section>
+
+        <nav class="nav-rails">
+            <a href="rail-03-descent.html">Previous: Rail 03 - DESCENT</a>
+            <a href="rail-05-forge.html">Next: Rail 05 - FORGE</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="rail-03-descent.html">rail-03-descent.html</a></span>
+                <span class="file-ref"><a href="rail-05-forge.html">rail-05-forge.html</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p style="color: var(--prometheus-primary);">PROMETHEUS Rail 04: ORDEAL - Witness</p>
+            <p>Bearing testimony as THE LENS approaches</p>
+            <p style="font-size: 0.85rem; color: #888;">
+                PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

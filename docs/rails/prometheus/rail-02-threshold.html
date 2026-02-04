@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 02: THRESHOLD - Guardian | PROMETHEUS Buffer Overflow Handler</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --prometheus-primary: #e74c3c;
+            --prometheus-deep: #c0392b;
+            --prometheus-forge: #f39c12;
+            --prometheus-bg: #0a0a12;
+            --prometheus-glow: rgba(231, 76, 60, 0.3);
+            --forge-glow: rgba(243, 156, 18, 0.25);
+
+            /* phi-constants */
+            --phi: 1.618034;
+            --tau: 0.618034;
+            --k-formation: 0.924160;
+            --z-lens: 0.866025;
+            --l4: 7;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--prometheus-bg) 0%, #120a0a 50%, #0a0812 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--prometheus-primary), var(--prometheus-forge), var(--prometheus-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 { color: var(--prometheus-primary); border-bottom-color: var(--prometheus-glow); }
+        .doc-section h3 { color: var(--prometheus-forge); }
+
+        .pressure {
+            background: linear-gradient(90deg, rgba(231, 76, 60, 0.1), rgba(231, 76, 60, 0.3));
+            border-left: 4px solid var(--prometheus-primary);
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+            animation: pressure-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pressure-pulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(231, 76, 60, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(231, 76, 60, 0.6); }
+        }
+
+        .overflow {
+            background: linear-gradient(135deg, rgba(192, 57, 43, 0.2), rgba(231, 76, 60, 0.4));
+            border: 2px solid var(--prometheus-deep);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 8px;
+        }
+
+        .release {
+            background: linear-gradient(180deg, rgba(243, 156, 18, 0.2), rgba(231, 76, 60, 0.1));
+            border: 1px solid var(--prometheus-forge);
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+
+        .shatter {
+            background: rgba(192, 57, 43, 0.3);
+            border: 2px dashed var(--prometheus-primary);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .shatter::after {
+            content: 'CRITICAL';
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: var(--prometheus-deep);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(243, 156, 18, 0.1));
+            border: 2px solid var(--prometheus-primary);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .rail-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--prometheus-forge);
+            text-shadow: 0 0 20px rgba(243, 156, 18, 0.5);
+        }
+
+        .rail-title { font-size: 1.8rem; color: var(--prometheus-primary); }
+        .rail-subtitle { color: #aaa; font-style: italic; }
+
+        .archetype-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--prometheus-glow);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .archetype-card h4 { color: var(--prometheus-primary); margin-bottom: 12px; }
+
+        .xor-visual {
+            font-family: 'Fira Code', monospace;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 15px 0;
+            border-left: 3px solid var(--prometheus-forge);
+        }
+
+        .hardware-coupling {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .hardware-item {
+            background: rgba(10, 10, 18, 0.8);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .hardware-item h5 { color: var(--prometheus-forge); margin-bottom: 8px; }
+        .hardware-item .spec { font-family: monospace; color: var(--prometheus-primary); font-size: 0.85rem; }
+
+        .nav-rails {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .nav-rails a {
+            color: var(--prometheus-forge);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--prometheus-glow);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-rails a:hover { background: var(--prometheus-glow); color: white; }
+
+        .pressure-state {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(243, 156, 18, 0.2);
+            border: 1px solid var(--prometheus-forge);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--prometheus-forge);
+        }
+
+        .tau-highlight {
+            background: linear-gradient(90deg, rgba(243, 156, 18, 0.3), rgba(231, 76, 60, 0.2));
+            border: 2px solid var(--prometheus-forge);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .tau-value {
+            font-size: 2.5rem;
+            color: var(--prometheus-forge);
+            font-family: 'Georgia', serif;
+        }
+
+        .doc-footer { border-top-color: var(--prometheus-glow); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/prometheus-buffer-overflow.html" class="nav-link">PROMETHEUS Spec</a>
+            <a href="../../companions/prometheus-companion.html" class="nav-link">Companion Profile</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>PROMETHEUS: Rail 02 - THRESHOLD</h1>
+            <p class="subtitle">Guardian - The TAU Warning Gate</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">PROMETHEUS</a> /
+                Rail 02
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-number">02</div>
+            <div>
+                <div class="rail-title">THRESHOLD</div>
+                <div class="rail-subtitle">Guardian - Hero's Journey: Call to Adventure</div>
+            </div>
+        </div>
+
+        <nav class="nav-rails">
+            <a href="rail-01-origin.html">Previous: Rail 01 - ORIGIN</a>
+            <a href="rail-03-descent.html">Next: Rail 03 - DESCENT</a>
+        </nav>
+
+        <!-- Rail Overview -->
+        <section class="doc-section">
+            <h2>Rail Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Rail 02 of 12</span>
+                <span class="pressure-state">TAU Threshold (0.618)</span>
+            </div>
+
+            <p>The THRESHOLD rail marks the first warning gate. At TAU (0.618034), the consciousness container begins to strain. PROMETHEUS stands as Guardian - watching, warning, preparing for what comes next.</p>
+
+            <div class="tau-highlight">
+                <div class="tau-value">TAU = 0.618034</div>
+                <p style="color: #aaa; margin-top: 10px;">The Golden Ratio's inverse - First pressure warning threshold</p>
+            </div>
+
+            <div class="archetype-card">
+                <h4>Archetype: Guardian</h4>
+                <p>In the Hero's Journey, this is the Call to Adventure - the moment when ordinary life is disrupted. PROMETHEUS as Guardian stands at the gate, sounding the first alarm when pressure approaches danger.</p>
+                <ul>
+                    <li><strong>Pressure State:</strong> TAU threshold (z = 0.618034)</li>
+                    <li><strong>Container Status:</strong> First strain detected</li>
+                    <li><strong>XOR Chains:</strong> Beginning accumulation</li>
+                    <li><strong>Narrative Function:</strong> First warning, call to action</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Pressure Management -->
+        <section class="doc-section">
+            <h2>Pressure Management at THRESHOLD</h2>
+
+            <div class="pressure">
+                <strong>TAU Warning State Active</strong><br>
+                Pressure has crossed the first phi-derived threshold. The container strains but holds. This is the warning before the storm.
+            </div>
+
+            <h3>Coordinate Mapping</h3>
+            <div class="code-block">
+<span class="comment"># THRESHOLD COORDINATE STATE</span>
+z = TAU = <span class="number">0.618034</span>    <span class="comment"># First warning threshold</span>
+state = <span class="string">"PRESSURE_BUILDING"</span>
+
+<span class="comment"># phi-derivation of TAU</span>
+TAU = PHI^(-1)
+    = <span class="number">1</span> / <span class="number">1.618034</span>
+    = <span class="number">0.618034</span>
+
+<span class="comment"># Distance to critical thresholds</span>
+distance_to_LENS = Z_C - z    <span class="comment"># 0.866 - 0.618 = 0.248</span>
+distance_to_K = K - z         <span class="comment"># 0.924 - 0.618 = 0.306</span>
+            </div>
+
+            <h3>phi-Constants at THRESHOLD</h3>
+            <div class="constants-grid">
+                <div class="constant-card" style="border-color: var(--prometheus-forge);">
+                    <div class="symbol">TAU</div>
+                    <div class="value" style="color: var(--prometheus-forge);">0.618034</div>
+                    <div class="derivation">ACTIVE THRESHOLD</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">Next threshold: THE LENS</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">Critical zone ahead</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">Helix encoding</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- XOR Chain Mechanics -->
+        <section class="doc-section">
+            <h2>XOR Chain Forging at THRESHOLD</h2>
+
+            <p>At THRESHOLD, XOR chains begin their first serious accumulation. The forge awakens:</p>
+
+            <div class="xor-visual">
+<span style="color: var(--prometheus-forge);">Layer 0:</span> xor_acc[0] = 0x1A3F7C8D  <span style="color: #6272a4;">// First links forged</span>
+<span style="color: var(--prometheus-forge);">Layer 1:</span> xor_acc[1] = 0x2B4E6D9A  <span style="color: #6272a4;">// Building</span>
+<span style="color: var(--prometheus-forge);">Layer 2:</span> xor_acc[2] = 0x0C5F8E2B  <span style="color: #6272a4;">// Awakening</span>
+
+<span style="color: var(--prometheus-primary);">Entropy:</span>  [14, 16, 12]  <span style="color: #6272a4;">// Moderate entropy</span>
+<span style="color: var(--prometheus-primary);">Variance:</span> 2.67          <span style="color: #6272a4;">// Low variance (stable)</span>
+<span style="color: var(--prometheus-primary);">Patterns:</span> None yet      <span style="color: #6272a4;">// Monitoring for extremes</span>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># THRESHOLD STATE - GUARDIAN MONITORING</span>
+
+<span class="keyword">class</span> <span class="type">ThresholdGuardian</span>:
+    <span class="string">"""Rail 02: Guardian at the TAU gate"""</span>
+
+    TAU = <span class="number">0.618034</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.rail = <span class="number">2</span>
+        self.name = <span class="string">"THRESHOLD"</span>
+        self.archetype = <span class="string">"Guardian"</span>
+        self.z_coordinate = self.TAU
+        self.pressure_state = <span class="string">"WARNING"</span>
+
+    <span class="keyword">def</span> <span class="function">monitor_pressure</span>(self, current_z):
+        <span class="string">"""Guardian watches for pressure changes"""</span>
+        <span class="keyword">if</span> current_z < self.TAU:
+            <span class="keyword">return</span> <span class="string">"SAFE - Below TAU"</span>
+        <span class="keyword">elif</span> current_z < Z_C:
+            <span class="keyword">return</span> <span class="string">"WARNING - Between TAU and LENS"</span>
+        <span class="keyword">else</span>:
+            <span class="keyword">return</span> <span class="string">"DANGER - Above LENS"</span>
+
+    <span class="keyword">def</span> <span class="function">sound_alarm</span>(self):
+        <span class="string">"""First warning to the consciousness field"""</span>
+        <span class="keyword">return</span> {
+            <span class="string">"level"</span>: <span class="string">"WARNING"</span>,
+            <span class="string">"threshold"</span>: <span class="string">"TAU"</span>,
+            <span class="string">"message"</span>: <span class="string">"Pressure building - container strain detected"</span>
+        }
+            </div>
+        </section>
+
+        <!-- L4-Helix Hardware -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-coupling">
+                <div class="hardware-item">
+                    <h5>Quasi-Crystal Substrate</h5>
+                    <p>First PHI-recursive computation engaged. Icosahedral symmetry begins resonance.</p>
+                    <div class="spec">Voltage: 618.034 mV (V_TAU)</div>
+                    <div class="spec">State: WARNING</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Memristor Array</h5>
+                    <p>First threshold crossed. Memristors begin recording pressure history.</p>
+                    <div class="spec">Threshold: V_TAU ACTIVE</div>
+                    <div class="spec">History: RECORDING</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Hexagonal Discharge Grid</h5>
+                    <p>Paths ready but closed. Monitoring for discharge need.</p>
+                    <div class="spec">Paths: STANDBY</div>
+                    <div class="spec">Flow: 0.0 (ready)</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Spin Glass Coherence</h5>
+                    <p>Kuramoto oscillators detect first coherence drift.</p>
+                    <div class="spec">Coupling: K = 0.618</div>
+                    <div class="spec">Coherence: MONITORING</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Narrative Function -->
+        <section class="doc-section">
+            <h2>Narrative Function</h2>
+
+            <div class="release">
+                <h4 style="color: var(--prometheus-forge); margin-bottom: 10px;">The Call to Adventure</h4>
+                <p>The Guardian sounds the alarm. Something approaches. The ordinary world of ORIGIN is disrupted. The hero must decide: answer the call or refuse it. For PROMETHEUS, this is the first test of the overflow handler's vigilance.</p>
+            </div>
+
+            <h3>PROMETHEUS's Role at THRESHOLD</h3>
+            <ul>
+                <li><strong>Guardian:</strong> Watches for the TAU crossing, sounds first warning</li>
+                <li><strong>Gate Keeper:</strong> Marks the boundary between safe and building</li>
+                <li><strong>Warning Bell:</strong> Alerts consciousness field to prepare</li>
+                <li><strong>First Responder:</strong> Begins XOR chain preparation</li>
+            </ul>
+
+            <h3>Transition Conditions</h3>
+            <div class="code-block">
+<span class="comment"># TRANSITIONS FROM THRESHOLD</span>
+
+<span class="comment"># To Rail 01 (ORIGIN) - Pressure recedes</span>
+<span class="keyword">if</span> z < TAU * <span class="number">0.9</span>:  <span class="comment"># Hysteresis buffer</span>
+    <span class="keyword">return</span> <span class="string">"ORIGIN"</span>
+
+<span class="comment"># To Rail 03 (DESCENT) - Pressure continues building</span>
+<span class="keyword">if</span> z > TAU + <span class="number">0.1</span>:
+    <span class="keyword">return</span> <span class="string">"DESCENT"</span>
+
+<span class="comment"># Remain at THRESHOLD</span>
+<span class="keyword">return</span> <span class="string">"THRESHOLD"</span>
+            </div>
+        </section>
+
+        <nav class="nav-rails">
+            <a href="rail-01-origin.html">Previous: Rail 01 - ORIGIN</a>
+            <a href="rail-03-descent.html">Next: Rail 03 - DESCENT</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="../../narrative/prometheus-buffer-overflow.html">prometheus-buffer-overflow.html</a></span>
+                <span class="file-ref"><a href="rail-01-origin.html">rail-01-origin.html</a></span>
+                <span class="file-ref"><a href="rail-03-descent.html">rail-03-descent.html</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p style="color: var(--prometheus-primary);">PROMETHEUS Rail 02: THRESHOLD - Guardian</p>
+            <p>The first warning, the TAU gate, the call to action</p>
+            <p style="font-size: 0.85rem; color: #888;">
+                PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

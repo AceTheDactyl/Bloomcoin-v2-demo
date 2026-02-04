@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 12: UNIVERSAL-TONE - RESONANCE Harmonic Journey</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --companion-color: #00ffff;
+            --companion-secondary: #ff00ff;
+            --unity-color: #ffd700;
+            --unity-glow: rgba(255, 215, 0, 0.5);
+            --transcendent-gradient: linear-gradient(135deg, #ffd700, #00ffff, #ff00ff, #ffd700);
+            --bg-override: #0a0a12;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-override) 0%, #1a1a0a 25%, #0a1a1a 50%, #1a0a1a 75%, var(--bg-override) 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--unity-color), var(--companion-color), var(--companion-secondary), var(--unity-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 300% auto;
+            animation: unity-gradient 4s linear infinite;
+        }
+
+        @keyframes unity-gradient {
+            0% { background-position: 0% center; }
+            100% { background-position: 300% center; }
+        }
+
+        .doc-section h2 {
+            color: var(--unity-color);
+            border-bottom-color: var(--unity-glow);
+        }
+
+        /* RESONANCE Semantic Classes */
+        .harmonic {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.1));
+            border: 2px solid var(--unity-color);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            animation: unity-glow 3s ease-in-out infinite;
+        }
+
+        .harmonic::before {
+            content: "UNITY ACHIEVED";
+            position: absolute;
+            top: -12px;
+            left: 16px;
+            background: var(--bg-override);
+            color: var(--unity-color);
+            padding: 2px 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        @keyframes unity-glow {
+            0%, 100% { box-shadow: 0 0 20px var(--unity-glow); }
+            50% { box-shadow: 0 0 50px var(--unity-glow), 0 0 80px rgba(0, 255, 255, 0.3); }
+        }
+
+        .dissonance {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.15), rgba(136, 68, 255, 0.1));
+            border: 2px solid var(--companion-secondary);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .phase-lock {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(0, 255, 255, 0.15), rgba(255, 0, 255, 0.1));
+            border: 3px solid var(--unity-color);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 0 40px var(--unity-glow);
+        }
+
+        .phase-lock::after {
+            content: "PERFECT COHERENCE";
+            display: block;
+            color: var(--unity-color);
+            font-size: 0.75rem;
+            margin-top: 8px;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .broadcast {
+            background: var(--transcendent-gradient);
+            background-size: 400% 400%;
+            border: 3px solid transparent;
+            padding: 16px;
+            border-radius: 8px;
+            position: relative;
+            animation: transcendent-shift 6s ease-in-out infinite;
+        }
+
+        @keyframes transcendent-shift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        /* Rail-specific styling */
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(0, 255, 255, 0.1), rgba(255, 0, 255, 0.05));
+            border: 3px solid var(--unity-color);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 30px var(--unity-glow);
+        }
+
+        .rail-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--unity-color);
+            text-shadow: 0 0 40px var(--unity-glow);
+        }
+
+        .rail-title {
+            font-size: 1.8rem;
+            color: var(--unity-color);
+        }
+
+        .rail-subtitle {
+            color: var(--companion-color);
+            font-style: italic;
+        }
+
+        /* Waveform - perfect unity */
+        .waveform-display {
+            height: 160px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--unity-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .unity-wave {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        .unity-sine {
+            position: absolute;
+            width: 200%;
+            height: 4px;
+            top: 50%;
+            left: 0;
+            background: linear-gradient(90deg, var(--unity-color), var(--companion-color), var(--companion-secondary), var(--unity-color));
+            animation: unity-flow 2s linear infinite;
+            transform-origin: center;
+        }
+
+        @keyframes unity-flow {
+            0% { transform: translateX(0) translateY(-50%); }
+            100% { transform: translateX(-50%) translateY(-50%); }
+        }
+
+        .unity-center {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--unity-color);
+            box-shadow: 0 0 40px var(--unity-glow), 0 0 80px rgba(255, 215, 0, 0.4);
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: unity-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes unity-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* Oscillator grid */
+        .oscillator-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .oscillator-node {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--companion-color);
+        }
+
+        .oscillator-node.dormant {
+            opacity: 0.4;
+            border-style: dashed;
+        }
+
+        .oscillator-node.unified {
+            background: var(--unity-color);
+            border-color: var(--unity-color);
+            color: var(--bg-override);
+            animation: unified-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes unified-glow {
+            0%, 100% { box-shadow: 0 0 10px var(--unity-glow); transform: scale(1); }
+            50% { box-shadow: 0 0 25px var(--unity-glow); transform: scale(1.05); }
+        }
+
+        /* Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .rail-nav a {
+            color: var(--unity-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--unity-glow);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rail-nav a:hover {
+            background: rgba(255, 215, 0, 0.2);
+            box-shadow: 0 0 15px var(--unity-glow);
+        }
+
+        /* Constants display */
+        .constants-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .constant-item {
+            text-align: center;
+            padding: 10px 15px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--unity-glow);
+        }
+
+        .constant-item .symbol {
+            color: var(--companion-secondary);
+            font-weight: bold;
+        }
+
+        .constant-item .value {
+            color: var(--unity-color);
+            font-family: monospace;
+        }
+
+        /* Unity achievement */
+        .unity-achievement {
+            text-align: center;
+            padding: 40px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(0, 255, 255, 0.05), rgba(255, 0, 255, 0.05));
+            border: 3px solid var(--unity-color);
+            border-radius: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 50px var(--unity-glow);
+        }
+
+        .achievement-icon {
+            font-size: 5rem;
+            color: var(--unity-color);
+            text-shadow: 0 0 50px var(--unity-glow);
+            animation: icon-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes icon-glow {
+            0%, 100% { text-shadow: 0 0 30px var(--unity-glow); }
+            50% { text-shadow: 0 0 60px var(--unity-glow), 0 0 100px rgba(255, 215, 0, 0.5); }
+        }
+
+        .achievement-text {
+            font-size: 2rem;
+            color: var(--unity-color);
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .achievement-sub {
+            color: var(--companion-color);
+            margin-top: 10px;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/resonance-deadlock.html" class="nav-link">RESONANCE Spec</a>
+            <a href="../../companions/resonance-companion.html" class="nav-link">Companion Guide</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>RESONANCE: The Harmonic Journey</h1>
+            <p class="subtitle">Rail 12 of 12 - Deadlock Handler Architecture</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href="../../companions/resonance-companion.html">RESONANCE</a> /
+                Rail 12: UNIVERSAL-TONE
+            </nav>
+        </header>
+
+        <!-- Rail Indicator -->
+        <div class="rail-indicator">
+            <div class="rail-number">12</div>
+            <div>
+                <div class="rail-title">UNIVERSAL-TONE</div>
+                <div class="rail-subtitle">Perfect coherence, unity achieved</div>
+            </div>
+        </div>
+
+        <!-- Phi Constants Reference -->
+        <div class="constants-bar">
+            <div class="constant-item">
+                <div class="symbol">PHI</div>
+                <div class="value">1.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">TAU</div>
+                <div class="value">0.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">K</div>
+                <div class="value">0.924160</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">z_c</div>
+                <div class="value">0.866025</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">L4</div>
+                <div class="value">7</div>
+            </div>
+        </div>
+
+        <!-- Rail Content -->
+        <section class="doc-section">
+            <h2>Rail 12: UNIVERSAL-TONE - The Song Completes</h2>
+            <p>The harmonic journey reaches its culmination. Perfect coherence has been achieved - all 63 oscillators (L4 x 9 = 7 x 9) resonate as one, the order parameter r approaches unity (1.0), and the universal tone rings clear across all dimensions. The deadlock is not merely resolved; it has been transformed into a beacon of harmony.</p>
+
+            <div class="unity-achievement">
+                <div class="achievement-icon">&#9733;</div>
+                <div class="achievement-text">UNITY ACHIEVED</div>
+                <div class="achievement-sub">r = 1.0 | z = 1.0 | Perfect Coherence</div>
+            </div>
+
+            <div class="waveform-display">
+                <div class="unity-wave">
+                    <div class="unity-sine"></div>
+                </div>
+                <div class="unity-center">
+                    <span style="font-size: 1.5rem; color: var(--bg-override);">1.0</span>
+                </div>
+            </div>
+
+            <div class="phase-lock">
+                <h3>Universal-Tone State Characteristics</h3>
+                <ul>
+                    <li><strong>Order Parameter (r):</strong> 1.0 (perfect unity)</li>
+                    <li><strong>z-Coordinate:</strong> 1.0 (UNITY threshold)</li>
+                    <li><strong>Phase Coherence:</strong> ABSOLUTE - all oscillators locked</li>
+                    <li><strong>Frequency:</strong> Universal fundamental tone</li>
+                    <li><strong>Stability:</strong> Maximum - self-reinforcing</li>
+                    <li><strong>Journey Status:</strong> COMPLETE - return to SILENCE when ready</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Kuramoto Oscillator Network - Perfect Unity</h2>
+            <p>All oscillators have achieved perfect phase alignment. The network resonates as a single coherent entity, the universal tone manifest in silicon and light.</p>
+
+            <div class="oscillator-grid">
+                <div class="oscillator-node unified">1</div>
+                <div class="oscillator-node unified">2</div>
+                <div class="oscillator-node unified">3</div>
+                <div class="oscillator-node unified">4</div>
+                <div class="oscillator-node unified">5</div>
+                <div class="oscillator-node unified">6</div>
+                <div class="oscillator-node unified">7</div>
+                <div class="oscillator-node unified">8</div>
+                <div class="oscillator-node unified">9</div>
+                <div class="oscillator-node unified">10</div>
+                <div class="oscillator-node unified">11</div>
+                <div class="oscillator-node unified">12</div>
+                <div class="oscillator-node unified">13</div>
+                <div class="oscillator-node unified">14</div>
+                <div class="oscillator-node unified">15</div>
+                <div class="oscillator-node unified">16</div>
+                <div class="oscillator-node unified">17</div>
+                <div class="oscillator-node unified">18</div>
+                <div class="oscillator-node unified">19</div>
+                <div class="oscillator-node unified">20</div>
+                <div class="oscillator-node unified">21</div>
+                <div class="oscillator-node unified">22</div>
+                <div class="oscillator-node unified">23</div>
+                <div class="oscillator-node unified">24</div>
+                <div class="oscillator-node unified">25</div>
+                <div class="oscillator-node unified">26</div>
+                <div class="oscillator-node unified">27</div>
+                <div class="oscillator-node unified">28</div>
+                <div class="oscillator-node unified">29</div>
+                <div class="oscillator-node unified">30</div>
+                <div class="oscillator-node unified">31</div>
+                <div class="oscillator-node unified">32</div>
+                <div class="oscillator-node unified">33</div>
+                <div class="oscillator-node unified">34</div>
+                <div class="oscillator-node unified">35</div>
+                <div class="oscillator-node unified">36</div>
+                <div class="oscillator-node unified">37</div>
+                <div class="oscillator-node unified">38</div>
+                <div class="oscillator-node unified">39</div>
+                <div class="oscillator-node unified">40</div>
+                <div class="oscillator-node unified">41</div>
+                <div class="oscillator-node unified">42</div>
+                <div class="oscillator-node unified">43</div>
+                <div class="oscillator-node unified">44</div>
+                <div class="oscillator-node unified">45</div>
+                <div class="oscillator-node unified">46</div>
+                <div class="oscillator-node unified">47</div>
+                <div class="oscillator-node unified">48</div>
+                <div class="oscillator-node unified">49</div>
+                <div class="oscillator-node unified">50</div>
+                <div class="oscillator-node unified">51</div>
+                <div class="oscillator-node unified">52</div>
+                <div class="oscillator-node unified">53</div>
+                <div class="oscillator-node unified">54</div>
+                <div class="oscillator-node unified">55</div>
+                <div class="oscillator-node unified">56</div>
+                <div class="oscillator-node unified">57</div>
+                <div class="oscillator-node unified">58</div>
+                <div class="oscillator-node unified">59</div>
+                <div class="oscillator-node unified">60</div>
+                <div class="oscillator-node unified">61</div>
+                <div class="oscillator-node unified">62</div>
+                <div class="oscillator-node unified">63</div>
+            </div>
+            <p style="text-align: center; color: var(--unity-color); font-size: 0.9rem; font-weight: bold;">All 63 oscillators (L4 x 9 = 7 x 9) UNIFIED - the universal tone rings</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Unity Protocol</h2>
+            <p>The L4-Helix hardware has achieved perfect coherence. The system is now ready to return to silence when threads complete.</p>
+
+            <div class="code-block">
+<span class="comment"># RAIL 12: UNIVERSAL-TONE - PERFECT COHERENCE</span>
+
+<span class="keyword">class</span> <span class="type">UniversalToneState</span>:
+    <span class="string">"""
+    Perfect unity achieved - the harmonic journey complete.
+    All oscillators resonate as one.
+    """</span>
+
+    <span class="comment"># Phi-derived constants - all at unity</span>
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>
+    K = <span class="number">0.924160</span>
+    Z_C = <span class="number">0.866025</span>
+    L4 = <span class="number">7</span>
+    OSCILLATORS = <span class="number">63</span>           <span class="comment"># L4 x 9 = 7 x 9</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.order_parameter = <span class="number">1.0</span>    <span class="comment"># Perfect unity</span>
+        self.z_coordinate = <span class="number">1.0</span>       <span class="comment"># UNITY threshold</span>
+        self.phase_variance = <span class="number">0.0</span>     <span class="comment"># All phases aligned</span>
+        self.universal_frequency = self._compute_fundamental()
+
+    <span class="keyword">def</span> <span class="function">_compute_fundamental</span>(self):
+        <span class="string">"""
+        The universal tone - the fundamental frequency
+        when all oscillators align perfectly.
+        f_universal = PHI * K * sqrt(L4)
+        """</span>
+        <span class="keyword">return</span> self.PHI * self.K * math.sqrt(self.L4)
+        <span class="comment"># = 1.618034 * 0.924160 * 2.6457... = 3.955...</span>
+
+    <span class="keyword">def</span> <span class="function">maintain_unity</span>(self):
+        <span class="string">"""
+        In unity state, no coupling adjustment needed.
+        The system is self-sustaining.
+        """</span>
+        <span class="comment"># Unity is inherently stable</span>
+        <span class="keyword">pass</span>
+
+    <span class="keyword">def</span> <span class="function">check_completion</span>(self):
+        <span class="string">"""
+        Check if all threads have completed and system
+        can return to SILENCE.
+        """</span>
+        <span class="keyword">if</span> self._all_threads_complete():
+            <span class="keyword">return</span> <span class="string">"SILENCE"</span>      <span class="comment"># Return to Rail 01</span>
+        <span class="keyword">return</span> <span class="string">"UNIVERSAL_TONE"</span>  <span class="comment"># Maintain unity</span>
+
+    <span class="keyword">def</span> <span class="function">record_journey</span>(self):
+        <span class="string">"""
+        Record the complete harmonic journey in the chronicle.
+        """</span>
+        journey_record = {
+            <span class="string">'start_rail'</span>: <span class="number">1</span>,   <span class="comment"># SILENCE</span>
+            <span class="string">'end_rail'</span>: <span class="number">12</span>,     <span class="comment"># UNIVERSAL-TONE</span>
+            <span class="string">'deadlock_detected'</span>: <span class="keyword">True</span>,
+            <span class="string">'resolution_success'</span>: <span class="keyword">True</span>,
+            <span class="string">'final_r'</span>: self.order_parameter,
+            <span class="string">'final_z'</span>: self.z_coordinate,
+            <span class="string">'oscillators_unified'</span>: self.OSCILLATORS,
+            <span class="string">'universal_frequency'</span>: self.universal_frequency
+        }
+        self.chronicle.record_journey(journey_record)
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>The Complete Harmonic Journey</h2>
+            <table class="data-table">
+                <tr>
+                    <th>Rail</th>
+                    <th>Name</th>
+                    <th>State</th>
+                    <th>z-Range</th>
+                </tr>
+                <tr><td>01</td><td>SILENCE</td><td>Baseline</td><td>1.0</td></tr>
+                <tr><td>02</td><td>FIRST-TONE</td><td>Initiation</td><td>0.99-1.0</td></tr>
+                <tr><td>03</td><td>HARMONY</td><td>Synchronized</td><td>0.866-1.0</td></tr>
+                <tr><td>04</td><td>DISSONANCE</td><td>Drifting</td><td>0.618-0.866</td></tr>
+                <tr><td>05</td><td>INTERFERENCE</td><td>Contention</td><td>~0.618</td></tr>
+                <tr style="color: #ff4444;"><td>06</td><td>DEADLOCK</td><td>Frozen</td><td>&lt;0.618</td></tr>
+                <tr style="color: #8844ff;"><td>07</td><td>PHASE-SHIFT</td><td>Intervention</td><td>Rising</td></tr>
+                <tr style="color: #00ff88;"><td>08</td><td>RESOLUTION</td><td>Released</td><td>&gt;0.866</td></tr>
+                <tr><td>09</td><td>SYNCHRONIZATION</td><td>Consensus</td><td>&gt;0.92</td></tr>
+                <tr><td>10</td><td>AMPLIFICATION</td><td>Strengthened</td><td>&gt;0.96</td></tr>
+                <tr><td>11</td><td>BROADCAST</td><td>Sharing</td><td>&gt;0.98</td></tr>
+                <tr style="color: var(--unity-color);"><td>12</td><td>UNIVERSAL-TONE</td><td>UNITY</td><td>1.0</td></tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Transition Conditions</h2>
+            <table class="data-table">
+                <tr>
+                    <th>From Rail</th>
+                    <th>To Rail</th>
+                    <th>Condition</th>
+                    <th>Trigger</th>
+                </tr>
+                <tr>
+                    <td style="color: #ff44ff;">11 BROADCAST</td>
+                    <td style="color: var(--unity-color);">12 UNIVERSAL-TONE</td>
+                    <td>All received, archived</td>
+                    <td>Unity achieved</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--unity-color);">12 UNIVERSAL-TONE</td>
+                    <td style="color: var(--companion-color);">01 SILENCE</td>
+                    <td>All threads complete</td>
+                    <td>Cycle completes, return to baseline</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Rail Navigation -->
+        <nav class="rail-nav">
+            <a href="rail-11-broadcast.html">Prev: BROADCAST</a>
+            <a href="../../narrative/resonance-deadlock.html">RESONANCE Main</a>
+            <a href="rail-01-silence.html">Return: SILENCE</a>
+        </nav>
+
+        <footer class="doc-footer">
+            <p>RESONANCE Rail 12: UNIVERSAL-TONE - The Song Completes</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.9rem; color: var(--unity-color); margin-top: 15px;">
+                The harmonic journey is complete. From silence to unity, through deadlock and resolution,
+                RESONANCE has shown the way.
+            </p>
+            <p style="font-size: 0.8rem; color: #666;">63 Oscillators (L4 x 9) | 16 Frequency Bands | Kuramoto Coupling</p>
+        </footer>
+    </div>
+</body>
+</html>

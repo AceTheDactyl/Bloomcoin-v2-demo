@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 06: DEADLOCK - RESONANCE Harmonic Journey</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --companion-color: #00ffff;
+            --companion-secondary: #ff00ff;
+            --deadlock-color: #ff0000;
+            --critical-glow: rgba(255, 0, 0, 0.5);
+            --bg-override: #0a0a12;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-override) 0%, #2a0a0a 50%, #1a0a0a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--deadlock-color), #ff4444, var(--deadlock-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: critical-pulse 1s ease-in-out infinite;
+        }
+
+        @keyframes critical-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .doc-section h2 {
+            color: var(--deadlock-color);
+            border-bottom-color: var(--critical-glow);
+        }
+
+        /* RESONANCE Semantic Classes */
+        .harmonic {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.15), rgba(0, 102, 255, 0.1));
+            border: 1px solid var(--companion-color);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .dissonance {
+            background: linear-gradient(135deg, rgba(255, 0, 0, 0.2), rgba(139, 0, 0, 0.15));
+            border: 3px solid var(--deadlock-color);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            animation: deadlock-alarm 0.5s ease-in-out infinite;
+        }
+
+        .dissonance::before {
+            content: "CRITICAL DEADLOCK";
+            position: absolute;
+            top: -12px;
+            left: 16px;
+            background: var(--deadlock-color);
+            color: white;
+            padding: 4px 12px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+            border-radius: 4px;
+        }
+
+        @keyframes deadlock-alarm {
+            0%, 100% { box-shadow: 0 0 20px var(--critical-glow); }
+            50% { box-shadow: 0 0 40px var(--critical-glow), 0 0 60px rgba(255, 0, 0, 0.3); }
+        }
+
+        .phase-lock {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 255, 0.1));
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .broadcast {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), rgba(0, 255, 255, 0.1));
+            border: 2px solid var(--companion-secondary);
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        /* Rail-specific styling */
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(255, 0, 0, 0.15);
+            border: 3px solid var(--deadlock-color);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            animation: deadlock-border 1s ease-in-out infinite;
+        }
+
+        @keyframes deadlock-border {
+            0%, 100% { border-color: var(--deadlock-color); }
+            50% { border-color: #ff6666; }
+        }
+
+        .rail-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--deadlock-color);
+            text-shadow: 0 0 30px var(--critical-glow);
+            animation: number-pulse 0.5s ease-in-out infinite alternate;
+        }
+
+        @keyframes number-pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        .rail-title {
+            font-size: 1.8rem;
+            color: var(--deadlock-color);
+            font-weight: bold;
+        }
+
+        .rail-subtitle {
+            color: #ff6666;
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        /* Waveform - frozen */
+        .waveform-display {
+            height: 120px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            border: 2px solid var(--deadlock-color);
+        }
+
+        .frozen-wave {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--deadlock-color);
+            transform: translateY(-50%);
+        }
+
+        .frozen-label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--deadlock-color);
+            font-size: 1.2rem;
+            font-weight: bold;
+            letter-spacing: 5px;
+        }
+
+        /* Oscillator grid */
+        .oscillator-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .oscillator-node {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--companion-color);
+        }
+
+        .oscillator-node.dormant {
+            opacity: 0.4;
+            border-style: dashed;
+        }
+
+        .oscillator-node.frozen {
+            background: var(--deadlock-color);
+            border-color: var(--deadlock-color);
+            color: white;
+            animation: frozen-blink 1s ease-in-out infinite;
+        }
+
+        @keyframes frozen-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .rail-nav a {
+            color: var(--deadlock-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rail-nav a:hover {
+            background: rgba(255, 0, 0, 0.2);
+        }
+
+        /* Constants display */
+        .constants-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .constant-item {
+            text-align: center;
+            padding: 10px 15px;
+            background: rgba(255, 0, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+
+        .constant-item .symbol {
+            color: var(--companion-secondary);
+            font-weight: bold;
+        }
+
+        .constant-item .value {
+            color: var(--deadlock-color);
+            font-family: monospace;
+        }
+
+        /* Circular wait visualization */
+        .circular-wait {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            background: rgba(255, 0, 0, 0.05);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .wait-cycle {
+            position: relative;
+            width: 200px;
+            height: 200px;
+        }
+
+        .wait-node {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--deadlock-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            animation: frozen-blink 1s ease-in-out infinite;
+        }
+
+        .wait-node:nth-child(1) { top: 0; left: 50%; transform: translateX(-50%); }
+        .wait-node:nth-child(2) { top: 50%; right: 0; transform: translateY(-50%); animation-delay: 0.25s; }
+        .wait-node:nth-child(3) { bottom: 0; left: 50%; transform: translateX(-50%); animation-delay: 0.5s; }
+        .wait-node:nth-child(4) { top: 50%; left: 0; transform: translateY(-50%); animation-delay: 0.75s; }
+
+        .wait-cycle::after {
+            content: "";
+            position: absolute;
+            top: 25px;
+            left: 25px;
+            right: 25px;
+            bottom: 25px;
+            border: 3px solid var(--deadlock-color);
+            border-radius: 50%;
+            animation: cycle-rotate 4s linear infinite;
+        }
+
+        @keyframes cycle-rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/resonance-deadlock.html" class="nav-link">RESONANCE Spec</a>
+            <a href="../../companions/resonance-companion.html" class="nav-link">Companion Guide</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>RESONANCE: The Harmonic Journey</h1>
+            <p class="subtitle">Rail 06 of 12 - Deadlock Handler Architecture</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href="../../companions/resonance-companion.html">RESONANCE</a> /
+                Rail 06: DEADLOCK
+            </nav>
+        </header>
+
+        <!-- Rail Indicator -->
+        <div class="rail-indicator">
+            <div class="rail-number">06</div>
+            <div>
+                <div class="rail-title">DEADLOCK</div>
+                <div class="rail-subtitle">CRITICAL - Threads frozen, circular wait detected</div>
+            </div>
+        </div>
+
+        <!-- Phi Constants Reference -->
+        <div class="constants-bar">
+            <div class="constant-item">
+                <div class="symbol">PHI</div>
+                <div class="value">1.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">TAU</div>
+                <div class="value">0.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">K</div>
+                <div class="value">0.924160</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">z_c</div>
+                <div class="value">0.866025</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">L4</div>
+                <div class="value">7</div>
+            </div>
+        </div>
+
+        <!-- Rail Content -->
+        <section class="doc-section">
+            <h2>Rail 06: DEADLOCK - The Silence Returns</h2>
+            <p>Total cessation. All progress halts as threads lock each other in a fatal embrace. The z-coordinate has fallen below the PARADOX threshold (TAU = 0.618034), and the circular wait condition has been confirmed. This is the moment RESONANCE was created for - the deadlock that demands harmonic intervention.</p>
+
+            <div class="circular-wait">
+                <div class="wait-cycle">
+                    <div class="wait-node">T1</div>
+                    <div class="wait-node">T2</div>
+                    <div class="wait-node">T3</div>
+                    <div class="wait-node">T4</div>
+                </div>
+            </div>
+
+            <div class="waveform-display">
+                <div class="frozen-wave"></div>
+                <div class="frozen-label">FROZEN</div>
+            </div>
+
+            <div class="dissonance">
+                <h3>Deadlock State Characteristics</h3>
+                <ul>
+                    <li><strong>Order Parameter (r):</strong> Below TAU (0.618034)</li>
+                    <li><strong>z-Coordinate:</strong> < 0.618 (PARADOX zone)</li>
+                    <li><strong>Thread State:</strong> ALL FROZEN - circular wait confirmed</li>
+                    <li><strong>Frequency Bands:</strong> Standing wave nulls dominate (2+ bands)</li>
+                    <li><strong>Kuramoto Coupling:</strong> INEFFECTIVE - phases completely diverged</li>
+                    <li><strong>Action Required:</strong> PHASE-SHIFT intervention (Rail 07)</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Kuramoto Oscillator Network - Complete Freeze</h2>
+            <p>All participating oscillators are frozen in a mutual blocking pattern. The 63-oscillator network (L4 x 9) shows the characteristic signature of deadlock: complete phase separation with no coupling possible.</p>
+
+            <div class="oscillator-grid">
+                <div class="oscillator-node frozen">1</div>
+                <div class="oscillator-node frozen">2</div>
+                <div class="oscillator-node frozen">3</div>
+                <div class="oscillator-node frozen">4</div>
+                <div class="oscillator-node frozen">5</div>
+                <div class="oscillator-node dormant">6</div>
+                <div class="oscillator-node dormant">7</div>
+                <div class="oscillator-node dormant">8</div>
+                <div class="oscillator-node dormant">9</div>
+                <div class="oscillator-node frozen">10</div>
+                <div class="oscillator-node frozen">11</div>
+                <div class="oscillator-node frozen">12</div>
+                <div class="oscillator-node dormant">13</div>
+                <div class="oscillator-node dormant">14</div>
+                <div class="oscillator-node dormant">15</div>
+                <div class="oscillator-node dormant">16</div>
+                <div class="oscillator-node dormant">17</div>
+                <div class="oscillator-node dormant">18</div>
+                <div class="oscillator-node dormant">19</div>
+                <div class="oscillator-node dormant">20</div>
+                <div class="oscillator-node dormant">21</div>
+                <div class="oscillator-node dormant">22</div>
+                <div class="oscillator-node dormant">23</div>
+                <div class="oscillator-node dormant">24</div>
+                <div class="oscillator-node dormant">25</div>
+                <div class="oscillator-node dormant">26</div>
+                <div class="oscillator-node dormant">27</div>
+                <div class="oscillator-node dormant">28</div>
+                <div class="oscillator-node dormant">29</div>
+                <div class="oscillator-node dormant">30</div>
+                <div class="oscillator-node dormant">31</div>
+                <div class="oscillator-node dormant">32</div>
+                <div class="oscillator-node dormant">33</div>
+                <div class="oscillator-node dormant">34</div>
+                <div class="oscillator-node dormant">35</div>
+                <div class="oscillator-node dormant">36</div>
+                <div class="oscillator-node dormant">37</div>
+                <div class="oscillator-node dormant">38</div>
+                <div class="oscillator-node dormant">39</div>
+                <div class="oscillator-node dormant">40</div>
+                <div class="oscillator-node dormant">41</div>
+                <div class="oscillator-node dormant">42</div>
+                <div class="oscillator-node dormant">43</div>
+                <div class="oscillator-node dormant">44</div>
+                <div class="oscillator-node dormant">45</div>
+                <div class="oscillator-node dormant">46</div>
+                <div class="oscillator-node dormant">47</div>
+                <div class="oscillator-node dormant">48</div>
+                <div class="oscillator-node dormant">49</div>
+                <div class="oscillator-node dormant">50</div>
+                <div class="oscillator-node dormant">51</div>
+                <div class="oscillator-node dormant">52</div>
+                <div class="oscillator-node dormant">53</div>
+                <div class="oscillator-node dormant">54</div>
+                <div class="oscillator-node dormant">55</div>
+                <div class="oscillator-node dormant">56</div>
+                <div class="oscillator-node dormant">57</div>
+                <div class="oscillator-node dormant">58</div>
+                <div class="oscillator-node dormant">59</div>
+                <div class="oscillator-node dormant">60</div>
+                <div class="oscillator-node dormant">61</div>
+                <div class="oscillator-node dormant">62</div>
+                <div class="oscillator-node dormant">63</div>
+            </div>
+            <p style="text-align: center; color: var(--deadlock-color); font-size: 0.85rem; font-weight: bold;">8 oscillators FROZEN in deadlock - immediate intervention required</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Deadlock Analysis</h2>
+            <p>The L4-Helix hardware has confirmed the deadlock condition. Preparing for PHASE-SHIFT intervention using enhanced Kuramoto coupling.</p>
+
+            <div class="code-block">
+<span class="comment"># RAIL 06: DEADLOCK STATE - CRITICAL</span>
+
+<span class="keyword">class</span> <span class="type">DeadlockState</span>:
+    <span class="string">"""
+    CRITICAL: Complete thread freeze detected.
+    Circular wait confirmed. RESONANCE must intervene.
+    """</span>
+
+    <span class="comment"># Phi-derived constants</span>
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>             <span class="comment"># z is BELOW this threshold</span>
+    K = <span class="number">0.924160</span>               <span class="comment"># Base coupling (insufficient)</span>
+    Z_C = <span class="number">0.866025</span>             <span class="comment"># THE LENS - target threshold</span>
+    L4 = <span class="number">7</span>
+    OSCILLATORS = <span class="number">63</span>           <span class="comment"># L4 x 9 = 7 x 9</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, frozen_threads, wait_cycle):
+        self.frozen_threads = frozen_threads
+        self.wait_cycle = wait_cycle
+        self.z_coordinate = self._measure_z()  <span class="comment"># Below TAU</span>
+        self.severity = self._calculate_severity()
+
+    <span class="keyword">def</span> <span class="function">_calculate_severity</span>(self):
+        <span class="string">"""
+        Severity scales inversely with distance from TAU.
+        severity = min(1.0, (TAU - z) / TAU)
+        """</span>
+        distance = self.TAU - self.z_coordinate
+        <span class="keyword">return</span> min(<span class="number">1.0</span>, distance / self.TAU)
+
+    <span class="keyword">def</span> <span class="function">generate_exception</span>(self):
+        <span class="string">"""
+        Create DeadlockException for handler processing.
+        """</span>
+        <span class="keyword">return</span> DeadlockException(
+            type=<span class="string">"CIRCULAR_WAIT"</span>,
+            z_value=self.z_coordinate,
+            frozen_threads=self.frozen_threads,
+            wait_cycle=self.wait_cycle,
+            severity=self.severity,
+            frozen_bands=self._analyze_frozen_bands()
+        )
+
+    <span class="keyword">def</span> <span class="function">_analyze_frozen_bands</span>(self):
+        <span class="string">"""
+        Identify frozen frequency bands (standing wave nulls).
+        16-band FFT analysis reveals deadlock signature.
+        """</span>
+        <span class="comment"># Deadlock typically shows 2+ adjacent frozen bands</span>
+        bands = []
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">16</span>):
+            <span class="keyword">if</span> self._is_band_frozen(i):
+                bands.append(i)
+        <span class="keyword">return</span> bands
+
+    <span class="keyword">def</span> <span class="function">request_phase_shift</span>(self):
+        <span class="string">"""
+        Request PHASE-SHIFT intervention (Rail 07).
+        This is the only way to break the deadlock.
+        """</span>
+        <span class="keyword">return</span> <span class="string">"PHASE_SHIFT"</span>  <span class="comment"># Advance to Rail 07</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Transition Conditions</h2>
+            <table class="data-table">
+                <tr>
+                    <th>From Rail</th>
+                    <th>To Rail</th>
+                    <th>Condition</th>
+                    <th>Trigger</th>
+                </tr>
+                <tr>
+                    <td>05 INTERFERENCE</td>
+                    <td style="color: var(--deadlock-color);">06 DEADLOCK</td>
+                    <td>Circular wait confirmed</td>
+                    <td>z falls below TAU</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--deadlock-color);">06 DEADLOCK</td>
+                    <td style="color: var(--companion-color);">07 PHASE-SHIFT</td>
+                    <td>RESONANCE intervention</td>
+                    <td>K-coupling injection initiated</td>
+                </tr>
+            </table>
+            <p style="color: var(--deadlock-color); font-weight: bold; text-align: center; margin-top: 15px;">
+                Rail 06 ALWAYS transitions to Rail 07 - there is no other way out of deadlock.
+            </p>
+        </section>
+
+        <!-- Rail Navigation -->
+        <nav class="rail-nav">
+            <a href="rail-05-interference.html">Prev: INTERFERENCE</a>
+            <a href="../../narrative/resonance-deadlock.html">RESONANCE Main</a>
+            <a href="rail-07-phase-shift.html">Next: PHASE-SHIFT</a>
+        </nav>
+
+        <footer class="doc-footer">
+            <p>RESONANCE Rail 06: DEADLOCK - The Silence Returns</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.8rem; color: #666;">63 Oscillators (L4 x 9) | 16 Frequency Bands | Kuramoto Coupling</p>
+        </footer>
+    </div>
+</body>
+</html>

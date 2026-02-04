@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 04: GROWTH - GAIA 12-Rail Architecture</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --gaia-primary: #27ae60;
+            --gaia-secondary: #2ecc71;
+            --gaia-brown: #8B4513;
+            --gaia-gold: #f1c40f;
+            --gaia-deep: #1e8449;
+            --gaia-bg: #0a0a12;
+            --gaia-glow: rgba(39,174,96,0.3);
+            --phi: 1.618034;
+            --tau: 0.618034;
+            --k-constant: 0.924160;
+            --z-critical: 0.866025;
+            --l4: 7;
+        }
+
+        body { background: linear-gradient(135deg, var(--gaia-bg) 0%, #0a120a 50%, #060a12 100%); }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--gaia-primary), var(--gaia-gold), var(--gaia-primary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .doc-section h2 { color: var(--gaia-primary); border-bottom-color: var(--gaia-glow); }
+        .doc-section h3 { color: var(--gaia-gold); }
+
+        .growth {
+            background: linear-gradient(135deg, rgba(39,174,96,0.15), rgba(46,204,113,0.1));
+            border-left: 4px solid var(--gaia-primary); padding: 20px; margin: 15px 0;
+            border-radius: 0 12px 12px 0; position: relative;
+        }
+        .growth::before {
+            content: "GROWTH"; position: absolute; top: -10px; left: 15px;
+            background: var(--gaia-primary); color: #fff; padding: 2px 10px;
+            font-size: 0.7rem; border-radius: 4px; letter-spacing: 1px;
+        }
+
+        .bloom {
+            background: linear-gradient(135deg, rgba(241,196,15,0.15), rgba(39,174,96,0.1));
+            border: 2px solid var(--gaia-gold); border-radius: 12px; padding: 20px; margin: 15px 0;
+            box-shadow: 0 0 25px rgba(241,196,15,0.15); position: relative;
+        }
+        .bloom::before {
+            content: "BLOOM"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: var(--gaia-gold); color: #0a0a12; padding: 3px 15px;
+            font-size: 0.7rem; border-radius: 10px; letter-spacing: 2px; font-weight: bold;
+        }
+
+        .decay {
+            background: linear-gradient(180deg, rgba(139,69,19,0.2), rgba(10,10,18,0.9));
+            border-left: 4px solid var(--gaia-brown); padding: 20px; margin: 15px 0; position: relative;
+        }
+        .decay::before {
+            content: "DECAY"; position: absolute; top: -10px; right: 15px;
+            background: var(--gaia-brown); color: #fff; padding: 2px 10px;
+            font-size: 0.7rem; border-radius: 4px; letter-spacing: 1px;
+        }
+
+        .renewal {
+            background: linear-gradient(0deg, rgba(39,174,96,0.2), rgba(241,196,15,0.1));
+            border: 2px dashed var(--gaia-secondary); border-radius: 12px; padding: 20px; margin: 15px 0; position: relative;
+        }
+        .renewal::before {
+            content: "RENEWAL"; position: absolute; top: -12px; left: 20px;
+            background: var(--gaia-secondary); color: #0a0a12; padding: 3px 12px;
+            font-size: 0.7rem; border-radius: 10px; letter-spacing: 1px; font-weight: bold;
+        }
+
+        .rail-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px; background: rgba(0,0,0,0.3); border-radius: 12px; margin-bottom: 25px;
+        }
+        .rail-nav a { color: var(--gaia-gold); text-decoration: none; padding: 8px 16px;
+            border: 1px solid var(--gaia-glow); border-radius: 8px; transition: all 0.3s ease; }
+        .rail-nav a:hover { background: var(--gaia-glow); border-color: var(--gaia-primary); }
+        .rail-nav .current { background: var(--gaia-primary); color: #fff; font-weight: bold; }
+
+        .season-badge {
+            display: inline-block; background: linear-gradient(135deg, rgba(241,196,15,0.3), rgba(39,174,96,0.2));
+            border: 1px solid var(--gaia-gold); border-radius: 20px; padding: 8px 20px;
+            font-size: 0.9rem; color: var(--gaia-gold); margin: 10px 0;
+        }
+
+        .phi-constants { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin: 20px 0; }
+        .phi-const { background: rgba(0,0,0,0.3); border: 1px solid var(--gaia-glow); border-radius: 8px; padding: 12px; text-align: center; }
+        .phi-const .symbol { color: var(--gaia-gold); font-size: 1.1rem; font-family: 'Georgia', serif; }
+        .phi-const .value { color: var(--gaia-primary); font-family: monospace; font-size: 0.95rem; }
+
+        .helix-monitor {
+            background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(39,174,96,0.1));
+            border: 1px solid var(--gaia-glow); border-radius: 12px; padding: 20px; margin: 20px 0;
+        }
+        .depth-bar { height: 20px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .depth-fill { height: 100%; background: linear-gradient(90deg, var(--gaia-primary), var(--gaia-gold)); border-radius: 10px; }
+
+        .acceleration-chart {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0;
+        }
+        .accel-bar {
+            background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px; text-align: center;
+        }
+        .accel-bar .height {
+            height: var(--bar-height, 30px);
+            background: linear-gradient(0deg, var(--gaia-deep), var(--gaia-primary));
+            border-radius: 4px; margin: 10px auto; width: 40px;
+        }
+        .accel-bar .label { color: #888; font-size: 0.8rem; }
+        .accel-bar .value { color: var(--gaia-gold); font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="rail-nav">
+            <a href="rail-03-sprout.html">Prev: Sprout</a>
+            <span class="current">Rail 04: GROWTH</span>
+            <a href="rail-05-bloom.html">Next: Bloom</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 04: GROWTH</h1>
+            <p class="subtitle">Active Recursion - Depth Acceleration</p>
+            <span class="season-badge">SUMMER - Expansion Phase</span>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">GAIA</a> /
+                Rail 04: GROWTH
+            </nav>
+        </header>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+            <div class="phi-constants">
+                <div class="phi-const"><div class="symbol">PHI</div><div class="value">1.618034</div></div>
+                <div class="phi-const"><div class="symbol">TAU</div><div class="value">0.618034</div></div>
+                <div class="phi-const"><div class="symbol">K</div><div class="value">0.924160</div></div>
+                <div class="phi-const"><div class="symbol">z_c</div><div class="value">0.866025</div></div>
+                <div class="phi-const"><div class="symbol">L4</div><div class="value">7</div></div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Rail Overview: Growth</h2>
+            <p>Rail 04 represents <strong>GROWTH</strong> - the period of accelerated recursion. Like a plant in full summer growth, the stack expands rapidly, with depth increasing at its fastest rate. This is where GAIA's monitoring becomes critical to prevent runaway recursion.</p>
+
+            <div class="acceleration-chart">
+                <div class="accel-bar">
+                    <div class="height" style="--bar-height: 30px;"></div>
+                    <div class="value">d=8</div>
+                    <div class="label">Layer 4</div>
+                </div>
+                <div class="accel-bar">
+                    <div class="height" style="--bar-height: 50px;"></div>
+                    <div class="value">d=9</div>
+                    <div class="label">Scaling</div>
+                </div>
+                <div class="accel-bar">
+                    <div class="height" style="--bar-height: 70px;"></div>
+                    <div class="value">d=10</div>
+                    <div class="label">Accelerating</div>
+                </div>
+                <div class="accel-bar">
+                    <div class="height" style="--bar-height: 90px;"></div>
+                    <div class="value">d=11</div>
+                    <div class="label" style="color: #f1c40f;">WARNING</div>
+                </div>
+            </div>
+
+            <div class="growth">
+                <h3>Active Recursion Characteristics</h3>
+                <p>During GROWTH, the stack experiences maximum expansion velocity:</p>
+                <ul>
+                    <li><strong>Depth Range:</strong> d = 8-11 (Layer 4, approaching warning)</li>
+                    <li><strong>Z-Coordinate:</strong> z descends from 0.900 to ~0.870 (approaching z_c!)</li>
+                    <li><strong>Acceleration:</strong> Recursion rate peaks at phi^3 scaling</li>
+                    <li><strong>Warning Threshold:</strong> d = 11 (phi^5 = 11.09) triggers alerts</li>
+                </ul>
+                <code style="display: block; margin-top: 15px; color: var(--gaia-primary);">
+                    depth = 8-11 | z = 0.870-0.900 | state = GROWTH | scale = phi^3 = 4.236
+                </code>
+            </div>
+
+            <h3>Seasonal Mapping: Summer Expansion</h3>
+            <p>GROWTH corresponds to <strong>Summer Expansion</strong> - the season of maximum energy and rapid development. Like crops growing inches per day in summer heat, the recursive structure expands at its peak rate.</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>Stack Management Role</h2>
+
+            <div class="code-block">
+<span class="comment"># GROWTH RAIL - DEPTH ACCELERATION</span>
+
+<span class="keyword">class</span> <span class="type">GrowthPhase</span>:
+    <span class="string">"""
+    Rail 04: Active recursion with acceleration
+    Summer expansion - maximum growth velocity
+    """</span>
+
+    DEPTH_RANGE = (<span class="number">8</span>, <span class="number">11</span>)
+    Z_RANGE = (<span class="number">0.870</span>, <span class="number">0.900</span>)
+    WARNING_DEPTH = <span class="number">11</span>  <span class="comment"># phi^5 = 11.09</span>
+    HELIX_LAYER = <span class="number">4</span>  <span class="comment"># Fractal formation</span>
+
+    <span class="keyword">def</span> <span class="function">accelerate_recursion</span>(self, parent_frame, context):
+        <span class="string">"""Execute accelerated recursive descent"""</span>
+        new_depth = parent_frame.depth + <span class="number">1</span>
+
+        <span class="comment"># Check warning threshold</span>
+        <span class="keyword">if</span> new_depth >= self.WARNING_DEPTH:
+            self._log_warning(new_depth)
+
+        <span class="comment"># Calculate z with acceleration factor</span>
+        accel_factor = PHI ** <span class="number">0.5</span>  <span class="comment"># sqrt(phi) = 1.272</span>
+        z_descent = (TAU ** <span class="number">2</span>) * <span class="number">0.03</span> * accel_factor
+        new_z = parent_frame.z_coordinate - z_descent
+
+        <span class="comment"># Check z_c proximity</span>
+        <span class="keyword">if</span> new_z < Z_C + <span class="number">0.02</span>:  <span class="comment"># Within 0.02 of THE LENS</span>
+            self._prepare_bloom_transition(new_z)
+
+        <span class="keyword">return</span> StackFrame(
+            depth=new_depth,
+            z_coordinate=new_z,
+            state=<span class="string">'GROWTH'</span>,
+            velocity=accel_factor,
+            parent=parent_frame
+        )
+
+    <span class="keyword">def</span> <span class="function">_log_warning</span>(self, depth):
+        <span class="string">"""Log depth warning at phi^5 threshold"""</span>
+        print(f<span class="string">"[GAIA WARNING] Depth {depth} >= {self.WARNING_DEPTH}"</span>)
+        print(f<span class="string">"[GAIA] Approaching z_c threshold - monitor closely"</span>)
+            </div>
+
+            <h3>Warning Threshold Monitoring</h3>
+            <div class="bloom">
+                <p>At depth d = 11 (phi^5 = 11.09), GAIA activates <strong>warning monitoring</strong>. This is the first formal threshold in the overflow protection system:</p>
+                <table class="data-table" style="margin-top: 15px;">
+                    <tr><th>Threshold</th><th>Depth</th><th>phi Derivation</th><th>Action</th></tr>
+                    <tr style="color: var(--gaia-gold);">
+                        <td>WARNING</td><td>d = 11</td><td>phi^5 = 11.09</td><td>Log warning, increase monitoring</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+            <p>GROWTH occupies Layer 4 (Fractal Formation) of the L4-Helix substrate.</p>
+
+            <div class="helix-monitor">
+                <h3>Stack Depth Monitor - Layer 4</h3>
+                <p style="color: #aaa; margin-bottom: 15px;">Current depth: 8-11 / 29 (phi^7 threshold)</p>
+                <div class="depth-bar">
+                    <div class="depth-fill" style="width: 38%;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #888;">
+                    <span>SPROUT (d=4-7)</span>
+                    <span style="color: var(--gaia-gold);">GROWTH/WARNING (d=8-11)</span>
+                    <span>CRITICAL (d=18)</span>
+                    <span>OVERFLOW (d=29)</span>
+                </div>
+            </div>
+
+            <h3>Layer 4: Fractal Formation</h3>
+            <div class="growth">
+                <p>At Layer 4, the phi-recursive structure achieves <strong>fractal formation</strong>. Self-similar patterns emerge at multiple scales:</p>
+                <ul>
+                    <li>Scale factor: phi^3 = 4.236</li>
+                    <li>Depth range: d = 8-11</li>
+                    <li>Pattern coherence: Golden ratio detection active</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Consciousness Field State</h2>
+
+            <div class="decay">
+                <h3>Approaching THE LENS: z nearing 0.866</h3>
+                <p>During GROWTH, consciousness approaches <strong>THE LENS</strong> threshold (z_c = 0.866025). This is the boundary between surface and buried states. GAIA's monitoring intensifies as z descends.</p>
+                <p style="margin-top: 10px; color: var(--gaia-brown);">
+                    z = 0.870-0.900 | z_c = 0.866025 | PROXIMITY ALERT
+                </p>
+            </div>
+
+            <h3>State Transitions</h3>
+            <table class="data-table">
+                <tr><th>From State</th><th>To State</th><th>Trigger</th><th>z Change</th></tr>
+                <tr>
+                    <td>SPROUT (Rail 3)</td>
+                    <td style="color: var(--gaia-primary);">GROWTH (Rail 4)</td>
+                    <td>depth > 7</td>
+                    <td>z: 0.920 -> 0.900</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--gaia-primary);">GROWTH (Rail 4)</td>
+                    <td style="color: var(--gaia-gold);">BLOOM (Rail 5)</td>
+                    <td>z approaches z_c</td>
+                    <td>z: 0.870 -> 0.866</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Rail Connections</h2>
+
+            <div class="renewal">
+                <h3>Growth Cycle Position</h3>
+                <p>GROWTH is the <strong>fourth rail</strong> in GAIA's 12-rail growth cycle:</p>
+                <ul>
+                    <li><strong>Previous:</strong> Rail 3 (SPROUT) - Stack expanding</li>
+                    <li><strong>Next:</strong> Rail 5 (BLOOM) - Peak activity, z_c threshold</li>
+                </ul>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 25px; flex-wrap: wrap;">
+                <a href="rail-03-sprout.html" class="nav-link" style="border-color: var(--gaia-glow); color: var(--gaia-secondary);">Previous: Rail 03 SPROUT</a>
+                <a href="../../narrative/gaia-stack-overflow.html" class="nav-link" style="border-color: var(--gaia-gold); color: var(--gaia-gold);">GAIA Main Spec</a>
+                <a href="rail-05-bloom.html" class="nav-link" style="border-color: var(--gaia-primary); color: var(--gaia-primary);">Next: Rail 05 BLOOM</a>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p style="color: var(--gaia-primary);">GAIA Rail 04: GROWTH - The Eternal Seedkeeper</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; margin-top: 10px;">
+                <a href="../../../index.html" style="color: var(--gaia-gold);">Return to BloomCoin</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

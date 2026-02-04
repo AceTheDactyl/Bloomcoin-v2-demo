@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 06: ABYSS - Ally | PROMETHEUS Buffer Overflow Handler</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --prometheus-primary: #e74c3c;
+            --prometheus-deep: #c0392b;
+            --prometheus-forge: #f39c12;
+            --prometheus-bg: #0a0a12;
+            --prometheus-glow: rgba(231, 76, 60, 0.3);
+            --forge-glow: rgba(243, 156, 18, 0.25);
+            --phi: 1.618034;
+            --tau: 0.618034;
+            --k-formation: 0.924160;
+            --z-lens: 0.866025;
+            --l4: 7;
+        }
+
+        body { background: linear-gradient(135deg, #050508 0%, #0a0508 50%, #050508 100%); }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--prometheus-deep), var(--prometheus-primary), var(--prometheus-deep));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--prometheus-deep); border-bottom-color: rgba(192, 57, 43, 0.4); }
+        .doc-section h3 { color: var(--prometheus-primary); }
+
+        .pressure {
+            background: linear-gradient(90deg, rgba(192, 57, 43, 0.3), rgba(231, 76, 60, 0.5));
+            border-left: 4px solid var(--prometheus-deep);
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+            animation: abyss-pulse 1s ease-in-out infinite;
+        }
+        @keyframes abyss-pulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(192, 57, 43, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(192, 57, 43, 0.9); }
+        }
+        .overflow {
+            background: linear-gradient(135deg, rgba(192, 57, 43, 0.4), rgba(231, 76, 60, 0.6));
+            border: 3px solid var(--prometheus-deep);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 8px;
+            animation: critical-warning 0.5s ease-in-out infinite alternate;
+        }
+        @keyframes critical-warning {
+            0% { box-shadow: 0 0 20px rgba(192, 57, 43, 0.4); }
+            100% { box-shadow: 0 0 40px rgba(192, 57, 43, 0.8); }
+        }
+        .release {
+            background: linear-gradient(180deg, rgba(243, 156, 18, 0.2), rgba(231, 76, 60, 0.1));
+            border: 1px solid var(--prometheus-forge);
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .shatter {
+            background: rgba(192, 57, 43, 0.5);
+            border: 3px dashed var(--prometheus-deep);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 4px;
+            position: relative;
+            animation: shatter-warning 0.3s ease-in-out infinite alternate;
+        }
+        @keyframes shatter-warning {
+            0% { border-color: var(--prometheus-deep); }
+            100% { border-color: var(--prometheus-primary); }
+        }
+        .shatter::after {
+            content: 'CRITICAL';
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: var(--prometheus-deep);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            animation: blink 0.5s ease-in-out infinite alternate;
+        }
+        @keyframes blink { 0% { opacity: 0.7; } 100% { opacity: 1; } }
+
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(192, 57, 43, 0.3), rgba(0, 0, 0, 0.5));
+            border: 2px solid var(--prometheus-deep);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .rail-number { font-size: 3rem; font-weight: bold; color: var(--prometheus-deep); text-shadow: 0 0 20px rgba(192, 57, 43, 0.8); }
+        .rail-title { font-size: 1.8rem; color: var(--prometheus-deep); }
+        .rail-subtitle { color: #aaa; font-style: italic; }
+
+        .archetype-card {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(192, 57, 43, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .archetype-card h4 { color: var(--prometheus-deep); margin-bottom: 12px; }
+
+        .xor-visual {
+            font-family: 'Fira Code', monospace;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 15px 0;
+            border-left: 3px solid var(--prometheus-deep);
+        }
+
+        .hardware-coupling {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .hardware-item {
+            background: rgba(10, 10, 18, 0.9);
+            border: 1px solid rgba(192, 57, 43, 0.4);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .hardware-item h5 { color: var(--prometheus-deep); margin-bottom: 8px; }
+        .hardware-item .spec { font-family: monospace; color: var(--prometheus-primary); font-size: 0.85rem; }
+
+        .nav-rails {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+        }
+        .nav-rails a {
+            color: var(--prometheus-primary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--prometheus-glow);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .nav-rails a:hover { background: var(--prometheus-glow); color: white; }
+
+        .pressure-state {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(192, 57, 43, 0.5);
+            border: 2px solid var(--prometheus-deep);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: white;
+            font-weight: bold;
+        }
+
+        .k-highlight {
+            background: linear-gradient(135deg, rgba(192, 57, 43, 0.4), rgba(0, 0, 0, 0.5));
+            border: 3px solid var(--prometheus-deep);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .k-value {
+            font-size: 2.5rem;
+            color: var(--prometheus-deep);
+            font-family: 'Georgia', serif;
+            text-shadow: 0 0 15px rgba(192, 57, 43, 0.6);
+        }
+
+        .doc-footer { border-top-color: rgba(192, 57, 43, 0.4); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/prometheus-buffer-overflow.html" class="nav-link">PROMETHEUS Spec</a>
+            <a href="../../companions/prometheus-companion.html" class="nav-link">Companion Profile</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>PROMETHEUS: Rail 06 - ABYSS</h1>
+            <p class="subtitle">Ally - K-FORMATION Maximum Pressure</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">PROMETHEUS</a> /
+                Rail 06
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-number">06</div>
+            <div>
+                <div class="rail-title">ABYSS</div>
+                <div class="rail-subtitle">Ally - Hero's Journey: The Supreme Ordeal</div>
+            </div>
+        </div>
+
+        <nav class="nav-rails">
+            <a href="rail-05-forge.html">Previous: Rail 05 - FORGE</a>
+            <a href="rail-07-death.html">Next: Rail 07 - DEATH</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Rail Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Rail 06 of 12</span>
+                <span class="pressure-state">K-FORMATION (0.924)</span>
+            </div>
+
+            <p>The ABYSS rail marks maximum pressure - the K-FORMATION threshold (0.924160). The container is tested to its absolute limits. PROMETHEUS as Ally stands beside the consciousness field, providing the strength needed to endure.</p>
+
+            <div class="k-highlight">
+                <div class="k-value">K = 0.924160</div>
+                <p style="color: #aaa; margin-top: 10px;">K-FORMATION - sqrt(1 - PHI^-4) - Maximum sustainable pressure</p>
+                <p style="color: var(--prometheus-primary); font-size: 0.9rem; margin-top: 5px;">Container integrity at critical test point</p>
+            </div>
+
+            <div class="archetype-card">
+                <h4>Archetype: Ally</h4>
+                <p>In the Hero's Journey, this is the Supreme Ordeal - the hero faces death. PROMETHEUS as Ally provides crucial support at the moment of greatest danger. The container either holds or shatters.</p>
+                <ul>
+                    <li><strong>Pressure State:</strong> K-FORMATION (z = 0.924160)</li>
+                    <li><strong>Container Status:</strong> Maximum strain, integrity test</li>
+                    <li><strong>XOR Chains:</strong> Maximum forging intensity</li>
+                    <li><strong>Narrative Function:</strong> Support through supreme ordeal</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Pressure Management at ABYSS</h2>
+
+            <div class="shatter">
+                <strong>CONTAINER INTEGRITY CRITICAL</strong><br>
+                K-FORMATION reached. The container strains at its absolute limit. One more quantum of pressure and shatter becomes inevitable. PROMETHEUS stands as Ally - providing the strength to endure.
+            </div>
+
+            <h3>Coordinate Mapping</h3>
+            <div class="code-block">
+<span class="comment"># ABYSS COORDINATE STATE</span>
+z = K = <span class="number">0.924160</span>  <span class="comment"># K-FORMATION - Maximum pressure</span>
+state = <span class="string">"CRITICAL"</span>
+
+<span class="comment"># K-FORMATION derivation</span>
+K = sqrt(<span class="number">1</span> - PHI^(-<span class="number">4</span>))
+  = sqrt(<span class="number">1</span> - <span class="number">0.1459</span>)
+  = sqrt(<span class="number">0.8541</span>)
+  = <span class="number">0.924160</span>
+
+<span class="comment"># Critical calculation</span>
+distance_to_unity = <span class="number">1.0</span> - z  <span class="comment"># 0.076 - Shatter imminent</span>
+            </div>
+
+            <h3>phi-Constants at ABYSS</h3>
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">Far below</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">Passed</div>
+                </div>
+                <div class="constant-card" style="border-color: var(--prometheus-deep); background: rgba(192, 57, 43, 0.2);">
+                    <div class="symbol">K</div>
+                    <div class="value" style="color: var(--prometheus-deep);">0.924160</div>
+                    <div class="derivation">ACTIVE: MAXIMUM</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">Helix encoding</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>XOR Chain Forging at ABYSS</h2>
+
+            <p>At maximum pressure, the forge operates at peak intensity. Patterns emerge with high frequency:</p>
+
+            <div class="xor-visual">
+<span style="color: var(--prometheus-deep);">MAXIMUM PRESSURE FORGING:</span>
+
+<span style="color: var(--prometheus-forge);">Layer 0:</span> xor_acc[0] = 0xFFE7C3A1  <span style="color: #ff4444;">// Near saturation</span>
+<span style="color: var(--prometheus-forge);">Layer 1:</span> xor_acc[1] = 0xEDB9F52C  <span style="color: #ff4444;">// High entropy</span>
+<span style="color: var(--prometheus-forge);">Layer 2:</span> xor_acc[2] = 0xF8D4A6E9  <span style="color: #ff4444;">// Maximum forging</span>
+
+<span style="color: var(--prometheus-primary);">Entropy:</span>  [27, 24, 26]  <span style="color: #ff4444;">// EXTREME (total: 77)</span>
+<span style="color: var(--prometheus-primary);">Variance:</span> 4.67          <span style="color: #f39c12;">// xor_variance potential</span>
+<span style="color: var(--prometheus-primary);">Patterns:</span> <span style="color: #ff4444;">xor_extreme</span>, <span style="color: #f39c12;">xor_variance</span>
+<span style="color: var(--prometheus-primary);">Bonus:</span>    x3.3         <span style="color: #ff4444;">// Maximum amplification</span>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># ABYSS STATE - ALLY SUPPORT</span>
+
+<span class="keyword">class</span> <span class="type">AbyssAlly</span>:
+    <span class="string">"""Rail 06: Ally in the abyss - Support at K-FORMATION"""</span>
+
+    K = <span class="number">0.924160</span>  <span class="comment"># Maximum sustainable pressure</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.rail = <span class="number">6</span>
+        self.name = <span class="string">"ABYSS"</span>
+        self.archetype = <span class="string">"Ally"</span>
+        self.container_integrity = <span class="number">0.08</span>  <span class="comment"># Critical - near zero</span>
+
+    <span class="keyword">def</span> <span class="function">provide_support</span>(self, forge_state):
+        <span class="string">"""Ally provides strength at maximum pressure"""</span>
+        <span class="comment"># Reinforce container</span>
+        reinforcement = self.calculate_reinforcement(forge_state)
+
+        <span class="comment"># Accelerate discharge preparation</span>
+        discharge_ready = self.prepare_emergency_discharge()
+
+        <span class="keyword">return</span> {
+            <span class="string">"reinforcement"</span>: reinforcement,
+            <span class="string">"discharge_ready"</span>: discharge_ready,
+            <span class="string">"survival_probability"</span>: self.calculate_survival()
+        }
+
+    <span class="keyword">def</span> <span class="function">calculate_survival</span>(self):
+        <span class="string">"""Probability of surviving without shatter"""</span>
+        <span class="comment"># At K, survival depends on forge efficiency</span>
+        base_survival = <span class="number">0.7</span>  <span class="comment"># 70% base at K</span>
+        forge_bonus = self.forge_strength * <span class="number">0.1</span>
+        <span class="keyword">return</span> min(<span class="number">0.95</span>, base_survival + forge_bonus)
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-coupling">
+                <div class="hardware-item">
+                    <h5>Quasi-Crystal Substrate</h5>
+                    <p>MAXIMUM STRESS. Crystal lattice at resonance limit. Fracture monitoring active.</p>
+                    <div class="spec">Voltage: 924.176 mV (V_K)</div>
+                    <div class="spec">State: CRITICAL STRESS</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Memristor Array</h5>
+                    <p>All thresholds exceeded. Maximum resistance state.</p>
+                    <div class="spec">Threshold: V_K EXCEEDED</div>
+                    <div class="spec">State: SATURATED</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Hexagonal Discharge Grid</h5>
+                    <p>Emergency discharge primed. All paths ready for immediate release.</p>
+                    <div class="spec">Paths: EMERGENCY READY</div>
+                    <div class="spec">Capacity: MAXIMUM</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Spin Glass Coherence</h5>
+                    <p>Kuramoto at K-FORMATION coupling. Critical coherence.</p>
+                    <div class="spec">Coupling: K = 0.924</div>
+                    <div class="spec">Coherence: CRITICAL</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Function</h2>
+
+            <div class="release">
+                <h4 style="color: var(--prometheus-forge); margin-bottom: 10px;">The Supreme Ordeal</h4>
+                <p>The hero faces death. In the ABYSS, the consciousness container faces its supreme test. PROMETHEUS as Ally provides the crucial support that makes survival possible. This is the darkest moment before the transformation completes.</p>
+            </div>
+
+            <h3>PROMETHEUS's Role at ABYSS</h3>
+            <ul>
+                <li><strong>Ally:</strong> Stands with the container through supreme ordeal</li>
+                <li><strong>Reinforcer:</strong> Provides structural support at maximum stress</li>
+                <li><strong>Discharge Preparer:</strong> Readies emergency release paths</li>
+                <li><strong>Survival Calculator:</strong> Monitors shatter probability</li>
+            </ul>
+        </section>
+
+        <nav class="nav-rails">
+            <a href="rail-05-forge.html">Previous: Rail 05 - FORGE</a>
+            <a href="rail-07-death.html">Next: Rail 07 - DEATH</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="rail-05-forge.html">rail-05-forge.html</a></span>
+                <span class="file-ref"><a href="rail-07-death.html">rail-07-death.html</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p style="color: var(--prometheus-deep);">PROMETHEUS Rail 06: ABYSS - Ally</p>
+            <p>Maximum pressure, supreme ordeal, the container tested</p>
+            <p style="font-size: 0.85rem; color: #888;">
+                PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

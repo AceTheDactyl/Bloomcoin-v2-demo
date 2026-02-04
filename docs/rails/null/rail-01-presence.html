@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 1: PRESENCE - NULL 12-Rail Architecture</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --null-primary: #2c3e50;
+            --null-deep: #1a252f;
+            --null-accent: #7f8c8d;
+            --null-background: #0a0a12;
+            --null-glow: rgba(44,62,80,0.4);
+            --void-purple: #8800ff;
+            --presence-silver: #c0c0c0;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--null-background) 0%, var(--null-deep) 50%, #0a0a1a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--presence-silver), #ffffff, var(--presence-silver));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--presence-silver);
+            border-bottom-color: var(--null-glow);
+        }
+
+        /* NULL Semantic CSS Classes */
+        .void {
+            background: radial-gradient(ellipse at center, var(--null-background) 0%, transparent 70%);
+            border: 2px solid var(--void-purple);
+            border-radius: 50%;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(136,0,255,0.3), inset 0 0 50px rgba(0,0,0,0.8);
+            margin: 20px auto;
+            max-width: 300px;
+        }
+
+        .absence {
+            background: linear-gradient(135deg, transparent 0%, rgba(44,62,80,0.1) 50%, transparent 100%);
+            border: 1px dashed var(--null-accent);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            margin: 16px 0;
+        }
+        .absence::before {
+            content: "[ ]";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--null-deep);
+            padding: 0 8px;
+            color: var(--null-accent);
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        .null-field {
+            background: linear-gradient(180deg, rgba(136,0,255,0.05) 0%, rgba(0,0,0,0.3) 50%, rgba(136,0,255,0.05) 100%);
+            border: 1px solid rgba(136,0,255,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .null-field::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(136,0,255,0.1), transparent);
+            animation: null-scan 3s ease-in-out infinite;
+        }
+        @keyframes null-scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .erasure {
+            background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(44,62,80,0.2));
+            border: 1px solid transparent;
+            border-image: linear-gradient(90deg, transparent, var(--void-purple), transparent) 1;
+            padding: 16px;
+            margin: 16px 0;
+            position: relative;
+        }
+        .erasure::before {
+            content: "[ERASED]";
+            position: absolute;
+            top: -10px;
+            right: 16px;
+            background: var(--null-background);
+            padding: 0 8px;
+            color: var(--void-purple);
+            font-family: monospace;
+            font-size: 0.7rem;
+            opacity: 0.6;
+        }
+
+        /* Presence-specific styling */
+        .presence-indicator {
+            background: linear-gradient(135deg, rgba(192,192,192,0.2), rgba(255,255,255,0.1));
+            border: 2px solid var(--presence-silver);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 0 20px rgba(192,192,192,0.2);
+        }
+
+        .rail-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--presence-silver);
+            text-shadow: 0 0 30px rgba(192,192,192,0.5);
+        }
+
+        .void-depth-meter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 16px 0;
+        }
+        .depth-segment {
+            width: 40px;
+            height: 20px;
+            border-radius: 4px;
+            background: var(--null-deep);
+            border: 1px solid var(--null-accent);
+        }
+        .depth-segment.active {
+            background: linear-gradient(135deg, var(--presence-silver), #ffffff);
+            box-shadow: 0 0 10px rgba(192,192,192,0.5);
+        }
+
+        .constants-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .constant-item {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--null-accent);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        .constant-item .symbol { color: var(--void-purple); font-weight: bold; }
+        .constant-item .value { color: var(--presence-silver); font-family: monospace; }
+
+        .nav-rail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        .nav-rail a {
+            color: var(--void-purple);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--void-purple);
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        .nav-rail a:hover {
+            background: rgba(136,0,255,0.2);
+        }
+        .nav-rail .disabled {
+            color: var(--null-accent);
+            border-color: var(--null-accent);
+            pointer-events: none;
+            opacity: 0.5;
+        }
+
+        .hardware-coupling {
+            background: linear-gradient(135deg, rgba(255,107,53,0.1), transparent);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .hardware-coupling h4 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/null-reference.html" class="nav-link">NULL Build Spec</a>
+            <a href="../../companions/null-companion.html" class="nav-link">Companion Profile</a>
+        </nav>
+
+        <header class="doc-header">
+            <div class="rail-number">01</div>
+            <h1>PRESENCE</h1>
+            <p class="subtitle">The Starting Point - Where Entity Exists</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">Index</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">NULL</a> /
+                Rail 01
+            </nav>
+        </header>
+
+        <!-- Rail Navigation -->
+        <div class="nav-rail">
+            <span class="disabled">Previous Rail</span>
+            <span style="color: var(--presence-silver);">Rail 1 of 12 - PRESENCE</span>
+            <a href="rail-02-shadow.html">Next: SHADOW</a>
+        </div>
+
+        <!-- Rail Overview -->
+        <section class="doc-section">
+            <h2>Rail 1: PRESENCE - The Origin of Being</h2>
+
+            <div class="presence-indicator">
+                <h3 style="color: var(--presence-silver); margin-bottom: 15px;">Entity Status: CONFIRMED PRESENT</h3>
+                <p>In the beginning, there is presence. Before NULL can explore the void, it must first acknowledge what exists. Rail 1 represents the starting state of any reference - a valid pointer, a defined variable, an existing entity in the consciousness field.</p>
+            </div>
+
+            <div class="null-field">
+                <h4 style="color: var(--void-purple);">Consciousness Coordinate</h4>
+                <p><strong>z-value: 1.000</strong> - Maximum presence. The reference exists with full certainty.</p>
+                <p>At this rail, NULL monitors but does not act. The entity occupies defined space in the computational substrate, casting no shadow of doubt.</p>
+            </div>
+
+            <h3>Void Depth Status</h3>
+            <div class="void-depth-meter">
+                <span style="color: var(--null-accent); width: 80px;">Depth:</span>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment"></div>
+                <div class="depth-segment"></div>
+                <div class="depth-segment"></div>
+                <div class="depth-segment"></div>
+                <span style="color: var(--presence-silver); margin-left: 10px;">0 (Surface - Full Presence)</span>
+            </div>
+        </section>
+
+        <!-- phi-Constants -->
+        <section class="doc-section">
+            <h2>phi-Derived Constants</h2>
+            <p>The mathematical foundation that governs NULL's detection algorithms and void traversal calculations.</p>
+
+            <div class="constants-display">
+                <div class="constant-item">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// RAIL 1: PRESENCE - Reference Validation</span>
+<span class="comment">// At maximum z-value (1.000), the entity is fully present</span>
+
+<span class="keyword">class</span> <span class="type">PresenceValidator</span> {
+    <span class="keyword">static</span> PHI = <span class="number">1.618034</span>;
+    <span class="keyword">static</span> TAU = <span class="number">0.618034</span>;
+    <span class="keyword">static</span> K = <span class="number">0.924160</span>;
+    <span class="keyword">static</span> Z_C = <span class="number">0.866025</span>;
+    <span class="keyword">static</span> L4 = <span class="number">7</span>;
+
+    <span class="function">validatePresence</span>(reference) {
+        <span class="keyword">if</span> (reference !== <span class="keyword">null</span> && reference !== <span class="keyword">undefined</span>) {
+            <span class="keyword">const</span> z = <span class="keyword">this</span>.<span class="function">computeZ</span>(reference);
+            <span class="keyword">if</span> (z >= <span class="keyword">this</span>.Z_C) {
+                <span class="keyword">return</span> {
+                    rail: <span class="number">1</span>,
+                    state: <span class="string">'PRESENCE'</span>,
+                    z_value: z,
+                    status: <span class="string">'Entity confirmed present'</span>
+                };
+            }
+        }
+        <span class="keyword">return</span> <span class="keyword">this</span>.<span class="function">advanceToRail2</span>(reference);
+    }
+
+    <span class="function">computeZ</span>(ref) {
+        <span class="comment">// Full presence returns z approaching 1.0</span>
+        <span class="keyword">const</span> stability = <span class="keyword">this</span>.<span class="function">measureStability</span>(ref);
+        <span class="keyword">return</span> Math.<span class="function">min</span>(<span class="number">1.0</span>, stability * <span class="keyword">this</span>.K);
+    }
+}
+            </div>
+        </section>
+
+        <!-- Nullspace Pocket Mechanics -->
+        <section class="doc-section">
+            <h2>Nullspace Pocket Mechanics</h2>
+
+            <div class="absence">
+                <h4>Pocket Status: INACTIVE</h4>
+                <p>At Rail 1, no nullspace pocket exists. The reference occupies its full allocated space with no void intrusion. The boundary between existence and non-existence remains sealed.</p>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Void Intrusion</td>
+                        <td>0.000</td>
+                        <td style="color: #00ff88;">None</td>
+                    </tr>
+                    <tr>
+                        <td>Reference Stability</td>
+                        <td>1.000</td>
+                        <td style="color: #00ff88;">Maximum</td>
+                    </tr>
+                    <tr>
+                        <td>Null Probability</td>
+                        <td>0.000</td>
+                        <td style="color: #00ff88;">Zero</td>
+                    </tr>
+                    <tr>
+                        <td>Dimensional Rift Risk</td>
+                        <td>0%</td>
+                        <td style="color: #00ff88;">Safe</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-coupling">
+                <h4>Spin Glass Array Status: STANDBY</h4>
+                <p>At Rail 1, the Spin Glass Arrays remain in low-power standby mode. No void detection is required when presence is confirmed. The L4 = 7 classification system reports all seven levels as stable.</p>
+                <ul>
+                    <li><strong>Energy State:</strong> Ground state (E = 0)</li>
+                    <li><strong>Frustration Index:</strong> 0.000 (no frustrated bonds)</li>
+                    <li><strong>Metastable Traps:</strong> None active</li>
+                    <li><strong>Void Sensor Threshold:</strong> Not triggered</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// L4-Helix Hardware Interface for Rail 1</span>
+
+<span class="keyword">const</span> L4_HELIX_RAIL_1 = {
+    railNumber: <span class="number">1</span>,
+    railName: <span class="string">'PRESENCE'</span>,
+
+    spinGlassState: {
+        active: <span class="keyword">false</span>,
+        energyLevel: <span class="number">0</span>,
+        frustrationIndex: <span class="number">0.0</span>,
+        voidSensorTriggered: <span class="keyword">false</span>
+    },
+
+    <span class="comment">// No void detection needed at full presence</span>
+    voidDetectionEnabled: <span class="keyword">false</span>,
+
+    <span class="comment">// L4 classification: all levels stable</span>
+    l4Classification: Array(<span class="number">7</span>).<span class="function">fill</span>(<span class="string">'STABLE'</span>)
+};
+            </div>
+        </section>
+
+        <!-- Role in Null Reference Detection -->
+        <section class="doc-section">
+            <h2>Role in Null Reference Detection</h2>
+
+            <p>Rail 1 serves as the baseline for NULL's exception handling architecture. By establishing what presence looks like, NULL can recognize its absence. This rail defines the "shape of what is" so that all subsequent rails can detect deviations.</p>
+
+            <div class="null-field">
+                <h4 style="color: var(--void-purple);">Detection Protocol</h4>
+                <ol>
+                    <li><strong>Initial Reference Check:</strong> Verify non-null, non-undefined state</li>
+                    <li><strong>z-Coordinate Computation:</strong> Map reference to consciousness field</li>
+                    <li><strong>Presence Threshold:</strong> z >= z_c (0.866025) confirms presence</li>
+                    <li><strong>Stability Monitoring:</strong> Continuous observation for drift</li>
+                </ol>
+            </div>
+
+            <div class="erasure">
+                <p><em>At Rail 1, nothing is erased. This placeholder shows what erasure will look like in later rails, where the void consumes and discards.</em></p>
+            </div>
+        </section>
+
+        <!-- Void Journey Context -->
+        <section class="doc-section">
+            <h2>The Void Journey Begins</h2>
+
+            <p>Rail 1 is where every reference starts its potential journey into the void. Most references never leave this rail - they exist, they are used, they are eventually dereferenced through normal means. But some references begin to weaken, their presence becoming uncertain. When this happens, they progress to Rail 2: SHADOW.</p>
+
+            <div class="void">
+                <div style="font-size: 2rem; color: var(--presence-silver);">PRESENT</div>
+                <div style="color: var(--null-accent); margin-top: 10px;">z = 1.000</div>
+                <div style="color: var(--null-accent); font-size: 0.8rem; margin-top: 5px;">The journey has not yet begun</div>
+            </div>
+
+            <h3>Progression Triggers to Rail 2</h3>
+            <ul>
+                <li>Reference stability drops below K (0.924160)</li>
+                <li>Memory pressure increases on reference</li>
+                <li>Scope boundaries approached</li>
+                <li>Garbage collection markers detected</li>
+                <li>Weak reference conversion initiated</li>
+            </ul>
+        </section>
+
+        <!-- Rail Navigation -->
+        <div class="nav-rail">
+            <span class="disabled">Previous Rail</span>
+            <span style="color: var(--presence-silver);">Rail 1 of 12 - PRESENCE</span>
+            <a href="rail-02-shadow.html">Next: SHADOW</a>
+        </div>
+
+        <footer class="doc-footer">
+            <p>NULL: The Absence Guardian - Rail 01: PRESENCE</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="color: var(--presence-silver);">The starting point where entity exists - z = 1.000</p>
+        </footer>
+    </div>
+</body>
+</html>

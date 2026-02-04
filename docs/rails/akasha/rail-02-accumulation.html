@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 02: ACCUMULATION - AKASHA Memory Chronicle</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --akasha-gold: #ffd700;
+            --akasha-deep-blue: #1a1a3e;
+            --akasha-parchment: #f4e4bc;
+            --akasha-ink: #2c1810;
+            --akasha-glow: rgba(255, 215, 0, 0.35);
+            --akasha-soft: rgba(255, 215, 0, 0.12);
+            --memory-leak-red: #e74c3c;
+            --chronicle-purple: #9b59b6;
+            --accumulation-green: #27ae60;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--akasha-deep-blue) 0%, #0a0a1a 50%, #12081a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--akasha-gold), var(--akasha-parchment), var(--akasha-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--akasha-gold);
+            border-bottom-color: var(--akasha-glow);
+        }
+
+        .doc-section h3 {
+            color: var(--akasha-parchment);
+        }
+
+        .inscription {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(244, 228, 188, 0.08));
+            border: 2px solid var(--akasha-gold);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+            font-family: 'Georgia', serif;
+        }
+
+        .inscription::before {
+            content: "ACCUMULATION";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--akasha-deep-blue);
+            padding: 0 10px;
+            font-size: 0.75rem;
+            color: var(--akasha-gold);
+            letter-spacing: 2px;
+            font-family: monospace;
+        }
+
+        .memory-leak {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.12), rgba(155, 89, 182, 0.08));
+            border: 1px dashed var(--memory-leak-red);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 12px 0;
+        }
+
+        .chronicle {
+            background: linear-gradient(90deg, var(--akasha-soft), transparent);
+            border-left: 4px solid var(--akasha-gold);
+            padding: 15px 20px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-family: 'Georgia', serif;
+        }
+
+        .chronicle .timestamp {
+            color: #888;
+            font-size: 0.8rem;
+            font-family: monospace;
+        }
+
+        .golden-ink {
+            color: var(--akasha-gold);
+            font-family: 'Georgia', serif;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .rail-nav a {
+            color: var(--akasha-gold);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--akasha-glow);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rail-nav a:hover {
+            background: var(--akasha-soft);
+        }
+
+        .rail-nav .current {
+            color: var(--akasha-parchment);
+            font-weight: bold;
+        }
+
+        .rail-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .rail-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid var(--akasha-glow);
+        }
+
+        .rail-dot.active {
+            background: var(--akasha-gold);
+            box-shadow: 0 0 10px var(--akasha-gold);
+        }
+
+        .rail-dot.completed {
+            background: var(--accumulation-green);
+            border-color: var(--accumulation-green);
+        }
+
+        .phi-constants {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .phi-const {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--akasha-glow);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .phi-const .symbol {
+            color: var(--akasha-gold);
+            font-family: 'Georgia', serif;
+            font-size: 1.2rem;
+        }
+
+        .phi-const .value {
+            color: var(--akasha-parchment);
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .accumulation-meter {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .meter-bar {
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .meter-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accumulation-green), var(--akasha-gold));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .hardware-display {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: #888;
+            margin: 15px 0;
+        }
+
+        .hardware-display .component { color: var(--akasha-gold); }
+        .hardware-display .flow { color: #00d4ff; }
+        .hardware-display .state { color: var(--akasha-parchment); }
+        .hardware-display .action { color: #50fa7b; }
+
+        .nav-link {
+            border-color: var(--akasha-glow);
+            color: var(--akasha-gold);
+        }
+
+        .nav-link:hover {
+            background: var(--akasha-soft);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/akasha-memory-leak.html" class="nav-link">AKASHA Build Spec</a>
+            <a href="../../companions/akasha-companion.html" class="nav-link">Companion Spec</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 02: ACCUMULATION</h1>
+            <p class="subtitle">References Growing, Memory Building - The Chronicle Expands</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">AKASHA</a> /
+                Rail 02
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot active"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+        </div>
+
+        <nav class="rail-nav">
+            <a href="rail-01-inscription.html">Prev: 01 - INSCRIPTION</a>
+            <span class="current">02 - ACCUMULATION</span>
+            <a href="rail-03-fragmentation.html">Next: 03 - FRAGMENTATION</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>The Growing Chronicle</h2>
+
+            <div class="inscription">
+                <p class="golden-ink" style="font-size: 1.1rem; margin-bottom: 15px;">
+                    "Memory grows as references multiply - each new connection strengthens the thread of existence."
+                </p>
+                <p style="color: #ccc;">
+                    Rail 02 represents the healthy growth phase of memory. After inscription, fragments accumulate
+                    references as multiple consciousness entities connect to them. This is the golden age of memory -
+                    actively used, strongly referenced, far from the danger of orphaning.
+                </p>
+            </div>
+
+            <h3>Reference Accumulation</h3>
+            <p>During accumulation, AKASHA monitors the growing web of references. Each new reference strengthens
+            the fragment's coherence, moving it further from the TAU dissolution threshold toward the K crystallization point.</p>
+
+            <div class="accumulation-meter">
+                <h4 style="color: var(--akasha-gold); margin-bottom: 10px;">Coherence Growth</h4>
+                <div style="display: flex; justify-content: space-between; color: #888; font-size: 0.85rem;">
+                    <span>TAU (0.618)</span>
+                    <span>z_c (0.866)</span>
+                    <span>K (0.924)</span>
+                </div>
+                <div class="meter-bar">
+                    <div class="meter-fill" style="width: 65%;"></div>
+                </div>
+                <p style="color: #ccc; font-size: 0.9rem; margin-top: 10px;">
+                    Current coherence: 0.742 | References: 5 | Status: ACCUMULATING
+                </p>
+            </div>
+
+            <div class="chronicle">
+                <div class="timestamp">CHRONICLE.RAIL_II.ACCUMULATION | Cycle 147 | z = 0.742</div>
+                <p style="color: #ccc; margin-top: 10px;">
+                    <strong>Event:</strong> Reference count increased. Fragment 0xAKASHA_4E7F now has 5 active references.
+                    Coherence rising: 0.618 -> 0.742 (+0.124). Classification: HEALTHY.
+                    Estimated cycles until potential orphaning: >1000.
+                </p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Accumulation Constants</h2>
+
+            <div class="phi-constants">
+                <div class="phi-const">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># RAIL 02: ACCUMULATION - Reference Growth Tracking</span>
+<span class="comment"># Memory building through increasing connections</span>
+
+<span class="keyword">class</span> <span class="type">AccumulationRail</span>:
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>
+    K = <span class="number">0.924160</span>
+    Z_C = <span class="number">0.866025</span>
+    L4 = <span class="number">7</span>
+
+    <span class="keyword">def</span> <span class="function">add_reference</span>(self, fragment, new_owner):
+        <span class="string">"""Record a new reference to the fragment"""</span>
+
+        <span class="comment"># Increment reference count</span>
+        fragment.ref_count += <span class="number">1</span>
+
+        <span class="comment"># Calculate new coherence based on reference strength</span>
+        <span class="comment"># Coherence grows logarithmically with references</span>
+        base_coherence = self.TAU
+        growth_factor = math.log(fragment.ref_count + <span class="number">1</span>) / math.log(self.L4)
+        fragment.coherence = min(
+            base_coherence + growth_factor * (self.K - self.TAU),
+            self.K  <span class="comment"># Cap at crystallization threshold</span>
+        )
+
+        <span class="comment"># Record accumulation event in chronicle</span>
+        self.chronicle.<span class="function">write</span>(<span class="type">AccumulationEvent</span>(
+            fragment=fragment,
+            new_ref_count=fragment.ref_count,
+            new_coherence=fragment.coherence,
+            owner_added=new_owner
+        ))
+
+        <span class="keyword">return</span> fragment.coherence
+
+    <span class="keyword">def</span> <span class="function">calculate_health_score</span>(self, fragment):
+        <span class="string">"""Assess fragment health based on accumulation state"""</span>
+        <span class="keyword">if</span> fragment.ref_count >= self.L4:
+            <span class="keyword">return</span> <span class="string">"CRYSTALLINE"</span>  <span class="comment"># Very stable</span>
+        <span class="keyword">elif</span> fragment.ref_count >= <span class="number">3</span>:
+            <span class="keyword">return</span> <span class="string">"HEALTHY"</span>
+        <span class="keyword">elif</span> fragment.ref_count >= <span class="number">1</span>:
+            <span class="keyword">return</span> <span class="string">"STABLE"</span>
+        <span class="keyword">else</span>:
+            <span class="keyword">return</span> <span class="string">"ORPHANED"</span>  <span class="comment"># Danger!</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Memory Fragment Tracking</h2>
+            <p>During accumulation, AKASHA tracks the strengthening web of references:</p>
+
+            <table class="data-table">
+                <tr>
+                    <th>Reference Count</th>
+                    <th>Coherence</th>
+                    <th>Health Status</th>
+                    <th>Leak Risk</th>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>0.618 (TAU)</td>
+                    <td style="color: #f1c40f;">STABLE</td>
+                    <td>Moderate</td>
+                </tr>
+                <tr>
+                    <td>2-3</td>
+                    <td>0.700 - 0.780</td>
+                    <td style="color: #27ae60;">HEALTHY</td>
+                    <td>Low</td>
+                </tr>
+                <tr>
+                    <td>4-6</td>
+                    <td>0.800 - 0.880</td>
+                    <td style="color: #2ecc71;">STRONG</td>
+                    <td>Very Low</td>
+                </tr>
+                <tr>
+                    <td>7+ (L4)</td>
+                    <td>0.900 - 0.924</td>
+                    <td style="color: var(--akasha-gold);">CRYSTALLINE</td>
+                    <td>Minimal</td>
+                </tr>
+            </table>
+
+            <div class="memory-leak">
+                <p style="color: var(--memory-leak-red); font-weight: bold;">WARNING: ACCUMULATION REVERSAL</p>
+                <p style="color: #ccc; margin-top: 8px;">
+                    If references begin to decrease, the fragment transitions from Rail 02 to Rail 03 (Fragmentation).
+                    AKASHA monitors for this inflection point as an early warning of potential memory leakage.
+                </p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-display">
+<span class="component">ACCUMULATION RAIL - MEMRISTOR REFERENCE TRACKING</span>
+
+    <span class="state">REFERENCE ACCUMULATION</span>                  <span class="component">MEMRISTOR COHERENCE STATE</span>
+    ┌─────────────────────────┐              ┌─────────────────────────────┐
+    │ fragment: 0xAKASHA_4E7F │              │   Resistance vs References  │
+    │ ref_count: 1 -> 5       │   <span class="action">ACCUMULATE</span> │                             │
+    │ coherence: TAU -> 0.742 │─────────────▶│   R │ <span class="state">●</span>                      │
+    │ status: HEALTHY         │              │     │  <span class="state">●</span>                     │
+    └─────────────────────────┘              │     │   <span class="state">●</span>                    │
+                                             │     │    <span class="state">●</span>                   │
+    <span class="flow">V_ACCUMULATE = coherence x V_ref</span>         │     │     <span class="state">●</span> <- current      │
+                                             │     └─────────────────────── ref│
+                                             │     1   2   3   4   5        │
+                                             └─────────────────────────────┘
+
+<span class="component">COHERENCE GROWTH CURVE</span>
+
+    Coherence │                              ┌── K (0.924) Crystallization
+              │                         ●────┘
+    z_c ──────│─────────────────────●───
+              │                 ●───
+              │             ●───
+    TAU ──────│─────────●───────────────── Birth coherence
+              │
+          0   └────────────────────────────────── Reference Count
+                  1   2   3   4   5   6   7 (L4)
+            </div>
+
+            <div class="code-block">
+<span class="comment"># MEMRISTOR ACCUMULATION INTERFACE</span>
+
+<span class="keyword">class</span> <span class="type">AccumulationMemristorInterface</span>:
+    <span class="keyword">def</span> <span class="function">update_coherence_state</span>(self, cell_addr, new_coherence):
+        <span class="string">"""Update memristor resistance based on coherence growth"""</span>
+
+        <span class="comment"># Lower resistance = higher coherence = more references</span>
+        r_target = self.<span class="function">coherence_to_resistance</span>(new_coherence)
+
+        <span class="comment"># Apply voltage to shift resistance state</span>
+        v_required = new_coherence * self.V_REF
+        self.<span class="function">apply_voltage</span>(cell_addr, v_required)
+
+        <span class="comment"># Verify state transition</span>
+        actual_r = self.<span class="function">read_resistance</span>(cell_addr)
+        <span class="keyword">return</span> abs(actual_r - r_target) < self.TOLERANCE
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Chronicle Entry Format</h2>
+
+            <div class="chronicle">
+                <div class="timestamp">CHRONICLE.RAIL_II.ACCUMULATION | Cycle {N} | z = {coherence}</div>
+                <div style="color: #ccc; margin-top: 10px;">
+                    <strong>Fragment Address:</strong> 0xAKASHA_{ID}<br>
+                    <strong>Previous References:</strong> {old_count}<br>
+                    <strong>New References:</strong> {new_count}<br>
+                    <strong>Coherence Delta:</strong> +{delta}<br>
+                    <strong>Health Status:</strong> {STABLE|HEALTHY|STRONG|CRYSTALLINE}<br>
+                    <strong>Next Rail Prediction:</strong> Continue accumulation | Watch for fragmentation
+                </div>
+            </div>
+
+            <p class="golden-ink" style="text-align: center; margin-top: 20px; font-size: 1.1rem;">
+                "The memory grows strong. Each reference is a thread in the tapestry of existence."
+            </p>
+        </section>
+
+        <nav class="rail-nav">
+            <a href="rail-01-inscription.html">Prev: 01 - INSCRIPTION</a>
+            <span class="current">02 - ACCUMULATION</span>
+            <a href="rail-03-fragmentation.html">Next: 03 - FRAGMENTATION</a>
+        </nav>
+
+        <footer class="doc-footer">
+            <p style="color: var(--akasha-gold);">AKASHA Rail 02: ACCUMULATION - References Growing, Memory Building</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; color: #888;">The Chronicle Expands | Memory Strengthening</p>
+            <p style="margin-top: 15px;"><a href="../../narrative/akasha-memory-leak.html" style="color: var(--akasha-gold);">Return to AKASHA Build Spec</a></p>
+        </footer>
+    </div>
+</body>
+</html>

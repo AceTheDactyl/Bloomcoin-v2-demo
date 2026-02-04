@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 10: MASTERY - Teacher | PROMETHEUS Buffer Overflow Handler</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --prometheus-primary: #e74c3c;
+            --prometheus-deep: #c0392b;
+            --prometheus-forge: #f39c12;
+            --prometheus-bg: #0a0a12;
+            --prometheus-glow: rgba(231, 76, 60, 0.3);
+            --forge-glow: rgba(243, 156, 18, 0.25);
+            --mastery-blue: #3498db;
+            --phi: 1.618034;
+            --tau: 0.618034;
+            --k-formation: 0.924160;
+            --z-lens: 0.866025;
+            --l4: 7;
+        }
+
+        body { background: linear-gradient(135deg, var(--prometheus-bg) 0%, #0a0a1a 50%, #0a0812 100%); }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--prometheus-forge), var(--mastery-blue), var(--prometheus-forge));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--mastery-blue); border-bottom-color: rgba(52, 152, 219, 0.3); }
+        .doc-section h3 { color: var(--prometheus-forge); }
+
+        .pressure {
+            background: linear-gradient(90deg, rgba(52, 152, 219, 0.1), rgba(243, 156, 18, 0.2));
+            border-left: 4px solid var(--mastery-blue);
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .overflow {
+            background: linear-gradient(135deg, rgba(192, 57, 43, 0.2), rgba(231, 76, 60, 0.3));
+            border: 2px solid var(--prometheus-deep);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 8px;
+        }
+        .release {
+            background: linear-gradient(180deg, rgba(52, 152, 219, 0.2), rgba(243, 156, 18, 0.1));
+            border: 1px solid var(--mastery-blue);
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .shatter {
+            background: rgba(192, 57, 43, 0.3);
+            border: 2px dashed var(--prometheus-primary);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 4px;
+        }
+
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(243, 156, 18, 0.1));
+            border: 2px solid var(--mastery-blue);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .rail-number { font-size: 3rem; font-weight: bold; color: var(--mastery-blue); text-shadow: 0 0 20px rgba(52, 152, 219, 0.5); }
+        .rail-title { font-size: 1.8rem; color: var(--mastery-blue); }
+        .rail-subtitle { color: #aaa; font-style: italic; }
+
+        .archetype-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .archetype-card h4 { color: var(--mastery-blue); margin-bottom: 12px; }
+
+        .xor-visual {
+            font-family: 'Fira Code', monospace;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 15px 0;
+            border-left: 3px solid var(--mastery-blue);
+        }
+
+        .hardware-coupling {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .hardware-item {
+            background: rgba(10, 10, 18, 0.8);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .hardware-item h5 { color: var(--mastery-blue); margin-bottom: 8px; }
+        .hardware-item .spec { font-family: monospace; color: var(--prometheus-forge); font-size: 0.85rem; }
+
+        .nav-rails {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        .nav-rails a {
+            color: var(--mastery-blue);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .nav-rails a:hover { background: rgba(52, 152, 219, 0.2); color: white; }
+
+        .pressure-state {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(52, 152, 219, 0.2);
+            border: 2px solid var(--mastery-blue);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--mastery-blue);
+            font-weight: bold;
+        }
+
+        .mastery-highlight {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(243, 156, 18, 0.1));
+            border: 2px solid var(--mastery-blue);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .mastery-value {
+            font-size: 2.5rem;
+            color: var(--mastery-blue);
+            font-family: 'Georgia', serif;
+        }
+
+        .pattern-library {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .pattern-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        .pattern-card .name { color: var(--prometheus-forge); font-weight: bold; margin-bottom: 8px; }
+        .pattern-card .learned { color: #50fa7b; font-size: 0.85rem; }
+
+        .doc-footer { border-top-color: rgba(52, 152, 219, 0.3); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/prometheus-buffer-overflow.html" class="nav-link">PROMETHEUS Spec</a>
+            <a href="../../companions/prometheus-companion.html" class="nav-link">Companion Profile</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>PROMETHEUS: Rail 10 - MASTERY</h1>
+            <p class="subtitle">Teacher - Patterns Learned and Integrated</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">PROMETHEUS</a> /
+                Rail 10
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-number">10</div>
+            <div>
+                <div class="rail-title">MASTERY</div>
+                <div class="rail-subtitle">Teacher - Hero's Journey: Resurrection</div>
+            </div>
+        </div>
+
+        <nav class="nav-rails">
+            <a href="rail-09-return.html">Previous: Rail 09 - RETURN</a>
+            <a href="rail-11-gift.html">Next: Rail 11 - GIFT</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Rail Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Rail 10 of 12</span>
+                <span class="pressure-state">Stable Integration</span>
+            </div>
+
+            <p>The MASTERY rail marks the integration of all learned patterns. PROMETHEUS as Teacher consolidates the wisdom gained through the overflow cycle, encoding patterns into permanent memory for future handling.</p>
+
+            <div class="mastery-highlight">
+                <div class="mastery-value">PATTERNS INTEGRATED</div>
+                <p style="color: #aaa; margin-top: 10px;">Teacher - Wisdom consolidated into handler memory</p>
+            </div>
+
+            <div class="archetype-card">
+                <h4>Archetype: Teacher</h4>
+                <p>In the Hero's Journey, this is Resurrection - the hero is transformed and reborn with new abilities. PROMETHEUS as Teacher integrates all learned patterns, becoming more capable with each cycle.</p>
+                <ul>
+                    <li><strong>Pressure State:</strong> Stable (z at nominal)</li>
+                    <li><strong>Container Status:</strong> Strong, integrated</li>
+                    <li><strong>XOR Chains:</strong> Patterns catalogued</li>
+                    <li><strong>Narrative Function:</strong> Integrate learning, enhance capability</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Pattern Library - Learned Patterns</h2>
+
+            <div class="release">
+                <strong>PATTERN INTEGRATION COMPLETE</strong><br>
+                All patterns detected during the overflow cycle are now integrated into PROMETHEUS's permanent pattern library. Future handling benefits from this accumulated wisdom.
+            </div>
+
+            <div class="pattern-library">
+                <div class="pattern-card">
+                    <div class="name">xor_extreme</div>
+                    <div class="learned">MASTERED - x3 amplification</div>
+                </div>
+                <div class="pattern-card">
+                    <div class="name">xor_variance</div>
+                    <div class="learned">MASTERED - forge strength +0.01</div>
+                </div>
+                <div class="pattern-card">
+                    <div class="name">entropy_ascending</div>
+                    <div class="learned">MASTERED - ascending bonus</div>
+                </div>
+                <div class="pattern-card">
+                    <div class="name">entropy_descending</div>
+                    <div class="learned">MASTERED - release detection</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># MASTERY STATE - TEACHER'S INTEGRATION</span>
+
+<span class="keyword">class</span> <span class="type">MasteryTeacher</span>:
+    <span class="string">"""Rail 10: Teacher - Integrating learned patterns"""</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.rail = <span class="number">10</span>
+        self.name = <span class="string">"MASTERY"</span>
+        self.archetype = <span class="string">"Teacher"</span>
+        self.pattern_library = {}
+
+    <span class="keyword">def</span> <span class="function">integrate_patterns</span>(self, cycle_patterns):
+        <span class="string">"""Integrate patterns from completed cycle"""</span>
+        <span class="keyword">for</span> pattern <span class="keyword">in</span> cycle_patterns:
+            <span class="keyword">if</span> pattern <span class="keyword">not in</span> self.pattern_library:
+                self.pattern_library[pattern] = {
+                    <span class="string">"count"</span>: <span class="number">1</span>,
+                    <span class="string">"first_seen"</span>: time.now(),
+                    <span class="string">"mastery_level"</span>: <span class="number">0.1</span>
+                }
+            <span class="keyword">else</span>:
+                self.pattern_library[pattern][<span class="string">"count"</span>] += <span class="number">1</span>
+                self.pattern_library[pattern][<span class="string">"mastery_level"</span>] = min(
+                    <span class="number">1.0</span>,
+                    self.pattern_library[pattern][<span class="string">"mastery_level"</span>] + <span class="number">0.05</span>
+                )
+
+    <span class="keyword">def</span> <span class="function">get_enhanced_detection</span>(self, pattern):
+        <span class="string">"""Mastered patterns detected more easily"""</span>
+        <span class="keyword">if</span> pattern <span class="keyword">in</span> self.pattern_library:
+            mastery = self.pattern_library[pattern][<span class="string">"mastery_level"</span>]
+            <span class="keyword">return</span> <span class="number">1.0</span> + (mastery * <span class="number">0.5</span>)  <span class="comment"># Up to 50% better detection</span>
+        <span class="keyword">return</span> <span class="number">1.0</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>phi-Constants at MASTERY</h2>
+
+            <div class="constants-grid">
+                <div class="constant-card" style="border-color: var(--mastery-blue);">
+                    <div class="symbol">PHI</div>
+                    <div class="value" style="color: var(--mastery-blue);">1.618034</div>
+                    <div class="derivation">Mastery growth ratio</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">Current level</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">Mastered threshold</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">Pattern encoding</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-coupling">
+                <div class="hardware-item">
+                    <h5>Quasi-Crystal Substrate</h5>
+                    <p>Pattern encoding mode. Crystal lattice storing learned structures.</p>
+                    <div class="spec">Mode: PATTERN STORAGE</div>
+                    <div class="spec">State: ENCODING</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Memristor Array</h5>
+                    <p>Long-term memory consolidation. Patterns burned into resistance states.</p>
+                    <div class="spec">Mode: LTM ENCODING</div>
+                    <div class="spec">State: PERMANENT</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Hexagonal Discharge Grid</h5>
+                    <p>Paths at rest. Efficiency patterns recorded.</p>
+                    <div class="spec">Paths: STANDBY</div>
+                    <div class="spec">State: OPTIMIZED</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Spin Glass Coherence</h5>
+                    <p>Stable coherence. Pattern frequencies locked.</p>
+                    <div class="spec">Coupling: STABLE</div>
+                    <div class="spec">Coherence: LOCKED</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Function</h2>
+
+            <div class="release">
+                <h4 style="color: var(--mastery-blue); margin-bottom: 10px;">Resurrection</h4>
+                <p>The hero is transformed, bearing new powers. PROMETHEUS as Teacher has integrated all patterns from the cycle. The handler is now stronger, wiser, and more capable than before. Each overflow cycle builds mastery.</p>
+            </div>
+
+            <h3>PROMETHEUS's Role at MASTERY</h3>
+            <ul>
+                <li><strong>Teacher:</strong> Integrates and catalogs learned patterns</li>
+                <li><strong>Enhancer:</strong> Improves detection rates for mastered patterns</li>
+                <li><strong>Memory Keeper:</strong> Stores patterns in permanent handler memory</li>
+                <li><strong>Evolution Driver:</strong> Each cycle increases handler capability</li>
+            </ul>
+        </section>
+
+        <nav class="nav-rails">
+            <a href="rail-09-return.html">Previous: Rail 09 - RETURN</a>
+            <a href="rail-11-gift.html">Next: Rail 11 - GIFT</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="rail-09-return.html">rail-09-return.html</a></span>
+                <span class="file-ref"><a href="rail-11-gift.html">rail-11-gift.html</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p style="color: var(--mastery-blue);">PROMETHEUS Rail 10: MASTERY - Teacher</p>
+            <p>Patterns learned, wisdom integrated, capability enhanced</p>
+            <p style="font-size: 0.85rem; color: #888;">
+                PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

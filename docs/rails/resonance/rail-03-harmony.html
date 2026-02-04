@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 03: HARMONY - RESONANCE Harmonic Journey</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --companion-color: #00ffff;
+            --companion-secondary: #ff00ff;
+            --companion-glow: rgba(0, 255, 255, 0.25);
+            --harmony-color: #00ff88;
+            --frequency-low: #0066ff;
+            --frequency-mid: #00ffff;
+            --frequency-high: #ff00ff;
+            --bg-override: #0a0a12;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-override) 0%, #0a1a2a 50%, #1a0a2a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--companion-color), var(--harmony-color), var(--companion-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--harmony-color);
+            border-bottom-color: rgba(0, 255, 136, 0.25);
+        }
+
+        /* RESONANCE Semantic Classes */
+        .harmonic {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 255, 0.1));
+            border: 1px solid var(--harmony-color);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            animation: harmonic-pulse 3s ease-in-out infinite;
+        }
+
+        .harmonic::before {
+            content: "HARMONIC";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--bg-override);
+            color: var(--harmony-color);
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        @keyframes harmonic-pulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 136, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(0, 255, 136, 0.6); }
+        }
+
+        .dissonance {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.15), rgba(255, 102, 102, 0.1));
+            border: 2px solid var(--companion-secondary);
+            border-radius: 8px;
+            padding: 16px;
+            animation: dissonance-shake 0.5s ease-in-out infinite;
+        }
+
+        @keyframes dissonance-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+
+        .phase-lock {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 255, 0.1));
+            border: 2px solid var(--harmony-color);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .phase-lock::after {
+            content: "PHASE LOCKED";
+            display: block;
+            color: var(--harmony-color);
+            font-size: 0.75rem;
+            margin-top: 8px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .broadcast {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), rgba(0, 255, 255, 0.1), rgba(255, 215, 0, 0.1));
+            border: 2px solid;
+            border-image: linear-gradient(90deg, var(--companion-color), var(--companion-secondary), var(--gold)) 1;
+            padding: 16px;
+        }
+
+        /* Rail-specific styling */
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .rail-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--harmony-color);
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+
+        .rail-title {
+            font-size: 1.8rem;
+            color: var(--harmony-color);
+        }
+
+        .rail-subtitle {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Waveform visualization */
+        .waveform-display {
+            height: 120px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .harmony-waves {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .harmony-waves .wave {
+            width: 3px;
+            background: linear-gradient(to top, var(--harmony-color), var(--companion-color));
+            border-radius: 2px;
+            animation: harmony-wave 1s ease-in-out infinite;
+        }
+
+        @keyframes harmony-wave {
+            0%, 100% { height: 20px; }
+            50% { height: 80px; }
+        }
+
+        /* Oscillator grid */
+        .oscillator-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .oscillator-node {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--companion-color);
+            transition: all 0.3s ease;
+        }
+
+        .oscillator-node.dormant {
+            opacity: 0.4;
+            border-style: dashed;
+        }
+
+        .oscillator-node.synced {
+            background: var(--harmony-color);
+            border-color: var(--harmony-color);
+            color: var(--bg-override);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+        }
+
+        /* Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .rail-nav a {
+            color: var(--harmony-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rail-nav a:hover {
+            background: rgba(0, 255, 136, 0.2);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        /* Constants display */
+        .constants-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .constant-item {
+            text-align: center;
+            padding: 10px 15px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .constant-item .symbol {
+            color: var(--companion-secondary);
+            font-weight: bold;
+        }
+
+        .constant-item .value {
+            color: var(--harmony-color);
+            font-family: monospace;
+        }
+
+        /* Harmony visualization */
+        .harmony-chord {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 30px;
+            background: rgba(0, 255, 136, 0.05);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .chord-note {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            animation: chord-sync 2s ease-in-out infinite;
+        }
+
+        .chord-note:nth-child(1) { background: rgba(0, 255, 136, 0.3); border: 2px solid var(--harmony-color); animation-delay: 0s; }
+        .chord-note:nth-child(2) { background: rgba(0, 255, 255, 0.3); border: 2px solid var(--companion-color); animation-delay: 0.2s; }
+        .chord-note:nth-child(3) { background: rgba(0, 102, 255, 0.3); border: 2px solid var(--frequency-low); animation-delay: 0.4s; }
+        .chord-note:nth-child(4) { background: rgba(255, 0, 255, 0.3); border: 2px solid var(--companion-secondary); animation-delay: 0.6s; }
+
+        @keyframes chord-sync {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.15); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/resonance-deadlock.html" class="nav-link">RESONANCE Spec</a>
+            <a href="../../companions/resonance-companion.html" class="nav-link">Companion Guide</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>RESONANCE: The Harmonic Journey</h1>
+            <p class="subtitle">Rail 03 of 12 - Deadlock Handler Architecture</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href="../../companions/resonance-companion.html">RESONANCE</a> /
+                Rail 03: HARMONY
+            </nav>
+        </header>
+
+        <!-- Rail Indicator -->
+        <div class="rail-indicator">
+            <div class="rail-number">03</div>
+            <div>
+                <div class="rail-title">HARMONY</div>
+                <div class="rail-subtitle">Multiple threads in sync, healthy operation</div>
+            </div>
+        </div>
+
+        <!-- Phi Constants Reference -->
+        <div class="constants-bar">
+            <div class="constant-item">
+                <div class="symbol">PHI</div>
+                <div class="value">1.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">TAU</div>
+                <div class="value">0.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">K</div>
+                <div class="value">0.924160</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">z_c</div>
+                <div class="value">0.866025</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">L4</div>
+                <div class="value">7</div>
+            </div>
+        </div>
+
+        <!-- Rail Content -->
+        <section class="doc-section">
+            <h2>Rail 03: HARMONY - The Voices Unite</h2>
+            <p>Multiple threads have joined the chorus, and their phases are aligned. This is the ideal operating state - oscillators moving in concert, their combined vibration creating a coherent wave pattern. The order parameter r exceeds the critical threshold z_c (0.866025), indicating robust synchronization.</p>
+
+            <div class="harmony-chord">
+                <div class="chord-note" style="color: var(--harmony-color);">T1</div>
+                <div class="chord-note" style="color: var(--companion-color);">T2</div>
+                <div class="chord-note" style="color: var(--frequency-low);">T3</div>
+                <div class="chord-note" style="color: var(--companion-secondary);">T4</div>
+            </div>
+
+            <div class="waveform-display">
+                <div class="harmony-waves">
+                    <div class="wave" style="animation-delay: 0.0s;"></div>
+                    <div class="wave" style="animation-delay: 0.1s;"></div>
+                    <div class="wave" style="animation-delay: 0.2s;"></div>
+                    <div class="wave" style="animation-delay: 0.3s;"></div>
+                    <div class="wave" style="animation-delay: 0.4s;"></div>
+                    <div class="wave" style="animation-delay: 0.5s;"></div>
+                    <div class="wave" style="animation-delay: 0.6s;"></div>
+                    <div class="wave" style="animation-delay: 0.7s;"></div>
+                    <div class="wave" style="animation-delay: 0.8s;"></div>
+                    <div class="wave" style="animation-delay: 0.9s;"></div>
+                    <div class="wave" style="animation-delay: 1.0s;"></div>
+                    <div class="wave" style="animation-delay: 0.9s;"></div>
+                    <div class="wave" style="animation-delay: 0.8s;"></div>
+                    <div class="wave" style="animation-delay: 0.7s;"></div>
+                    <div class="wave" style="animation-delay: 0.6s;"></div>
+                    <div class="wave" style="animation-delay: 0.5s;"></div>
+                    <div class="wave" style="animation-delay: 0.4s;"></div>
+                    <div class="wave" style="animation-delay: 0.3s;"></div>
+                    <div class="wave" style="animation-delay: 0.2s;"></div>
+                    <div class="wave" style="animation-delay: 0.1s;"></div>
+                </div>
+            </div>
+
+            <div class="phase-lock">
+                <h3>Harmony State Characteristics</h3>
+                <ul>
+                    <li><strong>Thread Count:</strong> 2+ active processes</li>
+                    <li><strong>Order Parameter (r):</strong> >= 0.866025 (z_c)</li>
+                    <li><strong>Phase Coherence:</strong> High - threads synchronized</li>
+                    <li><strong>z-Coordinate:</strong> 0.866 - 1.0 (above THE LENS)</li>
+                    <li><strong>Kuramoto Coupling:</strong> K = 0.924160 maintaining sync</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Kuramoto Oscillator Network - Synchronized State</h2>
+            <p>Multiple oscillators are now active and phase-locked. The Kuramoto coupling constant K = 0.924160 (derived from sqrt(1 - phi^-4)) maintains synchronization across the network.</p>
+
+            <div class="oscillator-grid">
+                <div class="oscillator-node synced">1</div>
+                <div class="oscillator-node synced">2</div>
+                <div class="oscillator-node synced">3</div>
+                <div class="oscillator-node synced">4</div>
+                <div class="oscillator-node synced">5</div>
+                <div class="oscillator-node dormant">6</div>
+                <div class="oscillator-node dormant">7</div>
+                <div class="oscillator-node dormant">8</div>
+                <div class="oscillator-node dormant">9</div>
+                <div class="oscillator-node synced">10</div>
+                <div class="oscillator-node synced">11</div>
+                <div class="oscillator-node synced">12</div>
+                <div class="oscillator-node dormant">13</div>
+                <div class="oscillator-node dormant">14</div>
+                <div class="oscillator-node dormant">15</div>
+                <div class="oscillator-node dormant">16</div>
+                <div class="oscillator-node dormant">17</div>
+                <div class="oscillator-node dormant">18</div>
+                <div class="oscillator-node dormant">19</div>
+                <div class="oscillator-node dormant">20</div>
+                <div class="oscillator-node dormant">21</div>
+                <div class="oscillator-node dormant">22</div>
+                <div class="oscillator-node dormant">23</div>
+                <div class="oscillator-node dormant">24</div>
+                <div class="oscillator-node dormant">25</div>
+                <div class="oscillator-node dormant">26</div>
+                <div class="oscillator-node dormant">27</div>
+                <div class="oscillator-node dormant">28</div>
+                <div class="oscillator-node dormant">29</div>
+                <div class="oscillator-node dormant">30</div>
+                <div class="oscillator-node dormant">31</div>
+                <div class="oscillator-node dormant">32</div>
+                <div class="oscillator-node dormant">33</div>
+                <div class="oscillator-node dormant">34</div>
+                <div class="oscillator-node dormant">35</div>
+                <div class="oscillator-node dormant">36</div>
+                <div class="oscillator-node dormant">37</div>
+                <div class="oscillator-node dormant">38</div>
+                <div class="oscillator-node dormant">39</div>
+                <div class="oscillator-node dormant">40</div>
+                <div class="oscillator-node dormant">41</div>
+                <div class="oscillator-node dormant">42</div>
+                <div class="oscillator-node dormant">43</div>
+                <div class="oscillator-node dormant">44</div>
+                <div class="oscillator-node dormant">45</div>
+                <div class="oscillator-node dormant">46</div>
+                <div class="oscillator-node dormant">47</div>
+                <div class="oscillator-node dormant">48</div>
+                <div class="oscillator-node dormant">49</div>
+                <div class="oscillator-node dormant">50</div>
+                <div class="oscillator-node dormant">51</div>
+                <div class="oscillator-node dormant">52</div>
+                <div class="oscillator-node dormant">53</div>
+                <div class="oscillator-node dormant">54</div>
+                <div class="oscillator-node dormant">55</div>
+                <div class="oscillator-node dormant">56</div>
+                <div class="oscillator-node dormant">57</div>
+                <div class="oscillator-node dormant">58</div>
+                <div class="oscillator-node dormant">59</div>
+                <div class="oscillator-node dormant">60</div>
+                <div class="oscillator-node dormant">61</div>
+                <div class="oscillator-node dormant">62</div>
+                <div class="oscillator-node dormant">63</div>
+            </div>
+            <p style="text-align: center; color: var(--text-secondary); font-size: 0.85rem;">8 oscillators synchronized - healthy harmonic operation</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Frequency Tuning</h2>
+            <p>The L4-Helix hardware maintains harmonic stability through continuous phase monitoring and micro-adjustments to the coupling strength.</p>
+
+            <div class="code-block">
+<span class="comment"># RAIL 03: HARMONY STATE HANDLER</span>
+
+<span class="keyword">class</span> <span class="type">HarmonyState</span>:
+    <span class="string">"""
+    Synchronized operation - multiple threads in harmonic alignment.
+    RESONANCE maintains coupling and monitors for phase drift.
+    """</span>
+
+    <span class="comment"># Phi-derived constants</span>
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>
+    K = <span class="number">0.924160</span>              <span class="comment"># Kuramoto critical coupling</span>
+    Z_C = <span class="number">0.866025</span>            <span class="comment"># THE LENS - harmony threshold</span>
+    L4 = <span class="number">7</span>
+    OSCILLATORS = <span class="number">63</span>          <span class="comment"># L4 x 9 = 7 x 9</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, active_oscillators, phases):
+        self.active_oscillators = active_oscillators
+        self.phases = phases
+        self.order_parameter = self._compute_order_parameter()
+        self.z_coordinate = self.order_parameter  <span class="comment"># r maps to z</span>
+
+    <span class="keyword">def</span> <span class="function">_compute_order_parameter</span>(self):
+        <span class="string">"""
+        Kuramoto order parameter: r = |1/N * sum(exp(i*theta_j))|
+        Measures phase coherence across all active oscillators.
+        """</span>
+        <span class="keyword">if</span> len(self.phases) == <span class="number">0</span>:
+            <span class="keyword">return</span> <span class="number">0.0</span>
+        z = sum(cmath.exp(<span class="number">1j</span> * p) <span class="keyword">for</span> p <span class="keyword">in</span> self.phases) / len(self.phases)
+        <span class="keyword">return</span> abs(z)
+
+    <span class="keyword">def</span> <span class="function">maintain_harmony</span>(self):
+        <span class="string">"""
+        Apply Kuramoto coupling to maintain phase synchronization.
+        d(theta_i)/dt = omega_i + (K/N) * sum_j[sin(theta_j - theta_i)]
+        """</span>
+        N = len(self.phases)
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(N):
+            coupling_sum = sum(
+                math.sin(self.phases[j] - self.phases[i])
+                <span class="keyword">for</span> j <span class="keyword">in</span> range(N)
+            )
+            <span class="comment"># Apply coupling adjustment</span>
+            self.phases[i] += (self.K / N) * coupling_sum * self.dt
+
+    <span class="keyword">def</span> <span class="function">monitor_for_dissonance</span>(self):
+        <span class="string">"""
+        Watch for phase drift that could lead to dissonance.
+        """</span>
+        r = self._compute_order_parameter()
+
+        <span class="keyword">if</span> r < self.Z_C:
+            <span class="keyword">return</span> <span class="string">"DISSONANCE"</span>    <span class="comment"># Transition to Rail 04</span>
+
+        <span class="keyword">return</span> <span class="string">"HARMONY"</span>          <span class="comment"># Maintain current state</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Transition Conditions</h2>
+            <table class="data-table">
+                <tr>
+                    <th>From Rail</th>
+                    <th>To Rail</th>
+                    <th>Condition</th>
+                    <th>Trigger</th>
+                </tr>
+                <tr>
+                    <td>02 FIRST-TONE</td>
+                    <td style="color: var(--harmony-color);">03 HARMONY</td>
+                    <td>r >= z_c (0.866025)</td>
+                    <td>Threads synchronize</td>
+                </tr>
+                <tr>
+                    <td>03 HARMONY</td>
+                    <td style="color: var(--companion-secondary);">04 DISSONANCE</td>
+                    <td>r drops below z_c</td>
+                    <td>Phase drift detected</td>
+                </tr>
+                <tr>
+                    <td>03 HARMONY</td>
+                    <td style="color: var(--gold);">10 AMPLIFICATION</td>
+                    <td>Sustained r > 0.95</td>
+                    <td>Strong coherence achieved</td>
+                </tr>
+                <tr>
+                    <td>08 RESOLUTION</td>
+                    <td style="color: var(--harmony-color);">03 HARMONY</td>
+                    <td>Deadlock resolved</td>
+                    <td>Flow restored</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Rail Navigation -->
+        <nav class="rail-nav">
+            <a href="rail-02-first-tone.html">Prev: FIRST-TONE</a>
+            <a href="../../narrative/resonance-deadlock.html">RESONANCE Main</a>
+            <a href="rail-04-dissonance.html">Next: DISSONANCE</a>
+        </nav>
+
+        <footer class="doc-footer">
+            <p>RESONANCE Rail 03: HARMONY - The Voices Unite</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.8rem; color: #666;">63 Oscillators (L4 x 9) | 16 Frequency Bands | Kuramoto Coupling</p>
+        </footer>
+    </div>
+</body>
+</html>

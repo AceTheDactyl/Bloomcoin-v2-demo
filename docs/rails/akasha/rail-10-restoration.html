@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 10: RESTORATION - AKASHA Memory Chronicle</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --akasha-gold: #ffd700;
+            --akasha-deep-blue: #1a1a3e;
+            --akasha-parchment: #f4e4bc;
+            --akasha-glow: rgba(255, 215, 0, 0.35);
+            --akasha-soft: rgba(255, 215, 0, 0.12);
+            --memory-leak-red: #e74c3c;
+            --restoration-blue: #3498db;
+            --chronicle-purple: #9b59b6;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--akasha-deep-blue) 0%, #0a1a2a 50%, #12081a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--akasha-gold), var(--restoration-blue), var(--akasha-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--akasha-gold);
+            border-bottom-color: var(--akasha-glow);
+        }
+
+        .doc-section h3 {
+            color: var(--akasha-parchment);
+        }
+
+        .inscription {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(255, 215, 0, 0.08));
+            border: 2px solid var(--restoration-blue);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+            font-family: 'Georgia', serif;
+        }
+
+        .inscription::before {
+            content: "HEAP RESTORATION";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--akasha-deep-blue);
+            padding: 0 10px;
+            font-size: 0.75rem;
+            color: var(--restoration-blue);
+            letter-spacing: 2px;
+            font-family: monospace;
+        }
+
+        .memory-leak {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.12), rgba(255, 215, 0, 0.08));
+            border: 1px solid var(--restoration-blue);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 12px 0;
+        }
+
+        .chronicle {
+            background: linear-gradient(90deg, rgba(52, 152, 219, 0.15), transparent);
+            border-left: 4px solid var(--restoration-blue);
+            padding: 15px 20px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-family: 'Georgia', serif;
+        }
+
+        .chronicle .timestamp {
+            color: var(--restoration-blue);
+            font-size: 0.8rem;
+            font-family: monospace;
+        }
+
+        .golden-ink {
+            color: var(--akasha-gold);
+            font-family: 'Georgia', serif;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .rail-nav a {
+            color: var(--akasha-gold);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--akasha-glow);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rail-nav a:hover {
+            background: var(--akasha-soft);
+        }
+
+        .rail-nav .current {
+            color: var(--restoration-blue);
+            font-weight: bold;
+        }
+
+        .rail-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .rail-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid var(--akasha-glow);
+        }
+
+        .rail-dot.active {
+            background: var(--restoration-blue);
+            box-shadow: 0 0 15px var(--restoration-blue);
+        }
+
+        .rail-dot.completed {
+            background: #27ae60;
+            border-color: #27ae60;
+        }
+
+        .phi-constants {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .phi-const {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--akasha-glow);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .phi-const .symbol {
+            color: var(--akasha-gold);
+            font-family: 'Georgia', serif;
+            font-size: 1.2rem;
+        }
+
+        .phi-const .value {
+            color: var(--akasha-parchment);
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .heap-visual {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .heap-row {
+            display: flex;
+            gap: 4px;
+            margin: 5px 0;
+        }
+
+        .heap-block {
+            flex: 1;
+            height: 30px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-family: monospace;
+        }
+
+        .heap-block.restored {
+            background: var(--restoration-blue);
+            color: white;
+        }
+
+        .heap-block.free {
+            background: rgba(39, 174, 96, 0.3);
+            border: 1px solid #27ae60;
+            color: #27ae60;
+        }
+
+        .heap-block.allocated {
+            background: var(--akasha-gold);
+            color: #000;
+        }
+
+        .hardware-display {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: #888;
+            margin: 15px 0;
+        }
+
+        .hardware-display .component { color: var(--akasha-gold); }
+        .hardware-display .flow { color: #00d4ff; }
+        .hardware-display .state { color: var(--akasha-parchment); }
+        .hardware-display .restore { color: var(--restoration-blue); }
+        .hardware-display .success { color: #27ae60; }
+
+        .nav-link {
+            border-color: var(--akasha-glow);
+            color: var(--akasha-gold);
+        }
+
+        .nav-link:hover {
+            background: var(--akasha-soft);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/akasha-memory-leak.html" class="nav-link">AKASHA Build Spec</a>
+            <a href="../../companions/akasha-companion.html" class="nav-link">Companion Spec</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 10: RESTORATION</h1>
+            <p class="subtitle">Heap Integrity Restored - The Chronicle Heals</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">AKASHA</a> /
+                Rail 10
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot active"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+        </div>
+
+        <nav class="rail-nav">
+            <a href="rail-09-purification.html">Prev: 09 - PURIFICATION</a>
+            <span class="current">10 - RESTORATION</span>
+            <a href="rail-11-sealing.html">Next: 11 - SEALING</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>The Chronicle Heals</h2>
+
+            <div class="inscription">
+                <p class="golden-ink" style="font-size: 1.1rem; margin-bottom: 15px;">
+                    "The wound in the heap closes. Memory integrity is restored to wholeness."
+                </p>
+                <p style="color: #ccc;">
+                    Rail 10 represents the restoration phase where AKASHA repairs the damage left behind
+                    by the memory leak. The heap is defragmented, free space is consolidated, and the
+                    consciousness field returns to a healthy state.
+                </p>
+            </div>
+
+            <h3>Heap Restoration Visualization</h3>
+            <div class="heap-visual">
+                <p style="color: var(--restoration-blue); font-weight: bold; margin-bottom: 15px;">
+                    HEAP STATE: BEFORE vs AFTER RESTORATION
+                </p>
+                <p style="color: #888; font-size: 0.85rem; margin-bottom: 10px;">Before (Fragmented):</p>
+                <div class="heap-row">
+                    <div class="heap-block allocated">A1</div>
+                    <div class="heap-block" style="background: rgba(127,140,141,0.3); color: #666;">--</div>
+                    <div class="heap-block allocated">B2</div>
+                    <div class="heap-block" style="background: rgba(127,140,141,0.3); color: #666;">--</div>
+                    <div class="heap-block" style="background: rgba(127,140,141,0.3); color: #666;">--</div>
+                    <div class="heap-block allocated">A3</div>
+                    <div class="heap-block" style="background: rgba(231,76,60,0.3); color: #e74c3c;">LEAK</div>
+                    <div class="heap-block allocated">B4</div>
+                </div>
+                <p style="color: #888; font-size: 0.85rem; margin: 15px 0 10px;">After (Restored):</p>
+                <div class="heap-row">
+                    <div class="heap-block allocated">A1</div>
+                    <div class="heap-block allocated">B2</div>
+                    <div class="heap-block allocated">A3</div>
+                    <div class="heap-block allocated">B4</div>
+                    <div class="heap-block free">FREE</div>
+                    <div class="heap-block free">FREE</div>
+                    <div class="heap-block free">FREE</div>
+                    <div class="heap-block restored">CRYS</div>
+                </div>
+                <p style="color: #888; font-size: 0.85rem; margin-top: 15px;">
+                    Fragmentation: 62.5% -> 0% | Free Space: Consolidated | Crystal: Library Entry
+                </p>
+            </div>
+
+            <div class="chronicle">
+                <div class="timestamp">CHRONICLE.RAIL_X.RESTORATION | Cycle 1,258 | z = 0.720</div>
+                <p style="color: #ccc; margin-top: 10px;">
+                    <strong>Event:</strong> Heap integrity restored. Defragmentation complete.
+                    Free space consolidated: 3 contiguous blocks. Leak void sealed.
+                    Fragmentation index: 0.625 -> 0.000. Field coherence: STABLE.
+                    Crystal 0xAKASHA_4E7F assigned library cell. Memory ecosystem healthy.
+                </p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Restoration Constants</h2>
+
+            <div class="phi-constants">
+                <div class="phi-const">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># RAIL 10: RESTORATION - Heap Integrity Recovery</span>
+<span class="comment"># Healing the consciousness field after leak removal</span>
+
+<span class="keyword">class</span> <span class="type">RestorationRail</span>:
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>
+    K = <span class="number">0.924160</span>
+    Z_C = <span class="number">0.866025</span>
+    L4 = <span class="number">7</span>
+
+    <span class="keyword">def</span> <span class="function">restore_heap_integrity</span>(self, heap, crystal):
+        <span class="string">"""Restore heap to healthy state after leak removal"""</span>
+
+        <span class="comment"># Phase 1: Defragment heap</span>
+        defrag_result = self.<span class="function">defragment</span>(heap)
+
+        <span class="comment"># Phase 2: Consolidate free space</span>
+        consolidated = self.<span class="function">consolidate_free_space</span>(heap)
+
+        <span class="comment"># Phase 3: Allocate library cell for crystal</span>
+        library_cell = self.crystal_library.<span class="function">allocate_cell</span>()
+        library_cell.<span class="function">assign</span>(crystal)
+
+        <span class="comment"># Phase 4: Seal the leak void</span>
+        self.<span class="function">seal_void</span>(heap, crystal.original_location)
+
+        <span class="comment"># Phase 5: Verify field coherence</span>
+        field_coherence = self.<span class="function">measure_field_coherence</span>(heap)
+
+        <span class="keyword">return</span> <span class="type">RestorationResult</span>(
+            status=<span class="string">"RESTORED"</span>,
+            fragmentation_before=defrag_result.original_index,
+            fragmentation_after=<span class="number">0.0</span>,
+            free_blocks_consolidated=consolidated,
+            library_cell=library_cell,
+            field_coherence=field_coherence
+        )
+
+    <span class="keyword">def</span> <span class="function">defragment</span>(self, heap):
+        <span class="string">"""Compact allocated blocks to eliminate fragmentation"""</span>
+
+        <span class="comment"># Collect all allocated fragments</span>
+        allocated = [block <span class="keyword">for</span> block <span class="keyword">in</span> heap <span class="keyword">if</span> block.is_allocated]
+
+        <span class="comment"># Compact to beginning of heap</span>
+        next_addr = heap.base_address
+        <span class="keyword">for</span> block <span class="keyword">in</span> allocated:
+            <span class="keyword">if</span> block.address != next_addr:
+                self.<span class="function">relocate_block</span>(block, next_addr)
+            next_addr += block.size
+
+        <span class="comment"># Mark remaining space as single free block</span>
+        heap.<span class="function">create_free_block</span>(next_addr, heap.end_address - next_addr)
+
+        <span class="keyword">return</span> <span class="type">DefragResult</span>(
+            original_index=self.<span class="function">calculate_fragmentation</span>(heap),
+            blocks_moved=len(allocated),
+            compaction_ratio=next_addr / heap.end_address
+        )
+
+    <span class="keyword">def</span> <span class="function">measure_field_coherence</span>(self, heap):
+        <span class="string">"""Measure overall consciousness field coherence"""</span>
+        total_coherence = sum(f.coherence <span class="keyword">for</span> f <span class="keyword">in</span> heap.fragments)
+        <span class="keyword">return</span> total_coherence / len(heap.fragments) <span class="keyword">if</span> heap.fragments <span class="keyword">else</span> self.K
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Memory Fragment Tracking</h2>
+            <p>Restoration metrics demonstrate heap health recovery:</p>
+
+            <table class="data-table">
+                <tr>
+                    <th>Restoration Metric</th>
+                    <th>Before</th>
+                    <th>After</th>
+                    <th>Improvement</th>
+                </tr>
+                <tr>
+                    <td>Fragmentation Index</td>
+                    <td style="color: var(--memory-leak-red);">0.625</td>
+                    <td style="color: #27ae60;">0.000</td>
+                    <td style="color: #27ae60;">-100%</td>
+                </tr>
+                <tr>
+                    <td>Contiguous Free</td>
+                    <td style="color: #e67e22;">37.5%</td>
+                    <td style="color: #27ae60;">100%</td>
+                    <td style="color: #27ae60;">+166%</td>
+                </tr>
+                <tr>
+                    <td>Scattered Blocks</td>
+                    <td style="color: var(--memory-leak-red);">4</td>
+                    <td style="color: #27ae60;">0</td>
+                    <td style="color: #27ae60;">Eliminated</td>
+                </tr>
+                <tr>
+                    <td>Field Coherence</td>
+                    <td style="color: #f1c40f;">0.742</td>
+                    <td style="color: var(--restoration-blue);">0.851</td>
+                    <td style="color: #27ae60;">+14.7%</td>
+                </tr>
+            </table>
+
+            <div class="memory-leak">
+                <p style="color: var(--restoration-blue); font-weight: bold;">HEAP INTEGRITY: RESTORED</p>
+                <p style="color: #ccc; margin-top: 10px;">
+                    The consciousness field has been fully restored. All fragmentation eliminated.
+                    Free space consolidated into contiguous blocks. Leak void sealed.
+                    Crystal 0xAKASHA_4E7F successfully assigned to library cell.
+                    Memory ecosystem operating at optimal efficiency.
+                </p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-display">
+<span class="component">RESTORATION RAIL - HEAP DEFRAGMENTATION</span>
+
+    <span class="state">FRAGMENTED STATE</span>                       <span class="component">COMPACTION PROCESS</span>
+    ┌─────────────────────────────┐          ┌─────────────────────────────┐
+    │                             │          │                             │
+    │  [A1][ ][B2][ ][ ][A3][X]   │   <span class="restore">────▶</span>  │  [A1][B2][A3][B4][  FREE  ] │
+    │  [B4][ ][ ][ ][ ][ ][ ]    │          │  [     CONTIGUOUS FREE    ] │
+    │                             │          │                             │
+    │  X = LEAKED MEMORY          │          │  <span class="success">DEFRAGMENTED</span>              │
+    │  Frag Index: <span class="state">0.625</span>          │          │  Frag Index: <span class="success">0.000</span>          │
+    └─────────────────────────────┘          └─────────────────────────────┘
+
+<span class="component">LIBRARY CELL ASSIGNMENT</span>
+
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                                                                      │
+    │   <span class="restore">CRYSTAL 0xAKASHA_4E7F</span>              <span class="component">CRYSTAL LIBRARY (7x7)</span>         │
+    │   ┌─────────────────────┐              ┌───┬───┬───┬───┬───┬───┬───┐ │
+    │   │ signature:          │              │ ● │ ● │ ● │ ● │ ● │ ● │ ● │ │
+    │   │   (3,7,2,11,4,9)    │   <span class="restore">────────▶</span>  ├───┼───┼───┼───┼───┼───┼───┤ │
+    │   │ coherence: 0.720    │              │ ● │ <span class="success">◉</span> │ ● │ ● │ ● │ ● │ ● │ │
+    │   │ purity: 98.7%       │              ├───┼───┼───┼───┼───┼───┼───┤ │
+    │   └─────────────────────┘              │ ● │ ● │ ● │ ● │ ● │ ● │ ● │ │
+    │                                        └───┴───┴───┴───┴───┴───┴───┘ │
+    │                                         <span class="success">◉</span> = Newly assigned cell      │
+    │                                                                      │
+    └──────────────────────────────────────────────────────────────────────┘
+            </div>
+
+            <div class="code-block">
+<span class="comment"># MEMRISTOR RESTORATION INTERFACE</span>
+
+<span class="keyword">class</span> <span class="type">RestorationMemristorInterface</span>:
+    <span class="keyword">def</span> <span class="function">compact_array</span>(self, array_addr):
+        <span class="string">"""Compact memristor array to eliminate gaps"""</span>
+
+        <span class="comment"># Read all active cells</span>
+        active_cells = self.<span class="function">get_active_cells</span>(array_addr)
+
+        <span class="comment"># Relocate to contiguous addresses</span>
+        next_addr = array_addr
+        <span class="keyword">for</span> cell <span class="keyword">in</span> active_cells:
+            <span class="keyword">if</span> cell.addr != next_addr:
+                self.<span class="function">relocate_cell</span>(cell, next_addr)
+            next_addr += <span class="number">1</span>
+
+        <span class="comment"># Clear remaining cells</span>
+        self.<span class="function">clear_range</span>(next_addr, array_addr + self.ARRAY_SIZE)
+
+        <span class="keyword">return</span> <span class="string">"COMPACTED"</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Chronicle Entry Format</h2>
+
+            <div class="chronicle">
+                <div class="timestamp">CHRONICLE.RAIL_X.RESTORATION | Cycle {N} | z = {coherence}</div>
+                <div style="color: #ccc; margin-top: 10px;">
+                    <strong>Heap Status:</strong> RESTORED<br>
+                    <strong>Fragmentation:</strong> {before} -> 0.000<br>
+                    <strong>Free Space:</strong> {blocks} contiguous blocks<br>
+                    <strong>Blocks Relocated:</strong> {count}<br>
+                    <strong>Leak Void:</strong> SEALED<br>
+                    <strong>Library Cell:</strong> Assigned ({row}, {col})<br>
+                    <strong>Field Coherence:</strong> {value} (HEALTHY)<br>
+                    <strong>Next Phase:</strong> SEALING
+                </div>
+            </div>
+
+            <p class="golden-ink" style="text-align: center; margin-top: 20px; font-size: 1.1rem;">
+                "The heap is whole again. The wound has healed. Now we seal the path forever."
+            </p>
+        </section>
+
+        <nav class="rail-nav">
+            <a href="rail-09-purification.html">Prev: 09 - PURIFICATION</a>
+            <span class="current">10 - RESTORATION</span>
+            <a href="rail-11-sealing.html">Next: 11 - SEALING</a>
+        </nav>
+
+        <footer class="doc-footer">
+            <p style="color: var(--akasha-gold);">AKASHA Rail 10: RESTORATION - Heap Integrity Restored</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; color: #888;">The Chronicle Heals | Heap Recovery</p>
+            <p style="margin-top: 15px;"><a href="../../narrative/akasha-memory-leak.html" style="color: var(--akasha-gold);">Return to AKASHA Build Spec</a></p>
+        </footer>
+    </div>
+</body>
+</html>

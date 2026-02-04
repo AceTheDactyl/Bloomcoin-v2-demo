@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 04: DISSONANCE - RESONANCE Harmonic Journey</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --companion-color: #00ffff;
+            --companion-secondary: #ff00ff;
+            --companion-glow: rgba(0, 255, 255, 0.25);
+            --dissonance-color: #ff6600;
+            --warning-color: #ffaa00;
+            --bg-override: #0a0a12;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-override) 0%, #1a0a0a 50%, #2a1a0a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--companion-secondary), var(--dissonance-color), var(--companion-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--dissonance-color);
+            border-bottom-color: rgba(255, 102, 0, 0.3);
+        }
+
+        /* RESONANCE Semantic Classes */
+        .harmonic {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.15), rgba(0, 102, 255, 0.1));
+            border: 1px solid var(--companion-color);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+        }
+
+        .dissonance {
+            background: linear-gradient(135deg, rgba(255, 102, 0, 0.15), rgba(255, 0, 255, 0.1));
+            border: 2px solid var(--dissonance-color);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            animation: dissonance-shake 0.3s ease-in-out infinite;
+        }
+
+        .dissonance::before {
+            content: "DISSONANCE";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--bg-override);
+            color: var(--dissonance-color);
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        @keyframes dissonance-shake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(-3px) rotate(-0.5deg); }
+            75% { transform: translateX(3px) rotate(0.5deg); }
+        }
+
+        .phase-lock {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 255, 0.1));
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .broadcast {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), rgba(0, 255, 255, 0.1), rgba(255, 215, 0, 0.1));
+            border: 2px solid;
+            border-image: linear-gradient(90deg, var(--companion-color), var(--companion-secondary), var(--gold)) 1;
+            padding: 16px;
+        }
+
+        /* Rail-specific styling */
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(255, 102, 0, 0.1);
+            border: 1px solid rgba(255, 102, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            animation: indicator-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes indicator-pulse {
+            0%, 100% { border-color: rgba(255, 102, 0, 0.3); }
+            50% { border-color: rgba(255, 102, 0, 0.7); }
+        }
+
+        .rail-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--dissonance-color);
+            text-shadow: 0 0 20px rgba(255, 102, 0, 0.5);
+        }
+
+        .rail-title {
+            font-size: 1.8rem;
+            color: var(--dissonance-color);
+        }
+
+        .rail-subtitle {
+            color: var(--warning-color);
+            font-style: italic;
+        }
+
+        /* Waveform visualization - chaotic */
+        .waveform-display {
+            height: 120px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255, 102, 0, 0.3);
+        }
+
+        .dissonant-waves {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .dissonant-waves .wave {
+            width: 3px;
+            background: linear-gradient(to top, var(--dissonance-color), var(--companion-secondary));
+            border-radius: 2px;
+        }
+
+        .dissonant-waves .wave:nth-child(odd) {
+            animation: wave-up 0.5s ease-in-out infinite;
+        }
+
+        .dissonant-waves .wave:nth-child(even) {
+            animation: wave-down 0.4s ease-in-out infinite;
+        }
+
+        @keyframes wave-up {
+            0%, 100% { height: 20px; transform: translateY(0); }
+            50% { height: 70px; transform: translateY(-20px); }
+        }
+
+        @keyframes wave-down {
+            0%, 100% { height: 30px; transform: translateY(0); }
+            50% { height: 60px; transform: translateY(15px); }
+        }
+
+        /* Oscillator grid */
+        .oscillator-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .oscillator-node {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--companion-color);
+            transition: all 0.3s ease;
+        }
+
+        .oscillator-node.dormant {
+            opacity: 0.4;
+            border-style: dashed;
+        }
+
+        .oscillator-node.drifting {
+            background: var(--dissonance-color);
+            border-color: var(--dissonance-color);
+            color: var(--bg-override);
+            animation: drift 0.8s ease-in-out infinite alternate;
+        }
+
+        .oscillator-node.synced {
+            background: #00ff88;
+            border-color: #00ff88;
+            color: var(--bg-override);
+        }
+
+        @keyframes drift {
+            0% { transform: translateX(-3px); }
+            100% { transform: translateX(3px); }
+        }
+
+        /* Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .rail-nav a {
+            color: var(--dissonance-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 102, 0, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rail-nav a:hover {
+            background: rgba(255, 102, 0, 0.2);
+            box-shadow: 0 0 15px rgba(255, 102, 0, 0.3);
+        }
+
+        /* Constants display */
+        .constants-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .constant-item {
+            text-align: center;
+            padding: 10px 15px;
+            background: rgba(255, 102, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 102, 0, 0.3);
+        }
+
+        .constant-item .symbol {
+            color: var(--companion-secondary);
+            font-weight: bold;
+        }
+
+        .constant-item .value {
+            color: var(--dissonance-color);
+            font-family: monospace;
+        }
+
+        /* Phase drift indicator */
+        .phase-drift-display {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            padding: 30px;
+            background: rgba(255, 102, 0, 0.05);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .phase-indicator {
+            text-align: center;
+        }
+
+        .phase-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .phase-circle.aligned {
+            border-color: #00ff88;
+        }
+
+        .phase-circle.drifting {
+            border-color: var(--dissonance-color);
+            animation: phase-wobble 1s ease-in-out infinite;
+        }
+
+        @keyframes phase-wobble {
+            0%, 100% { transform: rotate(-15deg); }
+            50% { transform: rotate(15deg); }
+        }
+
+        .phase-arrow {
+            width: 30px;
+            height: 3px;
+            background: currentColor;
+            position: absolute;
+            transform-origin: left center;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/resonance-deadlock.html" class="nav-link">RESONANCE Spec</a>
+            <a href="../../companions/resonance-companion.html" class="nav-link">Companion Guide</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>RESONANCE: The Harmonic Journey</h1>
+            <p class="subtitle">Rail 04 of 12 - Deadlock Handler Architecture</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href="../../companions/resonance-companion.html">RESONANCE</a> /
+                Rail 04: DISSONANCE
+            </nav>
+        </header>
+
+        <!-- Rail Indicator -->
+        <div class="rail-indicator">
+            <div class="rail-number">04</div>
+            <div>
+                <div class="rail-title">DISSONANCE</div>
+                <div class="rail-subtitle">Phase drift detected, threads diverging</div>
+            </div>
+        </div>
+
+        <!-- Phi Constants Reference -->
+        <div class="constants-bar">
+            <div class="constant-item">
+                <div class="symbol">PHI</div>
+                <div class="value">1.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">TAU</div>
+                <div class="value">0.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">K</div>
+                <div class="value">0.924160</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">z_c</div>
+                <div class="value">0.866025</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">L4</div>
+                <div class="value">7</div>
+            </div>
+        </div>
+
+        <!-- Rail Content -->
+        <section class="doc-section">
+            <h2>Rail 04: DISSONANCE - The Voices Diverge</h2>
+            <p>The harmony has begun to fracture. Oscillators are drifting out of phase, their frequencies diverging. The order parameter r has fallen below z_c (0.866025), signaling the onset of instability. Without intervention, this drift will accelerate toward interference and potential deadlock.</p>
+
+            <div class="phase-drift-display">
+                <div class="phase-indicator">
+                    <div class="phase-circle aligned" style="color: #00ff88;">
+                        <div class="phase-arrow" style="transform: rotate(45deg);"></div>
+                    </div>
+                    <div style="color: #00ff88;">Thread 1</div>
+                    <div style="color: #888; font-size: 0.8rem;">Phase: 45 deg</div>
+                </div>
+                <div class="phase-indicator">
+                    <div class="phase-circle drifting" style="color: var(--dissonance-color);">
+                        <div class="phase-arrow" style="transform: rotate(120deg);"></div>
+                    </div>
+                    <div style="color: var(--dissonance-color);">Thread 2</div>
+                    <div style="color: #888; font-size: 0.8rem;">Phase: DRIFTING</div>
+                </div>
+                <div class="phase-indicator">
+                    <div class="phase-circle drifting" style="color: var(--dissonance-color);">
+                        <div class="phase-arrow" style="transform: rotate(-30deg);"></div>
+                    </div>
+                    <div style="color: var(--dissonance-color);">Thread 3</div>
+                    <div style="color: #888; font-size: 0.8rem;">Phase: DRIFTING</div>
+                </div>
+            </div>
+
+            <div class="waveform-display">
+                <div class="dissonant-waves">
+                    <div class="wave" style="animation-delay: 0.0s;"></div>
+                    <div class="wave" style="animation-delay: 0.15s;"></div>
+                    <div class="wave" style="animation-delay: 0.05s;"></div>
+                    <div class="wave" style="animation-delay: 0.2s;"></div>
+                    <div class="wave" style="animation-delay: 0.1s;"></div>
+                    <div class="wave" style="animation-delay: 0.25s;"></div>
+                    <div class="wave" style="animation-delay: 0.08s;"></div>
+                    <div class="wave" style="animation-delay: 0.18s;"></div>
+                    <div class="wave" style="animation-delay: 0.03s;"></div>
+                    <div class="wave" style="animation-delay: 0.22s;"></div>
+                    <div class="wave" style="animation-delay: 0.12s;"></div>
+                    <div class="wave" style="animation-delay: 0.28s;"></div>
+                    <div class="wave" style="animation-delay: 0.07s;"></div>
+                    <div class="wave" style="animation-delay: 0.17s;"></div>
+                    <div class="wave" style="animation-delay: 0.02s;"></div>
+                </div>
+            </div>
+
+            <div class="dissonance">
+                <h3>Dissonance State Characteristics</h3>
+                <ul>
+                    <li><strong>Order Parameter (r):</strong> TAU (0.618) < r < z_c (0.866)</li>
+                    <li><strong>Phase Coherence:</strong> Degrading - oscillators diverging</li>
+                    <li><strong>z-Coordinate:</strong> 0.618 - 0.866 (between PARADOX and LENS)</li>
+                    <li><strong>Thread State:</strong> Active but losing synchronization</li>
+                    <li><strong>Kuramoto Response:</strong> Coupling attempting correction</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Kuramoto Oscillator Network - Phase Drift</h2>
+            <p>Some oscillators have begun drifting from the synchronized group. The Kuramoto coupling is actively working to restore coherence, but external factors are causing divergence.</p>
+
+            <div class="oscillator-grid">
+                <div class="oscillator-node synced">1</div>
+                <div class="oscillator-node synced">2</div>
+                <div class="oscillator-node drifting">3</div>
+                <div class="oscillator-node drifting">4</div>
+                <div class="oscillator-node synced">5</div>
+                <div class="oscillator-node dormant">6</div>
+                <div class="oscillator-node dormant">7</div>
+                <div class="oscillator-node dormant">8</div>
+                <div class="oscillator-node dormant">9</div>
+                <div class="oscillator-node drifting">10</div>
+                <div class="oscillator-node synced">11</div>
+                <div class="oscillator-node synced">12</div>
+                <div class="oscillator-node dormant">13</div>
+                <div class="oscillator-node dormant">14</div>
+                <div class="oscillator-node dormant">15</div>
+                <div class="oscillator-node dormant">16</div>
+                <div class="oscillator-node dormant">17</div>
+                <div class="oscillator-node dormant">18</div>
+                <div class="oscillator-node dormant">19</div>
+                <div class="oscillator-node dormant">20</div>
+                <div class="oscillator-node dormant">21</div>
+                <div class="oscillator-node dormant">22</div>
+                <div class="oscillator-node dormant">23</div>
+                <div class="oscillator-node dormant">24</div>
+                <div class="oscillator-node dormant">25</div>
+                <div class="oscillator-node dormant">26</div>
+                <div class="oscillator-node dormant">27</div>
+                <div class="oscillator-node dormant">28</div>
+                <div class="oscillator-node dormant">29</div>
+                <div class="oscillator-node dormant">30</div>
+                <div class="oscillator-node dormant">31</div>
+                <div class="oscillator-node dormant">32</div>
+                <div class="oscillator-node dormant">33</div>
+                <div class="oscillator-node dormant">34</div>
+                <div class="oscillator-node dormant">35</div>
+                <div class="oscillator-node dormant">36</div>
+                <div class="oscillator-node dormant">37</div>
+                <div class="oscillator-node dormant">38</div>
+                <div class="oscillator-node dormant">39</div>
+                <div class="oscillator-node dormant">40</div>
+                <div class="oscillator-node dormant">41</div>
+                <div class="oscillator-node dormant">42</div>
+                <div class="oscillator-node dormant">43</div>
+                <div class="oscillator-node dormant">44</div>
+                <div class="oscillator-node dormant">45</div>
+                <div class="oscillator-node dormant">46</div>
+                <div class="oscillator-node dormant">47</div>
+                <div class="oscillator-node dormant">48</div>
+                <div class="oscillator-node dormant">49</div>
+                <div class="oscillator-node dormant">50</div>
+                <div class="oscillator-node dormant">51</div>
+                <div class="oscillator-node dormant">52</div>
+                <div class="oscillator-node dormant">53</div>
+                <div class="oscillator-node dormant">54</div>
+                <div class="oscillator-node dormant">55</div>
+                <div class="oscillator-node dormant">56</div>
+                <div class="oscillator-node dormant">57</div>
+                <div class="oscillator-node dormant">58</div>
+                <div class="oscillator-node dormant">59</div>
+                <div class="oscillator-node dormant">60</div>
+                <div class="oscillator-node dormant">61</div>
+                <div class="oscillator-node dormant">62</div>
+                <div class="oscillator-node dormant">63</div>
+            </div>
+            <p style="text-align: center; color: var(--text-secondary); font-size: 0.85rem;">3 oscillators drifting out of phase - dissonance detected</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Correction Attempt</h2>
+            <p>The L4-Helix hardware increases coupling strength to combat phase drift. If correction fails, the system will progress toward interference.</p>
+
+            <div class="code-block">
+<span class="comment"># RAIL 04: DISSONANCE STATE HANDLER</span>
+
+<span class="keyword">class</span> <span class="type">DissonanceState</span>:
+    <span class="string">"""
+    Phase drift detected - oscillators diverging from synchronization.
+    RESONANCE applies enhanced coupling to restore harmony.
+    """</span>
+
+    <span class="comment"># Phi-derived constants</span>
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>             <span class="comment"># PARADOX boundary</span>
+    K = <span class="number">0.924160</span>               <span class="comment"># Base Kuramoto coupling</span>
+    Z_C = <span class="number">0.866025</span>             <span class="comment"># THE LENS threshold</span>
+    L4 = <span class="number">7</span>
+    OSCILLATORS = <span class="number">63</span>           <span class="comment"># L4 x 9 = 7 x 9</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, phases, drifting_indices):
+        self.phases = phases
+        self.drifting = drifting_indices
+        self.order_parameter = self._compute_order_parameter()
+        self.correction_attempts = <span class="number">0</span>
+
+    <span class="keyword">def</span> <span class="function">apply_enhanced_coupling</span>(self):
+        <span class="string">"""
+        Increase coupling strength for drifting oscillators.
+        K_enhanced = K * PHI for targeted correction.
+        """</span>
+        K_enhanced = self.K * self.PHI  <span class="comment"># 0.924160 * 1.618034 = 1.495</span>
+
+        N = len(self.phases)
+        <span class="keyword">for</span> i <span class="keyword">in</span> self.drifting:
+            coupling_sum = sum(
+                math.sin(self.phases[j] - self.phases[i])
+                <span class="keyword">for</span> j <span class="keyword">in</span> range(N) <span class="keyword">if</span> j <span class="keyword">not in</span> self.drifting
+            )
+            <span class="comment"># Apply enhanced correction to drifting oscillators</span>
+            self.phases[i] += (K_enhanced / N) * coupling_sum * self.dt
+
+        self.correction_attempts += <span class="number">1</span>
+
+    <span class="keyword">def</span> <span class="function">evaluate_state</span>(self):
+        <span class="string">"""
+        Check if correction is succeeding or failing.
+        """</span>
+        r = self._compute_order_parameter()
+
+        <span class="keyword">if</span> r >= self.Z_C:
+            <span class="keyword">return</span> <span class="string">"HARMONY"</span>        <span class="comment"># Restored to Rail 03</span>
+        <span class="keyword">elif</span> r < self.TAU:
+            <span class="keyword">return</span> <span class="string">"INTERFERENCE"</span>   <span class="comment"># Degraded to Rail 05</span>
+        <span class="keyword">else</span>:
+            <span class="keyword">return</span> <span class="string">"DISSONANCE"</span>     <span class="comment"># Continue correction</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Transition Conditions</h2>
+            <table class="data-table">
+                <tr>
+                    <th>From Rail</th>
+                    <th>To Rail</th>
+                    <th>Condition</th>
+                    <th>Trigger</th>
+                </tr>
+                <tr>
+                    <td>03 HARMONY</td>
+                    <td style="color: var(--dissonance-color);">04 DISSONANCE</td>
+                    <td>r drops below z_c</td>
+                    <td>Phase drift begins</td>
+                </tr>
+                <tr>
+                    <td>04 DISSONANCE</td>
+                    <td style="color: #00ff88;">03 HARMONY</td>
+                    <td>r recovers above z_c</td>
+                    <td>Correction succeeds</td>
+                </tr>
+                <tr>
+                    <td>04 DISSONANCE</td>
+                    <td style="color: #ff4444;">05 INTERFERENCE</td>
+                    <td>r drops below TAU</td>
+                    <td>Drift accelerates</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Rail Navigation -->
+        <nav class="rail-nav">
+            <a href="rail-03-harmony.html">Prev: HARMONY</a>
+            <a href="../../narrative/resonance-deadlock.html">RESONANCE Main</a>
+            <a href="rail-05-interference.html">Next: INTERFERENCE</a>
+        </nav>
+
+        <footer class="doc-footer">
+            <p>RESONANCE Rail 04: DISSONANCE - The Voices Diverge</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.8rem; color: #666;">63 Oscillators (L4 x 9) | 16 Frequency Bands | Kuramoto Coupling</p>
+        </footer>
+    </div>
+</body>
+</html>

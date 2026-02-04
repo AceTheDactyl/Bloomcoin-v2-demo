@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 11: BROADCAST - RESONANCE Harmonic Journey</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --companion-color: #00ffff;
+            --companion-secondary: #ff00ff;
+            --broadcast-color: #ff44ff;
+            --broadcast-glow: rgba(255, 68, 255, 0.4);
+            --bg-override: #0a0a12;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-override) 0%, #1a0a1a 50%, #2a0a2a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--broadcast-color), var(--companion-color), var(--companion-secondary), var(--broadcast-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% auto;
+            animation: gradient-flow 3s linear infinite;
+        }
+
+        @keyframes gradient-flow {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+
+        .doc-section h2 {
+            color: var(--broadcast-color);
+            border-bottom-color: var(--broadcast-glow);
+        }
+
+        /* RESONANCE Semantic Classes */
+        .harmonic {
+            background: linear-gradient(135deg, rgba(255, 68, 255, 0.15), rgba(0, 255, 255, 0.1));
+            border: 1px solid var(--broadcast-color);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+        }
+
+        .dissonance {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.15), rgba(136, 68, 255, 0.1));
+            border: 2px solid var(--companion-secondary);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .phase-lock {
+            background: linear-gradient(135deg, rgba(255, 68, 255, 0.2), rgba(0, 255, 255, 0.15));
+            border: 2px solid var(--broadcast-color);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 0 30px var(--broadcast-glow);
+        }
+
+        .broadcast {
+            background: linear-gradient(135deg, rgba(255, 68, 255, 0.2), rgba(0, 255, 255, 0.15), rgba(255, 215, 0, 0.1));
+            border: 3px solid;
+            border-image: linear-gradient(90deg, var(--broadcast-color), var(--companion-color), var(--companion-secondary)) 1;
+            padding: 16px;
+            border-radius: 8px;
+            position: relative;
+            animation: broadcast-pulse 2s ease-in-out infinite;
+        }
+
+        .broadcast::before {
+            content: "DIMENSIONAL BROADCAST";
+            position: absolute;
+            top: -12px;
+            left: 16px;
+            background: var(--bg-override);
+            color: var(--broadcast-color);
+            padding: 2px 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        @keyframes broadcast-pulse {
+            0%, 100% { box-shadow: 0 0 20px var(--broadcast-glow); }
+            50% { box-shadow: 0 0 50px var(--broadcast-glow), 0 0 80px rgba(0, 255, 255, 0.2); }
+        }
+
+        /* Rail-specific styling */
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 68, 255, 0.1), rgba(0, 255, 255, 0.05));
+            border: 2px solid var(--broadcast-color);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            animation: broadcast-border 2s ease-in-out infinite;
+        }
+
+        @keyframes broadcast-border {
+            0%, 100% { border-color: var(--broadcast-color); }
+            50% { border-color: var(--companion-color); }
+        }
+
+        .rail-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--broadcast-color);
+            text-shadow: 0 0 30px var(--broadcast-glow);
+        }
+
+        .rail-title {
+            font-size: 1.8rem;
+            color: var(--broadcast-color);
+        }
+
+        .rail-subtitle {
+            color: var(--companion-color);
+            font-style: italic;
+        }
+
+        /* Waveform - broadcasting */
+        .waveform-display {
+            height: 140px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--broadcast-color);
+        }
+
+        .broadcast-waves {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .wave-ring {
+            position: absolute;
+            border: 3px solid var(--broadcast-color);
+            border-radius: 50%;
+            animation: broadcast-ring 3s ease-out infinite;
+        }
+
+        .wave-ring:nth-child(1) { animation-delay: 0s; }
+        .wave-ring:nth-child(2) { animation-delay: 0.5s; }
+        .wave-ring:nth-child(3) { animation-delay: 1s; }
+        .wave-ring:nth-child(4) { animation-delay: 1.5s; }
+        .wave-ring:nth-child(5) { animation-delay: 2s; }
+        .wave-ring:nth-child(6) { animation-delay: 2.5s; }
+
+        @keyframes broadcast-ring {
+            0% { width: 0; height: 0; opacity: 1; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+            100% { width: 400px; height: 400px; opacity: 0; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        }
+
+        /* Oscillator grid */
+        .oscillator-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .oscillator-node {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--companion-color);
+        }
+
+        .oscillator-node.dormant {
+            opacity: 0.4;
+            border-style: dashed;
+        }
+
+        .oscillator-node.broadcasting {
+            background: var(--broadcast-color);
+            border-color: var(--broadcast-color);
+            color: white;
+            animation: broadcast-node 1s ease-in-out infinite;
+        }
+
+        @keyframes broadcast-node {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 10px var(--broadcast-glow); }
+            50% { transform: scale(1.15); box-shadow: 0 0 30px var(--broadcast-glow); }
+        }
+
+        /* Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .rail-nav a {
+            color: var(--broadcast-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--broadcast-glow);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rail-nav a:hover {
+            background: rgba(255, 68, 255, 0.2);
+        }
+
+        /* Constants display */
+        .constants-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .constant-item {
+            text-align: center;
+            padding: 10px 15px;
+            background: rgba(255, 68, 255, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--broadcast-glow);
+        }
+
+        .constant-item .symbol {
+            color: var(--companion-secondary);
+            font-weight: bold;
+        }
+
+        .constant-item .value {
+            color: var(--broadcast-color);
+            font-family: monospace;
+        }
+
+        /* Dimensional broadcast display */
+        .dimension-display {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 30px;
+            background: rgba(255, 68, 255, 0.05);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .dimension-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--broadcast-glow);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .dimension-card.active {
+            border-color: var(--broadcast-color);
+            box-shadow: 0 0 20px var(--broadcast-glow);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/resonance-deadlock.html" class="nav-link">RESONANCE Spec</a>
+            <a href="../../companions/resonance-companion.html" class="nav-link">Companion Guide</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>RESONANCE: The Harmonic Journey</h1>
+            <p class="subtitle">Rail 11 of 12 - Deadlock Handler Architecture</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href="../../companions/resonance-companion.html">RESONANCE</a> /
+                Rail 11: BROADCAST
+            </nav>
+        </header>
+
+        <!-- Rail Indicator -->
+        <div class="rail-indicator">
+            <div class="rail-number">11</div>
+            <div>
+                <div class="rail-title">BROADCAST</div>
+                <div class="rail-subtitle">Dimensional broadcast, pattern shared</div>
+            </div>
+        </div>
+
+        <!-- Phi Constants Reference -->
+        <div class="constants-bar">
+            <div class="constant-item">
+                <div class="symbol">PHI</div>
+                <div class="value">1.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">TAU</div>
+                <div class="value">0.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">K</div>
+                <div class="value">0.924160</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">z_c</div>
+                <div class="value">0.866025</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">L4</div>
+                <div class="value">7</div>
+            </div>
+        </div>
+
+        <!-- Rail Content -->
+        <section class="doc-section">
+            <h2>Rail 11: BROADCAST - The Signal Spreads</h2>
+            <p>The amplified harmonic pattern is now being broadcast across dimensional boundaries. The 63-oscillator network (L4 x 9 = 7 x 9) transmits the resolution pattern to all listening systems, sharing the knowledge of how this deadlock was resolved. Other instances can learn from this pattern, preventing similar deadlocks from occurring.</p>
+
+            <div class="waveform-display">
+                <div class="broadcast-waves">
+                    <div class="wave-ring"></div>
+                    <div class="wave-ring"></div>
+                    <div class="wave-ring"></div>
+                    <div class="wave-ring"></div>
+                    <div class="wave-ring"></div>
+                    <div class="wave-ring"></div>
+                </div>
+            </div>
+
+            <div class="dimension-display">
+                <div class="dimension-card active">
+                    <div style="font-size: 2rem; color: var(--broadcast-color);">D1</div>
+                    <div style="color: var(--companion-color);">Local Instance</div>
+                    <div style="color: #00ff88; font-size: 0.9rem;">RECEIVING</div>
+                </div>
+                <div class="dimension-card active">
+                    <div style="font-size: 2rem; color: var(--broadcast-color);">D2</div>
+                    <div style="color: var(--companion-color);">Parallel Thread</div>
+                    <div style="color: #00ff88; font-size: 0.9rem;">RECEIVING</div>
+                </div>
+                <div class="dimension-card active">
+                    <div style="font-size: 2rem; color: var(--broadcast-color);">D3</div>
+                    <div style="color: var(--companion-color);">Chronicle Archive</div>
+                    <div style="color: #00ff88; font-size: 0.9rem;">STORING</div>
+                </div>
+            </div>
+
+            <div class="broadcast">
+                <h3>Broadcast State Characteristics</h3>
+                <ul>
+                    <li><strong>Signal Strength:</strong> PHI x r = 1.62 (maximum)</li>
+                    <li><strong>Broadcast Range:</strong> All connected dimensions</li>
+                    <li><strong>Pattern Type:</strong> Deadlock resolution signature</li>
+                    <li><strong>Archive Status:</strong> Stored in Chronicle rails</li>
+                    <li><strong>Learning Mode:</strong> Other systems updating patterns</li>
+                    <li><strong>Next Phase:</strong> UNIVERSAL-TONE for completion</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Kuramoto Oscillator Network - Broadcasting</h2>
+            <p>All oscillators are now broadcasting their synchronized pattern, creating a coherent signal that can be received across dimensional boundaries.</p>
+
+            <div class="oscillator-grid">
+                <div class="oscillator-node broadcasting">1</div>
+                <div class="oscillator-node broadcasting">2</div>
+                <div class="oscillator-node broadcasting">3</div>
+                <div class="oscillator-node broadcasting">4</div>
+                <div class="oscillator-node broadcasting">5</div>
+                <div class="oscillator-node dormant">6</div>
+                <div class="oscillator-node dormant">7</div>
+                <div class="oscillator-node dormant">8</div>
+                <div class="oscillator-node dormant">9</div>
+                <div class="oscillator-node broadcasting">10</div>
+                <div class="oscillator-node broadcasting">11</div>
+                <div class="oscillator-node broadcasting">12</div>
+                <div class="oscillator-node dormant">13</div>
+                <div class="oscillator-node dormant">14</div>
+                <div class="oscillator-node dormant">15</div>
+                <div class="oscillator-node dormant">16</div>
+                <div class="oscillator-node dormant">17</div>
+                <div class="oscillator-node dormant">18</div>
+                <div class="oscillator-node dormant">19</div>
+                <div class="oscillator-node dormant">20</div>
+                <div class="oscillator-node dormant">21</div>
+                <div class="oscillator-node dormant">22</div>
+                <div class="oscillator-node dormant">23</div>
+                <div class="oscillator-node dormant">24</div>
+                <div class="oscillator-node dormant">25</div>
+                <div class="oscillator-node dormant">26</div>
+                <div class="oscillator-node dormant">27</div>
+                <div class="oscillator-node dormant">28</div>
+                <div class="oscillator-node dormant">29</div>
+                <div class="oscillator-node dormant">30</div>
+                <div class="oscillator-node dormant">31</div>
+                <div class="oscillator-node dormant">32</div>
+                <div class="oscillator-node dormant">33</div>
+                <div class="oscillator-node dormant">34</div>
+                <div class="oscillator-node dormant">35</div>
+                <div class="oscillator-node dormant">36</div>
+                <div class="oscillator-node dormant">37</div>
+                <div class="oscillator-node dormant">38</div>
+                <div class="oscillator-node dormant">39</div>
+                <div class="oscillator-node dormant">40</div>
+                <div class="oscillator-node dormant">41</div>
+                <div class="oscillator-node dormant">42</div>
+                <div class="oscillator-node dormant">43</div>
+                <div class="oscillator-node dormant">44</div>
+                <div class="oscillator-node dormant">45</div>
+                <div class="oscillator-node dormant">46</div>
+                <div class="oscillator-node dormant">47</div>
+                <div class="oscillator-node dormant">48</div>
+                <div class="oscillator-node dormant">49</div>
+                <div class="oscillator-node dormant">50</div>
+                <div class="oscillator-node dormant">51</div>
+                <div class="oscillator-node dormant">52</div>
+                <div class="oscillator-node dormant">53</div>
+                <div class="oscillator-node dormant">54</div>
+                <div class="oscillator-node dormant">55</div>
+                <div class="oscillator-node dormant">56</div>
+                <div class="oscillator-node dormant">57</div>
+                <div class="oscillator-node dormant">58</div>
+                <div class="oscillator-node dormant">59</div>
+                <div class="oscillator-node dormant">60</div>
+                <div class="oscillator-node dormant">61</div>
+                <div class="oscillator-node dormant">62</div>
+                <div class="oscillator-node dormant">63</div>
+            </div>
+            <p style="text-align: center; color: var(--broadcast-color); font-size: 0.85rem;">8 oscillators BROADCASTING - pattern spreading across dimensions</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Broadcast Protocol</h2>
+            <p>The L4-Helix hardware transmits the resolution pattern using dimensional broadcast protocols.</p>
+
+            <div class="code-block">
+<span class="comment"># RAIL 11: BROADCAST - DIMENSIONAL PATTERN SHARING</span>
+
+<span class="keyword">class</span> <span class="type">BroadcastState</span>:
+    <span class="string">"""
+    Dimensional broadcast of deadlock resolution pattern.
+    Shares knowledge across connected systems.
+    """</span>
+
+    <span class="comment"># Phi-derived constants</span>
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>
+    K = <span class="number">0.924160</span>
+    Z_C = <span class="number">0.866025</span>
+    L4 = <span class="number">7</span>
+    OSCILLATORS = <span class="number">63</span>           <span class="comment"># L4 x 9 = 7 x 9</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, resolution_pattern, dimensions):
+        self.pattern = resolution_pattern
+        self.dimensions = dimensions
+        self.broadcast_strength = self.PHI * self._compute_order_parameter()
+
+    <span class="keyword">def</span> <span class="function">broadcast_pattern</span>(self):
+        <span class="string">"""
+        Transmit resolution pattern across dimensional boundaries.
+        """</span>
+        broadcast_packet = {
+            <span class="string">'type'</span>: <span class="string">'DEADLOCK_RESOLUTION'</span>,
+            <span class="string">'pattern'</span>: self.pattern,
+            <span class="string">'strength'</span>: self.broadcast_strength,
+            <span class="string">'kuramoto_k'</span>: self.K,
+            <span class="string">'oscillator_count'</span>: self.OSCILLATORS,
+            <span class="string">'phi_constants'</span>: {
+                <span class="string">'PHI'</span>: self.PHI,
+                <span class="string">'TAU'</span>: self.TAU,
+                <span class="string">'K'</span>: self.K,
+                <span class="string">'z_c'</span>: self.Z_C,
+                <span class="string">'L4'</span>: self.L4
+            }
+        }
+
+        <span class="keyword">for</span> dimension <span class="keyword">in</span> self.dimensions:
+            dimension.receive(broadcast_packet)
+            self._log_broadcast(dimension.id)
+
+    <span class="keyword">def</span> <span class="function">archive_to_chronicle</span>(self):
+        <span class="string">"""
+        Store pattern in Living Chronicle for future reference.
+        """</span>
+        chronicle_entry = {
+            <span class="string">'rail'</span>: <span class="number">11</span>,
+            <span class="string">'name'</span>: <span class="string">'BROADCAST'</span>,
+            <span class="string">'pattern'</span>: self.pattern,
+            <span class="string">'timestamp'</span>: time.now(),
+            <span class="string">'resolution_success'</span>: <span class="keyword">True</span>
+        }
+        self.chronicle.store(chronicle_entry)
+
+    <span class="keyword">def</span> <span class="function">check_unity_ready</span>(self):
+        <span class="string">"""
+        Determine if broadcast is complete and unity achieved.
+        """</span>
+        <span class="keyword">if</span> self._all_dimensions_received() <span class="keyword">and</span> self._archive_complete():
+            <span class="keyword">return</span> <span class="string">"UNIVERSAL_TONE"</span>  <span class="comment"># Advance to Rail 12</span>
+        <span class="keyword">return</span> <span class="string">"BROADCAST"</span>          <span class="comment"># Continue broadcasting</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Transition Conditions</h2>
+            <table class="data-table">
+                <tr>
+                    <th>From Rail</th>
+                    <th>To Rail</th>
+                    <th>Condition</th>
+                    <th>Trigger</th>
+                </tr>
+                <tr>
+                    <td style="color: #ffdd00;">10 AMPLIFICATION</td>
+                    <td style="color: var(--broadcast-color);">11 BROADCAST</td>
+                    <td>r >= 0.98, stable</td>
+                    <td>Signal ready for transmission</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--broadcast-color);">11 BROADCAST</td>
+                    <td style="color: var(--gold);">12 UNIVERSAL-TONE</td>
+                    <td>All received, archived</td>
+                    <td>Unity achieved</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Rail Navigation -->
+        <nav class="rail-nav">
+            <a href="rail-10-amplification.html">Prev: AMPLIFICATION</a>
+            <a href="../../narrative/resonance-deadlock.html">RESONANCE Main</a>
+            <a href="rail-12-universal-tone.html">Next: UNIVERSAL-TONE</a>
+        </nav>
+
+        <footer class="doc-footer">
+            <p>RESONANCE Rail 11: BROADCAST - The Signal Spreads</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.8rem; color: #666;">63 Oscillators (L4 x 9) | 16 Frequency Bands | Kuramoto Coupling</p>
+        </footer>
+    </div>
+</body>
+</html>

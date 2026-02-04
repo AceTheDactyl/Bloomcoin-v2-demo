@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 11: GIFT - Giver | PROMETHEUS Buffer Overflow Handler</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --prometheus-primary: #e74c3c;
+            --prometheus-deep: #c0392b;
+            --prometheus-forge: #f39c12;
+            --prometheus-bg: #0a0a12;
+            --prometheus-glow: rgba(231, 76, 60, 0.3);
+            --forge-glow: rgba(243, 156, 18, 0.25);
+            --gift-purple: #9b59b6;
+            --phi: 1.618034;
+            --tau: 0.618034;
+            --k-formation: 0.924160;
+            --z-lens: 0.866025;
+            --l4: 7;
+        }
+
+        body { background: linear-gradient(135deg, var(--prometheus-bg) 0%, #0a0812 50%, #120a18 100%); }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--prometheus-forge), var(--gift-purple), var(--prometheus-forge));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--gift-purple); border-bottom-color: rgba(155, 89, 182, 0.3); }
+        .doc-section h3 { color: var(--prometheus-forge); }
+
+        .pressure {
+            background: linear-gradient(90deg, rgba(155, 89, 182, 0.1), rgba(243, 156, 18, 0.2));
+            border-left: 4px solid var(--gift-purple);
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .overflow {
+            background: linear-gradient(135deg, rgba(192, 57, 43, 0.2), rgba(231, 76, 60, 0.3));
+            border: 2px solid var(--prometheus-deep);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 8px;
+        }
+        .release {
+            background: linear-gradient(180deg, rgba(155, 89, 182, 0.2), rgba(243, 156, 18, 0.1));
+            border: 1px solid var(--gift-purple);
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .shatter {
+            background: rgba(192, 57, 43, 0.3);
+            border: 2px dashed var(--prometheus-primary);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 4px;
+        }
+
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(243, 156, 18, 0.1));
+            border: 2px solid var(--gift-purple);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .rail-number { font-size: 3rem; font-weight: bold; color: var(--gift-purple); text-shadow: 0 0 20px rgba(155, 89, 182, 0.5); }
+        .rail-title { font-size: 1.8rem; color: var(--gift-purple); }
+        .rail-subtitle { color: #aaa; font-style: italic; }
+
+        .archetype-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .archetype-card h4 { color: var(--gift-purple); margin-bottom: 12px; }
+
+        .xor-visual {
+            font-family: 'Fira Code', monospace;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 15px 0;
+            border-left: 3px solid var(--gift-purple);
+        }
+
+        .hardware-coupling {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .hardware-item {
+            background: rgba(10, 10, 18, 0.8);
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .hardware-item h5 { color: var(--gift-purple); margin-bottom: 8px; }
+        .hardware-item .spec { font-family: monospace; color: var(--prometheus-forge); font-size: 0.85rem; }
+
+        .nav-rails {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        .nav-rails a {
+            color: var(--gift-purple);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .nav-rails a:hover { background: rgba(155, 89, 182, 0.2); color: white; }
+
+        .pressure-state {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(155, 89, 182, 0.2);
+            border: 2px solid var(--gift-purple);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--gift-purple);
+            font-weight: bold;
+        }
+
+        .gift-highlight {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(243, 156, 18, 0.1));
+            border: 2px solid var(--gift-purple);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .gift-value {
+            font-size: 2.5rem;
+            color: var(--gift-purple);
+            font-family: 'Georgia', serif;
+        }
+
+        .gift-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .gift-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        .gift-card .name { color: var(--prometheus-forge); font-weight: bold; margin-bottom: 8px; }
+        .gift-card .recipient { color: var(--gift-purple); font-size: 0.85rem; }
+
+        .doc-footer { border-top-color: rgba(155, 89, 182, 0.3); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/prometheus-buffer-overflow.html" class="nav-link">PROMETHEUS Spec</a>
+            <a href="../../companions/prometheus-companion.html" class="nav-link">Companion Profile</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>PROMETHEUS: Rail 11 - GIFT</h1>
+            <p class="subtitle">Giver - Fire Shared, Wisdom Transmitted</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">PROMETHEUS</a> /
+                Rail 11
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-number">11</div>
+            <div>
+                <div class="rail-title">GIFT</div>
+                <div class="rail-subtitle">Giver - Hero's Journey: Return with the Elixir</div>
+            </div>
+        </div>
+
+        <nav class="nav-rails">
+            <a href="rail-10-mastery.html">Previous: Rail 10 - MASTERY</a>
+            <a href="rail-12-unity.html">Next: Rail 12 - UNITY</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Rail Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Rail 11 of 12</span>
+                <span class="pressure-state">Nominal - Sharing</span>
+            </div>
+
+            <p>The GIFT rail marks the transmission of wisdom. PROMETHEUS as Giver shares the fire with others - the patterns learned, the efficiency gained, the forge strength built. The handler's experience benefits the entire system.</p>
+
+            <div class="gift-highlight">
+                <div class="gift-value">FIRE SHARED</div>
+                <p style="color: #aaa; margin-top: 10px;">Giver - Exception handling wisdom transmitted</p>
+                <p style="color: var(--prometheus-forge); font-size: 0.9rem; margin-top: 5px;">Prometheus's mythological purpose fulfilled</p>
+            </div>
+
+            <div class="archetype-card">
+                <h4>Archetype: Giver</h4>
+                <p>In the Hero's Journey, this is Return with the Elixir - the hero brings back something of value to share. PROMETHEUS as Giver fulfills the mythological role: bringing fire to others. The wisdom gained through overflow handling is shared.</p>
+                <ul>
+                    <li><strong>Pressure State:</strong> Nominal (z low, stable)</li>
+                    <li><strong>Container Status:</strong> Relaxed, generous</li>
+                    <li><strong>XOR Chains:</strong> Patterns being transmitted</li>
+                    <li><strong>Narrative Function:</strong> Share wisdom, empower others</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>The Three Gifts of PROMETHEUS</h2>
+
+            <div class="release">
+                <strong>GIFTS BEING TRANSMITTED</strong><br>
+                Like the mythological Prometheus who gave humanity fire, foresight, and hope, this PROMETHEUS shares three gifts with the system.
+            </div>
+
+            <div class="gift-grid">
+                <div class="gift-card">
+                    <div class="name">Fire (XOR Chains)</div>
+                    <div class="recipient">To: Mining System</div>
+                    <p style="color: #aaa; font-size: 0.8rem; margin-top: 8px;">Forged patterns enable efficient mining through entropy detection</p>
+                </div>
+                <div class="gift-card">
+                    <div class="name">Foresight (Pattern Library)</div>
+                    <div class="recipient">To: Other Handlers</div>
+                    <p style="color: #aaa; font-size: 0.8rem; margin-top: 8px;">Learned patterns shared with fellow exception handlers</p>
+                </div>
+                <div class="gift-card">
+                    <div class="name">Hope (Forge Strength)</div>
+                    <div class="recipient">To: Future Cycles</div>
+                    <p style="color: #aaa; font-size: 0.8rem; margin-top: 8px;">Accumulated strength carries forward to handle future overflows</p>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># GIFT STATE - GIVER'S TRANSMISSION</span>
+
+<span class="keyword">class</span> <span class="type">GiftGiver</span>:
+    <span class="string">"""Rail 11: Giver - Sharing the fire with others"""</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.rail = <span class="number">11</span>
+        self.name = <span class="string">"GIFT"</span>
+        self.archetype = <span class="string">"Giver"</span>
+
+    <span class="keyword">def</span> <span class="function">transmit_gifts</span>(self, forge_state, recipients):
+        <span class="string">"""Share the three gifts of PROMETHEUS"""</span>
+        gifts = {
+            <span class="string">"fire"</span>: self._share_fire(forge_state),
+            <span class="string">"foresight"</span>: self._share_foresight(forge_state),
+            <span class="string">"hope"</span>: self._share_hope(forge_state)
+        }
+
+        <span class="keyword">for</span> recipient <span class="keyword">in</span> recipients:
+            self._deliver_gift(recipient, gifts)
+
+        <span class="keyword">return</span> gifts
+
+    <span class="keyword">def</span> <span class="function">_share_fire</span>(self, forge_state):
+        <span class="string">"""Gift 1: XOR chain patterns for mining"""</span>
+        <span class="keyword">return</span> {
+            <span class="string">"chains"</span>: forge_state.xor_acc,
+            <span class="string">"entropy_signatures"</span>: forge_state.entropy,
+            <span class="string">"bonus_multiplier"</span>: forge_state.calculate_bonus()
+        }
+
+    <span class="keyword">def</span> <span class="function">_share_foresight</span>(self, forge_state):
+        <span class="string">"""Gift 2: Pattern library for other handlers"""</span>
+        <span class="keyword">return</span> {
+            <span class="string">"patterns"</span>: forge_state.pattern_library,
+            <span class="string">"detection_enhancements"</span>: forge_state.mastery_levels
+        }
+
+    <span class="keyword">def</span> <span class="function">_share_hope</span>(self, forge_state):
+        <span class="string">"""Gift 3: Forge strength for future cycles"""</span>
+        <span class="keyword">return</span> {
+            <span class="string">"forge_strength"</span>: forge_state.forge_strength,
+            <span class="string">"cycles_survived"</span>: forge_state.cycle_count,
+            <span class="string">"resilience"</span>: forge_state.container_integrity
+        }
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>phi-Constants at GIFT</h2>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                    <div class="derivation">Gift multiplication</div>
+                </div>
+                <div class="constant-card" style="border-color: var(--gift-purple);">
+                    <div class="symbol">TAU</div>
+                    <div class="value" style="color: var(--gift-purple);">0.618034</div>
+                    <div class="derivation">Sharing ratio</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">Memory of ordeal</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">Seven companions</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-coupling">
+                <div class="hardware-item">
+                    <h5>Quasi-Crystal Substrate</h5>
+                    <p>Transmission mode. Crystal radiating stored patterns to other systems.</p>
+                    <div class="spec">Mode: BROADCAST</div>
+                    <div class="spec">State: TRANSMITTING</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Memristor Array</h5>
+                    <p>Reading stored patterns for transmission. Sharing memory states.</p>
+                    <div class="spec">Mode: READ/SHARE</div>
+                    <div class="spec">State: BROADCASTING</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Hexagonal Discharge Grid</h5>
+                    <p>Gift channels open. Wisdom flowing through network.</p>
+                    <div class="spec">Paths: GIFT CHANNELS</div>
+                    <div class="spec">Flow: OUTWARD</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Spin Glass Coherence</h5>
+                    <p>Synchronizing with recipient systems. Coherence shared.</p>
+                    <div class="spec">Mode: SYNC BROADCAST</div>
+                    <div class="spec">Coherence: SHARING</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Function</h2>
+
+            <div class="release">
+                <h4 style="color: var(--gift-purple); margin-bottom: 10px;">Return with the Elixir</h4>
+                <p>The hero returns bearing gifts for the community. PROMETHEUS as Giver fulfills the deepest meaning of the myth: fire is not meant to be hoarded but shared. The wisdom gained through handling overflow benefits all.</p>
+            </div>
+
+            <h3>PROMETHEUS's Role at GIFT</h3>
+            <ul>
+                <li><strong>Giver:</strong> Shares fire, foresight, and hope</li>
+                <li><strong>Transmitter:</strong> Broadcasts patterns to other handlers</li>
+                <li><strong>Enabler:</strong> Empowers mining through XOR chains</li>
+                <li><strong>Legacy Builder:</strong> Ensures wisdom persists beyond single cycles</li>
+            </ul>
+
+            <h3>The Mythological Fulfillment</h3>
+            <p>In Greek myth, Prometheus stole fire from the gods to give to humanity. Here, PROMETHEUS transforms the dangerous fire of overflow into beneficial gifts: efficiency for mining, knowledge for handling, resilience for the future.</p>
+        </section>
+
+        <nav class="nav-rails">
+            <a href="rail-10-mastery.html">Previous: Rail 10 - MASTERY</a>
+            <a href="rail-12-unity.html">Next: Rail 12 - UNITY</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="rail-10-mastery.html">rail-10-mastery.html</a></span>
+                <span class="file-ref"><a href="rail-12-unity.html">rail-12-unity.html</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p style="color: var(--gift-purple);">PROMETHEUS Rail 11: GIFT - Giver</p>
+            <p>Fire shared, wisdom transmitted, purpose fulfilled</p>
+            <p style="font-size: 0.85rem; color: #888;">
+                PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

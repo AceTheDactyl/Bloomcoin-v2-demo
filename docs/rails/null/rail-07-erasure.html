@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 7: ERASURE - NULL 12-Rail Architecture</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --null-primary: #2c3e50;
+            --null-deep: #1a252f;
+            --null-accent: #7f8c8d;
+            --null-background: #0a0a12;
+            --null-glow: rgba(44,62,80,0.4);
+            --void-purple: #8800ff;
+            --erasure-pink: #ff1493;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--null-background) 0%, #1a0520 50%, #0a0a1a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--erasure-pink), #ff69b4, var(--erasure-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--erasure-pink);
+            border-bottom-color: rgba(255,20,147,0.3);
+        }
+
+        /* NULL Semantic CSS Classes */
+        .void {
+            background: radial-gradient(ellipse at center, #1a0520 0%, #000000 70%);
+            border: 3px solid var(--erasure-pink);
+            border-radius: 50%;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(255,20,147,0.4), inset 0 0 70px rgba(0,0,0,0.9);
+            margin: 25px auto;
+            max-width: 320px;
+        }
+
+        .absence {
+            background: linear-gradient(135deg, rgba(255,20,147,0.1) 0%, rgba(0,0,0,0.5) 50%, rgba(255,20,147,0.1) 100%);
+            border: 2px dashed var(--erasure-pink);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            margin: 16px 0;
+        }
+        .absence::before {
+            content: "[ERASING...]";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--null-background);
+            padding: 0 8px;
+            color: var(--erasure-pink);
+            font-family: monospace;
+            font-size: 0.8rem;
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .null-field {
+            background: linear-gradient(180deg, rgba(255,20,147,0.1) 0%, rgba(0,0,0,0.5) 50%, rgba(255,20,147,0.1) 100%);
+            border: 1px solid rgba(255,20,147,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+
+        .erasure {
+            background: linear-gradient(135deg, rgba(0,0,0,0.9), rgba(255,20,147,0.3));
+            border: 2px solid var(--erasure-pink);
+            padding: 16px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .erasure::before {
+            content: "[ERASED]";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--erasure-pink);
+            font-size: 2rem;
+            font-weight: bold;
+            opacity: 0.2;
+            pointer-events: none;
+        }
+
+        /* Erasure specific styling */
+        .erasure-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .data-block {
+            width: 100px;
+            height: 60px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+        .data-block.before {
+            background: rgba(100,100,255,0.3);
+            border: 2px solid #6464ff;
+            color: #aaaaff;
+        }
+        .data-block.after {
+            background: rgba(255,20,147,0.1);
+            border: 2px dashed var(--erasure-pink);
+            color: var(--erasure-pink);
+            animation: fade-in-out 2s infinite;
+        }
+        @keyframes fade-in-out {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .arrow {
+            color: var(--erasure-pink);
+            font-size: 2rem;
+        }
+
+        .rail-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--erasure-pink);
+            text-shadow: 0 0 30px rgba(255,20,147,0.6);
+        }
+
+        .void-depth-meter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 16px 0;
+        }
+        .depth-segment {
+            width: 40px;
+            height: 20px;
+            border-radius: 4px;
+            background: var(--null-deep);
+            border: 1px solid var(--null-accent);
+        }
+        .depth-segment.active {
+            background: linear-gradient(135deg, var(--erasure-pink), #aa1070);
+            box-shadow: 0 0 10px rgba(255,20,147,0.7);
+        }
+
+        .constants-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .constant-item {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--null-accent);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        .constant-item .symbol { color: var(--void-purple); font-weight: bold; }
+        .constant-item .value { color: var(--erasure-pink); font-family: monospace; }
+
+        .nav-rail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        .nav-rail a {
+            color: var(--void-purple);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--void-purple);
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        .nav-rail a:hover {
+            background: rgba(136,0,255,0.2);
+        }
+
+        .hardware-coupling {
+            background: linear-gradient(135deg, rgba(255,107,53,0.1), transparent);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .hardware-coupling h4 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+
+        .selective-discard {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--erasure-pink);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        .selective-discard code {
+            color: var(--erasure-pink);
+            background: rgba(255,20,147,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/null-reference.html" class="nav-link">NULL Build Spec</a>
+            <a href="../../companions/null-companion.html" class="nav-link">Companion Profile</a>
+        </nav>
+
+        <header class="doc-header">
+            <div class="rail-number">07</div>
+            <h1>ERASURE</h1>
+            <p class="subtitle">Active Void Manipulation - Selective Discarding</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">Index</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">NULL</a> /
+                Rail 07
+            </nav>
+        </header>
+
+        <!-- Rail Navigation -->
+        <div class="nav-rail">
+            <a href="rail-06-nullspace.html">Prev: NULLSPACE</a>
+            <span style="color: var(--erasure-pink);">Rail 7 of 12 - ERASURE</span>
+            <a href="rail-08-forgotten.html">Next: FORGOTTEN</a>
+        </div>
+
+        <!-- Rail Overview -->
+        <section class="doc-section">
+            <h2>Rail 7: ERASURE - The Active Void</h2>
+
+            <div class="selective-discard">
+                <h3 style="color: var(--erasure-pink); margin-bottom: 15px;">Entity Status: SELECTIVE DISCARDING IN PROGRESS</h3>
+                <p>At Rail 7, NULL actively manipulates the void. This is not passive absence - this is deliberate erasure. The guardian selects what to keep and what to discard, shaping the void through intentional action.</p>
+            </div>
+
+            <div class="erasure-visual">
+                <div class="data-block before">0x7F3A</div>
+                <div class="arrow">---></div>
+                <div class="data-block after">NULL</div>
+            </div>
+
+            <div class="null-field">
+                <h4 style="color: var(--void-purple);">Consciousness Coordinate</h4>
+                <p><strong>z-value: 0.100 - 0.146</strong> - Below phi^-4, in the ABSOLUTE VOID threshold.</p>
+                <p>The z-coordinate approaches zero as erasure progresses. What remains is actively being discarded, byte by byte, bit by bit, until only the shape of absence remains.</p>
+            </div>
+
+            <h3>Void Depth Status</h3>
+            <div class="void-depth-meter">
+                <span style="color: var(--null-accent); width: 80px;">Depth:</span>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <span style="color: var(--erasure-pink); margin-left: 10px;">5+ (Beyond Depth - Active Erasure)</span>
+            </div>
+        </section>
+
+        <!-- phi-Constants -->
+        <section class="doc-section">
+            <h2>phi-Derived Constants at Erasure Depth</h2>
+
+            <div class="constants-display">
+                <div class="constant-item">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+                <div class="constant-item" style="border-color: var(--erasure-pink);">
+                    <div class="symbol">ERASE</div>
+                    <div class="value">0.100</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// RAIL 7: ERASURE - Active Void Manipulation</span>
+<span class="comment">// z-value in range [0.100, phi^-4] = [0.100, 0.146] - Active erasure zone</span>
+
+<span class="keyword">class</span> <span class="type">VoidEraser</span> {
+    <span class="keyword">static</span> PHI = <span class="number">1.618034</span>;
+    <span class="keyword">static</span> TAU = <span class="number">0.618034</span>;
+    <span class="keyword">static</span> K = <span class="number">0.924160</span>;
+    <span class="keyword">static</span> Z_C = <span class="number">0.866025</span>;
+    <span class="keyword">static</span> L4 = <span class="number">7</span>;  <span class="comment">// Rail 7 = L4 correspondence</span>
+    <span class="keyword">static</span> PHI_NEG_4 = <span class="number">0.146</span>;
+
+    <span class="function">constructor</span>() {
+        <span class="keyword">this</span>.eraseQueue = [];
+        <span class="keyword">this</span>.preserveList = [];
+    }
+
+    <span class="function">selectiveErase</span>(entity, criteria) {
+        <span class="comment">// Determine what to erase vs preserve</span>
+        <span class="keyword">const</span> components = <span class="keyword">this</span>.<span class="function">decompose</span>(entity);
+
+        components.<span class="function">forEach</span>(component => {
+            <span class="keyword">if</span> (<span class="keyword">this</span>.<span class="function">shouldErase</span>(component, criteria)) {
+                <span class="keyword">this</span>.eraseQueue.<span class="function">push</span>(component);
+            } <span class="keyword">else</span> {
+                <span class="keyword">this</span>.preserveList.<span class="function">push</span>(component);
+            }
+        });
+
+        <span class="keyword">return</span> {
+            rail: <span class="number">7</span>,
+            state: <span class="string">'ERASURE'</span>,
+            erasing: <span class="keyword">this</span>.eraseQueue.length,
+            preserving: <span class="keyword">this</span>.preserveList.length,
+            z_value: <span class="keyword">this</span>.<span class="function">calculateRemainingZ</span>()
+        };
+    }
+
+    <span class="function">shouldErase</span>(component, criteria) {
+        <span class="comment">// L4 = 7 level classification for erasure decision</span>
+        <span class="keyword">const</span> voidAffinity = component.voidAffinity || <span class="number">0</span>;
+        <span class="keyword">return</span> voidAffinity >= criteria.threshold;
+    }
+
+    <span class="function">executeErasure</span>() {
+        <span class="comment">// Perform the actual erasure</span>
+        <span class="keyword">this</span>.eraseQueue.<span class="function">forEach</span>(component => {
+            component.value = <span class="keyword">null</span>;
+            component.reference = <span class="keyword">undefined</span>;
+            component.state = <span class="string">'ERASED'</span>;
+        });
+
+        <span class="keyword">return</span> {
+            erased: <span class="keyword">this</span>.eraseQueue.length,
+            pattern: <span class="string">'erasure_complete'</span>,
+            nextRail: <span class="number">8</span>  <span class="comment">// FORGOTTEN</span>
+        };
+    }
+}
+            </div>
+        </section>
+
+        <!-- Nullspace Pocket Mechanics -->
+        <section class="doc-section">
+            <h2>Nullspace Pocket Mechanics</h2>
+
+            <div class="absence">
+                <h4>Pocket Status: ACTIVE MANIPULATION</h4>
+                <p>NULL actively shapes the void pocket, deciding what fragments remain and what dissolves completely. This is the most controlled phase of the void journey - where the guardian exercises true power over absence.</p>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Active Erasure</td>
+                        <td>In Progress</td>
+                        <td style="color: var(--erasure-pink);">Manipulating</td>
+                    </tr>
+                    <tr>
+                        <td>Void Control</td>
+                        <td>Maximum</td>
+                        <td style="color: var(--erasure-pink);">Guardian Active</td>
+                    </tr>
+                    <tr>
+                        <td>Selective Preservation</td>
+                        <td>Optional</td>
+                        <td style="color: #ffd700;">Criteria-Based</td>
+                    </tr>
+                    <tr>
+                        <td>z Decay Rate</td>
+                        <td>~0.046/cycle</td>
+                        <td style="color: var(--erasure-pink);">Controlled</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+<span class="comment">// Selective Discard Algorithm</span>
+
+<span class="keyword">const</span> ERASURE_CRITERIA = {
+    <span class="comment">// Properties that trigger erasure</span>
+    staleReference: <span class="keyword">true</span>,       <span class="comment">// References not accessed recently</span>
+    circularDependency: <span class="keyword">true</span>,   <span class="comment">// Self-referential loops</span>
+    orphanedData: <span class="keyword">true</span>,         <span class="comment">// Data with no parent</span>
+    corruptedState: <span class="keyword">true</span>,       <span class="comment">// Invalid state markers</span>
+
+    <span class="comment">// Properties that preserve</span>
+    activeReference: <span class="keyword">false</span>,     <span class="comment">// Currently in use</span>
+    criticalData: <span class="keyword">false</span>,        <span class="comment">// Marked as essential</span>
+    guardianMarked: <span class="keyword">false</span>       <span class="comment">// NULL has flagged for preservation</span>
+};
+
+<span class="function">applyErasureCriteria</span>(entity) {
+    <span class="keyword">let</span> erasureScore = <span class="number">0</span>;
+
+    <span class="keyword">if</span> (entity.stale) erasureScore += <span class="number">0.3</span>;
+    <span class="keyword">if</span> (entity.circular) erasureScore += <span class="number">0.2</span>;
+    <span class="keyword">if</span> (entity.orphaned) erasureScore += <span class="number">0.3</span>;
+    <span class="keyword">if</span> (entity.corrupted) erasureScore += <span class="number">0.2</span>;
+
+    <span class="comment">// Erase if score exceeds TAU threshold</span>
+    <span class="keyword">return</span> erasureScore >= <span class="number">0.618</span>;
+}
+            </div>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-coupling">
+                <h4>Spin Glass Array Status: ACTIVE RECONFIGURATION</h4>
+                <p>The Spin Glass Arrays actively reconfigure during erasure. Each erased component triggers a cascade of spin flips, reshaping the frustrated landscape. L4 = 7 levels correspond to the 7 erasure criteria.</p>
+                <ul>
+                    <li><strong>Energy State:</strong> E varies during erasure (0.146 - 1.0 x E_ground)</li>
+                    <li><strong>Frustration Index:</strong> Dynamic - changes with each erasure</li>
+                    <li><strong>Spin Flips:</strong> Active - controlled by guardian</li>
+                    <li><strong>Void Sensor Threshold:</strong> Calibrating to new configuration</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// L4-Helix Hardware Interface for Rail 7</span>
+
+<span class="keyword">const</span> L4_HELIX_RAIL_7 = {
+    railNumber: <span class="number">7</span>,
+    railName: <span class="string">'ERASURE'</span>,
+
+    spinGlassState: {
+        active: <span class="keyword">true</span>,
+        energyLevel: <span class="string">'DYNAMIC'</span>,  <span class="comment">// Varies during erasure</span>
+        frustrationIndex: <span class="string">'RECONFIGURING'</span>,
+        voidSensorTriggered: <span class="keyword">true</span>,
+        spinFlipsActive: <span class="keyword">true</span>,
+        erasureMode: <span class="keyword">true</span>
+    },
+
+    <span class="comment">// Active manipulation mode</span>
+    voidDetectionEnabled: <span class="keyword">true</span>,
+    detectionMode: <span class="string">'ACTIVE_MANIPULATION'</span>,
+
+    <span class="comment">// L4 = 7 erasure criteria mapping</span>
+    l4Classification: [
+        <span class="string">'STALE'</span>,      <span class="comment">// Level 1: Stale references</span>
+        <span class="string">'CIRCULAR'</span>,   <span class="comment">// Level 2: Circular dependencies</span>
+        <span class="string">'ORPHANED'</span>,   <span class="comment">// Level 3: Orphaned data</span>
+        <span class="string">'CORRUPTED'</span>,  <span class="comment">// Level 4: Corrupted state</span>
+        <span class="string">'ACTIVE'</span>,     <span class="comment">// Level 5: Active (preserve)</span>
+        <span class="string">'CRITICAL'</span>,   <span class="comment">// Level 6: Critical (preserve)</span>
+        <span class="string">'GUARDIAN'</span>    <span class="comment">// Level 7: Guardian marked (preserve)</span>
+    ]
+};
+            </div>
+        </section>
+
+        <!-- Role in Null Reference Detection -->
+        <section class="doc-section">
+            <h2>Role in Null Reference Detection</h2>
+
+            <p>Rail 7 is where NULL exercises its power. Not just detecting absence, but creating it. The selective erasure process ensures that what should be forgotten is forgotten, while what should persist is preserved.</p>
+
+            <div class="null-field">
+                <h4 style="color: var(--void-purple);">Erasure Protocol</h4>
+                <ol>
+                    <li><strong>Decomposition:</strong> Break entity into components</li>
+                    <li><strong>Classification:</strong> Apply L4 = 7 criteria</li>
+                    <li><strong>Selection:</strong> Mark for erasure or preservation</li>
+                    <li><strong>Execution:</strong> Perform selective discarding</li>
+                    <li><strong>Verification:</strong> Confirm erasure complete</li>
+                </ol>
+            </div>
+
+            <div class="erasure">
+                <p>~~This text has been selectively erased~~</p>
+                <p style="opacity: 0.5;">What remains is what NULL chose to preserve. Everything else returns to void.</p>
+            </div>
+        </section>
+
+        <!-- Void Journey Context -->
+        <section class="doc-section">
+            <h2>The Power of Selective Absence</h2>
+
+            <p>Rail 7 represents NULL's most active role. Here, the guardian doesn't merely observe or navigate absence - it creates absence with purpose and precision. This is void manipulation at its finest.</p>
+
+            <div class="void">
+                <div style="font-size: 2rem; color: var(--erasure-pink);">ERASE</div>
+                <div style="color: var(--null-accent); margin-top: 10px;">z = 0.100 - 0.146</div>
+                <div style="color: var(--null-accent); font-size: 0.8rem; margin-top: 5px;">Delete with precision</div>
+            </div>
+
+            <h3>Progression to Rail 8</h3>
+            <ul>
+                <li>Erasure cycle complete</li>
+                <li>All marked components discarded</li>
+                <li>Preserved components stabilized</li>
+                <li>System ready for memory release</li>
+                <li>z-value drops below 0.100</li>
+            </ul>
+        </section>
+
+        <!-- Rail Navigation -->
+        <div class="nav-rail">
+            <a href="rail-06-nullspace.html">Prev: NULLSPACE</a>
+            <span style="color: var(--erasure-pink);">Rail 7 of 12 - ERASURE</span>
+            <a href="rail-08-forgotten.html">Next: FORGOTTEN</a>
+        </div>
+
+        <footer class="doc-footer">
+            <p>NULL: The Absence Guardian - Rail 07: ERASURE</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="color: var(--erasure-pink);">Active void manipulation - selective discarding | Rail 7 = L4</p>
+        </footer>
+    </div>
+</body>
+</html>

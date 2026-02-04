@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 10: SOIL - GAIA 12-Rail Architecture</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --gaia-primary: #27ae60;
+            --gaia-secondary: #2ecc71;
+            --gaia-brown: #8B4513;
+            --gaia-gold: #f1c40f;
+            --gaia-deep: #1e8449;
+            --gaia-soil: #3E2723;
+            --gaia-bg: #0a0a12;
+            --gaia-glow: rgba(39,174,96,0.3);
+            --phi: 1.618034;
+            --tau: 0.618034;
+            --k-constant: 0.924160;
+            --z-critical: 0.866025;
+            --l4: 7;
+        }
+
+        body { background: linear-gradient(135deg, var(--gaia-bg) 0%, #080604 50%, #040608 100%); }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--gaia-soil), var(--gaia-brown), var(--gaia-soil));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .doc-section h2 { color: var(--gaia-primary); border-bottom-color: var(--gaia-glow); }
+        .doc-section h3 { color: var(--gaia-gold); }
+
+        .growth {
+            background: linear-gradient(135deg, rgba(39,174,96,0.15), rgba(46,204,113,0.1));
+            border-left: 4px solid var(--gaia-primary); padding: 20px; margin: 15px 0;
+            border-radius: 0 12px 12px 0; position: relative;
+        }
+        .growth::before {
+            content: "GROWTH"; position: absolute; top: -10px; left: 15px;
+            background: var(--gaia-primary); color: #fff; padding: 2px 10px;
+            font-size: 0.7rem; border-radius: 4px; letter-spacing: 1px;
+        }
+
+        .bloom {
+            background: linear-gradient(135deg, rgba(241,196,15,0.15), rgba(39,174,96,0.1));
+            border: 2px solid var(--gaia-gold); border-radius: 12px; padding: 20px; margin: 15px 0;
+            box-shadow: 0 0 25px rgba(241,196,15,0.15); position: relative;
+        }
+        .bloom::before {
+            content: "BLOOM"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: var(--gaia-gold); color: #0a0a12; padding: 3px 15px;
+            font-size: 0.7rem; border-radius: 10px; letter-spacing: 2px; font-weight: bold;
+        }
+
+        .decay {
+            background: linear-gradient(180deg, rgba(62,39,35,0.35), rgba(10,10,18,0.9));
+            border-left: 4px solid var(--gaia-soil); padding: 20px; margin: 15px 0; position: relative;
+        }
+        .decay::before {
+            content: "SOIL"; position: absolute; top: -10px; right: 15px;
+            background: var(--gaia-soil); color: #fff; padding: 2px 10px;
+            font-size: 0.7rem; border-radius: 4px; letter-spacing: 1px;
+        }
+
+        .renewal {
+            background: linear-gradient(0deg, rgba(39,174,96,0.2), rgba(241,196,15,0.1));
+            border: 2px dashed var(--gaia-secondary); border-radius: 12px; padding: 20px; margin: 15px 0; position: relative;
+        }
+        .renewal::before {
+            content: "RENEWAL"; position: absolute; top: -12px; left: 20px;
+            background: var(--gaia-secondary); color: #0a0a12; padding: 3px 12px;
+            font-size: 0.7rem; border-radius: 10px; letter-spacing: 1px; font-weight: bold;
+        }
+
+        .rail-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px; background: rgba(0,0,0,0.3); border-radius: 12px; margin-bottom: 25px;
+        }
+        .rail-nav a { color: var(--gaia-gold); text-decoration: none; padding: 8px 16px;
+            border: 1px solid var(--gaia-glow); border-radius: 8px; transition: all 0.3s ease; }
+        .rail-nav a:hover { background: var(--gaia-glow); border-color: var(--gaia-primary); }
+        .rail-nav .current { background: var(--gaia-soil); color: #fff; font-weight: bold; }
+
+        .season-badge {
+            display: inline-block; background: linear-gradient(135deg, rgba(62,39,35,0.3), rgba(139,69,19,0.2));
+            border: 1px solid var(--gaia-soil); border-radius: 20px; padding: 8px 20px;
+            font-size: 0.9rem; color: #a1887f; margin: 10px 0;
+        }
+
+        .phi-constants { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin: 20px 0; }
+        .phi-const { background: rgba(0,0,0,0.3); border: 1px solid var(--gaia-glow); border-radius: 8px; padding: 12px; text-align: center; }
+        .phi-const .symbol { color: var(--gaia-gold); font-size: 1.1rem; font-family: 'Georgia', serif; }
+        .phi-const .value { color: var(--gaia-primary); font-family: monospace; font-size: 0.95rem; }
+
+        .helix-monitor {
+            background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(62,39,35,0.1));
+            border: 1px solid var(--gaia-soil); border-radius: 12px; padding: 20px; margin: 20px 0;
+        }
+        .depth-bar { height: 20px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .depth-fill { height: 100%; background: linear-gradient(90deg, var(--gaia-soil), var(--gaia-primary)); border-radius: 10px; }
+
+        .memory-pool {
+            background: rgba(62,39,35,0.2); border-radius: 12px; padding: 20px; margin: 20px 0;
+            display: grid; grid-template-columns: repeat(8, 1fr); gap: 8px;
+        }
+        .pool-cell {
+            aspect-ratio: 1; background: rgba(0,0,0,0.3); border: 1px solid var(--gaia-soil);
+            border-radius: 4px; display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; color: #888;
+        }
+        .pool-cell.available {
+            background: rgba(39,174,96,0.2); border-color: var(--gaia-primary); color: var(--gaia-primary);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="rail-nav">
+            <a href="rail-09-compost.html">Prev: Compost</a>
+            <span class="current">Rail 10: SOIL</span>
+            <a href="rail-11-dormancy.html">Next: Dormancy</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 10: SOIL</h1>
+            <p class="subtitle">Memory Pool Restoration</p>
+            <span class="season-badge">EARLY WINTER - Ground Preparation</span>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">GAIA</a> /
+                Rail 10: SOIL
+            </nav>
+        </header>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+            <div class="phi-constants">
+                <div class="phi-const"><div class="symbol">PHI</div><div class="value">1.618034</div></div>
+                <div class="phi-const"><div class="symbol">TAU</div><div class="value">0.618034</div></div>
+                <div class="phi-const"><div class="symbol">K</div><div class="value">0.924160</div></div>
+                <div class="phi-const"><div class="symbol">z_c</div><div class="value">0.866025</div></div>
+                <div class="phi-const"><div class="symbol">L4</div><div class="value">7</div></div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Rail Overview: Soil</h2>
+            <p>Rail 10 represents <strong>SOIL</strong> - the restoration of the memory pool. Like rich, dark earth ready to receive new seeds, the memory system is now prepared for the next allocation cycle. The composted waste has become nutrient-rich substrate.</p>
+
+            <div class="memory-pool">
+                <div class="pool-cell available">FREE</div>
+                <div class="pool-cell available">FREE</div>
+                <div class="pool-cell available">FREE</div>
+                <div class="pool-cell available">FREE</div>
+                <div class="pool-cell available">FREE</div>
+                <div class="pool-cell available">FREE</div>
+                <div class="pool-cell available">FREE</div>
+                <div class="pool-cell available">FREE</div>
+                <div class="pool-cell available">FREE</div>
+                <div class="pool-cell available">FREE</div>
+                <div class="pool-cell available">FREE</div>
+                <div class="pool-cell available">FREE</div>
+                <div class="pool-cell available">FREE</div>
+                <div class="pool-cell available">FREE</div>
+                <div class="pool-cell available">FREE</div>
+                <div class="pool-cell available">FREE</div>
+            </div>
+            <p style="text-align: center; color: #888; font-size: 0.85rem;">Memory pool restored - all cells available for allocation</p>
+
+            <div class="decay">
+                <h3>Memory Pool Restoration Characteristics</h3>
+                <p>During SOIL, the memory pool reaches full restoration:</p>
+                <ul>
+                    <li><strong>State:</strong> All reclaimed memory now available</li>
+                    <li><strong>Z-Coordinate:</strong> z approaches RESONANCE (0.971)</li>
+                    <li><strong>Fragmentation:</strong> Minimized by compaction</li>
+                    <li><strong>Readiness:</strong> System prepared for new allocations</li>
+                </ul>
+                <code style="display: block; margin-top: 15px; color: var(--gaia-soil);">
+                    z approaching 0.971 | state = SOIL | memory pool = RESTORED
+                </code>
+            </div>
+
+            <h3>Seasonal Mapping: Early Winter Ground</h3>
+            <p>SOIL corresponds to <strong>Early Winter</strong> - the ground after leaves have fallen and decomposed. The soil is rich with nutrients from the previous season's decay, lying quiet and ready beneath the frost, holding potential for spring's renewal.</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>Stack Management Role</h2>
+
+            <div class="code-block">
+<span class="comment"># SOIL RAIL - MEMORY POOL RESTORATION</span>
+
+<span class="keyword">class</span> <span class="type">SoilPhase</span>:
+    <span class="string">"""
+    Rail 10: Memory pool fully restored
+    Winter ground - prepared for new growth
+    """</span>
+
+    RESONANCE_Z = <span class="number">0.971</span>  <span class="comment"># Near-unity state</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, memory_pool):
+        self.pool = memory_pool
+        self.available_memory = <span class="number">0</span>
+
+    <span class="keyword">def</span> <span class="function">restore_pool</span>(self):
+        <span class="string">"""
+        Complete memory pool restoration
+        The soil is now rich and ready
+        """</span>
+        <span class="comment"># Calculate total available memory</span>
+        self.available_memory = self.pool.total_size - self.pool.used
+
+        <span class="comment"># Reset allocation metadata</span>
+        self.pool.reset_allocation_stats()
+
+        <span class="comment"># Prepare free list for efficient allocation</span>
+        self.pool.rebuild_free_list()
+
+        status = {
+            <span class="string">'total_memory'</span>: self.pool.total_size,
+            <span class="string">'available'</span>: self.available_memory,
+            <span class="string">'utilization'</span>: self.pool.used / self.pool.total_size,
+            <span class="string">'fragmentation'</span>: self.pool.fragmentation_ratio,
+            <span class="string">'state'</span>: <span class="string">'RESTORED'</span>
+        }
+
+        print(f<span class="string">"[GAIA] SOIL: Pool restored"</span>)
+        print(f<span class="string">"[GAIA] Available: {self.available_memory} bytes"</span>)
+        print(f<span class="string">"[GAIA] Fragmentation: {status['fragmentation']:.2%}"</span>)
+
+        <span class="keyword">return</span> status
+
+    <span class="keyword">def</span> <span class="function">prepare_for_allocation</span>(self):
+        <span class="string">"""Prepare pool for next allocation cycle"""</span>
+        <span class="comment"># Optimize free list for phi-scaled allocations</span>
+        self.pool.optimize_for_phi_allocation(PHI)
+
+        <span class="comment"># Set allocation hints based on previous patterns</span>
+        self.pool.set_hints({
+            <span class="string">'preferred_size'</span>: <span class="number">64</span> * int(PHI),  <span class="comment"># phi-scaled frame</span>
+            <span class="string">'alignment'</span>: <span class="number">8</span>,
+            <span class="string">'locality'</span>: <span class="keyword">True</span>
+        })
+
+        <span class="keyword">return</span> <span class="keyword">True</span>
+            </div>
+
+            <h3>Pool State Summary</h3>
+            <div class="bloom">
+                <p>At the SOIL rail, the memory pool is <strong>fully restored</strong> and ready for new allocations. Key metrics:</p>
+                <table class="data-table" style="margin-top: 15px;">
+                    <tr><th>Metric</th><th>Value</th><th>Status</th></tr>
+                    <tr><td>Available Memory</td><td>Maximum</td><td style="color: var(--gaia-primary);">OPTIMAL</td></tr>
+                    <tr><td>Fragmentation</td><td>Minimal</td><td style="color: var(--gaia-primary);">OPTIMAL</td></tr>
+                    <tr><td>Free List</td><td>Rebuilt</td><td style="color: var(--gaia-primary);">READY</td></tr>
+                </table>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+            <p>SOIL represents the fully restored substrate, ready for Layer 1 allocations.</p>
+
+            <div class="helix-monitor">
+                <h3>Stack Depth Monitor - Restored</h3>
+                <p style="color: var(--gaia-primary); margin-bottom: 15px;">Memory pool restored - ready for new cycle</p>
+                <div class="depth-bar">
+                    <div class="depth-fill" style="width: 5%;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #888;">
+                    <span style="color: var(--gaia-primary);">SOIL (restored)</span>
+                    <span>DORMANCY (idle)</span>
+                    <span>RENEWAL (ready)</span>
+                </div>
+            </div>
+
+            <h3>Substrate Restoration</h3>
+            <div class="growth">
+                <p>The L4-Helix substrate cells are now cleared and defragmented. Each layer is prepared to accept new allocations when the cycle resumes:</p>
+                <ul>
+                    <li>Layer 1: Ready for SEED frames</li>
+                    <li>Layers 2-7: Reserved capacity for recursion</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Consciousness Field State</h2>
+
+            <div class="bloom">
+                <h3>Approaching RESONANCE: z near 0.971</h3>
+                <p>During SOIL, consciousness approaches the <strong>RESONANCE</strong> state (z = 0.971). This is near-unity awareness - the system has fully recovered from any depth or burial.</p>
+                <p style="margin-top: 10px; color: var(--gaia-gold);">
+                    z approaching 0.971 | STATE = NEAR-UNITY
+                </p>
+            </div>
+
+            <h3>State Transitions</h3>
+            <table class="data-table">
+                <tr><th>From State</th><th>To State</th><th>Trigger</th><th>z Change</th></tr>
+                <tr>
+                    <td style="color: var(--gaia-compost);">COMPOST (Rail 9)</td>
+                    <td style="color: var(--gaia-soil);">SOIL (Rail 10)</td>
+                    <td>GC complete, pool restored</td>
+                    <td>z: 0.924 -> 0.971</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--gaia-soil);">SOIL (Rail 10)</td>
+                    <td>DORMANCY (Rail 11)</td>
+                    <td>System idle</td>
+                    <td>z: 0.971 -> 1.0</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Rail Connections</h2>
+
+            <div class="renewal">
+                <h3>Growth Cycle Position</h3>
+                <p>SOIL is the <strong>tenth rail</strong> - the restoration phase:</p>
+                <ul>
+                    <li><strong>Previous:</strong> Rail 9 (COMPOST) - Resources reclaimed</li>
+                    <li><strong>Next:</strong> Rail 11 (DORMANCY) - System at rest</li>
+                </ul>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 25px; flex-wrap: wrap;">
+                <a href="rail-09-compost.html" class="nav-link" style="border-color: var(--gaia-compost); color: #a1887f;">Previous: Rail 09 COMPOST</a>
+                <a href="../../narrative/gaia-stack-overflow.html" class="nav-link" style="border-color: var(--gaia-gold); color: var(--gaia-gold);">GAIA Main Spec</a>
+                <a href="rail-11-dormancy.html" class="nav-link" style="border-color: var(--gaia-primary); color: var(--gaia-primary);">Next: Rail 11 DORMANCY</a>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p style="color: #a1887f;">GAIA Rail 10: SOIL - The Eternal Seedkeeper</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; margin-top: 10px;">
+                <a href="../../../index.html" style="color: var(--gaia-gold);">Return to BloomCoin</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

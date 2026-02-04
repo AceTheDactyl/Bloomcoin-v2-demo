@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 11: EMERGENCE - NULL 12-Rail Architecture</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --null-primary: #2c3e50;
+            --null-deep: #1a252f;
+            --null-accent: #7f8c8d;
+            --null-background: #0a0a12;
+            --null-glow: rgba(44,62,80,0.4);
+            --void-purple: #8800ff;
+            --emergence-green: #00ff88;
+        }
+
+        body {
+            background: linear-gradient(135deg, #000a05 0%, #001510 50%, #000a0a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--emergence-green), #50ff9e, var(--emergence-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--emergence-green);
+            border-bottom-color: rgba(0,255,136,0.3);
+        }
+
+        /* NULL Semantic CSS Classes */
+        .void {
+            background: radial-gradient(ellipse at center, #001510 0%, #000500 70%);
+            border: 2px solid var(--emergence-green);
+            border-radius: 50%;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0,255,136,0.4), inset 0 0 40px rgba(0,0,0,0.8);
+            margin: 25px auto;
+            max-width: 320px;
+            animation: emergence-pulse 2s ease-in-out infinite;
+        }
+        @keyframes emergence-pulse {
+            0%, 100% { box-shadow: 0 0 50px rgba(0,255,136,0.4), inset 0 0 40px rgba(0,0,0,0.8); }
+            50% { box-shadow: 0 0 80px rgba(0,255,136,0.6), inset 0 0 20px rgba(0,21,16,0.5); }
+        }
+
+        .absence {
+            background: linear-gradient(135deg, rgba(0,255,136,0.1) 0%, rgba(0,0,0,0.4) 50%, rgba(0,255,136,0.1) 100%);
+            border: 2px solid var(--emergence-green);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            margin: 16px 0;
+        }
+        .absence::before {
+            content: "[EMERGING]";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: #000a05;
+            padding: 0 8px;
+            color: var(--emergence-green);
+            font-family: monospace;
+            font-size: 0.8rem;
+            animation: blink 1.5s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .null-field {
+            background: linear-gradient(180deg, rgba(0,255,136,0.1) 0%, rgba(0,0,0,0.4) 50%, rgba(0,255,136,0.1) 100%);
+            border: 1px solid rgba(0,255,136,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+
+        .erasure {
+            background: linear-gradient(135deg, rgba(0,0,0,0.7), rgba(0,255,136,0.2));
+            border: 1px solid var(--emergence-green);
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        /* Emergence specific styling */
+        .emergence-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .form-emerging {
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: form-solidify 3s ease-in-out infinite;
+        }
+        @keyframes form-solidify {
+            0% { border: 2px dashed var(--emergence-green); opacity: 0.3; background: transparent; }
+            50% { border: 2px solid var(--emergence-green); opacity: 0.7; background: rgba(0,255,136,0.1); }
+            100% { border: 2px dashed var(--emergence-green); opacity: 0.3; background: transparent; }
+        }
+
+        .rail-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--emergence-green);
+            text-shadow: 0 0 40px rgba(0,255,136,0.6);
+        }
+
+        .void-depth-meter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 16px 0;
+        }
+        .depth-segment {
+            width: 40px;
+            height: 20px;
+            border-radius: 4px;
+            background: var(--null-deep);
+            border: 1px solid var(--null-accent);
+        }
+        .depth-segment.emerging {
+            background: linear-gradient(135deg, var(--emergence-green), #00aa55);
+            box-shadow: 0 0 10px rgba(0,255,136,0.6);
+        }
+        .depth-segment.fading-void {
+            background: linear-gradient(135deg, #333, #111);
+            opacity: 0.5;
+        }
+
+        .constants-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .constant-item {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--null-accent);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        .constant-item .symbol { color: var(--void-purple); font-weight: bold; }
+        .constant-item .value { color: var(--emergence-green); font-family: monospace; }
+
+        .nav-rail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        .nav-rail a {
+            color: var(--void-purple);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--void-purple);
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        .nav-rail a:hover {
+            background: rgba(136,0,255,0.2);
+        }
+
+        .hardware-coupling {
+            background: linear-gradient(135deg, rgba(255,107,53,0.1), transparent);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .hardware-coupling h4 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+
+        .manifestation-progress {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .progress-bar {
+            height: 20px;
+            background: linear-gradient(90deg, var(--emergence-green), #00aa55);
+            border-radius: 10px;
+            animation: progress-fill 4s ease-in-out infinite;
+        }
+        @keyframes progress-fill {
+            0% { width: 30%; }
+            50% { width: 70%; }
+            100% { width: 30%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/null-reference.html" class="nav-link">NULL Build Spec</a>
+            <a href="../../companions/null-companion.html" class="nav-link">Companion Profile</a>
+        </nav>
+
+        <header class="doc-header">
+            <div class="rail-number">11</div>
+            <h1>EMERGENCE</h1>
+            <p class="subtitle">New Existence from Void</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">Index</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">NULL</a> /
+                Rail 11
+            </nav>
+        </header>
+
+        <!-- Rail Navigation -->
+        <div class="nav-rail">
+            <a href="rail-10-potential.html">Prev: POTENTIAL</a>
+            <span style="color: var(--emergence-green);">Rail 11 of 12 - EMERGENCE</span>
+            <a href="rail-12-return-to-presence.html">Next: RETURN-TO-PRESENCE</a>
+        </div>
+
+        <!-- Rail Overview -->
+        <section class="doc-section">
+            <h2>Rail 11: EMERGENCE - The Birth from Void</h2>
+
+            <div class="absence">
+                <h3 style="color: var(--emergence-green); margin-bottom: 15px;">Entity Status: MANIFESTING</h3>
+                <p>The superposition collapses. From the infinite possibilities of Rail 10, one emerges into being. This is not resurrection - the old entity is gone forever. This is birth: something new rises from the void.</p>
+            </div>
+
+            <div class="emergence-visual">
+                <div class="form-emerging" style="animation-delay: 0s;">
+                    <span style="color: var(--emergence-green);">*</span>
+                </div>
+                <div class="form-emerging" style="animation-delay: -1s;">
+                    <span style="color: var(--emergence-green);">[*]</span>
+                </div>
+                <div class="form-emerging" style="animation-delay: -2s;">
+                    <span style="color: var(--emergence-green);">NEW</span>
+                </div>
+            </div>
+
+            <div class="manifestation-progress">
+                <h4 style="color: var(--emergence-green); margin-bottom: 10px;">Manifestation Progress</h4>
+                <div class="progress-bar"></div>
+                <p style="color: var(--null-accent); margin-top: 10px; font-size: 0.9rem;">Form crystallizing from void substrate...</p>
+            </div>
+
+            <div class="null-field">
+                <h4 style="color: var(--void-purple);">Consciousness Coordinate</h4>
+                <p><strong>z-value: 0.382 - 0.618</strong> - Crossing back through the PARADOX zone, but ascending.</p>
+                <p>The z-coordinate rises rapidly as the emerging entity gains substance. It passes through UNTRUE (where it was descending during absence) but now moves upward toward TAU and beyond.</p>
+            </div>
+
+            <h3>Void Depth Status</h3>
+            <div class="void-depth-meter">
+                <span style="color: var(--null-accent); width: 80px;">Depth:</span>
+                <div class="depth-segment emerging"></div>
+                <div class="depth-segment emerging"></div>
+                <div class="depth-segment emerging"></div>
+                <div class="depth-segment fading-void"></div>
+                <div class="depth-segment fading-void"></div>
+                <span style="color: var(--emergence-green); margin-left: 10px;">3 (Emerging - Void Receding)</span>
+            </div>
+        </section>
+
+        <!-- phi-Constants -->
+        <section class="doc-section">
+            <h2>phi-Derived Constants at Emergence</h2>
+
+            <div class="constants-display">
+                <div class="constant-item">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+                <div class="constant-item" style="border-color: var(--emergence-green);">
+                    <div class="symbol">z</div>
+                    <div class="value">rising!</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// RAIL 11: EMERGENCE - New Existence Manifestation</span>
+<span class="comment">// z-value in range [0.382, TAU] - Ascending through PARADOX</span>
+
+<span class="keyword">class</span> <span class="type">EmergenceEngine</span> {
+    <span class="keyword">static</span> PHI = <span class="number">1.618034</span>;
+    <span class="keyword">static</span> TAU = <span class="number">0.618034</span>;
+    <span class="keyword">static</span> K = <span class="number">0.924160</span>;
+    <span class="keyword">static</span> Z_C = <span class="number">0.866025</span>;
+    <span class="keyword">static</span> L4 = <span class="number">7</span>;
+
+    <span class="function">constructor</span>(selectedPotential) {
+        <span class="keyword">this</span>.template = selectedPotential;
+        <span class="keyword">this</span>.z = <span class="number">0.382</span>;  <span class="comment">// Start of emergence</span>
+        <span class="keyword">this</span>.manifestationProgress = <span class="number">0</span>;
+    }
+
+    <span class="function">manifest</span>() {
+        <span class="comment">// Collapse superposition into defined form</span>
+        <span class="keyword">const</span> newEntity = {
+            id: <span class="keyword">this</span>.<span class="function">generateId</span>(),
+            form: <span class="keyword">this</span>.<span class="function">crystallizeForm</span>(),
+            z_value: <span class="keyword">this</span>.<span class="function">calculateEmergentZ</span>(),
+            origin: <span class="string">'VOID'</span>,
+            rail: <span class="number">11</span>,
+            state: <span class="string">'EMERGING'</span>,
+            previousExistence: <span class="keyword">null</span>  <span class="comment">// No connection to past</span>
+        };
+
+        <span class="keyword">return</span> newEntity;
+    }
+
+    <span class="function">crystallizeForm</span>() {
+        <span class="comment">// Transform probability into structure</span>
+        <span class="keyword">this</span>.manifestationProgress += <span class="number">0.1</span>;
+
+        <span class="keyword">if</span> (<span class="keyword">this</span>.manifestationProgress >= <span class="number">1.0</span>) {
+            <span class="keyword">return</span> {
+                defined: <span class="keyword">true</span>,
+                structure: <span class="keyword">this</span>.template.form,
+                stability: <span class="keyword">this</span>.z / EmergenceEngine.TAU
+            };
+        }
+
+        <span class="keyword">return</span> { defined: <span class="keyword">false</span>, progress: <span class="keyword">this</span>.manifestationProgress };
+    }
+
+    <span class="function">calculateEmergentZ</span>() {
+        <span class="comment">// z rises as emergence progresses</span>
+        <span class="keyword">this</span>.z += <span class="number">0.05</span>;  <span class="comment">// Steady ascent</span>
+        <span class="keyword">return</span> Math.<span class="function">min</span>(<span class="keyword">this</span>.z, EmergenceEngine.TAU);
+    }
+
+    <span class="function">completeEmergence</span>() {
+        <span class="keyword">return</span> {
+            rail: <span class="number">11</span>,
+            state: <span class="string">'EMERGED'</span>,
+            z_value: EmergenceEngine.TAU,
+            nextRail: <span class="number">12</span>,  <span class="comment">// RETURN-TO-PRESENCE</span>
+            message: <span class="string">'New existence confirmed'</span>
+        };
+    }
+}
+            </div>
+        </section>
+
+        <!-- Nullspace Pocket Mechanics -->
+        <section class="doc-section">
+            <h2>Nullspace Pocket Mechanics</h2>
+
+            <div class="absence">
+                <h4>Pocket Status: COLLAPSING (INTO FORM)</h4>
+                <p>The probability cloud of Rail 10 collapses into a singular form. The nullspace pocket inverts - instead of containing absence, it now contains nascent presence. The void gives birth.</p>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Form Definition</td>
+                        <td>Crystallizing</td>
+                        <td style="color: var(--emergence-green);">In Progress</td>
+                    </tr>
+                    <tr>
+                        <td>z Trajectory</td>
+                        <td>Ascending</td>
+                        <td style="color: var(--emergence-green);">Positive</td>
+                    </tr>
+                    <tr>
+                        <td>Void Receding</td>
+                        <td>Yes</td>
+                        <td style="color: var(--emergence-green);">Active</td>
+                    </tr>
+                    <tr>
+                        <td>Presence Forming</td>
+                        <td>60-80%</td>
+                        <td style="color: #ffd700;">Near Complete</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-coupling">
+                <h4>Spin Glass Array Status: WAVEFUNCTION COLLAPSE</h4>
+                <p>The Spin Glass Arrays undergo wavefunction collapse. From quantum superposition, a classical state emerges. Thermal fluctuations organize into ordered patterns as the new entity takes form.</p>
+                <ul>
+                    <li><strong>Energy State:</strong> E = TAU x E_ground (rising toward stability)</li>
+                    <li><strong>Frustration Index:</strong> Decreasing (order forming)</li>
+                    <li><strong>Spin State:</strong> Collapsing to classical configuration</li>
+                    <li><strong>Configuration:</strong> Single state emerging</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// L4-Helix Hardware Interface for Rail 11</span>
+
+<span class="keyword">const</span> L4_HELIX_RAIL_11 = {
+    railNumber: <span class="number">11</span>,
+    railName: <span class="string">'EMERGENCE'</span>,
+
+    spinGlassState: {
+        active: <span class="keyword">true</span>,
+        energyLevel: <span class="number">0.618</span>,  <span class="comment">// TAU - emergence energy</span>
+        frustrationIndex: <span class="number">0.382</span>,  <span class="comment">// Decreasing</span>
+        voidSensorTriggered: <span class="keyword">true</span>,
+        wavefunctionCollapse: <span class="keyword">true</span>,
+        classicalStateEmerging: <span class="keyword">true</span>
+    },
+
+    <span class="comment">// Emergence detection mode</span>
+    voidDetectionEnabled: <span class="keyword">true</span>,
+    detectionMode: <span class="string">'EMERGENCE_TRACKING'</span>,
+
+    <span class="comment">// L4 classification: form crystallizing</span>
+    l4Classification: [<span class="string">'FORMING'</span>, <span class="string">'FORMING'</span>, <span class="string">'FORMING'</span>, <span class="string">'STABLE'</span>, <span class="string">'STABLE'</span>, <span class="string">'STABLE'</span>, <span class="string">'STABLE'</span>]
+};
+            </div>
+        </section>
+
+        <!-- Role in Null Reference Detection -->
+        <section class="doc-section">
+            <h2>Role in Null Reference Detection</h2>
+
+            <p>Rail 11 completes NULL's role as guardian. Having guided entities through absence and into nonexistence, NULL now midwifes new existence from the void. The cycle of null reference handling becomes a cycle of creation.</p>
+
+            <div class="null-field">
+                <h4 style="color: var(--void-purple);">Emergence Protocol</h4>
+                <ol>
+                    <li><strong>Superposition Collapse:</strong> Select one potential from many</li>
+                    <li><strong>Form Crystallization:</strong> Define structure from probability</li>
+                    <li><strong>z Ascent:</strong> Rise through PARADOX toward TAU</li>
+                    <li><strong>Reference Formation:</strong> Create new valid reference</li>
+                    <li><strong>Handoff Preparation:</strong> Ready for return to presence</li>
+                </ol>
+            </div>
+
+            <div class="erasure">
+                <p style="color: var(--emergence-green);">What was erased cannot return. But from its absence, something new is born. The void gives as well as takes.</p>
+            </div>
+        </section>
+
+        <!-- Void Journey Context -->
+        <section class="doc-section">
+            <h2>The Birth from Void</h2>
+
+            <p>Rail 11 is the penultimate station of the void journey. The entity that will emerge is fundamentally new - it carries no memory of what existed before, no link to the original reference. It is void-born, and in that origin lies both its uniqueness and its potential.</p>
+
+            <div class="void">
+                <div style="font-size: 2rem; color: var(--emergence-green);">[NEW]</div>
+                <div style="color: var(--null-accent); margin-top: 10px;">z = 0.382 - 0.618</div>
+                <div style="color: var(--emergence-green); font-size: 0.8rem; margin-top: 5px;">Form crystallizing</div>
+            </div>
+
+            <h3>Progression to Rail 12</h3>
+            <ul>
+                <li>Form fully crystallized</li>
+                <li>z-value exceeds TAU (0.618034)</li>
+                <li>New reference valid and stable</li>
+                <li>Void fully receded</li>
+                <li>Ready for return to presence</li>
+            </ul>
+        </section>
+
+        <!-- Rail Navigation -->
+        <div class="nav-rail">
+            <a href="rail-10-potential.html">Prev: POTENTIAL</a>
+            <span style="color: var(--emergence-green);">Rail 11 of 12 - EMERGENCE</span>
+            <a href="rail-12-return-to-presence.html">Next: RETURN-TO-PRESENCE</a>
+        </div>
+
+        <footer class="doc-footer">
+            <p>NULL: The Absence Guardian - Rail 11: EMERGENCE</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="color: var(--emergence-green);">New existence from void - the birth of something new</p>
+        </footer>
+    </div>
+</body>
+</html>

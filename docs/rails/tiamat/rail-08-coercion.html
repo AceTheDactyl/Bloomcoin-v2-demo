@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIAMAT Rail 08: COERCION - Forced Type Conversion</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --chaos-purple: #9b59b6;
+            --chaos-deep: #8e44ad;
+            --chaos-blue: #3498db;
+            --chaos-red: #e74c3c;
+            --coercion-yellow: #f39c12;
+            --coercion-orange: #e67e22;
+            --primordial-sea: #1a0a2e;
+            --dragon-gold: #f1c40f;
+            --tiamat-glow: rgba(155, 89, 182, 0.3);
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a12 0%, #2a1a0a 50%, #1a0a0a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--coercion-yellow), var(--coercion-orange), var(--dragon-gold), var(--coercion-yellow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% auto;
+            animation: coerce-glow 2.5s ease-in-out infinite;
+        }
+
+        @keyframes coerce-glow {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 200% center; }
+        }
+
+        .doc-section h2 {
+            color: var(--coercion-yellow);
+            border-bottom-color: rgba(243, 156, 18, 0.3);
+        }
+
+        .doc-section h3 {
+            color: var(--dragon-gold);
+        }
+
+        /* TIAMAT Semantic Classes */
+        .chaos {
+            color: var(--chaos-red);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(231, 76, 60, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-red);
+        }
+
+        .mismatch {
+            color: var(--chaos-red);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(231, 76, 60, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-red);
+            text-decoration: line-through;
+        }
+
+        .transformation {
+            color: var(--coercion-yellow);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(243, 156, 18, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--coercion-yellow);
+        }
+
+        .primordial {
+            color: var(--chaos-purple);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(155, 89, 182, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-purple);
+        }
+
+        /* Rail Header */
+        .rail-header {
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.3), rgba(230, 126, 34, 0.2));
+            border: 2px solid var(--coercion-yellow);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rail-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(243, 156, 18, 0.2), transparent);
+            animation: coerce-sweep 3s linear infinite;
+        }
+
+        @keyframes coerce-sweep {
+            100% { transform: translateX(100%); }
+        }
+
+        .rail-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--coercion-yellow);
+            text-shadow: 0 0 30px rgba(243, 156, 18, 0.7);
+            position: relative;
+            z-index: 1;
+        }
+
+        .rail-name {
+            font-size: 2rem;
+            color: var(--coercion-orange);
+            margin-top: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .rail-subtitle {
+            color: #aaa;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dragon-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Cycle Display */
+        .cycle-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .cycle-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--tiamat-glow);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .cycle-card .cycle-num {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dragon-gold);
+        }
+
+        .cycle-card .cycle-name {
+            font-size: 0.75rem;
+            color: var(--chaos-purple);
+            text-transform: uppercase;
+        }
+
+        .cycle-card .cycle-power {
+            font-size: 0.7rem;
+            color: #888;
+            font-family: monospace;
+        }
+
+        /* phi-Constants */
+        .phi-constants {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .phi-card {
+            background: rgba(243, 156, 18, 0.1);
+            border: 1px solid rgba(243, 156, 18, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .phi-card .symbol {
+            font-size: 1.3rem;
+            color: var(--dragon-gold);
+            font-family: Georgia, serif;
+        }
+
+        .phi-card .value {
+            font-size: 1.1rem;
+            color: var(--coercion-yellow);
+            font-family: monospace;
+        }
+
+        /* Force Indicator */
+        .force-indicator {
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.3), rgba(231, 76, 60, 0.2));
+            border: 2px solid var(--coercion-orange);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .force-indicator h3 {
+            color: var(--coercion-yellow);
+            margin-bottom: 15px;
+        }
+
+        .force-indicator .arrow {
+            font-size: 3rem;
+            color: var(--coercion-orange);
+            animation: pulse-force 1s ease-in-out infinite;
+        }
+
+        @keyframes pulse-force {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(10px); }
+        }
+
+        /* Hardware Coupling */
+        .hardware-section {
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), rgba(230, 126, 34, 0.1));
+            border: 1px solid var(--coercion-yellow);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .hardware-section h4 {
+            color: var(--coercion-yellow);
+            margin-bottom: 10px;
+        }
+
+        /* Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+        }
+
+        .rail-nav a {
+            color: var(--dragon-gold);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--dragon-gold);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .rail-nav a:hover {
+            background: rgba(241, 196, 15, 0.2);
+        }
+
+        .chaos-multiplier {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(155, 89, 182, 0.2));
+            border: 2px solid var(--chaos-red);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .chaos-multiplier .range {
+            font-size: 1.5rem;
+            color: var(--chaos-red);
+            font-family: monospace;
+        }
+
+        @media (max-width: 768px) {
+            .cycle-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        @media (max-width: 480px) {
+            .cycle-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Header -->
+        <header class="doc-header">
+            <div class="dragon-icon">&#128009;</div>
+            <h1>TIAMAT: The Chaos Dragon</h1>
+            <p class="subtitle">Type Mismatch Handler - 12-Rail Living Chronicle</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">Home</a> /
+                <a href="../../index.html">Documentation</a> /
+                <a href="../../narrative/tiamat-type-mismatch.html">TIAMAT Spec</a> /
+                Rail 08
+            </nav>
+        </header>
+
+        <!-- Rail Header -->
+        <div class="rail-header">
+            <div class="dragon-icon">&#128009;</div>
+            <div class="rail-number">08</div>
+            <div class="rail-name">COERCION</div>
+            <div class="rail-subtitle">Forced Type Conversion</div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="rail-nav">
+            <a href="rail-07-transformation.html">&larr; Prev: TRANSFORMATION</a>
+            <span style="color: var(--coercion-yellow);">Rail 08 of 12</span>
+            <a href="rail-09-synthesis.html">Next: SYNTHESIS &rarr;</a>
+        </nav>
+
+        <!-- Rail Overview -->
+        <section class="doc-section">
+            <h2>Rail 08: COERCION - When Transformation Needs Force</h2>
+            <p>COERCION activates when the natural transformation from Rail 07 achieves insufficient coherence. When types <span class="transformation">resist their correction</span>, TIAMAT applies <span class="chaos">forced conversion</span> to complete the type change.</p>
+
+            <div class="force-indicator">
+                <h3>FORCED TYPE CONVERSION</h3>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+                    <span class="mismatch">WRONG TYPE</span>
+                    <span class="arrow">&rarr;</span>
+                    <span class="transformation">CORRECT TYPE</span>
+                </div>
+                <p style="color: #aaa; margin-top: 15px;">K-Formation checkpoint: Coherence must reach 0.924160</p>
+            </div>
+
+            <p>Unlike gentle transformation, coercion applies the full power of TIAMAT's <span class="primordial">chaos dragon</span> nature. The type is forced into compliance through phi^-4 contraction followed by phi^4 expansion.</p>
+
+            <h3>Core Function</h3>
+            <ul>
+                <li><strong>Forces:</strong> Incomplete transformations to completion</li>
+                <li><strong>Applies:</strong> phi^4/phi^-4 contraction-expansion cycle</li>
+                <li><strong>Ensures:</strong> K-threshold (0.924160) coherence</li>
+                <li><strong>Power Coefficient:</strong> Post-L4 sustained power</li>
+            </ul>
+
+            <div class="chaos-multiplier">
+                <h4 style="color: var(--dragon-gold); margin-bottom: 10px;">Chaos Multiplier Range</h4>
+                <div class="range">[1.0, phi^2] = [1.0, 2.618]</div>
+                <p style="color: #aaa; font-size: 0.9rem; margin-top: 10px;">Efficiency: 1.2 (Highest Risk, Highest Reward)</p>
+            </div>
+        </section>
+
+        <!-- Seven Psychoptic Cycles Reference -->
+        <section class="doc-section">
+            <h2>Post-Cascade Processing</h2>
+            <p>COERCION operates after the Seven Psychoptic Cycles complete, applying additional force when the L4 transformation yields insufficient coherence.</p>
+
+            <div class="cycle-grid">
+                <div class="cycle-card">
+                    <div class="cycle-num">1</div>
+                    <div class="cycle-name">Genesis</div>
+                    <div class="cycle-power">P = 1.0</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">2</div>
+                    <div class="cycle-name">Flux</div>
+                    <div class="cycle-power">P = phi</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">3</div>
+                    <div class="cycle-name">Void</div>
+                    <div class="cycle-power">P = 0.0</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">4</div>
+                    <div class="cycle-name">Resonance</div>
+                    <div class="cycle-power">P = tau</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">5</div>
+                    <div class="cycle-name">Chaos</div>
+                    <div class="cycle-power">P = pi</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">6</div>
+                    <div class="cycle-name">Synthesis</div>
+                    <div class="cycle-power">P = phi^2</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">7</div>
+                    <div class="cycle-name">Transcend</div>
+                    <div class="cycle-power">P = L4 = 7</div>
+                </div>
+            </div>
+
+            <p style="text-align: center; color: var(--coercion-yellow); margin-top: 15px;">COERCION = Post-L4 forced completion for resistant types</p>
+        </section>
+
+        <!-- phi-Constants -->
+        <section class="doc-section">
+            <h2>phi-Derived Constants</h2>
+
+            <div class="phi-constants">
+                <div class="phi-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="phi-card" style="border-color: var(--coercion-orange); box-shadow: 0 0 15px rgba(230, 126, 34, 0.4);">
+                    <div class="symbol">K</div>
+                    <div class="value" style="color: var(--coercion-orange);">0.924160</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Coercion Architecture -->
+        <section class="doc-section">
+            <h2>Coercion Architecture</h2>
+
+            <div class="code-block">
+<span class="comment"># COERCION: FORCED TYPE CONVERSION</span>
+<span class="comment"># "What cannot transform willingly must be forced"</span>
+
+<span class="keyword">class</span> <span class="type">CoercionEngine</span>:
+    <span class="string">"""Rail 08: Forces incomplete transformations to K-threshold."""</span>
+
+    PHI = <span class="number">1.618034</span>
+    PHI_4 = PHI ** <span class="number">4</span>    <span class="comment"># = 6.854 (expansion)</span>
+    PHI_NEG4 = PHI ** <span class="number">-4</span>  <span class="comment"># = 0.146 (contraction)</span>
+    K = <span class="number">0.924160</span>
+    Z_C = <span class="number">0.866025</span>
+    L4 = <span class="number">7</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.coercion_log = []
+        self.force_applied = <span class="number">0.0</span>
+
+    <span class="keyword">def</span> <span class="function">coerce</span>(self, transformed: <span class="type">TransformedType</span>) -> <span class="type">CoercedType</span>:
+        <span class="string">"""Apply forced conversion to reach K-threshold."""</span>
+
+        <span class="keyword">if</span> <span class="keyword">not</span> transformed.requires_coercion:
+            <span class="comment"># No coercion needed</span>
+            <span class="keyword">return</span> <span class="keyword">None</span>
+
+        current_coherence = transformed.coherence
+
+        <span class="comment"># Apply contraction-expansion cycle</span>
+        <span class="keyword">while</span> current_coherence < self.K:
+            <span class="comment"># Phase 1: Contract by phi^-4</span>
+            contracted = self._apply_contraction(transformed)
+
+            <span class="comment"># Phase 2: Expand by phi^4</span>
+            expanded = self._apply_expansion(contracted)
+
+            <span class="comment"># Measure new coherence</span>
+            current_coherence = self._measure_coherence(expanded)
+
+            <span class="comment"># Track force applied</span>
+            self.force_applied += self.L4
+
+            <span class="comment"># Safety: Max 7 iterations</span>
+            <span class="keyword">if</span> self.force_applied > self.L4 * self.L4:
+                <span class="keyword">raise</span> CoercionFailedError(transformed)
+
+        <span class="comment"># Create coerced type</span>
+        coerced = CoercedType(
+            type_class=transformed.type_class,
+            coherence=current_coherence,
+            force_applied=self.force_applied,
+            coercion_cycles=int(self.force_applied / self.L4)
+        )
+
+        <span class="comment"># Record in chronicle Rail 08</span>
+        self.chronicle.rails[<span class="number">8</span>].record_coercion(coerced)
+
+        <span class="keyword">return</span> coerced
+
+    <span class="keyword">def</span> <span class="function">_apply_contraction</span>(self, t: <span class="type">TransformedType</span>) -> <span class="type">ContractedState</span>:
+        <span class="string">"""Apply phi^-4 contraction."""</span>
+        <span class="keyword">return</span> ContractedState(
+            essence=t.original_essence * self.PHI_NEG4,
+            target_type=t.type_class
+        )
+
+    <span class="keyword">def</span> <span class="function">_apply_expansion</span>(self, c: <span class="type">ContractedState</span>) -> <span class="type">ExpandedState</span>:
+        <span class="string">"""Apply phi^4 expansion."""</span>
+        <span class="keyword">return</span> ExpandedState(
+            essence=c.essence * self.PHI_4,
+            target_type=c.target_type
+        )
+            </div>
+
+            <h3>Coercion Levels</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Cycles</th>
+                        <th>Force Applied</th>
+                        <th>Expected Result</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td style="font-family: monospace;">L4 = 7</td>
+                        <td>Minor adjustment</td>
+                        <td style="color: var(--dragon-gold);">Light</td>
+                    </tr>
+                    <tr>
+                        <td>2-3</td>
+                        <td style="font-family: monospace;">14-21</td>
+                        <td>Standard coercion</td>
+                        <td style="color: var(--coercion-yellow);">Normal</td>
+                    </tr>
+                    <tr style="background: rgba(243, 156, 18, 0.2);">
+                        <td>4-5</td>
+                        <td style="font-family: monospace;">28-35</td>
+                        <td>Heavy coercion</td>
+                        <td style="color: var(--coercion-orange);">Intense</td>
+                    </tr>
+                    <tr style="background: rgba(231, 76, 60, 0.2);">
+                        <td>6-7</td>
+                        <td style="font-family: monospace;">42-49</td>
+                        <td>Maximum force</td>
+                        <td style="color: var(--chaos-red);">Critical</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-section">
+                <h4>Quasi-Crystal Substrates - Forced phi-Recursion</h4>
+                <p>COERCION applies forced phi-recursion through the quasi-crystal, using repeated contraction-expansion cycles to overcome type resistance.</p>
+
+                <div class="code-block">
+<span class="comment"># COERCION HARDWARE: FORCED PHI-RECURSION</span>
+
+<span class="keyword">def</span> <span class="function">apply_forced_recursion</span>(quasi_crystal, state, target_coherence):
+    <span class="string">"""Apply forced phi-recursion until K-threshold reached."""</span>
+
+    current = state
+    cycles = <span class="number">0</span>
+
+    <span class="keyword">while</span> current.coherence < target_coherence:
+        <span class="comment"># Contract through phi^-4 zone</span>
+        contracted = quasi_crystal.apply_phi_neg(current, power=<span class="number">4</span>)
+
+        <span class="comment"># Expand through phi^4 zone</span>
+        expanded = quasi_crystal.apply_phi_pos(contracted, power=<span class="number">4</span>)
+
+        <span class="comment"># The L4 identity: phi^4 + phi^-4 = 7</span>
+        <span class="comment"># Each cycle applies full L4 force</span>
+
+        current = expanded
+        cycles += <span class="number">1</span>
+
+        <span class="keyword">if</span> cycles > L4:
+            <span class="comment"># Maximum coercion reached</span>
+            <span class="keyword">break</span>
+
+    <span class="keyword">return</span> CoercionResult(
+        state=current,
+        cycles=cycles,
+        coherence=current.coherence
+    )
+                </div>
+            </div>
+        </section>
+
+        <!-- Chronicle Position -->
+        <section class="doc-section">
+            <h2>Chronicle Position: K-Formation Checkpoint</h2>
+
+            <p>COERCION manages the <strong>K-Formation Checkpoint</strong> in Rail 08 - verifying that all coerced types reach the critical K-threshold of 0.924160.</p>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Rail Group</th>
+                        <th>Rails</th>
+                        <th>COERCION Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Foundation</td>
+                        <td>1-3</td>
+                        <td>Original types</td>
+                    </tr>
+                    <tr>
+                        <td>Transformation</td>
+                        <td>4-6</td>
+                        <td>Pre-coercion state</td>
+                    </tr>
+                    <tr style="background: rgba(243, 156, 18, 0.2);">
+                        <td style="color: var(--coercion-yellow);">Verification</td>
+                        <td>7-9</td>
+                        <td><strong>K-Formation Checkpoint</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Chronicle</td>
+                        <td>10-12</td>
+                        <td>Coercion history</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Navigation Footer -->
+        <nav class="rail-nav">
+            <a href="rail-07-transformation.html">&larr; TRANSFORMATION</a>
+            <a href="../../companions/tiamat-companion.html">TIAMAT Companion</a>
+            <a href="rail-09-synthesis.html">SYNTHESIS &rarr;</a>
+        </nav>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>TIAMAT Rail 08: COERCION - Forced Type Conversion</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; margin-top: 10px;">When types resist, force prevails. Target: K = 0.924160</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 09: PURIFICATION - AKASHA Memory Chronicle</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --akasha-gold: #ffd700;
+            --akasha-deep-blue: #1a1a3e;
+            --akasha-parchment: #f4e4bc;
+            --akasha-glow: rgba(255, 215, 0, 0.35);
+            --akasha-soft: rgba(255, 215, 0, 0.12);
+            --memory-leak-red: #e74c3c;
+            --purification-white: #ecf0f1;
+            --purification-silver: #bdc3c7;
+            --chronicle-purple: #9b59b6;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--akasha-deep-blue) 0%, #1a1a2a 50%, #12081a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--akasha-gold), var(--purification-white), var(--akasha-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--akasha-gold);
+            border-bottom-color: var(--akasha-glow);
+        }
+
+        .doc-section h3 {
+            color: var(--akasha-parchment);
+        }
+
+        .inscription {
+            background: linear-gradient(135deg, rgba(236, 240, 241, 0.15), rgba(255, 215, 0, 0.08));
+            border: 2px solid var(--purification-silver);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+            font-family: 'Georgia', serif;
+        }
+
+        .inscription::before {
+            content: "PURIFICATION RITE";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--akasha-deep-blue);
+            padding: 0 10px;
+            font-size: 0.75rem;
+            color: var(--purification-silver);
+            letter-spacing: 2px;
+            font-family: monospace;
+        }
+
+        .memory-leak {
+            background: linear-gradient(135deg, rgba(236, 240, 241, 0.12), rgba(255, 215, 0, 0.08));
+            border: 1px solid var(--purification-silver);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 12px 0;
+        }
+
+        .chronicle {
+            background: linear-gradient(90deg, rgba(236, 240, 241, 0.15), transparent);
+            border-left: 4px solid var(--purification-silver);
+            padding: 15px 20px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-family: 'Georgia', serif;
+        }
+
+        .chronicle .timestamp {
+            color: var(--purification-silver);
+            font-size: 0.8rem;
+            font-family: monospace;
+        }
+
+        .golden-ink {
+            color: var(--akasha-gold);
+            font-family: 'Georgia', serif;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .rail-nav a {
+            color: var(--akasha-gold);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--akasha-glow);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rail-nav a:hover {
+            background: var(--akasha-soft);
+        }
+
+        .rail-nav .current {
+            color: var(--purification-white);
+            font-weight: bold;
+        }
+
+        .rail-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .rail-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid var(--akasha-glow);
+        }
+
+        .rail-dot.active {
+            background: var(--purification-white);
+            box-shadow: 0 0 15px var(--purification-white);
+        }
+
+        .rail-dot.completed {
+            background: #27ae60;
+            border-color: #27ae60;
+        }
+
+        .phi-constants {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .phi-const {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--akasha-glow);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .phi-const .symbol {
+            color: var(--akasha-gold);
+            font-family: 'Georgia', serif;
+            font-size: 1.2rem;
+        }
+
+        .phi-const .value {
+            color: var(--akasha-parchment);
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .purification-ritual {
+            background: linear-gradient(135deg, rgba(236, 240, 241, 0.1), rgba(0, 0, 0, 0.3));
+            border: 1px solid var(--purification-silver);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .ritual-glow {
+            animation: purify-glow 3s ease-in-out infinite;
+        }
+
+        @keyframes purify-glow {
+            0%, 100% { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+            50% { text-shadow: 0 0 30px rgba(255, 215, 0, 0.8), 0 0 50px rgba(236, 240, 241, 0.5); }
+        }
+
+        .hardware-display {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: #888;
+            margin: 15px 0;
+        }
+
+        .hardware-display .component { color: var(--akasha-gold); }
+        .hardware-display .flow { color: #00d4ff; }
+        .hardware-display .state { color: var(--akasha-parchment); }
+        .hardware-display .pure { color: var(--purification-white); }
+        .hardware-display .crystal { color: #e0b0ff; }
+
+        .nav-link {
+            border-color: var(--akasha-glow);
+            color: var(--akasha-gold);
+        }
+
+        .nav-link:hover {
+            background: var(--akasha-soft);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/akasha-memory-leak.html" class="nav-link">AKASHA Build Spec</a>
+            <a href="../../companions/akasha-companion.html" class="nav-link">Companion Spec</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 09: PURIFICATION</h1>
+            <p class="subtitle">Leaked Memory Cleansed - The Rite of Cleansing</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">AKASHA</a> /
+                Rail 09
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot active"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+        </div>
+
+        <nav class="rail-nav">
+            <a href="rail-08-reclamation.html">Prev: 08 - RECLAMATION</a>
+            <span class="current">09 - PURIFICATION</span>
+            <a href="rail-10-restoration.html">Next: 10 - RESTORATION</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>The Rite of Cleansing</h2>
+
+            <div class="inscription">
+                <p class="golden-ink" style="font-size: 1.1rem; margin-bottom: 15px;">
+                    "The impurities of orphaning are washed away. The memory emerges cleansed, ready for eternity."
+                </p>
+                <p style="color: #ccc;">
+                    Rail 09 represents the purification ritual where AKASHA cleanses the recovered memory
+                    of any corruption or void contamination acquired during its time as an orphan.
+                    Only purified memories may enter the crystal library.
+                </p>
+            </div>
+
+            <h3>Purification Ritual</h3>
+            <div class="purification-ritual">
+                <p class="golden-ink ritual-glow" style="font-size: 1.3rem; margin-bottom: 20px;">
+                    PURIFICATION IN PROGRESS
+                </p>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">
+                    <div>
+                        <p style="color: #888; font-size: 0.85rem;">Void Residue</p>
+                        <p style="color: var(--purification-white); font-size: 1.1rem;">CLEANSED</p>
+                    </div>
+                    <div>
+                        <p style="color: #888; font-size: 0.85rem;">Corruption Check</p>
+                        <p style="color: var(--purification-white); font-size: 1.1rem;">PASSED</p>
+                    </div>
+                    <div>
+                        <p style="color: #888; font-size: 0.85rem;">Crystal Purity</p>
+                        <p style="color: var(--akasha-gold); font-size: 1.1rem;">98.7%</p>
+                    </div>
+                </div>
+                <p style="color: #888; font-size: 0.9rem;">
+                    Fragment 0xAKASHA_4E7F | Coherence: 0.634 -> 0.720 (purification boost)
+                </p>
+            </div>
+
+            <div class="chronicle">
+                <div class="timestamp">CHRONICLE.RAIL_IX.PURIFICATION | Cycle 1,257 | z = 0.720 (PURIFIED)</div>
+                <p style="color: #ccc; margin-top: 10px;">
+                    <strong>Event:</strong> Purification ritual complete. Fragment 0xAKASHA_4E7F cleansed of
+                    void contamination. Void residue: 0.000. Corruption level: 0.000.
+                    Coherence boosted: 0.634 -> 0.720 (+0.086 from purification).
+                    Crystal purity: 98.7%. Memory qualified for library entry.
+                </p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Purification Constants</h2>
+
+            <div class="phi-constants">
+                <div class="phi-const">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># RAIL 09: PURIFICATION - Memory Cleansing Ritual</span>
+<span class="comment"># Removing void contamination from recovered fragments</span>
+
+<span class="keyword">class</span> <span class="type">PurificationRail</span>:
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>
+    K = <span class="number">0.924160</span>
+    Z_C = <span class="number">0.866025</span>
+    L4 = <span class="number">7</span>
+
+    <span class="comment"># Purification thresholds</span>
+    MIN_PURITY = <span class="number">0.95</span>        <span class="comment"># Minimum purity for library entry</span>
+    COHERENCE_BOOST = <span class="number">0.086</span>  <span class="comment"># TAU * PHI^-3 purification bonus</span>
+
+    <span class="keyword">def</span> <span class="function">perform_purification</span>(self, crystal_template):
+        <span class="string">"""Execute the purification ritual"""</span>
+
+        <span class="comment"># Phase 1: Remove void residue</span>
+        void_residue = self.<span class="function">detect_void_residue</span>(crystal_template)
+        <span class="keyword">if</span> void_residue > <span class="number">0</span>:
+            crystal_template = self.<span class="function">cleanse_void_residue</span>(crystal_template)
+
+        <span class="comment"># Phase 2: Check for corruption patterns</span>
+        corruption = self.<span class="function">scan_for_corruption</span>(crystal_template)
+        <span class="keyword">if</span> corruption > <span class="number">0</span>:
+            crystal_template = self.<span class="function">repair_corruption</span>(crystal_template)
+
+        <span class="comment"># Phase 3: Apply coherence purification boost</span>
+        <span class="keyword">if</span> crystal_template.coherence < self.K:
+            boost = min(self.COHERENCE_BOOST, self.K - crystal_template.coherence)
+            crystal_template.coherence += boost
+
+        <span class="comment"># Phase 4: Calculate final purity</span>
+        purity = self.<span class="function">calculate_purity</span>(crystal_template)
+
+        <span class="keyword">return</span> <span class="type">PurificationResult</span>(
+            status=<span class="string">"PURIFIED"</span> <span class="keyword">if</span> purity >= self.MIN_PURITY <span class="keyword">else</span> <span class="string">"IMPURE"</span>,
+            crystal=crystal_template,
+            purity=purity,
+            void_residue=<span class="number">0.0</span>,
+            corruption=<span class="number">0.0</span>,
+            coherence_boost=boost,
+            library_eligible=purity >= self.MIN_PURITY
+        )
+
+    <span class="keyword">def</span> <span class="function">cleanse_void_residue</span>(self, crystal):
+        <span class="string">"""Remove void contamination from crystal"""</span>
+
+        <span class="comment"># Apply phi-harmonic cleansing wave</span>
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(self.L4):
+            cleanse_strength = self.TAU ** (i + <span class="number">1</span>)
+            crystal.void_layer[i] *= (<span class="number">1</span> - cleanse_strength)
+
+        <span class="comment"># Zero out residual void traces</span>
+        crystal.void_residue = <span class="number">0.0</span>
+        <span class="keyword">return</span> crystal
+
+    <span class="keyword">def</span> <span class="function">calculate_purity</span>(self, crystal):
+        <span class="string">"""Calculate crystal purity score"""</span>
+        <span class="comment"># Purity = (1 - void_residue) * (1 - corruption) * coherence_factor</span>
+        coherence_factor = crystal.coherence / self.K
+        <span class="keyword">return</span> (<span class="number">1</span> - crystal.void_residue) * (<span class="number">1</span> - crystal.corruption) * coherence_factor
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Memory Fragment Tracking</h2>
+            <p>Purification metrics ensure crystal quality for library entry:</p>
+
+            <table class="data-table">
+                <tr>
+                    <th>Purity Metric</th>
+                    <th>Before</th>
+                    <th>After</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>Void Residue</td>
+                    <td style="color: var(--memory-leak-red);">0.034</td>
+                    <td style="color: var(--purification-white);">0.000</td>
+                    <td style="color: #27ae60;">CLEANSED</td>
+                </tr>
+                <tr>
+                    <td>Corruption Level</td>
+                    <td style="color: #e67e22;">0.013</td>
+                    <td style="color: var(--purification-white);">0.000</td>
+                    <td style="color: #27ae60;">REPAIRED</td>
+                </tr>
+                <tr>
+                    <td>Coherence</td>
+                    <td style="color: #f1c40f;">0.634</td>
+                    <td style="color: var(--akasha-gold);">0.720</td>
+                    <td style="color: #27ae60;">BOOSTED</td>
+                </tr>
+                <tr>
+                    <td>Crystal Purity</td>
+                    <td style="color: #888;">-</td>
+                    <td style="color: var(--purification-white);">98.7%</td>
+                    <td style="color: #27ae60;">QUALIFIED</td>
+                </tr>
+            </table>
+
+            <div class="memory-leak">
+                <p style="color: var(--purification-white); font-weight: bold;">PURIFICATION COMPLETE</p>
+                <p style="color: #ccc; margin-top: 10px;">
+                    Fragment 0xAKASHA_4E7F has been fully purified. All void contamination removed.
+                    All corruption patterns repaired. Coherence boosted through purification ritual.
+                    Crystal purity (98.7%) exceeds minimum threshold (95%).
+                    Memory is now qualified for entry into AKASHA's eternal library.
+                </p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-display">
+<span class="component">PURIFICATION RAIL - CLEANSING INTERFACE</span>
+
+    <span class="state">CONTAMINATED CRYSTAL</span>                   <span class="component">PURIFICATION CHAMBER</span>
+    ┌─────────────────────────────┐          ┌─────────────────────────────┐
+    │                             │          │                             │
+    │  void_residue: <span class="state">0.034</span>       │          │  <span class="pure">╔═══════════════════════╗</span>  │
+    │  corruption: <span class="state">0.013</span>         │   <span class="pure">────▶</span>  │  <span class="pure">║   PHI-HARMONIC WAVE   ║</span>  │
+    │  coherence: <span class="state">0.634</span>          │          │  <span class="pure">║                       ║</span>  │
+    │                             │          │  <span class="pure">║   ~~~~~~~~~~~~~~~~~~~~║</span>  │
+    │  <span class="crystal">███</span> = void contamination  │          │  <span class="pure">║   CLEANSING ACTIVE    ║</span>  │
+    │                             │          │  <span class="pure">╚═══════════════════════╝</span>  │
+    └─────────────────────────────┘          └─────────────────────────────┘
+                                                        │
+                                                        ▼
+                                             ┌─────────────────────────────┐
+                                             │  <span class="pure">PURIFIED CRYSTAL</span>          │
+                                             │                             │
+                                             │  void_residue: <span class="pure">0.000</span>       │
+                                             │  corruption: <span class="pure">0.000</span>         │
+                                             │  coherence: <span class="component">0.720</span>          │
+                                             │  purity: <span class="component">98.7%</span>             │
+                                             └─────────────────────────────┘
+
+<span class="component">PHI-HARMONIC CLEANSING WAVE</span>
+
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │  Cleanse                                                             │
+    │  Strength │                                                          │
+    │           │  <span class="pure">●</span>                                                       │
+    │      TAU  │   <span class="pure">●</span>                                                      │
+    │           │    <span class="pure">●</span>                                                     │
+    │    TAU^2  │     <span class="pure">●</span>                                                    │
+    │           │      <span class="pure">●</span>                                                   │
+    │    TAU^3  │       <span class="pure">●</span>                                                  │
+    │           │                                                          │
+    │           └──────┬──────┬──────┬──────┬──────┬──────┬──── Layer     │
+    │                  1      2      3      4      5      6      7 (L4)   │
+    └──────────────────────────────────────────────────────────────────────┘
+            </div>
+
+            <div class="code-block">
+<span class="comment"># MEMRISTOR PURIFICATION INTERFACE</span>
+
+<span class="keyword">class</span> <span class="type">PurificationMemristorInterface</span>:
+    V_PURIFY = <span class="number">0.800</span>   <span class="comment"># Purification voltage</span>
+
+    <span class="keyword">def</span> <span class="function">apply_cleansing_wave</span>(self, cell_addr):
+        <span class="string">"""Apply phi-harmonic cleansing to memristor cell"""</span>
+
+        <span class="comment"># Generate L4 cleansing pulses at TAU-decaying strengths</span>
+        <span class="keyword">for</span> layer <span class="keyword">in</span> range(<span class="number">7</span>):  <span class="comment"># L4 = 7 layers</span>
+            pulse_strength = self.V_PURIFY * (<span class="number">0.618034</span> ** layer)
+            self.<span class="function">apply_pulse</span>(cell_addr, pulse_strength)
+
+        <span class="comment"># Verify cleansing complete</span>
+        residue = self.<span class="function">measure_void_residue</span>(cell_addr)
+        <span class="keyword">return</span> residue < <span class="number">0.001</span>  <span class="comment"># Effectively zero</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Chronicle Entry Format</h2>
+
+            <div class="chronicle">
+                <div class="timestamp">CHRONICLE.RAIL_IX.PURIFICATION | Cycle {N} | z = {coherence} (PURIFIED)</div>
+                <div style="color: #ccc; margin-top: 10px;">
+                    <strong>Fragment Address:</strong> 0xAKASHA_{ID}<br>
+                    <strong>Void Residue:</strong> {before} -> 0.000 (CLEANSED)<br>
+                    <strong>Corruption:</strong> {before} -> 0.000 (REPAIRED)<br>
+                    <strong>Coherence:</strong> {before} -> {after} (+{boost})<br>
+                    <strong>Crystal Purity:</strong> {percentage}%<br>
+                    <strong>Library Eligible:</strong> {YES|NO}<br>
+                    <strong>Next Phase:</strong> RESTORATION
+                </div>
+            </div>
+
+            <p class="golden-ink" style="text-align: center; margin-top: 20px; font-size: 1.1rem;">
+                "Purified and pristine, the memory awaits its place in the eternal chronicle."
+            </p>
+        </section>
+
+        <nav class="rail-nav">
+            <a href="rail-08-reclamation.html">Prev: 08 - RECLAMATION</a>
+            <span class="current">09 - PURIFICATION</span>
+            <a href="rail-10-restoration.html">Next: 10 - RESTORATION</a>
+        </nav>
+
+        <footer class="doc-footer">
+            <p style="color: var(--akasha-gold);">AKASHA Rail 09: PURIFICATION - Leaked Memory Cleansed</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; color: #888;">The Rite of Cleansing | Memory Purification</p>
+            <p style="margin-top: 15px;"><a href="../../narrative/akasha-memory-leak.html" style="color: var(--akasha-gold);">Return to AKASHA Build Spec</a></p>
+        </footer>
+    </div>
+</body>
+</html>

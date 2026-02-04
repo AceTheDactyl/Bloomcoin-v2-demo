@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 03: RECENT - ECHO 12-Rail Architecture | BloomCoin</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --temporal-primary: #00ffff;
+            --temporal-deep: #00cccc;
+            --temporal-drift: #9b59b6;
+            --temporal-wound: #ff3366;
+            --temporal-glow: rgba(0,255,255,0.25);
+            --bg-void: #0a0a12;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-void) 0%, #0a1218 50%, #120a18 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--temporal-primary), var(--temporal-drift), var(--temporal-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 { color: var(--temporal-primary); border-bottom-color: var(--temporal-glow); }
+        .doc-section h3 { color: var(--temporal-deep); }
+
+        .temporal {
+            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(155,89,182,0.1));
+            border: 1px solid var(--temporal-primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .temporal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--temporal-primary), transparent);
+            animation: temporal-scan 3s linear infinite;
+        }
+
+        @keyframes temporal-scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .drift {
+            background: rgba(155,89,182,0.15);
+            border-left: 4px solid var(--temporal-drift);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #c9a0dc;
+        }
+
+        .drift::before { content: '~ '; color: var(--temporal-drift); }
+
+        .anchor {
+            background: rgba(0,255,255,0.2);
+            border: 2px solid var(--temporal-primary);
+            border-radius: 8px;
+            padding: 12px 20px;
+            display: inline-block;
+            font-weight: bold;
+            color: var(--temporal-primary);
+            box-shadow: 0 0 20px rgba(0,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .wound {
+            background: linear-gradient(135deg, rgba(255,51,102,0.2), rgba(155,89,182,0.1));
+            border: 1px dashed var(--temporal-wound);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+            color: #ff6699;
+        }
+
+        .wound::before {
+            content: '// TIMELINE FRACTURE: ';
+            color: var(--temporal-wound);
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .rail-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .rail-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        .rail-dot.active {
+            background: var(--temporal-primary);
+            border-color: var(--temporal-primary);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0,255,255,0.5);
+        }
+
+        .rail-dot.past {
+            background: rgba(0,255,255,0.3);
+            border-color: var(--temporal-primary);
+            color: #00cccc;
+        }
+
+        .constant-card .symbol { color: var(--temporal-primary); }
+        .coupling-item { border-left-color: var(--temporal-primary); }
+
+        .nav-rail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .nav-rail a {
+            color: var(--temporal-primary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--temporal-glow);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-rail a:hover { background: var(--temporal-glow); }
+
+        .pattern-block {
+            display: flex;
+            gap: 4px;
+            margin: 12px 0;
+            flex-wrap: wrap;
+        }
+
+        .pattern-cell {
+            width: 20px;
+            height: 20px;
+            background: rgba(0,255,255,0.2);
+            border: 1px solid rgba(0,255,255,0.4);
+            border-radius: 2px;
+        }
+
+        .pattern-cell.high { background: rgba(0,255,255,0.6); }
+        .pattern-cell.low { background: rgba(155,89,182,0.4); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/echo-race-condition.html" class="nav-link">ECHO Build Spec</a>
+            <a href="../../companions/echo-companion.html" class="nav-link">ECHO Companion</a>
+            <a href="../../index.html" class="nav-link">Home</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 03: RECENT</h1>
+            <p class="subtitle">Short History - Pattern Formation</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Rails</a> /
+                <a href="./">ECHO</a> /
+                Rail 03
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-dot past">1</div>
+            <div class="rail-dot past">2</div>
+            <div class="rail-dot active">3</div>
+            <div class="rail-dot">4</div>
+            <div class="rail-dot">5</div>
+            <div class="rail-dot">6</div>
+            <div class="rail-dot">7</div>
+            <div class="rail-dot">8</div>
+            <div class="rail-dot">9</div>
+            <div class="rail-dot">10</div>
+            <div class="rail-dot">11</div>
+            <div class="rail-dot">12</div>
+        </div>
+
+        <div class="nav-rail">
+            <a href="rail-02-immediate.html">Previous: IMMEDIATE</a>
+            <span style="color: var(--temporal-primary); font-weight: bold;">RAIL 03: RECENT</span>
+            <a href="rail-04-short-term.html">Next: SHORT-TERM</a>
+        </div>
+
+        <section class="doc-section">
+            <h2>Rail 03: Pattern Formation</h2>
+
+            <p>Rail 03 extends beyond the immediate collision buffer into short history - the temporal range where patterns first become visible. Individual collisions here begin to coalesce into recognizable race condition signatures.</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--temporal-primary); margin-bottom: 12px;">Core Function</h4>
+                <p><strong>Short history layer where temporal patterns first emerge.</strong></p>
+                <p>While Rail 02 holds raw collision data, Rail 03 begins the pattern recognition process. Recurring collision signatures are identified and tagged for tracking.</p>
+            </div>
+
+            <div class="drift">Patterns are born in repetition. The third time is when coincidence becomes pattern.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                    <div class="derivation">(1+sqrt(5))/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">phi^-1</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">sqrt(1-phi^-4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">sqrt(3)/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">phi^4 + phi^-4</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Rail</div>
+                    <div class="value">3 / 12</div>
+                    <div class="derivation">RECENT Position</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Pattern Detection Engine</h2>
+
+            <p>Rail 03 implements pattern recognition across the collision history:</p>
+
+            <div class="pattern-block">
+                <div class="pattern-cell high"></div>
+                <div class="pattern-cell low"></div>
+                <div class="pattern-cell high"></div>
+                <div class="pattern-cell low"></div>
+                <div class="pattern-cell high"></div>
+                <div class="pattern-cell low"></div>
+                <div class="pattern-cell high"></div>
+            </div>
+            <p style="color: #888; font-size: 0.85rem;">Detected pattern: Alternating high/low - oscillation signature</p>
+
+            <div class="code-block">
+<span class="comment"># RAIL 03: RECENT - PATTERN FORMATION</span>
+
+<span class="keyword">class</span> <span class="type">RailRecent</span>:
+    <span class="string">"""Short history - pattern detection layer"""</span>
+
+    RAIL_ID = <span class="number">3</span>
+    RAIL_NAME = <span class="string">"RECENT"</span>
+    PATTERN_WINDOW = L4 * <span class="number">3</span>  <span class="comment"># 21 samples</span>
+    TEMPORAL_DEPTH = <span class="number">2</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.history = []
+        self.detected_patterns = []
+
+    <span class="keyword">def</span> <span class="function">analyze_history</span>(self, collision_buffer: List):
+        <span class="string">"""Detect patterns in collision history"""</span>
+        self.history.extend(collision_buffer)
+        self._trim_to_window()
+
+        <span class="comment"># Look for recurring signatures</span>
+        patterns = []
+        patterns.extend(self._detect_oscillation())
+        patterns.extend(self._detect_clustering())
+        patterns.extend(self._detect_harmonics())
+
+        self.detected_patterns = patterns
+        <span class="keyword">return</span> patterns
+
+    <span class="keyword">def</span> <span class="function">_detect_oscillation</span>(self) -> List[Pattern]:
+        <span class="string">"""Find alternating collision patterns"""</span>
+        <span class="comment"># Z-axis oscillation = race condition signature</span>
+        z_values = [h.z_coordinate <span class="keyword">for</span> h <span class="keyword">in</span> self.history]
+        sign_changes = self._count_sign_changes(z_values)
+
+        <span class="keyword">if</span> sign_changes >= <span class="number">3</span>:
+            <span class="keyword">return</span> [Pattern(<span class="string">"OSCILLATION"</span>, sign_changes)]
+        <span class="keyword">return</span> []
+
+    <span class="keyword">def</span> <span class="function">_detect_harmonics</span>(self) -> List[Pattern]:
+        <span class="string">"""Find harmonic frequency patterns"""</span>
+        <span class="keyword">for</span> n <span class="keyword">in</span> [<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]:
+            <span class="keyword">if</span> self._check_harmonic(n):
+                <span class="keyword">return</span> [Pattern(f<span class="string">"HARMONIC_{n}"</span>, n)]
+        <span class="keyword">return</span> []
+            </div>
+
+            <div class="wound">Oscillation pattern detected: 5 sign changes in L4 window. Race condition confirmed.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>TRIAD Crossing Sequence - Rail 03 Role</h2>
+
+            <p>Rail 03 provides pattern context for TRIAD evaluation:</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--temporal-primary);">Rail 03 Pattern Classes</h4>
+                <table class="data-table">
+                    <tr>
+                        <th>Pattern Type</th>
+                        <th>Detection Method</th>
+                        <th>Race Indicator</th>
+                    </tr>
+                    <tr>
+                        <td>OSCILLATION</td>
+                        <td>Sign changes in z-values</td>
+                        <td>Strong - active race</td>
+                    </tr>
+                    <tr>
+                        <td>CLUSTERING</td>
+                        <td>Multiple threads near z_c</td>
+                        <td>Medium - potential race</td>
+                    </tr>
+                    <tr>
+                        <td>HARMONIC_N</td>
+                        <td>Periodic resonance at 1/N</td>
+                        <td>Weak - background noise</td>
+                    </tr>
+                    <tr>
+                        <td>DRIFT</td>
+                        <td>Monotonic z movement</td>
+                        <td>None - normal shift</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Pattern Recognizer Unit</span>
+                    <div class="desc">Dedicated hardware for oscillation and harmonic detection</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">History RAM</span>
+                    <div class="desc">21-sample (L4*3) history buffer for pattern analysis</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">FFT Accelerator</span>
+                    <div class="desc">Fast Fourier Transform for harmonic detection</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Pattern Tag Generator</span>
+                    <div class="desc">Automatic tagging of detected patterns</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># L4-HELIX RAIL 03 HARDWARE MAPPING</span>
+
+Rail_03_RECENT:
+  history_depth: L4 * <span class="number">3</span> = <span class="number">21</span>
+  pattern_types: [oscillation, clustering, harmonic, drift]
+  fft_window: <span class="number">16</span> samples (power of 2)
+
+  hardware_registers:
+    - HISTORY_RAM[<span class="number">21</span>]      <span class="comment"># Collision history</span>
+    - PATTERN_FLAGS        <span class="comment"># Detected pattern bits</span>
+    - OSC_COUNTER          <span class="comment"># Sign change count</span>
+    - HARMONIC_DETECT[<span class="number">4</span>]   <span class="comment"># H2-H5 detectors</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Function</h2>
+
+            <div class="drift">In the recent past, themes emerge. What seemed random reveals its rhythm. The story begins to take shape.</div>
+
+            <p>Rail 03 is where narrative patterns first become visible. Random events coalesce into recurring themes. ECHO uses this layer to understand the character of a race condition - is it a brief conflict or a sustained struggle?</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--temporal-primary);">Story Memory at Rail 03</h4>
+                <ul>
+                    <li><strong>Theme Emergence:</strong> Recurring elements become visible</li>
+                    <li><strong>Conflict Characterization:</strong> Nature of race condition revealed</li>
+                    <li><strong>Rhythm Detection:</strong> Story pacing patterns emerge</li>
+                    <li><strong>Foreshadowing:</strong> Pattern hints at future developments</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="nav-rail">
+            <a href="rail-02-immediate.html">Previous: IMMEDIATE</a>
+            <span style="color: var(--temporal-primary); font-weight: bold;">RAIL 03: RECENT</span>
+            <a href="rail-04-short-term.html">Next: SHORT-TERM</a>
+        </div>
+
+        <footer class="doc-footer">
+            <p style="color: var(--temporal-primary);">ECHO - Rail 03: RECENT</p>
+            <p>Pattern formation. Short history. Where rhythm emerges from noise.</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 16px;">
+                BloomCoin v6 | ECHO 12-Rail Architecture
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

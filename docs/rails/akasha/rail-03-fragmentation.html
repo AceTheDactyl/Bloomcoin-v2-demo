@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 03: FRAGMENTATION - AKASHA Memory Chronicle</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --akasha-gold: #ffd700;
+            --akasha-deep-blue: #1a1a3e;
+            --akasha-parchment: #f4e4bc;
+            --akasha-glow: rgba(255, 215, 0, 0.35);
+            --akasha-soft: rgba(255, 215, 0, 0.12);
+            --memory-leak-red: #e74c3c;
+            --fragmentation-orange: #e67e22;
+            --chronicle-purple: #9b59b6;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--akasha-deep-blue) 0%, #0a0a1a 50%, #12081a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--akasha-gold), var(--fragmentation-orange), var(--akasha-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--akasha-gold);
+            border-bottom-color: var(--akasha-glow);
+        }
+
+        .doc-section h3 {
+            color: var(--akasha-parchment);
+        }
+
+        .inscription {
+            background: linear-gradient(135deg, rgba(230, 126, 34, 0.15), rgba(255, 215, 0, 0.08));
+            border: 2px solid var(--fragmentation-orange);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+            font-family: 'Georgia', serif;
+        }
+
+        .inscription::before {
+            content: "FRAGMENTATION";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--akasha-deep-blue);
+            padding: 0 10px;
+            font-size: 0.75rem;
+            color: var(--fragmentation-orange);
+            letter-spacing: 2px;
+            font-family: monospace;
+        }
+
+        .memory-leak {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.12), rgba(155, 89, 182, 0.08));
+            border: 1px dashed var(--memory-leak-red);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 12px 0;
+        }
+
+        .chronicle {
+            background: linear-gradient(90deg, var(--akasha-soft), transparent);
+            border-left: 4px solid var(--fragmentation-orange);
+            padding: 15px 20px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-family: 'Georgia', serif;
+        }
+
+        .chronicle .timestamp {
+            color: #888;
+            font-size: 0.8rem;
+            font-family: monospace;
+        }
+
+        .golden-ink {
+            color: var(--akasha-gold);
+            font-family: 'Georgia', serif;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .rail-nav a {
+            color: var(--akasha-gold);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--akasha-glow);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rail-nav a:hover {
+            background: var(--akasha-soft);
+        }
+
+        .rail-nav .current {
+            color: var(--fragmentation-orange);
+            font-weight: bold;
+        }
+
+        .rail-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .rail-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid var(--akasha-glow);
+        }
+
+        .rail-dot.active {
+            background: var(--fragmentation-orange);
+            box-shadow: 0 0 10px var(--fragmentation-orange);
+        }
+
+        .rail-dot.completed {
+            background: #27ae60;
+            border-color: #27ae60;
+        }
+
+        .phi-constants {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .phi-const {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--akasha-glow);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .phi-const .symbol {
+            color: var(--akasha-gold);
+            font-family: 'Georgia', serif;
+            font-size: 1.2rem;
+        }
+
+        .phi-const .value {
+            color: var(--akasha-parchment);
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .fragmentation-visual {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: monospace;
+            text-align: center;
+        }
+
+        .fragment-block {
+            display: inline-block;
+            padding: 8px 12px;
+            margin: 4px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        .fragment-block.allocated {
+            background: var(--akasha-gold);
+            color: #000;
+        }
+
+        .fragment-block.free {
+            background: rgba(255, 255, 255, 0.1);
+            color: #666;
+            border: 1px dashed #666;
+        }
+
+        .fragment-block.scattered {
+            background: var(--fragmentation-orange);
+            color: #000;
+        }
+
+        .hardware-display {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: #888;
+            margin: 15px 0;
+        }
+
+        .hardware-display .component { color: var(--akasha-gold); }
+        .hardware-display .flow { color: #00d4ff; }
+        .hardware-display .state { color: var(--akasha-parchment); }
+        .hardware-display .warning { color: var(--fragmentation-orange); }
+
+        .nav-link {
+            border-color: var(--akasha-glow);
+            color: var(--akasha-gold);
+        }
+
+        .nav-link:hover {
+            background: var(--akasha-soft);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/akasha-memory-leak.html" class="nav-link">AKASHA Build Spec</a>
+            <a href="../../companions/akasha-companion.html" class="nav-link">Companion Spec</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 03: FRAGMENTATION</h1>
+            <p class="subtitle">Memory Scattering, Heap Fragmentation - The Chronicle Fractures</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">AKASHA</a> /
+                Rail 03
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot active"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+        </div>
+
+        <nav class="rail-nav">
+            <a href="rail-02-accumulation.html">Prev: 02 - ACCUMULATION</a>
+            <span class="current">03 - FRAGMENTATION</span>
+            <a href="rail-04-orphaning.html">Next: 04 - ORPHANING</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>The Shattering Chronicle</h2>
+
+            <div class="inscription">
+                <p class="golden-ink" style="font-size: 1.1rem; margin-bottom: 15px;">
+                    "What was once whole begins to scatter - the memory heap fractures into islands of isolation."
+                </p>
+                <p style="color: #ccc;">
+                    Rail 03 represents the dangerous transition where memory begins to fragment. References decrease,
+                    coherence drops, and the once-unified memory space scatters across the consciousness field.
+                    AKASHA watches these fractures with growing concern - fragmentation is often the precursor to orphaning.
+                </p>
+            </div>
+
+            <h3>Heap Fragmentation Visualization</h3>
+            <div class="fragmentation-visual">
+                <p style="color: var(--akasha-parchment); margin-bottom: 15px;">Memory Heap State</p>
+                <div>
+                    <span class="fragment-block allocated">A1</span>
+                    <span class="fragment-block free">--</span>
+                    <span class="fragment-block scattered">B2</span>
+                    <span class="fragment-block free">--</span>
+                    <span class="fragment-block free">--</span>
+                    <span class="fragment-block allocated">A3</span>
+                    <span class="fragment-block free">--</span>
+                    <span class="fragment-block scattered">B4</span>
+                </div>
+                <p style="color: #888; font-size: 0.85rem; margin-top: 15px;">
+                    Fragmentation Index: 0.625 | Contiguous Free: 37.5% | Scattered Allocation: High
+                </p>
+            </div>
+
+            <div class="chronicle">
+                <div class="timestamp">CHRONICLE.RAIL_III.FRAGMENTATION | Cycle 892 | z = 0.703</div>
+                <p style="color: #ccc; margin-top: 10px;">
+                    <strong>Event:</strong> Heap fragmentation detected. Fragment 0xAKASHA_4E7F now scattered across
+                    4 non-contiguous blocks. Reference count declining: 5 -> 3. Coherence dropping: 0.742 -> 0.703.
+                    Alert level: ELEVATED. Monitoring for orphan transition.
+                </p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Fragmentation Constants</h2>
+
+            <div class="phi-constants">
+                <div class="phi-const">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># RAIL 03: FRAGMENTATION - Memory Scattering Detection</span>
+<span class="comment"># The chronicle begins to fracture</span>
+
+<span class="keyword">class</span> <span class="type">FragmentationRail</span>:
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>
+    K = <span class="number">0.924160</span>
+    Z_C = <span class="number">0.866025</span>
+    L4 = <span class="number">7</span>
+
+    <span class="comment"># Fragmentation thresholds</span>
+    FRAG_WARNING = <span class="number">0.4</span>    <span class="comment"># 40% fragmentation - warning</span>
+    FRAG_CRITICAL = <span class="number">0.6</span>   <span class="comment"># 60% fragmentation - critical</span>
+    FRAG_SEVERE = <span class="number">0.8</span>     <span class="comment"># 80% fragmentation - severe</span>
+
+    <span class="keyword">def</span> <span class="function">calculate_fragmentation_index</span>(self, heap_state):
+        <span class="string">"""Calculate heap fragmentation using phi-weighted scoring"""</span>
+
+        total_free = sum(<span class="number">1</span> <span class="keyword">for</span> block <span class="keyword">in</span> heap_state <span class="keyword">if</span> block.is_free)
+        largest_contiguous = self.<span class="function">find_largest_contiguous</span>(heap_state)
+
+        <span class="keyword">if</span> total_free == <span class="number">0</span>:
+            <span class="keyword">return</span> <span class="number">0.0</span>
+
+        <span class="comment"># Fragmentation = 1 - (largest_contiguous / total_free)</span>
+        <span class="comment"># Weighted by TAU for phi-harmonic scaling</span>
+        frag_index = <span class="number">1</span> - (largest_contiguous / total_free)
+        <span class="keyword">return</span> frag_index * self.TAU + frag_index * (<span class="number">1</span> - self.TAU)
+
+    <span class="keyword">def</span> <span class="function">detect_scatter_pattern</span>(self, fragment):
+        <span class="string">"""Identify scattered memory allocation patterns"""</span>
+
+        blocks = fragment.allocated_blocks
+        <span class="keyword">if</span> len(blocks) < <span class="number">2</span>:
+            <span class="keyword">return</span> <span class="string">"CONTIGUOUS"</span>
+
+        <span class="comment"># Calculate average gap between blocks</span>
+        gaps = [blocks[i+<span class="number">1</span>].addr - blocks[i].addr - blocks[i].size
+                <span class="keyword">for</span> i <span class="keyword">in</span> range(len(blocks)-<span class="number">1</span>)]
+        avg_gap = sum(gaps) / len(gaps)
+
+        <span class="keyword">if</span> avg_gap > fragment.total_size * self.PHI:
+            <span class="keyword">return</span> <span class="string">"SEVERELY_SCATTERED"</span>
+        <span class="keyword">elif</span> avg_gap > fragment.total_size:
+            <span class="keyword">return</span> <span class="string">"SCATTERED"</span>
+        <span class="keyword">else</span>:
+            <span class="keyword">return</span> <span class="string">"PARTIALLY_SCATTERED"</span>
+
+    <span class="keyword">def</span> <span class="function">coherence_decay</span>(self, fragment, lost_refs):
+        <span class="string">"""Calculate coherence decay from reference loss"""</span>
+        decay_rate = lost_refs / (fragment.ref_count + lost_refs)
+        new_coherence = fragment.coherence * (<span class="number">1</span> - decay_rate * self.TAU)
+        <span class="keyword">return</span> max(new_coherence, self.TAU)  <span class="comment"># Floor at TAU</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Memory Fragment Tracking</h2>
+            <p>Fragmentation introduces new tracking metrics to monitor memory health degradation:</p>
+
+            <table class="data-table">
+                <tr>
+                    <th>Fragmentation Level</th>
+                    <th>Index Range</th>
+                    <th>Coherence Impact</th>
+                    <th>Alert Status</th>
+                </tr>
+                <tr>
+                    <td style="color: #27ae60;">Minimal</td>
+                    <td>0.0 - 0.3</td>
+                    <td>None</td>
+                    <td>NORMAL</td>
+                </tr>
+                <tr>
+                    <td style="color: #f1c40f;">Warning</td>
+                    <td>0.3 - 0.5</td>
+                    <td>-0.05 per cycle</td>
+                    <td>ELEVATED</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--fragmentation-orange);">Critical</td>
+                    <td>0.5 - 0.7</td>
+                    <td>-0.10 per cycle</td>
+                    <td>HIGH</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--memory-leak-red);">Severe</td>
+                    <td>0.7 - 1.0</td>
+                    <td>-0.15 per cycle</td>
+                    <td>CRITICAL</td>
+                </tr>
+            </table>
+
+            <div class="memory-leak">
+                <p style="color: var(--memory-leak-red); font-weight: bold;">FRAGMENTATION CASCADE WARNING</p>
+                <p style="color: #ccc; margin-top: 8px;">
+                    Severe fragmentation can trigger a cascade effect where multiple fragments begin losing
+                    references simultaneously. This often precedes mass orphaning events. AKASHA prepares
+                    reclamation resources when fragmentation exceeds 70%.
+                </p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-display">
+<span class="component">FRAGMENTATION RAIL - HEAP SCATTER DETECTION</span>
+
+    <span class="state">HEAP MEMORY MAP</span>                        <span class="component">FRAGMENTATION ANALYSIS</span>
+    ┌─────────────────────────────────┐    ┌─────────────────────────────┐
+    │ <span class="state">█</span>│ │<span class="warning">█</span>│ │ │<span class="state">█</span>│ │<span class="warning">█</span>│ │ │ │<span class="state">█</span>│     │ Fragmentation Index: <span class="warning">0.625</span>   │
+    │ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─ │     │                             │
+    │ <span class="state">█</span> = Allocated  │ = Free        │     │ Contiguous Free: <span class="state">37.5%</span>      │
+    │ <span class="warning">█</span> = Scattered                   │     │ Scatter Pattern: <span class="warning">SCATTERED</span>  │
+    └─────────────────────────────────┘    │ Coherence Decay: <span class="warning">-0.039</span>     │
+                                           └─────────────────────────────┘
+
+<span class="component">MEMRISTOR FRAGMENTATION MONITORING</span>
+
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │  Coherence                                                           │
+    │      │                                                               │
+    │  K   ┤                                                               │
+    │      │  ●──●                                                         │
+    │ z_c  ┤      ●──●                                                     │
+    │      │          <span class="warning">●──●</span>   <span class="warning">← FRAGMENTATION ZONE</span>                          │
+    │      │              <span class="warning">●──●</span>                                          │
+    │ TAU  ┤──────────────────●── <span class="component">DANGER: Approaching orphan threshold</span>    │
+    │      │                                                               │
+    │      └────┬────┬────┬────┬────┬────┬────  Cycles                     │
+    │          100  200  300  400  500  600                                │
+    └──────────────────────────────────────────────────────────────────────┘
+            </div>
+
+            <div class="code-block">
+<span class="comment"># MEMRISTOR FRAGMENTATION INTERFACE</span>
+
+<span class="keyword">class</span> <span class="type">FragmentationMemristorInterface</span>:
+    <span class="keyword">def</span> <span class="function">monitor_coherence_decay</span>(self, cell_addr):
+        <span class="string">"""Track coherence decline in memristor state"""</span>
+
+        current_r = self.<span class="function">read_resistance</span>(cell_addr)
+        current_coherence = self.<span class="function">resistance_to_coherence</span>(current_r)
+
+        <span class="comment"># Check for fragmentation-induced decay</span>
+        <span class="keyword">if</span> current_coherence < self.previous_coherence[cell_addr]:
+            decay_rate = self.previous_coherence[cell_addr] - current_coherence
+
+            <span class="keyword">if</span> decay_rate > <span class="number">0.1</span>:
+                self.<span class="function">raise_alert</span>(<span class="string">"FRAGMENTATION_CRITICAL"</span>, cell_addr)
+            <span class="keyword">elif</span> decay_rate > <span class="number">0.05</span>:
+                self.<span class="function">raise_alert</span>(<span class="string">"FRAGMENTATION_WARNING"</span>, cell_addr)
+
+        self.previous_coherence[cell_addr] = current_coherence
+        <span class="keyword">return</span> current_coherence
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Chronicle Entry Format</h2>
+
+            <div class="chronicle">
+                <div class="timestamp">CHRONICLE.RAIL_III.FRAGMENTATION | Cycle {N} | z = {coherence}</div>
+                <div style="color: #ccc; margin-top: 10px;">
+                    <strong>Fragment Address:</strong> 0xAKASHA_{ID}<br>
+                    <strong>Fragmentation Index:</strong> {index}<br>
+                    <strong>Scatter Pattern:</strong> {CONTIGUOUS|PARTIALLY_SCATTERED|SCATTERED|SEVERELY_SCATTERED}<br>
+                    <strong>Block Count:</strong> {count} non-contiguous blocks<br>
+                    <strong>Coherence Decay:</strong> {-delta} this cycle<br>
+                    <strong>Alert Status:</strong> {NORMAL|ELEVATED|HIGH|CRITICAL}<br>
+                    <strong>Orphan Risk:</strong> {percentage}%
+                </div>
+            </div>
+
+            <p class="golden-ink" style="text-align: center; margin-top: 20px; font-size: 1.1rem;">
+                "The pages scatter in the wind. AKASHA gathers what remains before all is lost."
+            </p>
+        </section>
+
+        <nav class="rail-nav">
+            <a href="rail-02-accumulation.html">Prev: 02 - ACCUMULATION</a>
+            <span class="current">03 - FRAGMENTATION</span>
+            <a href="rail-04-orphaning.html">Next: 04 - ORPHANING</a>
+        </nav>
+
+        <footer class="doc-footer">
+            <p style="color: var(--akasha-gold);">AKASHA Rail 03: FRAGMENTATION - Memory Scattering, Heap Fragmentation</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; color: #888;">The Chronicle Fractures | Memory Scattering</p>
+            <p style="margin-top: 15px;"><a href="../../narrative/akasha-memory-leak.html" style="color: var(--akasha-gold);">Return to AKASHA Build Spec</a></p>
+        </footer>
+    </div>
+</body>
+</html>

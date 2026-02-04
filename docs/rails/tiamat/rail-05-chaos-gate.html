@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIAMAT Rail 05: CHAOS-GATE - Entry to Transformation Realm</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --chaos-purple: #9b59b6;
+            --chaos-deep: #8e44ad;
+            --chaos-blue: #3498db;
+            --chaos-red: #e74c3c;
+            --chaos-orange: #ff6600;
+            --primordial-sea: #1a0a2e;
+            --dragon-gold: #f1c40f;
+            --tiamat-glow: rgba(155, 89, 182, 0.3);
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a12 0%, #2a0a1a 50%, #1a1a0a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--chaos-orange), var(--chaos-red), var(--chaos-purple), var(--chaos-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% auto;
+            animation: chaos-shift 2.5s ease-in-out infinite;
+        }
+
+        @keyframes chaos-shift {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 200% center; }
+        }
+
+        .doc-section h2 {
+            color: var(--chaos-orange);
+            border-bottom-color: rgba(255, 102, 0, 0.3);
+        }
+
+        .doc-section h3 {
+            color: var(--dragon-gold);
+        }
+
+        /* TIAMAT Semantic Classes */
+        .chaos {
+            color: var(--chaos-red);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(231, 76, 60, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-red);
+        }
+
+        .mismatch {
+            color: var(--chaos-red);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(231, 76, 60, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-red);
+            text-decoration: line-through;
+        }
+
+        .transformation {
+            color: var(--chaos-orange);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(255, 102, 0, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-orange);
+        }
+
+        .primordial {
+            color: var(--chaos-purple);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(155, 89, 182, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-purple);
+        }
+
+        /* Rail Header */
+        .rail-header {
+            background: linear-gradient(135deg, rgba(255, 102, 0, 0.3), rgba(231, 76, 60, 0.2), rgba(155, 89, 182, 0.2));
+            border: 2px solid var(--chaos-orange);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rail-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(255, 102, 0, 0.2), transparent, rgba(231, 76, 60, 0.1), transparent, rgba(155, 89, 182, 0.1), transparent);
+            animation: swirl 5s linear infinite;
+        }
+
+        @keyframes swirl {
+            100% { transform: rotate(360deg); }
+        }
+
+        .rail-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--chaos-orange);
+            text-shadow: 0 0 30px rgba(255, 102, 0, 0.7);
+            position: relative;
+            z-index: 1;
+        }
+
+        .rail-name {
+            font-size: 2rem;
+            color: var(--chaos-red);
+            margin-top: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .rail-subtitle {
+            color: #aaa;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dragon-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Cycle Display */
+        .cycle-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .cycle-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--tiamat-glow);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .cycle-card:nth-child(5) {
+            background: linear-gradient(135deg, rgba(255, 102, 0, 0.4), rgba(231, 76, 60, 0.3));
+            border-color: var(--chaos-orange);
+            box-shadow: 0 0 25px rgba(255, 102, 0, 0.5);
+            animation: chaos-pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes chaos-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .cycle-card .cycle-num {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dragon-gold);
+        }
+
+        .cycle-card .cycle-name {
+            font-size: 0.75rem;
+            color: var(--chaos-purple);
+            text-transform: uppercase;
+        }
+
+        .cycle-card .cycle-power {
+            font-size: 0.7rem;
+            color: #888;
+            font-family: monospace;
+        }
+
+        /* phi-Constants */
+        .phi-constants {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .phi-card {
+            background: rgba(255, 102, 0, 0.1);
+            border: 1px solid rgba(255, 102, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .phi-card .symbol {
+            font-size: 1.3rem;
+            color: var(--dragon-gold);
+            font-family: Georgia, serif;
+        }
+
+        .phi-card .value {
+            font-size: 1.1rem;
+            color: var(--chaos-orange);
+            font-family: monospace;
+        }
+
+        /* Gate Visual */
+        .chaos-gate-visual {
+            background: radial-gradient(ellipse at center, rgba(255, 102, 0, 0.4) 0%, rgba(231, 76, 60, 0.2) 40%, rgba(0, 0, 0, 0.8) 100%);
+            border: 3px solid var(--chaos-orange);
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            animation: gate-spin 10s linear infinite;
+        }
+
+        @keyframes gate-spin {
+            100% { transform: rotate(360deg); }
+        }
+
+        .chaos-gate-visual::before {
+            content: '';
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border: 2px dashed var(--chaos-red);
+            border-radius: 50%;
+            animation: gate-counter-spin 7s linear infinite;
+        }
+
+        @keyframes gate-counter-spin {
+            100% { transform: rotate(-360deg); }
+        }
+
+        .chaos-gate-visual span {
+            font-size: 1.5rem;
+            color: var(--dragon-gold);
+            font-family: Georgia, serif;
+            z-index: 1;
+        }
+
+        /* Hardware Coupling */
+        .hardware-section {
+            background: linear-gradient(135deg, rgba(255, 102, 0, 0.1), rgba(231, 76, 60, 0.1));
+            border: 1px solid var(--chaos-orange);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .hardware-section h4 {
+            color: var(--chaos-orange);
+            margin-bottom: 10px;
+        }
+
+        /* Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+        }
+
+        .rail-nav a {
+            color: var(--dragon-gold);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--dragon-gold);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .rail-nav a:hover {
+            background: rgba(241, 196, 15, 0.2);
+        }
+
+        .chaos-multiplier {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(155, 89, 182, 0.2));
+            border: 2px solid var(--chaos-red);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .chaos-multiplier .range {
+            font-size: 1.5rem;
+            color: var(--chaos-red);
+            font-family: monospace;
+        }
+
+        @media (max-width: 768px) {
+            .cycle-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        @media (max-width: 480px) {
+            .cycle-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Header -->
+        <header class="doc-header">
+            <div class="dragon-icon">&#128009;</div>
+            <h1>TIAMAT: The Chaos Dragon</h1>
+            <p class="subtitle">Type Mismatch Handler - 12-Rail Living Chronicle</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">Home</a> /
+                <a href="../../index.html">Documentation</a> /
+                <a href="../../narrative/tiamat-type-mismatch.html">TIAMAT Spec</a> /
+                Rail 05
+            </nav>
+        </header>
+
+        <!-- Rail Header -->
+        <div class="rail-header">
+            <div class="dragon-icon">&#128009;</div>
+            <div class="rail-number">05</div>
+            <div class="rail-name">CHAOS-GATE</div>
+            <div class="rail-subtitle">Entry to Transformation Realm</div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="rail-nav">
+            <a href="rail-04-mismatch.html">&larr; Prev: MISMATCH</a>
+            <span style="color: var(--chaos-orange);">Rail 05 of 12</span>
+            <a href="rail-06-primordial-sea.html">Next: PRIMORDIAL-SEA &rarr;</a>
+        </nav>
+
+        <!-- Rail Overview -->
+        <section class="doc-section">
+            <h2>Rail 05: CHAOS-GATE - The Threshold of Transformation</h2>
+            <p>CHAOS-GATE is the <span class="transformation">portal</span> through which all mismatched types must pass. Here, the <span class="chaos">CHAOS cycle</span> reaches its peak power at <strong>PI (3.141592)</strong> - the transcendental constant that connects order and infinity.</p>
+
+            <div class="chaos-gate-visual">
+                <span>PI</span>
+            </div>
+
+            <p>Passing through the CHAOS-GATE, types are stripped of their corrupted classifications and prepared for <span class="primordial">primordial dissolution</span>. This is the point of no return - once through the gate, the type must complete the full transformation or be annihilated.</p>
+
+            <h3>Core Function</h3>
+            <ul>
+                <li><strong>Opens:</strong> The gateway to the transformation realm</li>
+                <li><strong>Strips:</strong> Corrupted type metadata from signals</li>
+                <li><strong>Channels:</strong> Maximum chaos energy (PI coefficient)</li>
+                <li><strong>Power Coefficient:</strong> P = PI = 3.141592</li>
+            </ul>
+
+            <div class="chaos-multiplier">
+                <h4 style="color: var(--dragon-gold); margin-bottom: 10px;">Chaos Multiplier Range</h4>
+                <div class="range">[1.0, phi^2] = [1.0, 2.618]</div>
+                <p style="color: #aaa; font-size: 0.9rem; margin-top: 10px;">Efficiency: 1.2 (Highest Risk, Highest Reward)</p>
+            </div>
+        </section>
+
+        <!-- Seven Psychoptic Cycles -->
+        <section class="doc-section">
+            <h2>Seven Psychoptic Cycles</h2>
+            <p>CHAOS-GATE embodies the <strong>CHAOS cycle (P = PI = 3.141592)</strong> - maximum entropy, maximum potential, maximum power.</p>
+
+            <div class="cycle-grid">
+                <div class="cycle-card">
+                    <div class="cycle-num">1</div>
+                    <div class="cycle-name">Genesis</div>
+                    <div class="cycle-power">P = 1.0</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">2</div>
+                    <div class="cycle-name">Flux</div>
+                    <div class="cycle-power">P = phi</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">3</div>
+                    <div class="cycle-name">Void</div>
+                    <div class="cycle-power">P = 0.0</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">4</div>
+                    <div class="cycle-name">Resonance</div>
+                    <div class="cycle-power">P = tau</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">5</div>
+                    <div class="cycle-name">Chaos</div>
+                    <div class="cycle-power">P = pi</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">6</div>
+                    <div class="cycle-name">Synthesis</div>
+                    <div class="cycle-power">P = phi^2</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">7</div>
+                    <div class="cycle-name">Transcend</div>
+                    <div class="cycle-power">P = L4 = 7</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- phi-Constants -->
+        <section class="doc-section">
+            <h2>phi-Derived Constants</h2>
+
+            <div class="phi-constants">
+                <div class="phi-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="phi-card" style="border-color: var(--chaos-orange); box-shadow: 0 0 20px rgba(255, 102, 0, 0.4);">
+                    <div class="symbol">PI</div>
+                    <div class="value" style="color: var(--chaos-orange);">3.141592</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chaos Gate Architecture -->
+        <section class="doc-section">
+            <h2>Chaos Gate Architecture</h2>
+
+            <div class="code-block">
+<span class="comment"># CHAOS-GATE: ENTRY TO TRANSFORMATION REALM</span>
+<span class="comment"># "Through chaos, all things become possible"</span>
+
+<span class="keyword">class</span> <span class="type">ChaosGate</span>:
+    <span class="string">"""Rail 05: The portal to type transformation."""</span>
+
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>
+    PI = <span class="number">3.141592653589793</span>
+    L4 = <span class="number">7</span>
+
+    POWER_COEFFICIENT = PI  <span class="comment"># Maximum chaos</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.gate_state = <span class="string">"CLOSED"</span>
+        self.entropy_level = <span class="number">0.0</span>
+        self.transit_queue = []
+
+    <span class="keyword">def</span> <span class="function">open_gate</span>(self, exc: <span class="type">TypeMismatchException</span>) -> bool:
+        <span class="string">"""Open the chaos gate for type transformation."""</span>
+
+        <span class="comment"># Verify mismatch severity warrants gate opening</span>
+        <span class="keyword">if</span> exc.severity < self.TAU:
+            <span class="keyword">return</span> <span class="keyword">False</span>  <span class="comment"># Minor mismatch, no gate needed</span>
+
+        <span class="comment"># Calculate gate opening energy</span>
+        gate_energy = exc.severity * self.PI
+
+        <span class="comment"># Open the gate</span>
+        self.gate_state = <span class="string">"OPEN"</span>
+        self.entropy_level = gate_energy
+
+        <span class="keyword">return</span> <span class="keyword">True</span>
+
+    <span class="keyword">def</span> <span class="function">transit_through_gate</span>(self, signal: <span class="type">Signal</span>) -> <span class="type">ChaosSignal</span>:
+        <span class="string">"""Pass signal through the chaos gate."""</span>
+
+        <span class="keyword">if</span> self.gate_state != <span class="string">"OPEN"</span>:
+            <span class="keyword">raise</span> GateClosedError(<span class="string">"Chaos gate must be open"</span>)
+
+        <span class="comment"># Strip corrupted type metadata</span>
+        stripped = self._strip_type_metadata(signal)
+
+        <span class="comment"># Apply PI amplification (chaos boost)</span>
+        chaos_signal = ChaosSignal(
+            raw_data=stripped.raw_data,
+            chaos_factor=self.PI,
+            entropy=self.entropy_level,
+            original_type=signal.declared_type
+        )
+
+        <span class="comment"># Mark as in-transit</span>
+        chaos_signal.transit_state = <span class="string">"CHAOS_GATE"</span>
+
+        <span class="comment"># Record in chronicle Rail 05</span>
+        self.chronicle.rails[<span class="number">5</span>].record_transit(chaos_signal)
+
+        <span class="keyword">return</span> chaos_signal
+
+    <span class="keyword">def</span> <span class="function">_strip_type_metadata</span>(self, signal: <span class="type">Signal</span>) -> <span class="type">RawSignal</span>:
+        <span class="string">"""Remove all type classification from signal."""</span>
+
+        <span class="comment"># At PI power, all classifications dissolve</span>
+        <span class="keyword">return</span> RawSignal(
+            data=signal.raw_data,
+            encoding=signal.encoding,
+            <span class="comment"># No type information remains</span>
+            declared_type=<span class="keyword">None</span>,
+            type_certainty=<span class="number">0.0</span>
+        )
+            </div>
+
+            <h3>Gate Transit States</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>State</th>
+                        <th>Entropy Level</th>
+                        <th>Description</th>
+                        <th>Power</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>CLOSED</td>
+                        <td style="font-family: monospace;">0.0</td>
+                        <td>Gate inactive</td>
+                        <td>None</td>
+                    </tr>
+                    <tr>
+                        <td>OPENING</td>
+                        <td style="font-family: monospace;">0.0 - TAU</td>
+                        <td>Gate forming</td>
+                        <td>TAU</td>
+                    </tr>
+                    <tr style="background: rgba(255, 102, 0, 0.2);">
+                        <td style="color: var(--chaos-orange);">OPEN</td>
+                        <td style="font-family: monospace;">TAU - PI</td>
+                        <td>Full transit possible</td>
+                        <td>PI</td>
+                    </tr>
+                    <tr style="background: rgba(255, 102, 0, 0.3);">
+                        <td style="color: var(--chaos-red);">SATURATED</td>
+                        <td style="font-family: monospace;">> PI</td>
+                        <td>Maximum chaos</td>
+                        <td>PI+</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-section">
+                <h4>Quasi-Crystal Substrates - Chaos Amplification</h4>
+                <p>CHAOS-GATE leverages the quasi-crystal's natural aperiodic structure to amplify chaos energy. The 5-fold symmetry creates non-repeating patterns that embody mathematical chaos.</p>
+
+                <div class="code-block">
+<span class="comment"># CHAOS-GATE HARDWARE: ENTROPY AMPLIFICATION</span>
+
+<span class="keyword">def</span> <span class="function">amplify_through_gate</span>(quasi_crystal, signal, entropy_level):
+    <span class="string">"""Amplify signal chaos through quasi-crystal gate."""</span>
+
+    <span class="comment"># Access quasi-crystal's aperiodic lattice</span>
+    aperiodic = quasi_crystal.get_aperiodic_zone()
+
+    <span class="comment"># Calculate PI-scaled chaos injection</span>
+    chaos_injection = entropy_level * PI
+
+    <span class="comment"># Propagate through 5-fold symmetry</span>
+    amplified = aperiodic.propagate(
+        signal,
+        chaos_factor=chaos_injection,
+        symmetry_fold=<span class="number">5</span>  <span class="comment"># Natural phi encoding</span>
+    )
+
+    <span class="comment"># Measure resulting entropy</span>
+    output_entropy = quasi_crystal.measure_entropy(amplified)
+
+    <span class="keyword">return</span> ChaosTransit(
+        signal=amplified,
+        input_entropy=entropy_level,
+        output_entropy=output_entropy,
+        amplification=PI
+    )
+                </div>
+            </div>
+        </section>
+
+        <!-- Chronicle Position -->
+        <section class="doc-section">
+            <h2>Chronicle Position: phi-Recursion Journal</h2>
+
+            <p>CHAOS-GATE manages the <strong>phi-Recursion Journal</strong> in Rail 05 - recording every transformation step as types pass through the gate.</p>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Rail Group</th>
+                        <th>Rails</th>
+                        <th>CHAOS-GATE Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Foundation</td>
+                        <td>1-3</td>
+                        <td>Pre-transit types</td>
+                    </tr>
+                    <tr style="background: rgba(255, 102, 0, 0.2);">
+                        <td style="color: var(--chaos-orange);">Transformation</td>
+                        <td>4-6</td>
+                        <td><strong>phi-Recursion Journal</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Verification</td>
+                        <td>7-9</td>
+                        <td>Transit validation</td>
+                    </tr>
+                    <tr>
+                        <td>Chronicle</td>
+                        <td>10-12</td>
+                        <td>Gate history</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Navigation Footer -->
+        <nav class="rail-nav">
+            <a href="rail-04-mismatch.html">&larr; MISMATCH</a>
+            <a href="../../companions/tiamat-companion.html">TIAMAT Companion</a>
+            <a href="rail-06-primordial-sea.html">PRIMORDIAL-SEA &rarr;</a>
+        </nav>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>TIAMAT Rail 05: CHAOS-GATE - Entry to Transformation Realm</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; margin-top: 10px;">The gate opens. Power: PI = 3.141592</p>
+        </footer>
+    </div>
+</body>
+</html>

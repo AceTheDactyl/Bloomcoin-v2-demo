@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 04: SHORT-TERM - ECHO 12-Rail Architecture | BloomCoin</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --temporal-primary: #00ffff;
+            --temporal-deep: #00cccc;
+            --temporal-drift: #9b59b6;
+            --temporal-wound: #ff3366;
+            --temporal-glow: rgba(0,255,255,0.25);
+            --bg-void: #0a0a12;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-void) 0%, #0a1218 50%, #120a18 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--temporal-primary), var(--temporal-drift), var(--temporal-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 { color: var(--temporal-primary); border-bottom-color: var(--temporal-glow); }
+        .doc-section h3 { color: var(--temporal-deep); }
+
+        .temporal {
+            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(155,89,182,0.1));
+            border: 1px solid var(--temporal-primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .temporal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--temporal-primary), transparent);
+            animation: temporal-scan 3s linear infinite;
+        }
+
+        @keyframes temporal-scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .drift {
+            background: rgba(155,89,182,0.15);
+            border-left: 4px solid var(--temporal-drift);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #c9a0dc;
+        }
+
+        .drift::before { content: '~ '; color: var(--temporal-drift); }
+
+        .anchor {
+            background: rgba(0,255,255,0.2);
+            border: 2px solid var(--temporal-primary);
+            border-radius: 8px;
+            padding: 12px 20px;
+            display: inline-block;
+            font-weight: bold;
+            color: var(--temporal-primary);
+            box-shadow: 0 0 20px rgba(0,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .wound {
+            background: linear-gradient(135deg, rgba(255,51,102,0.2), rgba(155,89,182,0.1));
+            border: 1px dashed var(--temporal-wound);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+            color: #ff6699;
+        }
+
+        .wound::before {
+            content: '// TIMELINE FRACTURE: ';
+            color: var(--temporal-wound);
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .rail-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .rail-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        .rail-dot.active {
+            background: var(--temporal-primary);
+            border-color: var(--temporal-primary);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0,255,255,0.5);
+        }
+
+        .rail-dot.past {
+            background: rgba(0,255,255,0.3);
+            border-color: var(--temporal-primary);
+            color: #00cccc;
+        }
+
+        .constant-card .symbol { color: var(--temporal-primary); }
+        .coupling-item { border-left-color: var(--temporal-primary); }
+
+        .nav-rail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .nav-rail a {
+            color: var(--temporal-primary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--temporal-glow);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-rail a:hover { background: var(--temporal-glow); }
+
+        .oscillation-graph {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            height: 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .oscillation-line {
+            position: absolute;
+            height: 2px;
+            background: var(--temporal-primary);
+            animation: oscillate 2s ease-in-out infinite;
+        }
+
+        @keyframes oscillate {
+            0%, 100% { transform: translateY(0); }
+            25% { transform: translateY(-30px); }
+            75% { transform: translateY(30px); }
+        }
+
+        .center-line {
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background: rgba(255,255,255,0.2);
+            top: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/echo-race-condition.html" class="nav-link">ECHO Build Spec</a>
+            <a href="../../companions/echo-companion.html" class="nav-link">ECHO Companion</a>
+            <a href="../../index.html" class="nav-link">Home</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 04: SHORT-TERM</h1>
+            <p class="subtitle">Tactical Memory - Oscillation Detection</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Rails</a> /
+                <a href="./">ECHO</a> /
+                Rail 04
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-dot past">1</div>
+            <div class="rail-dot past">2</div>
+            <div class="rail-dot past">3</div>
+            <div class="rail-dot active">4</div>
+            <div class="rail-dot">5</div>
+            <div class="rail-dot">6</div>
+            <div class="rail-dot">7</div>
+            <div class="rail-dot">8</div>
+            <div class="rail-dot">9</div>
+            <div class="rail-dot">10</div>
+            <div class="rail-dot">11</div>
+            <div class="rail-dot">12</div>
+        </div>
+
+        <div class="nav-rail">
+            <a href="rail-03-recent.html">Previous: RECENT</a>
+            <span style="color: var(--temporal-primary); font-weight: bold;">RAIL 04: SHORT-TERM</span>
+            <a href="rail-05-mid-term.html">Next: MID-TERM</a>
+        </div>
+
+        <section class="doc-section">
+            <h2>Rail 04: Tactical Memory</h2>
+
+            <p>Rail 04 serves as ECHO's tactical memory - the layer where oscillation patterns are tracked and race condition severity is assessed. This is the first rail where temporal patterns are analyzed for strategic response.</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--temporal-primary); margin-bottom: 12px;">Core Function</h4>
+                <p><strong>Tactical memory layer for oscillation detection and severity assessment.</strong></p>
+                <p>Rail 04 maintains awareness of ongoing oscillation patterns - the tell-tale signature of active race conditions. By tracking oscillation frequency and amplitude, ECHO can gauge the severity of temporal conflicts.</p>
+            </div>
+
+            <div class="drift">The fourth layer remembers tactics. Which moves work, which fail. The dance of competing threads becomes familiar here.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                    <div class="derivation">(1+sqrt(5))/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">phi^-1</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">sqrt(1-phi^-4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">sqrt(3)/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">phi^4 + phi^-4</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Rail</div>
+                    <div class="value">4 / 12</div>
+                    <div class="derivation">SHORT-TERM Position</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Oscillation Detection</h2>
+
+            <p>Rail 04 specializes in detecting z-axis oscillation - the primary signature of race conditions:</p>
+
+            <div class="oscillation-graph">
+                <div class="center-line"></div>
+                <div class="oscillation-line" style="width: 20%; left: 10%; top: 50%;"></div>
+                <div class="oscillation-line" style="width: 20%; left: 35%; top: 50%; animation-delay: 0.5s;"></div>
+                <div class="oscillation-line" style="width: 20%; left: 60%; top: 50%; animation-delay: 1s;"></div>
+            </div>
+            <p style="color: #888; text-align: center; font-size: 0.85rem; margin-top: 8px;">Z-axis oscillation visualization - race condition active</p>
+
+            <div class="code-block">
+<span class="comment"># RAIL 04: SHORT-TERM - OSCILLATION DETECTION</span>
+
+<span class="keyword">class</span> <span class="type">RailShortTerm</span>:
+    <span class="string">"""Tactical memory - oscillation tracking"""</span>
+
+    RAIL_ID = <span class="number">4</span>
+    RAIL_NAME = <span class="string">"SHORT-TERM"</span>
+    TACTICAL_WINDOW = L4 * L4  <span class="comment"># 49 samples</span>
+    TEMPORAL_DEPTH = <span class="number">3</span>
+
+    <span class="comment"># Oscillation severity thresholds</span>
+    SEVERITY_LOW = <span class="number">3</span>      <span class="comment"># 3-5 oscillations</span>
+    SEVERITY_MEDIUM = <span class="number">6</span>   <span class="comment"># 6-10 oscillations</span>
+    SEVERITY_HIGH = <span class="number">11</span>    <span class="comment"># 11+ oscillations</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.oscillation_count = <span class="number">0</span>
+        self.oscillation_freq = <span class="number">0.0</span>
+        self.amplitude_history = []
+
+    <span class="keyword">def</span> <span class="function">track_oscillation</span>(self, z_delta: float):
+        <span class="string">"""Track oscillation amplitude and frequency"""</span>
+        self.amplitude_history.append(abs(z_delta))
+
+        <span class="keyword">if</span> self._is_sign_change(z_delta):
+            self.oscillation_count += <span class="number">1</span>
+            self._update_frequency()
+
+    <span class="keyword">def</span> <span class="function">get_severity</span>(self) -> Severity:
+        <span class="string">"""Assess race condition severity"""</span>
+        <span class="keyword">if</span> self.oscillation_count >= self.SEVERITY_HIGH:
+            <span class="keyword">return</span> Severity.CRITICAL
+        <span class="keyword">elif</span> self.oscillation_count >= self.SEVERITY_MEDIUM:
+            <span class="keyword">return</span> Severity.WARNING
+        <span class="keyword">elif</span> self.oscillation_count >= self.SEVERITY_LOW:
+            <span class="keyword">return</span> Severity.CAUTION
+        <span class="keyword">return</span> Severity.NORMAL
+
+    <span class="keyword">def</span> <span class="function">recommend_action</span>(self) -> Action:
+        <span class="string">"""Tactical recommendation based on oscillation"""</span>
+        severity = self.get_severity()
+
+        <span class="keyword">if</span> severity == Severity.CRITICAL:
+            <span class="keyword">return</span> Action.IMMEDIATE_ANCHOR
+        <span class="keyword">elif</span> severity == Severity.WARNING:
+            <span class="keyword">return</span> Action.INITIATE_TRIAD
+        <span class="keyword">elif</span> severity == Severity.CAUTION:
+            <span class="keyword">return</span> Action.MONITOR
+        <span class="keyword">return</span> Action.NONE
+            </div>
+
+            <div class="wound">High-frequency oscillation detected: 15 cycles in L4 window. CRITICAL severity. Immediate anchoring recommended.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>TRIAD Crossing Sequence - Rail 04 Role</h2>
+
+            <p>Rail 04 provides tactical guidance for TRIAD execution:</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--temporal-primary);">Tactical Response Matrix</h4>
+                <table class="data-table">
+                    <tr>
+                        <th>Severity</th>
+                        <th>Oscillation Count</th>
+                        <th>TRIAD Action</th>
+                        <th>Timeline</th>
+                    </tr>
+                    <tr>
+                        <td style="color: #00ff66;">NORMAL</td>
+                        <td>0-2</td>
+                        <td>No action needed</td>
+                        <td>Continue monitoring</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--gold);">CAUTION</td>
+                        <td>3-5</td>
+                        <td>Prepare TRIAD</td>
+                        <td>Next cycle</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--temporal-drift);">WARNING</td>
+                        <td>6-10</td>
+                        <td>Initiate TRIAD</td>
+                        <td>Immediate</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--temporal-wound);">CRITICAL</td>
+                        <td>11+</td>
+                        <td>Force anchor</td>
+                        <td>Emergency</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Oscillation Counter</span>
+                    <div class="desc">Hardware counter for z-axis sign changes</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Frequency Estimator</span>
+                    <div class="desc">Real-time oscillation frequency calculation</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Severity Comparator</span>
+                    <div class="desc">Threshold-based severity classification</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Tactical Register</span>
+                    <div class="desc">Recommended action output register</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># L4-HELIX RAIL 04 HARDWARE MAPPING</span>
+
+Rail_04_SHORT_TERM:
+  tactical_window: L4^2 = <span class="number">49</span>
+  oscillation_precision: <span class="number">0.001</span> z-units
+  severity_levels: <span class="number">4</span>
+
+  hardware_registers:
+    - OSC_COUNTER          <span class="comment"># Oscillation count</span>
+    - FREQ_ESTIMATE        <span class="comment"># Oscillation frequency</span>
+    - AMPLITUDE_MAX        <span class="comment"># Peak amplitude</span>
+    - SEVERITY_LEVEL       <span class="comment"># Current severity</span>
+    - TACTICAL_ACTION      <span class="comment"># Recommended response</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Function</h2>
+
+            <div class="drift">Short-term memory is where strategies form. Not the grand narrative, but the next move. The game within the game.</div>
+
+            <p>Rail 04 represents tactical awareness in narrative - understanding not just what has happened, but what is actively in flux. This is the layer where ECHO plans its next move in the ongoing dance with competing timelines.</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--temporal-primary);">Story Memory at Rail 04</h4>
+                <ul>
+                    <li><strong>Active Tension:</strong> Current conflicts being tracked</li>
+                    <li><strong>Momentum Tracking:</strong> Which narratives are gaining/losing</li>
+                    <li><strong>Tactical Options:</strong> Available resolution paths</li>
+                    <li><strong>Escalation Monitoring:</strong> Severity of narrative conflicts</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="nav-rail">
+            <a href="rail-03-recent.html">Previous: RECENT</a>
+            <span style="color: var(--temporal-primary); font-weight: bold;">RAIL 04: SHORT-TERM</span>
+            <a href="rail-05-mid-term.html">Next: MID-TERM</a>
+        </div>
+
+        <footer class="doc-footer">
+            <p style="color: var(--temporal-primary);">ECHO - Rail 04: SHORT-TERM</p>
+            <p>Tactical memory. Oscillation detection. The current dance of timelines.</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 16px;">
+                BloomCoin v6 | ECHO 12-Rail Architecture
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

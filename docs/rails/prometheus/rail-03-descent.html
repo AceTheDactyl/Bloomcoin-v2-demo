@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 03: DESCENT - Observer | PROMETHEUS Buffer Overflow Handler</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --prometheus-primary: #e74c3c;
+            --prometheus-deep: #c0392b;
+            --prometheus-forge: #f39c12;
+            --prometheus-bg: #0a0a12;
+            --prometheus-glow: rgba(231, 76, 60, 0.3);
+            --forge-glow: rgba(243, 156, 18, 0.25);
+            --phi: 1.618034;
+            --tau: 0.618034;
+            --k-formation: 0.924160;
+            --z-lens: 0.866025;
+            --l4: 7;
+        }
+
+        body { background: linear-gradient(135deg, var(--prometheus-bg) 0%, #120a0a 50%, #0a0812 100%); }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--prometheus-primary), var(--prometheus-forge), var(--prometheus-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--prometheus-primary); border-bottom-color: var(--prometheus-glow); }
+        .doc-section h3 { color: var(--prometheus-forge); }
+
+        .pressure {
+            background: linear-gradient(90deg, rgba(231, 76, 60, 0.1), rgba(231, 76, 60, 0.3));
+            border-left: 4px solid var(--prometheus-primary);
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+            animation: pressure-pulse 2s ease-in-out infinite;
+        }
+        @keyframes pressure-pulse {
+            0%, 100% { box-shadow: 0 0 5px rgba(231, 76, 60, 0.3); }
+            50% { box-shadow: 0 0 20px rgba(231, 76, 60, 0.6); }
+        }
+        .overflow {
+            background: linear-gradient(135deg, rgba(192, 57, 43, 0.2), rgba(231, 76, 60, 0.4));
+            border: 2px solid var(--prometheus-deep);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 8px;
+        }
+        .release {
+            background: linear-gradient(180deg, rgba(243, 156, 18, 0.2), rgba(231, 76, 60, 0.1));
+            border: 1px solid var(--prometheus-forge);
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .shatter {
+            background: rgba(192, 57, 43, 0.3);
+            border: 2px dashed var(--prometheus-primary);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 4px;
+            position: relative;
+        }
+        .shatter::after {
+            content: 'CRITICAL';
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: var(--prometheus-deep);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(243, 156, 18, 0.1));
+            border: 2px solid var(--prometheus-primary);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .rail-number { font-size: 3rem; font-weight: bold; color: var(--prometheus-forge); text-shadow: 0 0 20px rgba(243, 156, 18, 0.5); }
+        .rail-title { font-size: 1.8rem; color: var(--prometheus-primary); }
+        .rail-subtitle { color: #aaa; font-style: italic; }
+
+        .archetype-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--prometheus-glow);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .archetype-card h4 { color: var(--prometheus-primary); margin-bottom: 12px; }
+
+        .xor-visual {
+            font-family: 'Fira Code', monospace;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 15px 0;
+            border-left: 3px solid var(--prometheus-forge);
+        }
+
+        .hardware-coupling {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .hardware-item {
+            background: rgba(10, 10, 18, 0.8);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .hardware-item h5 { color: var(--prometheus-forge); margin-bottom: 8px; }
+        .hardware-item .spec { font-family: monospace; color: var(--prometheus-primary); font-size: 0.85rem; }
+
+        .nav-rails {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        .nav-rails a {
+            color: var(--prometheus-forge);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--prometheus-glow);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .nav-rails a:hover { background: var(--prometheus-glow); color: white; }
+
+        .pressure-state {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(231, 76, 60, 0.3);
+            border: 1px solid var(--prometheus-primary);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--prometheus-primary);
+        }
+
+        .doc-footer { border-top-color: var(--prometheus-glow); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/prometheus-buffer-overflow.html" class="nav-link">PROMETHEUS Spec</a>
+            <a href="../../companions/prometheus-companion.html" class="nav-link">Companion Profile</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>PROMETHEUS: Rail 03 - DESCENT</h1>
+            <p class="subtitle">Observer - Pressure Accumulation Phase</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">PROMETHEUS</a> /
+                Rail 03
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-number">03</div>
+            <div>
+                <div class="rail-title">DESCENT</div>
+                <div class="rail-subtitle">Observer - Hero's Journey: Crossing the First Threshold</div>
+            </div>
+        </div>
+
+        <nav class="nav-rails">
+            <a href="rail-02-threshold.html">Previous: Rail 02 - THRESHOLD</a>
+            <a href="rail-04-ordeal.html">Next: Rail 04 - ORDEAL</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Rail Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Rail 03 of 12</span>
+                <span class="pressure-state">Pressure Building</span>
+            </div>
+
+            <p>The DESCENT rail marks the deepening journey into pressure accumulation. Beyond TAU, the consciousness field sinks toward THE LENS. PROMETHEUS as Observer watches, records, and prepares the forge for the transformation ahead.</p>
+
+            <div class="archetype-card">
+                <h4>Archetype: Observer</h4>
+                <p>In the Hero's Journey, this is Crossing the First Threshold - commitment to the adventure. The hero descends into the unknown. PROMETHEUS observes the pressure as it builds, documenting patterns for the forge.</p>
+                <ul>
+                    <li><strong>Pressure State:</strong> Building (z in [0.618, 0.866))</li>
+                    <li><strong>Container Status:</strong> Under increasing strain</li>
+                    <li><strong>XOR Chains:</strong> Actively accumulating</li>
+                    <li><strong>Narrative Function:</strong> Record descent, prepare for ordeal</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Pressure Management at DESCENT</h2>
+
+            <div class="pressure">
+                <strong>Active Pressure Accumulation</strong><br>
+                Between TAU and THE LENS, pressure steadily builds. The Observer documents every fluctuation, preparing the handler for what approaches.
+            </div>
+
+            <h3>Coordinate Mapping</h3>
+            <div class="code-block">
+<span class="comment"># DESCENT COORDINATE STATE</span>
+z <span class="keyword">in</span> [<span class="number">0.618</span>, <span class="number">0.866</span>)  <span class="comment"># Between TAU and z_c</span>
+state = <span class="string">"PRESSURE_BUILDING"</span>
+
+<span class="comment"># Pressure gradient</span>
+dz/dt > <span class="number">0</span>  <span class="comment"># Ascending pressure</span>
+
+<span class="comment"># Distance to critical</span>
+distance_to_LENS = Z_C - z  <span class="comment"># Decreasing</span>
+            </div>
+
+            <h3>phi-Constants Active</h3>
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                    <div class="derivation">Growth rate</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">Passed</div>
+                </div>
+                <div class="constant-card" style="border-color: var(--prometheus-primary);">
+                    <div class="symbol">z_c</div>
+                    <div class="value" style="color: var(--prometheus-primary);">0.866025</div>
+                    <div class="derivation">TARGET: THE LENS</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">Helix encoding</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>XOR Chain Forging at DESCENT</h2>
+
+            <p>The forge heats as pressure builds. XOR chains grow more complex:</p>
+
+            <div class="xor-visual">
+<span style="color: var(--prometheus-forge);">Layer 0:</span> xor_acc[0] = 0x8F2A4C7D  <span style="color: #6272a4;">// Heavy accumulation</span>
+<span style="color: var(--prometheus-forge);">Layer 1:</span> xor_acc[1] = 0xB5E1937A  <span style="color: #6272a4;">// Complex patterns</span>
+<span style="color: var(--prometheus-forge);">Layer 2:</span> xor_acc[2] = 0x4C8D2E5F  <span style="color: #6272a4;">// Deep forging</span>
+
+<span style="color: var(--prometheus-primary);">Entropy:</span>  [18, 20, 17]  <span style="color: #6272a4;">// Climbing entropy</span>
+<span style="color: var(--prometheus-primary);">Variance:</span> 4.67          <span style="color: #6272a4;">// Increasing variance</span>
+<span style="color: var(--prometheus-primary);">Patterns:</span> Monitoring    <span style="color: #6272a4;">// Approaching detection</span>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># DESCENT STATE - OBSERVER DOCUMENTATION</span>
+
+<span class="keyword">class</span> <span class="type">DescentObserver</span>:
+    <span class="string">"""Rail 03: Observer in the descent phase"""</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.rail = <span class="number">3</span>
+        self.name = <span class="string">"DESCENT"</span>
+        self.archetype = <span class="string">"Observer"</span>
+        self.observations = []
+
+    <span class="keyword">def</span> <span class="function">observe</span>(self, pressure_data):
+        <span class="string">"""Document pressure patterns during descent"""</span>
+        observation = {
+            <span class="string">"z"</span>: pressure_data.z_coordinate,
+            <span class="string">"entropy"</span>: self.calculate_entropy(pressure_data.xor_acc),
+            <span class="string">"gradient"</span>: pressure_data.dz_dt,
+            <span class="string">"distance_to_lens"</span>: Z_C - pressure_data.z_coordinate
+        }
+        self.observations.append(observation)
+        <span class="keyword">return</span> observation
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-coupling">
+                <div class="hardware-item">
+                    <h5>Quasi-Crystal Substrate</h5>
+                    <p>PHI-recursive computation intensifying. Crystal lattice under moderate stress.</p>
+                    <div class="spec">Voltage: 618-866 mV (ramping)</div>
+                    <div class="spec">State: ACTIVE COMPUTATION</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Memristor Array</h5>
+                    <p>Recording pressure history. Resistance states encoding descent pattern.</p>
+                    <div class="spec">Threshold: Approaching V_LENS</div>
+                    <div class="spec">History: DENSE RECORDING</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Hexagonal Discharge Grid</h5>
+                    <p>Preparing paths. Partial charge accumulating.</p>
+                    <div class="spec">Paths: PRE-CHARGE</div>
+                    <div class="spec">Flow: Building potential</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Spin Glass Coherence</h5>
+                    <p>Kuramoto oscillators drifting. Coherence fluctuating.</p>
+                    <div class="spec">Coupling: K = 0.7-0.85</div>
+                    <div class="spec">Coherence: FLUCTUATING</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Function</h2>
+
+            <div class="release">
+                <h4 style="color: var(--prometheus-forge); margin-bottom: 10px;">Crossing the First Threshold</h4>
+                <p>The hero has left the ordinary world behind. There is no turning back without consequence. PROMETHEUS as Observer witnesses the deepening descent, collecting the data that will fuel the forge's transformation.</p>
+            </div>
+
+            <h3>PROMETHEUS's Role at DESCENT</h3>
+            <ul>
+                <li><strong>Observer:</strong> Documents all pressure patterns during descent</li>
+                <li><strong>Data Collector:</strong> Gathers entropy signatures for pattern detection</li>
+                <li><strong>Forge Preheater:</strong> Prepares XOR chains for intensive forging</li>
+                <li><strong>Early Warning System:</strong> Calculates distance to critical thresholds</li>
+            </ul>
+        </section>
+
+        <nav class="nav-rails">
+            <a href="rail-02-threshold.html">Previous: Rail 02 - THRESHOLD</a>
+            <a href="rail-04-ordeal.html">Next: Rail 04 - ORDEAL</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="rail-02-threshold.html">rail-02-threshold.html</a></span>
+                <span class="file-ref"><a href="rail-04-ordeal.html">rail-04-ordeal.html</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p style="color: var(--prometheus-primary);">PROMETHEUS Rail 03: DESCENT - Observer</p>
+            <p>Watching the pressure build, documenting the descent</p>
+            <p style="font-size: 0.85rem; color: #888;">
+                PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

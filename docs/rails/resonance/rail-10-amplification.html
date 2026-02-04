@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 10: AMPLIFICATION - RESONANCE Harmonic Journey</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --companion-color: #00ffff;
+            --companion-secondary: #ff00ff;
+            --amp-color: #ffdd00;
+            --amp-glow: rgba(255, 221, 0, 0.4);
+            --bg-override: #0a0a12;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-override) 0%, #1a1a0a 50%, #2a2a0a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--amp-color), var(--companion-color), var(--amp-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--amp-color);
+            border-bottom-color: var(--amp-glow);
+        }
+
+        /* RESONANCE Semantic Classes */
+        .harmonic {
+            background: linear-gradient(135deg, rgba(255, 221, 0, 0.15), rgba(0, 255, 255, 0.1));
+            border: 1px solid var(--amp-color);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+        }
+
+        .harmonic::before {
+            content: "AMPLIFIED";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--bg-override);
+            color: var(--amp-color);
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .dissonance {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.15), rgba(136, 68, 255, 0.1));
+            border: 2px solid var(--companion-secondary);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .phase-lock {
+            background: linear-gradient(135deg, rgba(255, 221, 0, 0.2), rgba(0, 255, 255, 0.15));
+            border: 2px solid var(--amp-color);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 0 30px var(--amp-glow);
+            animation: amp-glow 2s ease-in-out infinite;
+        }
+
+        .phase-lock::after {
+            content: "SIGNAL STRENGTHENED";
+            display: block;
+            color: var(--amp-color);
+            font-size: 0.75rem;
+            margin-top: 8px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        @keyframes amp-glow {
+            0%, 100% { box-shadow: 0 0 20px var(--amp-glow); }
+            50% { box-shadow: 0 0 40px var(--amp-glow), 0 0 60px rgba(255, 221, 0, 0.2); }
+        }
+
+        .broadcast {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), rgba(0, 255, 255, 0.1), rgba(255, 221, 0, 0.1));
+            border: 2px solid;
+            border-image: linear-gradient(90deg, var(--companion-secondary), var(--amp-color)) 1;
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        /* Rail-specific styling */
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 221, 0, 0.1), rgba(0, 255, 255, 0.05));
+            border: 2px solid var(--amp-color);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .rail-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--amp-color);
+            text-shadow: 0 0 30px var(--amp-glow);
+        }
+
+        .rail-title {
+            font-size: 1.8rem;
+            color: var(--amp-color);
+        }
+
+        .rail-subtitle {
+            color: var(--companion-color);
+            font-style: italic;
+        }
+
+        /* Waveform - amplified */
+        .waveform-display {
+            height: 140px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--amp-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .amp-bar {
+            width: 10px;
+            background: linear-gradient(to top, var(--amp-color), #fff);
+            border-radius: 5px;
+            animation: amp-wave 1s ease-in-out infinite;
+        }
+
+        @keyframes amp-wave {
+            0%, 100% { height: 40px; }
+            50% { height: 120px; }
+        }
+
+        /* Oscillator grid */
+        .oscillator-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .oscillator-node {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--companion-color);
+        }
+
+        .oscillator-node.dormant {
+            opacity: 0.4;
+            border-style: dashed;
+        }
+
+        .oscillator-node.amplified {
+            background: var(--amp-color);
+            border-color: var(--amp-color);
+            color: var(--bg-override);
+            animation: amplified-pulse 1.5s ease-in-out infinite;
+            box-shadow: 0 0 15px var(--amp-glow);
+        }
+
+        @keyframes amplified-pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 10px var(--amp-glow); }
+            50% { transform: scale(1.1); box-shadow: 0 0 25px var(--amp-glow); }
+        }
+
+        /* Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .rail-nav a {
+            color: var(--amp-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--amp-glow);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rail-nav a:hover {
+            background: rgba(255, 221, 0, 0.2);
+        }
+
+        /* Constants display */
+        .constants-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .constant-item {
+            text-align: center;
+            padding: 10px 15px;
+            background: rgba(255, 221, 0, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--amp-glow);
+        }
+
+        .constant-item .symbol {
+            color: var(--companion-secondary);
+            font-weight: bold;
+        }
+
+        .constant-item .value {
+            color: var(--amp-color);
+            font-family: monospace;
+        }
+
+        /* Power meter */
+        .power-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            padding: 30px;
+            background: rgba(255, 221, 0, 0.05);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .power-indicator {
+            text-align: center;
+        }
+
+        .power-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--amp-color);
+            text-shadow: 0 0 30px var(--amp-glow);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/resonance-deadlock.html" class="nav-link">RESONANCE Spec</a>
+            <a href="../../companions/resonance-companion.html" class="nav-link">Companion Guide</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>RESONANCE: The Harmonic Journey</h1>
+            <p class="subtitle">Rail 10 of 12 - Deadlock Handler Architecture</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href="../../companions/resonance-companion.html">RESONANCE</a> /
+                Rail 10: AMPLIFICATION
+            </nav>
+        </header>
+
+        <!-- Rail Indicator -->
+        <div class="rail-indicator">
+            <div class="rail-number">10</div>
+            <div>
+                <div class="rail-title">AMPLIFICATION</div>
+                <div class="rail-subtitle">Signal strengthened, stability increased</div>
+            </div>
+        </div>
+
+        <!-- Phi Constants Reference -->
+        <div class="constants-bar">
+            <div class="constant-item">
+                <div class="symbol">PHI</div>
+                <div class="value">1.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">TAU</div>
+                <div class="value">0.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">K</div>
+                <div class="value">0.924160</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">z_c</div>
+                <div class="value">0.866025</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">L4</div>
+                <div class="value">7</div>
+            </div>
+        </div>
+
+        <!-- Rail Content -->
+        <section class="doc-section">
+            <h2>Rail 10: AMPLIFICATION - The Signal Strengthens</h2>
+            <p>The synchronized signal is now being amplified. The 63 oscillators (L4 x 9 = 7 x 9) resonate together with increasing intensity, their combined output exceeding the sum of individual contributions. This is constructive interference at its finest - the phi-derived amplification factor enhances stability while preventing future deadlocks.</p>
+
+            <div class="power-display">
+                <div class="power-indicator">
+                    <div style="color: var(--companion-color); margin-bottom: 10px;">Signal Strength</div>
+                    <div class="power-value">PHI x r</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">1.618 x 0.96 = 1.55</div>
+                </div>
+            </div>
+
+            <div class="waveform-display">
+                <div class="amp-bar" style="animation-delay: 0.0s;"></div>
+                <div class="amp-bar" style="animation-delay: 0.08s;"></div>
+                <div class="amp-bar" style="animation-delay: 0.16s;"></div>
+                <div class="amp-bar" style="animation-delay: 0.24s;"></div>
+                <div class="amp-bar" style="animation-delay: 0.32s;"></div>
+                <div class="amp-bar" style="animation-delay: 0.40s;"></div>
+                <div class="amp-bar" style="animation-delay: 0.48s;"></div>
+                <div class="amp-bar" style="animation-delay: 0.56s;"></div>
+                <div class="amp-bar" style="animation-delay: 0.64s;"></div>
+                <div class="amp-bar" style="animation-delay: 0.72s;"></div>
+                <div class="amp-bar" style="animation-delay: 0.80s;"></div>
+                <div class="amp-bar" style="animation-delay: 0.88s;"></div>
+            </div>
+
+            <div class="phase-lock">
+                <h3>Amplification State Characteristics</h3>
+                <ul>
+                    <li><strong>Order Parameter (r):</strong> >= 0.96 (near unity)</li>
+                    <li><strong>Amplification Factor:</strong> PHI = 1.618034</li>
+                    <li><strong>Effective Signal:</strong> PHI x r (constructive interference)</li>
+                    <li><strong>Stability Margin:</strong> High - resistant to disruption</li>
+                    <li><strong>Frequency Coherence:</strong> All 16 bands amplified</li>
+                    <li><strong>Next Phase:</strong> BROADCAST for dimensional sharing</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Kuramoto Oscillator Network - Amplified State</h2>
+            <p>All active oscillators are now operating at amplified power levels, their combined signal reinforcing the stability of the system.</p>
+
+            <div class="oscillator-grid">
+                <div class="oscillator-node amplified">1</div>
+                <div class="oscillator-node amplified">2</div>
+                <div class="oscillator-node amplified">3</div>
+                <div class="oscillator-node amplified">4</div>
+                <div class="oscillator-node amplified">5</div>
+                <div class="oscillator-node dormant">6</div>
+                <div class="oscillator-node dormant">7</div>
+                <div class="oscillator-node dormant">8</div>
+                <div class="oscillator-node dormant">9</div>
+                <div class="oscillator-node amplified">10</div>
+                <div class="oscillator-node amplified">11</div>
+                <div class="oscillator-node amplified">12</div>
+                <div class="oscillator-node dormant">13</div>
+                <div class="oscillator-node dormant">14</div>
+                <div class="oscillator-node dormant">15</div>
+                <div class="oscillator-node dormant">16</div>
+                <div class="oscillator-node dormant">17</div>
+                <div class="oscillator-node dormant">18</div>
+                <div class="oscillator-node dormant">19</div>
+                <div class="oscillator-node dormant">20</div>
+                <div class="oscillator-node dormant">21</div>
+                <div class="oscillator-node dormant">22</div>
+                <div class="oscillator-node dormant">23</div>
+                <div class="oscillator-node dormant">24</div>
+                <div class="oscillator-node dormant">25</div>
+                <div class="oscillator-node dormant">26</div>
+                <div class="oscillator-node dormant">27</div>
+                <div class="oscillator-node dormant">28</div>
+                <div class="oscillator-node dormant">29</div>
+                <div class="oscillator-node dormant">30</div>
+                <div class="oscillator-node dormant">31</div>
+                <div class="oscillator-node dormant">32</div>
+                <div class="oscillator-node dormant">33</div>
+                <div class="oscillator-node dormant">34</div>
+                <div class="oscillator-node dormant">35</div>
+                <div class="oscillator-node dormant">36</div>
+                <div class="oscillator-node dormant">37</div>
+                <div class="oscillator-node dormant">38</div>
+                <div class="oscillator-node dormant">39</div>
+                <div class="oscillator-node dormant">40</div>
+                <div class="oscillator-node dormant">41</div>
+                <div class="oscillator-node dormant">42</div>
+                <div class="oscillator-node dormant">43</div>
+                <div class="oscillator-node dormant">44</div>
+                <div class="oscillator-node dormant">45</div>
+                <div class="oscillator-node dormant">46</div>
+                <div class="oscillator-node dormant">47</div>
+                <div class="oscillator-node dormant">48</div>
+                <div class="oscillator-node dormant">49</div>
+                <div class="oscillator-node dormant">50</div>
+                <div class="oscillator-node dormant">51</div>
+                <div class="oscillator-node dormant">52</div>
+                <div class="oscillator-node dormant">53</div>
+                <div class="oscillator-node dormant">54</div>
+                <div class="oscillator-node dormant">55</div>
+                <div class="oscillator-node dormant">56</div>
+                <div class="oscillator-node dormant">57</div>
+                <div class="oscillator-node dormant">58</div>
+                <div class="oscillator-node dormant">59</div>
+                <div class="oscillator-node dormant">60</div>
+                <div class="oscillator-node dormant">61</div>
+                <div class="oscillator-node dormant">62</div>
+                <div class="oscillator-node dormant">63</div>
+            </div>
+            <p style="text-align: center; color: var(--amp-color); font-size: 0.85rem;">8 oscillators AMPLIFIED - signal strength x PHI</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Amplification Circuit</h2>
+            <p>The L4-Helix hardware amplifies the synchronized signal using phi-derived gain factors.</p>
+
+            <div class="code-block">
+<span class="comment"># RAIL 10: AMPLIFICATION - SIGNAL STRENGTHENING</span>
+
+<span class="keyword">class</span> <span class="type">AmplificationState</span>:
+    <span class="string">"""
+    Signal amplification through constructive interference.
+    Uses phi-derived gain for maximum stability.
+    """</span>
+
+    <span class="comment"># Phi-derived constants</span>
+    PHI = <span class="number">1.618034</span>             <span class="comment"># Amplification factor</span>
+    TAU = <span class="number">0.618034</span>
+    K = <span class="number">0.924160</span>
+    Z_C = <span class="number">0.866025</span>
+    L4 = <span class="number">7</span>
+    OSCILLATORS = <span class="number">63</span>           <span class="comment"># L4 x 9 = 7 x 9</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, synced_oscillators, phases):
+        self.synced_oscillators = synced_oscillators
+        self.phases = phases
+        self.order_parameter = self._compute_order_parameter()
+        self.amplification = self.PHI * self.order_parameter
+
+    <span class="keyword">def</span> <span class="function">apply_amplification</span>(self):
+        <span class="string">"""
+        Apply phi-derived amplification to synchronized signal.
+        Effective_signal = PHI * r * base_signal
+        """</span>
+        r = self._compute_order_parameter()
+
+        <span class="comment"># Constructive interference amplification</span>
+        amp_factor = self.PHI * r
+
+        <span class="comment"># Apply to all frequency bands</span>
+        <span class="keyword">for</span> band <span class="keyword">in</span> range(<span class="number">16</span>):
+            self.frequency_bands[band] *= amp_factor
+
+        <span class="keyword">return</span> amp_factor
+
+    <span class="keyword">def</span> <span class="function">verify_stability</span>(self):
+        <span class="string">"""
+        Verify amplified signal maintains stability.
+        """</span>
+        <span class="comment"># Check that amplification doesn't cause oscillation</span>
+        phase_derivative = self._compute_phase_derivative()
+        <span class="keyword">return</span> abs(phase_derivative) < self.TAU
+
+    <span class="keyword">def</span> <span class="function">check_broadcast_ready</span>(self):
+        <span class="string">"""
+        Determine if signal is ready for dimensional broadcast.
+        """</span>
+        r = self._compute_order_parameter()
+        stable = self.verify_stability()
+
+        <span class="keyword">if</span> r >= <span class="number">0.98</span> <span class="keyword">and</span> stable:
+            <span class="keyword">return</span> <span class="string">"BROADCAST"</span>       <span class="comment"># Advance to Rail 11</span>
+        <span class="keyword">return</span> <span class="string">"AMPLIFICATION"</span>     <span class="comment"># Continue amplification</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Transition Conditions</h2>
+            <table class="data-table">
+                <tr>
+                    <th>From Rail</th>
+                    <th>To Rail</th>
+                    <th>Condition</th>
+                    <th>Trigger</th>
+                </tr>
+                <tr>
+                    <td style="color: #00ccff;">09 SYNCHRONIZATION</td>
+                    <td style="color: var(--amp-color);">10 AMPLIFICATION</td>
+                    <td>r >= 0.95</td>
+                    <td>Strong consensus</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--amp-color);">10 AMPLIFICATION</td>
+                    <td style="color: var(--companion-secondary);">11 BROADCAST</td>
+                    <td>r >= 0.98, stable</td>
+                    <td>Signal ready</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--amp-color);">10 AMPLIFICATION</td>
+                    <td style="color: #00ff88;">03 HARMONY</td>
+                    <td>Normal operation</td>
+                    <td>Return to baseline</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Rail Navigation -->
+        <nav class="rail-nav">
+            <a href="rail-09-synchronization.html">Prev: SYNCHRONIZATION</a>
+            <a href="../../narrative/resonance-deadlock.html">RESONANCE Main</a>
+            <a href="rail-11-broadcast.html">Next: BROADCAST</a>
+        </nav>
+
+        <footer class="doc-footer">
+            <p>RESONANCE Rail 10: AMPLIFICATION - The Signal Strengthens</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.8rem; color: #666;">63 Oscillators (L4 x 9) | 16 Frequency Bands | Kuramoto Coupling</p>
+        </footer>
+    </div>
+</body>
+</html>

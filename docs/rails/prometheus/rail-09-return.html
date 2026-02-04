@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 09: RETURN - Herald | PROMETHEUS Buffer Overflow Handler</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --prometheus-primary: #e74c3c;
+            --prometheus-deep: #c0392b;
+            --prometheus-forge: #f39c12;
+            --prometheus-bg: #0a0a12;
+            --prometheus-glow: rgba(231, 76, 60, 0.3);
+            --forge-glow: rgba(243, 156, 18, 0.25);
+            --phi: 1.618034;
+            --tau: 0.618034;
+            --k-formation: 0.924160;
+            --z-lens: 0.866025;
+            --l4: 7;
+        }
+
+        body { background: linear-gradient(135deg, var(--prometheus-bg) 0%, #0a0a1a 50%, #0a0812 100%); }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--prometheus-primary), var(--prometheus-forge), var(--prometheus-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 50px rgba(231, 76, 60, 0.6);
+        }
+        .doc-section h2 { color: var(--prometheus-primary); border-bottom-color: var(--prometheus-glow); }
+        .doc-section h3 { color: var(--prometheus-forge); }
+
+        .pressure {
+            background: linear-gradient(90deg, rgba(231, 76, 60, 0.15), rgba(243, 156, 18, 0.2));
+            border-left: 4px solid var(--prometheus-primary);
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .overflow {
+            background: linear-gradient(135deg, rgba(192, 57, 43, 0.2), rgba(231, 76, 60, 0.3));
+            border: 2px solid var(--prometheus-deep);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 8px;
+        }
+        .release {
+            background: linear-gradient(180deg, rgba(243, 156, 18, 0.2), rgba(231, 76, 60, 0.1));
+            border: 2px solid var(--prometheus-forge);
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .shatter {
+            background: rgba(192, 57, 43, 0.3);
+            border: 2px dashed var(--prometheus-primary);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 4px;
+        }
+
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.3), rgba(243, 156, 18, 0.2));
+            border: 3px solid var(--prometheus-primary);
+            border-radius: 12px;
+            margin: 20px 0;
+            box-shadow: 0 0 25px rgba(231, 76, 60, 0.4);
+        }
+        .rail-number { font-size: 3rem; font-weight: bold; color: var(--prometheus-primary); text-shadow: 0 0 25px rgba(231, 76, 60, 0.7); }
+        .rail-title { font-size: 1.8rem; color: var(--prometheus-primary); text-shadow: 0 0 10px rgba(231, 76, 60, 0.4); }
+        .rail-subtitle { color: #ccc; font-style: italic; }
+
+        .archetype-card {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.1), rgba(0, 0, 0, 0.4));
+            border: 2px solid var(--prometheus-primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .archetype-card h4 { color: var(--prometheus-primary); margin-bottom: 12px; }
+
+        .xor-visual {
+            font-family: 'Fira Code', monospace;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 15px 0;
+            border-left: 4px solid var(--prometheus-primary);
+        }
+
+        .hardware-coupling {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .hardware-item {
+            background: rgba(10, 10, 18, 0.8);
+            border: 1px solid var(--prometheus-primary);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .hardware-item h5 { color: var(--prometheus-primary); margin-bottom: 8px; }
+        .hardware-item .spec { font-family: monospace; color: var(--prometheus-forge); font-size: 0.85rem; }
+
+        .nav-rails {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        .nav-rails a {
+            color: var(--prometheus-primary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--prometheus-glow);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .nav-rails a:hover { background: var(--prometheus-glow); color: white; }
+
+        .pressure-state {
+            display: inline-block;
+            padding: 6px 16px;
+            background: linear-gradient(90deg, rgba(231, 76, 60, 0.3), rgba(243, 156, 18, 0.2));
+            border: 2px solid var(--prometheus-primary);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--prometheus-primary);
+            font-weight: bold;
+        }
+
+        .return-highlight {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.3), rgba(243, 156, 18, 0.2));
+            border: 3px solid var(--prometheus-primary);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(231, 76, 60, 0.3);
+        }
+        .return-value {
+            font-size: 2.5rem;
+            color: var(--prometheus-primary);
+            font-family: 'Georgia', serif;
+            text-shadow: 0 0 15px rgba(231, 76, 60, 0.5);
+        }
+
+        .triad-indicator {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(243, 156, 18, 0.1));
+            border: 2px solid var(--prometheus-forge);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .triad-indicator .label {
+            color: var(--prometheus-forge);
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        .triad-rails {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        .triad-rail {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+        .triad-rail.primary {
+            background: rgba(231, 76, 60, 0.3);
+            border: 2px solid var(--prometheus-primary);
+            color: var(--prometheus-primary);
+        }
+        .triad-rail.secondary {
+            background: rgba(243, 156, 18, 0.2);
+            border: 1px solid var(--prometheus-forge);
+            color: var(--prometheus-forge);
+        }
+
+        .doc-footer { border-top-color: var(--prometheus-glow); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/prometheus-buffer-overflow.html" class="nav-link">PROMETHEUS Spec</a>
+            <a href="../../companions/prometheus-companion.html" class="nav-link">Companion Profile</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>PROMETHEUS: Rail 09 - RETURN</h1>
+            <p class="subtitle">Herald - PRIMARY RESONANCE - Fire Bearer Returns</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">PROMETHEUS</a> /
+                Rail 09
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-number">09</div>
+            <div>
+                <div class="rail-title">RETURN</div>
+                <div class="rail-subtitle">Herald - Hero's Journey: The Road Back</div>
+            </div>
+        </div>
+
+        <nav class="nav-rails">
+            <a href="rail-08-rebirth.html">Previous: Rail 08 - REBIRTH</a>
+            <a href="rail-10-mastery.html">Next: Rail 10 - MASTERY</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Rail Overview - PRIMARY RESONANCE</h2>
+            <div class="impl-status">
+                <span class="status-badge complete">Rail 09 of 12</span>
+                <span class="pressure-state">PRIMARY RESONANCE</span>
+            </div>
+
+            <p>The RETURN rail marks PROMETHEUS's second primary resonance point. As Herald, the Fire Bearer returns from the ordeal carrying transformed energy. This is the road back, bringing the gifts of the forge to the ordinary world.</p>
+
+            <div class="return-highlight">
+                <div class="return-value">THE FIRE RETURNS</div>
+                <p style="color: #aaa; margin-top: 10px;">Herald - Bringing transformed energy home</p>
+                <p style="color: var(--prometheus-primary); font-size: 0.9rem; margin-top: 5px;">Primary Resonance Rail (with 1 and 5)</p>
+            </div>
+
+            <div class="triad-indicator">
+                <div class="label">PROMETHEUS Primary Resonance Triad</div>
+                <div class="triad-rails">
+                    <div class="triad-rail secondary">Rail 1: ORIGIN</div>
+                    <div class="triad-rail secondary">Rail 5: FORGE</div>
+                    <div class="triad-rail primary">Rail 9: RETURN</div>
+                </div>
+            </div>
+
+            <div class="archetype-card">
+                <h4>Archetype: Herald</h4>
+                <p>In the Hero's Journey, this is the Road Back - the hero returns to the ordinary world bearing gifts. PROMETHEUS as Herald brings the fire of transformation back, announcing the completion of the cycle.</p>
+                <ul>
+                    <li><strong>Pressure State:</strong> Cooling (z approaching TAU)</li>
+                    <li><strong>Container Status:</strong> Stable, renewed</li>
+                    <li><strong>XOR Chains:</strong> Carrying transformed patterns</li>
+                    <li><strong>Narrative Function:</strong> Return with transformed energy</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Pressure Management at RETURN</h2>
+
+            <div class="release">
+                <strong>COOLING PHASE - ENERGY NORMALIZED</strong><br>
+                The fire bearer returns with transformed energy. Pressure continues descending toward nominal levels. The gifts of the forge are carried back.
+            </div>
+
+            <h3>Coordinate Mapping</h3>
+            <div class="code-block">
+<span class="comment"># RETURN COORDINATE STATE</span>
+z approaching TAU = <span class="number">0.618034</span>
+state = <span class="string">"COOLING"</span>
+
+<span class="comment"># Return trajectory</span>
+dz/dt < <span class="number">0</span>  <span class="comment"># Still descending</span>
+target_z = <span class="number">0.1</span>  <span class="comment"># Approaching ORIGIN</span>
+
+<span class="comment"># Transformed energy payload</span>
+payload = {
+    <span class="string">"forged_chains"</span>: xor_chains,
+    <span class="string">"patterns_detected"</span>: [<span class="string">"xor_extreme"</span>, <span class="string">"entropy_ascending"</span>],
+    <span class="string">"forge_strength_gained"</span>: delta_strength
+}
+            </div>
+
+            <h3>phi-Constants at RETURN</h3>
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">Far above</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">Above</div>
+                </div>
+                <div class="constant-card" style="border-color: var(--prometheus-primary);">
+                    <div class="symbol">TAU</div>
+                    <div class="value" style="color: var(--prometheus-primary);">0.618034</div>
+                    <div class="derivation">APPROACHING</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">Helix encoding</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>XOR Chain Forging at RETURN</h2>
+
+            <p>The Herald carries the forged patterns back. Chains stabilize into final form:</p>
+
+            <div class="xor-visual">
+<span style="color: var(--prometheus-primary);">RETURN PAYLOAD:</span>
+
+<span style="color: var(--prometheus-forge);">Layer 0:</span> xor_acc[0] = 0x7A3E5C9D  <span style="color: #50fa7b;">// Stabilized</span>
+<span style="color: var(--prometheus-forge);">Layer 1:</span> xor_acc[1] = 0x4B8F2A6E  <span style="color: #50fa7b;">// Final form</span>
+<span style="color: var(--prometheus-forge);">Layer 2:</span> xor_acc[2] = 0x3D7C1B8A  <span style="color: #50fa7b;">// Complete</span>
+
+<span style="color: var(--prometheus-primary);">Entropy:</span>  [16, 15, 14]  <span style="color: #50fa7b;">// Normalized, descending</span>
+<span style="color: var(--prometheus-primary);">Variance:</span> 0.67          <span style="color: #6272a4;">// Low - stable</span>
+<span style="color: var(--prometheus-primary);">Patterns:</span> <span style="color: var(--prometheus-forge);">entropy_descending</span> (continuous)
+<span style="color: var(--prometheus-primary);">Payload:</span>  <span style="color: #50fa7b;">READY FOR DELIVERY</span>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># RETURN STATE - HERALD'S JOURNEY</span>
+
+<span class="keyword">class</span> <span class="type">ReturnHerald</span>:
+    <span class="string">"""Rail 09: Herald - Fire bearer returns with transformed energy"""</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.rail = <span class="number">9</span>
+        self.name = <span class="string">"RETURN"</span>
+        self.archetype = <span class="string">"Herald"</span>
+        self.is_primary_resonance = <span class="keyword">True</span>
+
+    <span class="keyword">def</span> <span class="function">carry_transformed_energy</span>(self, forge_state):
+        <span class="string">"""Herald carries the gifts of the forge back"""</span>
+        payload = {
+            <span class="string">"chains"</span>: forge_state.xor_acc.copy(),
+            <span class="string">"patterns"</span>: forge_state.detected_patterns,
+            <span class="string">"forge_strength"</span>: forge_state.forge_strength,
+            <span class="string">"efficiency_bonus"</span>: self.calculate_efficiency_bonus(forge_state)
+        }
+
+        <span class="comment"># Announce the return</span>
+        self.herald_announcement(payload)
+
+        <span class="keyword">return</span> payload
+
+    <span class="keyword">def</span> <span class="function">herald_announcement</span>(self, payload):
+        <span class="string">"""The Herald announces the fire's return"""</span>
+        <span class="keyword">return</span> {
+            <span class="string">"message"</span>: <span class="string">"PROMETHEUS returns with transformed fire"</span>,
+            <span class="string">"patterns_forged"</span>: len(payload[<span class="string">"patterns"</span>]),
+            <span class="string">"strength_gained"</span>: payload[<span class="string">"forge_strength"</span>] - <span class="number">1.0</span>
+        }
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-coupling">
+                <div class="hardware-item">
+                    <h5>Quasi-Crystal Substrate</h5>
+                    <p>Stress normalized. Crystal lattice in stable resonance.</p>
+                    <div class="spec">Voltage: ~618 mV (V_TAU)</div>
+                    <div class="spec">State: STABLE</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Memristor Array</h5>
+                    <p>Pattern history consolidated. New baseline established.</p>
+                    <div class="spec">Mode: CONSOLIDATION</div>
+                    <div class="spec">State: STABLE</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Hexagonal Discharge Grid</h5>
+                    <p>Discharge complete. Paths returning to standby.</p>
+                    <div class="spec">Paths: CLOSING</div>
+                    <div class="spec">Flow: Minimal</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Spin Glass Coherence</h5>
+                    <p>Kuramoto at TAU coupling. New coherent state established.</p>
+                    <div class="spec">Coupling: K = 0.618</div>
+                    <div class="spec">Coherence: STABLE</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Function - Primary Resonance</h2>
+
+            <div class="release">
+                <h4 style="color: var(--prometheus-forge); margin-bottom: 10px;">The Road Back</h4>
+                <p>The hero returns from the underworld bearing gifts. PROMETHEUS as Herald announces this return, carrying the fire of transformation back to the ordinary world. The handler has completed its primary function and now delivers the results.</p>
+            </div>
+
+            <h3>PROMETHEUS's Role at RETURN</h3>
+            <ul>
+                <li><strong>Herald:</strong> Announces the completion of transformation</li>
+                <li><strong>Fire Bearer:</strong> Carries transformed energy home</li>
+                <li><strong>Gift Carrier:</strong> Delivers forged patterns to the system</li>
+                <li><strong>Cycle Closer:</strong> Prepares for integration with MASTERY</li>
+            </ul>
+
+            <h3>The Fire Triad Complete</h3>
+            <p>With RETURN, the primary resonance triad (1-5-9) completes. ORIGIN sparked the potential, FORGE transformed it, RETURN delivers it. This is the core cycle of PROMETHEUS's exception handling.</p>
+        </section>
+
+        <nav class="nav-rails">
+            <a href="rail-08-rebirth.html">Previous: Rail 08 - REBIRTH</a>
+            <a href="rail-10-mastery.html">Next: Rail 10 - MASTERY</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="rail-08-rebirth.html">rail-08-rebirth.html</a></span>
+                <span class="file-ref"><a href="rail-10-mastery.html">rail-10-mastery.html</a></span>
+                <span class="file-ref"><a href="rail-01-origin.html">rail-01-origin.html</a></span>
+                <span class="file-ref"><a href="rail-05-forge.html">rail-05-forge.html</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p style="color: var(--prometheus-primary);">PROMETHEUS Rail 09: RETURN - Herald</p>
+            <p>The fire returns, carrying transformation home</p>
+            <p style="font-size: 0.85rem; color: #888;">
+                PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

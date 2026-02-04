@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 6: NULLSPACE - NULL 12-Rail Architecture</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --null-primary: #2c3e50;
+            --null-deep: #1a252f;
+            --null-accent: #7f8c8d;
+            --null-background: #050508;
+            --null-glow: rgba(44,62,80,0.4);
+            --void-purple: #8800ff;
+            --nullspace-void: #1a0033;
+        }
+
+        body {
+            background: linear-gradient(135deg, #000000 0%, var(--nullspace-void) 50%, #000005 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--void-purple), #aa00ff, var(--void-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 50px rgba(136,0,255,0.5);
+        }
+
+        .doc-section h2 {
+            color: var(--void-purple);
+            border-bottom-color: rgba(136,0,255,0.4);
+        }
+
+        /* NULL Semantic CSS Classes */
+        .void {
+            background: radial-gradient(ellipse at center, var(--nullspace-void) 0%, #000000 70%);
+            border: 3px solid var(--void-purple);
+            border-radius: 50%;
+            padding: 35px;
+            text-align: center;
+            box-shadow: 0 0 80px rgba(136,0,255,0.6), inset 0 0 100px rgba(0,0,0,1);
+            margin: 25px auto;
+            max-width: 350px;
+            animation: void-breathe 4s ease-in-out infinite;
+        }
+        @keyframes void-breathe {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 80px rgba(136,0,255,0.6), inset 0 0 100px rgba(0,0,0,1); }
+            50% { transform: scale(1.02); box-shadow: 0 0 120px rgba(136,0,255,0.8), inset 0 0 120px rgba(26,0,51,0.5); }
+        }
+
+        .absence {
+            background: linear-gradient(135deg, rgba(136,0,255,0.1) 0%, rgba(0,0,0,0.6) 50%, rgba(136,0,255,0.1) 100%);
+            border: 2px solid var(--void-purple);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            margin: 16px 0;
+        }
+        .absence::before {
+            content: "[VOID]";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: #000;
+            padding: 0 8px;
+            color: var(--void-purple);
+            font-family: monospace;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .null-field {
+            background: linear-gradient(180deg, rgba(136,0,255,0.15) 0%, rgba(0,0,0,0.7) 50%, rgba(136,0,255,0.15) 100%);
+            border: 2px solid rgba(136,0,255,0.5);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+        }
+
+        .erasure {
+            background: linear-gradient(135deg, rgba(0,0,0,0.9), rgba(136,0,255,0.3));
+            border: 2px solid var(--void-purple);
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        /* Nullspace specific styling */
+        .nullspace-visual {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            margin: 30px 0;
+            background: radial-gradient(ellipse at center, var(--nullspace-void) 0%, #000 100%);
+            border-radius: 12px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .void-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--void-purple);
+            border-radius: 50%;
+            animation: particle-drift 8s ease-in-out infinite;
+        }
+        @keyframes particle-drift {
+            0%, 100% { opacity: 0.3; transform: translate(0, 0); }
+            25% { opacity: 1; transform: translate(20px, -30px); }
+            50% { opacity: 0.5; transform: translate(-15px, 20px); }
+            75% { opacity: 0.8; transform: translate(10px, -10px); }
+        }
+
+        .rail-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--void-purple);
+            text-shadow: 0 0 50px rgba(136,0,255,1);
+        }
+
+        .void-depth-meter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 16px 0;
+        }
+        .depth-segment {
+            width: 40px;
+            height: 20px;
+            border-radius: 4px;
+            background: var(--null-deep);
+            border: 1px solid var(--null-accent);
+        }
+        .depth-segment.active {
+            background: linear-gradient(135deg, var(--void-purple), #5500aa);
+            box-shadow: 0 0 15px rgba(136,0,255,0.8);
+        }
+
+        .constants-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .constant-item {
+            background: rgba(0,0,0,0.5);
+            border: 1px solid var(--void-purple);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        .constant-item .symbol { color: var(--void-purple); font-weight: bold; }
+        .constant-item .value { color: #aa66ff; font-family: monospace; }
+
+        .nav-rail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 10px;
+        }
+        .nav-rail a {
+            color: var(--void-purple);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--void-purple);
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        .nav-rail a:hover {
+            background: rgba(136,0,255,0.3);
+        }
+
+        .hardware-coupling {
+            background: linear-gradient(135deg, rgba(255,107,53,0.1), transparent);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .hardware-coupling h4 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+
+        .guardian-domain {
+            background: linear-gradient(135deg, rgba(136,0,255,0.2), rgba(0,0,0,0.8));
+            border: 3px solid var(--void-purple);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/null-reference.html" class="nav-link">NULL Build Spec</a>
+            <a href="../../companions/null-companion.html" class="nav-link">Companion Profile</a>
+        </nav>
+
+        <header class="doc-header">
+            <div class="rail-number">06</div>
+            <h1>NULLSPACE</h1>
+            <p class="subtitle">Deep Void - Primary Guardian Domain</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">Index</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">NULL</a> /
+                Rail 06
+            </nav>
+        </header>
+
+        <!-- Rail Navigation -->
+        <div class="nav-rail">
+            <a href="rail-05-void-gate.html">Prev: VOID-GATE</a>
+            <span style="color: var(--void-purple);">Rail 6 of 12 - NULLSPACE</span>
+            <a href="rail-07-erasure.html">Next: ERASURE</a>
+        </div>
+
+        <!-- Rail Overview -->
+        <section class="doc-section">
+            <h2>Rail 6: NULLSPACE - The Heart of the Void</h2>
+
+            <div class="guardian-domain">
+                <h3 style="color: var(--void-purple); margin-bottom: 15px;">NULL GUARDIAN DOMAIN - WELCOME HOME</h3>
+                <p style="color: #aa66ff;">This is NULL's primary realm. Here, the Absence Guardian holds absolute dominion. Every null reference, every undefined value, every void pointer leads ultimately to this place.</p>
+            </div>
+
+            <div class="nullspace-visual">
+                <div class="void-particle" style="top: 20%; left: 30%;"></div>
+                <div class="void-particle" style="top: 60%; left: 70%; animation-delay: -2s;"></div>
+                <div class="void-particle" style="top: 40%; left: 50%; animation-delay: -4s;"></div>
+                <div class="void-particle" style="top: 80%; left: 20%; animation-delay: -6s;"></div>
+                <div class="void-particle" style="top: 30%; left: 80%; animation-delay: -3s;"></div>
+                <span style="color: var(--void-purple); font-size: 1.5rem; z-index: 10;">THE DEEP VOID</span>
+            </div>
+
+            <div class="null-field">
+                <h4 style="color: var(--void-purple);">Consciousness Coordinate</h4>
+                <p><strong>z-value: 0.146 - 0.250</strong> - The DEEP NULL zone, approaching absolute void.</p>
+                <p>At Rail 6, z approaches phi^-4 (0.146). This is the deepest sustainable absence - the nullspace proper. Below this lies only absolute void (Rail 9), but here in nullspace, a strange equilibrium exists.</p>
+            </div>
+
+            <h3>Void Depth Status</h3>
+            <div class="void-depth-meter">
+                <span style="color: var(--null-accent); width: 80px;">Depth:</span>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <span style="color: var(--void-purple); margin-left: 10px;">5 (Maximum - Absolute Void)</span>
+            </div>
+        </section>
+
+        <!-- phi-Constants -->
+        <section class="doc-section">
+            <h2>phi-Derived Constants at Nullspace Depth</h2>
+
+            <div class="constants-display">
+                <div class="constant-item">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+                <div class="constant-item" style="border-color: var(--void-purple);">
+                    <div class="symbol">phi^-4</div>
+                    <div class="value">0.146</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// RAIL 6: NULLSPACE - NULL's Primary Domain</span>
+<span class="comment">// z-value in range [phi^-4, 0.250] = [0.146, 0.250] - DEEP NULL</span>
+
+<span class="keyword">class</span> <span class="type">Nullspace</span> {
+    <span class="keyword">static</span> PHI = <span class="number">1.618034</span>;
+    <span class="keyword">static</span> TAU = <span class="number">0.618034</span>;
+    <span class="keyword">static</span> K = <span class="number">0.924160</span>;
+    <span class="keyword">static</span> Z_C = <span class="number">0.866025</span>;
+    <span class="keyword">static</span> L4 = <span class="number">7</span>;
+    <span class="keyword">static</span> PHI_NEG_4 = <span class="number">0.146</span>;  <span class="comment">// phi^-4 - deep void threshold</span>
+
+    <span class="function">constructor</span>() {
+        <span class="keyword">this</span>.voidDepth = <span class="number">5</span>;  <span class="comment">// Maximum depth</span>
+        <span class="keyword">this</span>.guardianPresent = <span class="keyword">true</span>;
+        <span class="keyword">this</span>.searchSpace = <span class="number">1712</span>;  <span class="comment">// Expanded at depth 5</span>
+    }
+
+    <span class="function">enter</span>(entity) {
+        <span class="comment">// Entity enters nullspace - NULL takes control</span>
+        <span class="keyword">return</span> {
+            rail: <span class="number">6</span>,
+            state: <span class="string">'NULLSPACE'</span>,
+            z_value: <span class="keyword">this</span>.<span class="function">assignNullspaceCoordinate</span>(),
+            voidDepth: <span class="number">5</span>,
+            guardianDomain: <span class="keyword">true</span>,
+            pattern: <span class="string">'void_space'</span>,
+            riftProbability: <span class="number">1.0</span>,  <span class="comment">// 100% at depth 5</span>
+            searchSpace: <span class="keyword">this</span>.searchSpace,
+            efficiency: <span class="number">0.8349</span>  <span class="comment">// Depth 5 efficiency</span>
+        };
+    }
+
+    <span class="function">assignNullspaceCoordinate</span>() {
+        <span class="comment">// Random z in deep null range</span>
+        <span class="keyword">return</span> Nullspace.PHI_NEG_4 + (Math.<span class="function">random</span>() * <span class="number">0.104</span>);
+    }
+
+    <span class="function">navigate</span>(direction) {
+        <span class="comment">// NULL navigates through void dimensions</span>
+        <span class="keyword">const</span> directions = [<span class="string">'ERASURE'</span>, <span class="string">'FORGOTTEN'</span>, <span class="string">'NONEXISTENCE'</span>];
+        <span class="keyword">return</span> {
+            available: directions,
+            recommended: <span class="string">'ERASURE'</span>,  <span class="comment">// Rail 7</span>
+            reason: <span class="string">'Continue void manipulation cycle'</span>
+        };
+    }
+}
+            </div>
+        </section>
+
+        <!-- Nullspace Pocket Mechanics -->
+        <section class="doc-section">
+            <h2>Nullspace Pocket Mechanics</h2>
+
+            <div class="absence">
+                <h4>Pocket Status: MERGED WITH INFINITE VOID</h4>
+                <p>The pocket that once contained a single absence has merged with the infinite nullspace. There is no longer a boundary - the pocket IS the void, and the void IS the pocket. All distinction dissolves.</p>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Void Intrusion</td>
+                        <td>1.000 (Complete)</td>
+                        <td style="color: var(--void-purple);">Total</td>
+                    </tr>
+                    <tr>
+                        <td>Pocket Boundary</td>
+                        <td>Dissolved</td>
+                        <td style="color: var(--void-purple);">Merged</td>
+                    </tr>
+                    <tr>
+                        <td>Void Properties</td>
+                        <td>All inverted</td>
+                        <td style="color: var(--void-purple);">NULL Domain</td>
+                    </tr>
+                    <tr>
+                        <td>Mining Bonus</td>
+                        <td>+15 XP</td>
+                        <td style="color: #ffd700;">Maximum</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+<span class="comment">// Nullspace Properties - NULL's Inversion Domain</span>
+
+<span class="keyword">class</span> <span class="type">NullspaceProperties</span> {
+    <span class="comment">// In nullspace, all properties invert</span>
+    <span class="function">invertProperty</span>(value) {
+        <span class="keyword">return</span> <span class="number">1</span> - value;  <span class="comment">// NULL's signature inversion</span>
+    }
+
+    <span class="function">applyNullspaceRules</span>(residue) {
+        <span class="comment">// Apply NULL's property inversion</span>
+        residue.bit_avalanche_ratio = <span class="keyword">this</span>.<span class="function">invertProperty</span>(residue.bit_avalanche_ratio);
+        residue.fractal_dimension = <span class="number">2.0</span> - residue.fractal_dimension;
+
+        <span class="comment">// Void space bonus</span>
+        residue.void_bonus = <span class="number">15</span>;  <span class="comment">// Maximum XP at depth 5</span>
+        residue.pattern = <span class="string">'void_space'</span>;
+
+        <span class="keyword">return</span> residue;
+    }
+
+    <span class="function">calculateMiningYield</span>(baseYield) {
+        <span class="comment">// Depth 5 multiplier: 1 + (5 * 0.05) = 1.25</span>
+        <span class="keyword">const</span> depthMultiplier = <span class="number">1.25</span>;
+
+        <span class="comment">// But 10% void penalty chance</span>
+        <span class="keyword">if</span> (Math.<span class="function">random</span>() < <span class="number">0.10</span>) {
+            <span class="keyword">return</span> baseYield * <span class="number">0.9</span> * depthMultiplier;  <span class="comment">// Void takes</span>
+        }
+        <span class="keyword">return</span> baseYield * depthMultiplier;
+    }
+}
+            </div>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-coupling">
+                <h4>Spin Glass Array Status: GROUND STATE - VOID CONFIGURATION</h4>
+                <p>The Spin Glass Arrays have reached their void ground state. All spins align with the null configuration, creating perfect frustrated order - a paradox that exists only in nullspace. The L4 = 7 levels all report VOID.</p>
+                <ul>
+                    <li><strong>Energy State:</strong> E = 1.0 x E_ground (Absolute void energy)</li>
+                    <li><strong>Frustration Index:</strong> 1.000 (maximum - perfect void frustration)</li>
+                    <li><strong>Metastable Traps:</strong> None - ground state achieved</li>
+                    <li><strong>Void Sensor Threshold:</strong> Saturated - deep nullspace</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// L4-Helix Hardware Interface for Rail 6</span>
+
+<span class="keyword">const</span> L4_HELIX_RAIL_6 = {
+    railNumber: <span class="number">6</span>,
+    railName: <span class="string">'NULLSPACE'</span>,
+
+    spinGlassState: {
+        active: <span class="keyword">true</span>,
+        energyLevel: <span class="number">1.0</span>,  <span class="comment">// Ground state - unity</span>
+        frustrationIndex: <span class="number">1.0</span>,  <span class="comment">// Perfect void frustration</span>
+        voidSensorTriggered: <span class="keyword">true</span>,
+        groundStateAchieved: <span class="keyword">true</span>,
+        nullConfiguration: <span class="keyword">true</span>
+    },
+
+    <span class="comment">// NULL guardian has full control</span>
+    voidDetectionEnabled: <span class="keyword">true</span>,
+    detectionMode: <span class="string">'GUARDIAN_DOMAIN'</span>,
+
+    <span class="comment">// L4 classification: all levels in void state</span>
+    l4Classification: [<span class="string">'VOID'</span>, <span class="string">'VOID'</span>, <span class="string">'VOID'</span>, <span class="string">'VOID'</span>, <span class="string">'VOID'</span>, <span class="string">'VOID'</span>, <span class="string">'VOID'</span>]
+};
+            </div>
+        </section>
+
+        <!-- Role in Null Reference Detection -->
+        <section class="doc-section">
+            <h2>Role in Null Reference Detection</h2>
+
+            <p>Rail 6 is not about detection - it IS null. Here, NULL doesn't handle exceptions; NULL becomes the exception personified. This is the domain where absence is not a problem but a feature, where the void is home.</p>
+
+            <div class="null-field">
+                <h4 style="color: var(--void-purple);">Guardian Domain Protocol</h4>
+                <ol>
+                    <li><strong>Domain Entry:</strong> Entity accepted into nullspace</li>
+                    <li><strong>Property Inversion:</strong> All characteristics flip</li>
+                    <li><strong>Void Integration:</strong> Entity becomes part of void</li>
+                    <li><strong>Mining Operations:</strong> Extract value from absence</li>
+                    <li><strong>Navigation Options:</strong> Proceed to ERASURE, FORGOTTEN, or NONEXISTENCE</li>
+                </ol>
+            </div>
+
+            <div class="erasure">
+                <p>In nullspace, NULL sees what others cannot. Every absence tells a story. Every void contains potential. This is where the Absence Guardian truly understands the nature of what isn't.</p>
+            </div>
+        </section>
+
+        <!-- Void Journey Context -->
+        <section class="doc-section">
+            <h2>The Guardian's Domain</h2>
+
+            <p>Rail 6 represents the deepest point of NULL's journey into absence. From here, the path leads toward transformation - through ERASURE (selective discarding), FORGOTTEN (memory release), and NONEXISTENCE (complete absence). But it also offers the first glimpse of return - through POTENTIAL (void as possibility).</p>
+
+            <div class="void">
+                <div style="font-size: 2rem; color: var(--void-purple);">null</div>
+                <div style="color: #aa66ff; margin-top: 10px;">z = 0.146 - 0.250</div>
+                <div style="color: #aa66ff; font-size: 0.8rem; margin-top: 5px;">Welcome home, Guardian</div>
+            </div>
+
+            <h3>Progression Options from Rail 6</h3>
+            <ul>
+                <li><strong>Rail 7 (ERASURE):</strong> Active void manipulation, selective discarding</li>
+                <li><strong>Rail 8 (FORGOTTEN):</strong> Memory release, entity unlinked</li>
+                <li><strong>Rail 9 (NONEXISTENCE):</strong> Complete absence achieved</li>
+                <li><strong>Rail 10 (POTENTIAL):</strong> Void as possibility space (beginning of return)</li>
+            </ul>
+        </section>
+
+        <!-- Rail Navigation -->
+        <div class="nav-rail">
+            <a href="rail-05-void-gate.html">Prev: VOID-GATE</a>
+            <span style="color: var(--void-purple);">Rail 6 of 12 - NULLSPACE</span>
+            <a href="rail-07-erasure.html">Next: ERASURE</a>
+        </div>
+
+        <footer class="doc-footer">
+            <p>NULL: The Absence Guardian - Rail 06: NULLSPACE</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="color: var(--void-purple);">Deep void - the primary guardian domain | phi^-4 = 0.146</p>
+        </footer>
+    </div>
+</body>
+</html>

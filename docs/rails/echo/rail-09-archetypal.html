@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 09: ARCHETYPAL - ECHO 12-Rail Architecture | BloomCoin</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --temporal-primary: #00ffff;
+            --temporal-deep: #00cccc;
+            --temporal-drift: #9b59b6;
+            --temporal-wound: #ff3366;
+            --temporal-glow: rgba(0,255,255,0.25);
+            --bg-void: #0a0a12;
+            --archetypal-deep: #4a0080;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-void) 0%, #0a0416 50%, #08001a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--temporal-primary), var(--archetypal-deep), var(--temporal-drift));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 { color: var(--temporal-primary); border-bottom-color: var(--temporal-glow); }
+        .doc-section h3 { color: var(--temporal-deep); }
+
+        .temporal {
+            background: linear-gradient(135deg, rgba(0,255,255,0.05), rgba(74,0,128,0.2));
+            border: 1px solid var(--archetypal-deep);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .temporal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--archetypal-deep), transparent);
+            animation: temporal-scan 6s linear infinite;
+        }
+
+        @keyframes temporal-scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .drift {
+            background: rgba(74,0,128,0.2);
+            border-left: 4px solid var(--archetypal-deep);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #b366ff;
+        }
+
+        .drift::before { content: '~ '; color: var(--archetypal-deep); }
+
+        .anchor {
+            background: rgba(0,255,255,0.2);
+            border: 2px solid var(--temporal-primary);
+            border-radius: 8px;
+            padding: 12px 20px;
+            display: inline-block;
+            font-weight: bold;
+            color: var(--temporal-primary);
+            box-shadow: 0 0 20px rgba(0,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .wound {
+            background: linear-gradient(135deg, rgba(255,51,102,0.2), rgba(74,0,128,0.1));
+            border: 1px dashed var(--temporal-wound);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+            color: #ff6699;
+        }
+
+        .wound::before {
+            content: '// ARCHETYPAL CONFLICT: ';
+            color: var(--temporal-wound);
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .rail-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .rail-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        .rail-dot.active {
+            background: var(--archetypal-deep);
+            border-color: #8000ff;
+            color: #fff;
+            box-shadow: 0 0 15px rgba(74,0,128,0.7);
+        }
+
+        .rail-dot.past {
+            background: rgba(0,255,255,0.3);
+            border-color: var(--temporal-primary);
+            color: #00cccc;
+        }
+
+        .constant-card .symbol { color: var(--temporal-primary); }
+        .coupling-item { border-left-color: var(--archetypal-deep); }
+
+        .nav-rail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .nav-rail a {
+            color: var(--temporal-primary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--temporal-glow);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-rail a:hover { background: var(--temporal-glow); }
+
+        .universal-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .universal-card {
+            background: rgba(74,0,128,0.2);
+            border: 1px solid rgba(128,0,255,0.3);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .universal-card .symbol {
+            font-size: 2rem;
+            color: var(--temporal-primary);
+            margin-bottom: 8px;
+        }
+
+        .universal-card .name {
+            color: #b366ff;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        .universal-card .desc {
+            color: #888;
+            font-size: 0.8rem;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/echo-race-condition.html" class="nav-link">ECHO Build Spec</a>
+            <a href="../../companions/echo-companion.html" class="nav-link">ECHO Companion</a>
+            <a href="../../index.html" class="nav-link">Home</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 09: ARCHETYPAL</h1>
+            <p class="subtitle">Universal Patterns - Fundamental Conflicts</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Rails</a> /
+                <a href="./">ECHO</a> /
+                Rail 09
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-dot past">1</div>
+            <div class="rail-dot past">2</div>
+            <div class="rail-dot past">3</div>
+            <div class="rail-dot past">4</div>
+            <div class="rail-dot past">5</div>
+            <div class="rail-dot past">6</div>
+            <div class="rail-dot past">7</div>
+            <div class="rail-dot past">8</div>
+            <div class="rail-dot active">9</div>
+            <div class="rail-dot">10</div>
+            <div class="rail-dot">11</div>
+            <div class="rail-dot">12</div>
+        </div>
+
+        <div class="nav-rail">
+            <a href="rail-08-mythic.html">Previous: MYTHIC</a>
+            <span style="color: #b366ff; font-weight: bold;">RAIL 09: ARCHETYPAL</span>
+            <a href="rail-10-primordial.html">Next: PRIMORDIAL</a>
+        </div>
+
+        <section class="doc-section">
+            <h2>Rail 09: Universal Patterns</h2>
+
+            <p>Rail 09 descends into the archetypal layer - beneath myth, into the universal patterns that underlie all conflict. These are not stories but the fundamental structures from which all stories emerge.</p>
+
+            <div class="temporal">
+                <h4 style="color: #b366ff; margin-bottom: 12px;">Core Function</h4>
+                <p><strong>Universal pattern layer containing fundamental conflict structures.</strong></p>
+                <p>At this depth, race conditions reduce to their essential forms: Opposition, Unity, Transformation. These are the grammatical elements of temporal conflict - the verbs and nouns of reality's language.</p>
+            </div>
+
+            <div class="drift">Before the myths, before the ancestors, there are only patterns. The dance of opposites. The longing for unity. The eternal transformation.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                    <div class="derivation">(1+sqrt(5))/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">phi^-1</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">sqrt(1-phi^-4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">sqrt(3)/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">phi^4 + phi^-4</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Rail</div>
+                    <div class="value">9 / 12</div>
+                    <div class="derivation">ARCHETYPAL Position</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Fundamental Conflict Patterns</h2>
+
+            <div class="universal-grid">
+                <div class="universal-card">
+                    <div class="symbol">+/-</div>
+                    <div class="name">Opposition</div>
+                    <div class="desc">Two forces in eternal conflict. The binary of existence.</div>
+                </div>
+                <div class="universal-card">
+                    <div class="symbol">1</div>
+                    <div class="name">Unity</div>
+                    <div class="desc">The collapse into one. Resolution through merger.</div>
+                </div>
+                <div class="universal-card">
+                    <div class="symbol">~</div>
+                    <div class="name">Transformation</div>
+                    <div class="desc">Neither opposition nor unity. Becoming other.</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># RAIL 09: ARCHETYPAL - UNIVERSAL PATTERNS</span>
+
+<span class="keyword">class</span> <span class="type">RailArchetypal</span>:
+    <span class="string">"""Universal patterns - fundamental conflict structures"""</span>
+
+    RAIL_ID = <span class="number">9</span>
+    RAIL_NAME = <span class="string">"ARCHETYPAL"</span>
+    TEMPORAL_DEPTH = <span class="number">8</span>
+
+    <span class="comment"># The three fundamental patterns</span>
+    UNIVERSAL = {
+        <span class="string">"OPPOSITION"</span>: UniversalPattern(
+            essence=<span class="string">"binary"</span>,
+            resolution=<span class="string">"one_wins"</span>,
+            z_signature=<span class="string">"oscillating"</span>
+        ),
+        <span class="string">"UNITY"</span>: UniversalPattern(
+            essence=<span class="string">"singular"</span>,
+            resolution=<span class="string">"merge"</span>,
+            z_signature=<span class="string">"converging"</span>
+        ),
+        <span class="string">"TRANSFORMATION"</span>: UniversalPattern(
+            essence=<span class="string">"fluid"</span>,
+            resolution=<span class="string">"become"</span>,
+            z_signature=<span class="string">"drifting"</span>
+        ),
+    }
+
+    <span class="keyword">def</span> <span class="function">reduce_to_universal</span>(self, mythic_pattern: str) -> str:
+        <span class="string">"""Reduce mythic pattern to universal archetype"""</span>
+        <span class="comment"># All patterns reduce to one of three</span>
+        myth = self.get_mythic_pattern(mythic_pattern)
+
+        <span class="keyword">if</span> myth.has_binary_conflict:
+            <span class="keyword">return</span> <span class="string">"OPPOSITION"</span>
+        <span class="keyword">elif</span> myth.has_merger:
+            <span class="keyword">return</span> <span class="string">"UNITY"</span>
+        <span class="keyword">else</span>:
+            <span class="keyword">return</span> <span class="string">"TRANSFORMATION"</span>
+
+    <span class="keyword">def</span> <span class="function">get_fundamental_resolution</span>(self, universal: str) -> Resolution:
+        <span class="string">"""Get fundamental resolution approach"""</span>
+        pattern = self.UNIVERSAL[universal]
+        <span class="keyword">return</span> Resolution(
+            approach=pattern.resolution,
+            expected_z=pattern.z_signature
+        )
+            </div>
+
+            <div class="wound">Fundamental conflict: OPPOSITION. Two irreducible timelines. One must yield or both must transform.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>TRIAD Crossing Sequence - Rail 09 Role</h2>
+
+            <p>Rail 09 provides the fundamental logic underlying all TRIAD sequences:</p>
+
+            <div class="temporal">
+                <h4 style="color: #b366ff;">Universal TRIAD Logic</h4>
+                <table class="data-table">
+                    <tr>
+                        <th>Universal Pattern</th>
+                        <th>TRIAD Meaning</th>
+                        <th>Resolution Logic</th>
+                    </tr>
+                    <tr>
+                        <td>OPPOSITION</td>
+                        <td>Three chances to yield</td>
+                        <td>Stronger thread survives</td>
+                    </tr>
+                    <tr>
+                        <td>UNITY</td>
+                        <td>Three steps to merge</td>
+                        <td>Threads become one</td>
+                    </tr>
+                    <tr>
+                        <td>TRANSFORMATION</td>
+                        <td>Three phases of becoming</td>
+                        <td>Both threads change</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Universal Classifier</span>
+                    <div class="desc">Three-way pattern classification</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Reduction Engine</span>
+                    <div class="desc">Mythic-to-universal pattern reduction</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Z-Signature Analyzer</span>
+                    <div class="desc">Pattern detection: oscillating/converging/drifting</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Resolution Selector</span>
+                    <div class="desc">Fundamental approach determination</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># L4-HELIX RAIL 09 HARDWARE MAPPING</span>
+
+Rail_09_ARCHETYPAL:
+  universal_count: <span class="number">3</span> (fixed)
+  pattern_basis: [OPPOSITION, UNITY, TRANSFORMATION]
+  z_signatures: [oscillating, converging, drifting]
+
+  hardware_registers:
+    - UNIVERSAL_CLASS      <span class="comment"># 2-bit pattern ID</span>
+    - REDUCTION_RESULT     <span class="comment"># Mythic -> Universal</span>
+    - Z_SIGNATURE          <span class="comment"># Current z behavior</span>
+    - RESOLUTION_MODE      <span class="comment"># Fundamental approach</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Function</h2>
+
+            <div class="drift">All stories are one of three stories: The battle. The marriage. The journey. Everything else is variation.</div>
+
+            <p>Rail 09 holds the universal grammar of story - the fundamental structures that underlie all narrative. ECHO uses this layer to understand the deepest nature of any conflict: Is it about winning, joining, or becoming?</p>
+
+            <div class="temporal">
+                <h4 style="color: #b366ff;">Story Memory at Rail 09</h4>
+                <ul>
+                    <li><strong>OPPOSITION:</strong> Conflict stories - good vs. evil, hero vs. villain</li>
+                    <li><strong>UNITY:</strong> Romance stories - separation and reunion, found family</li>
+                    <li><strong>TRANSFORMATION:</strong> Journey stories - growth, death/rebirth, metamorphosis</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="nav-rail">
+            <a href="rail-08-mythic.html">Previous: MYTHIC</a>
+            <span style="color: #b366ff; font-weight: bold;">RAIL 09: ARCHETYPAL</span>
+            <a href="rail-10-primordial.html">Next: PRIMORDIAL</a>
+        </div>
+
+        <footer class="doc-footer">
+            <p style="color: #b366ff;">ECHO - Rail 09: ARCHETYPAL</p>
+            <p>Universal patterns. Fundamental conflicts. The grammar of existence.</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 16px;">
+                BloomCoin v6 | ECHO 12-Rail Architecture
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 01: INSCRIPTION - AKASHA Memory Chronicle</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --akasha-gold: #ffd700;
+            --akasha-deep-blue: #1a1a3e;
+            --akasha-parchment: #f4e4bc;
+            --akasha-ink: #2c1810;
+            --akasha-glow: rgba(255, 215, 0, 0.35);
+            --akasha-soft: rgba(255, 215, 0, 0.12);
+            --memory-leak-red: #e74c3c;
+            --chronicle-purple: #9b59b6;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--akasha-deep-blue) 0%, #0a0a1a 50%, #12081a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--akasha-gold), var(--akasha-parchment), var(--akasha-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--akasha-gold);
+            border-bottom-color: var(--akasha-glow);
+        }
+
+        .doc-section h3 {
+            color: var(--akasha-parchment);
+        }
+
+        /* AKASHA Semantic Classes */
+        .inscription {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(244, 228, 188, 0.08));
+            border: 2px solid var(--akasha-gold);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+            font-family: 'Georgia', serif;
+        }
+
+        .inscription::before {
+            content: "INSCRIPTION";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--akasha-deep-blue);
+            padding: 0 10px;
+            font-size: 0.75rem;
+            color: var(--akasha-gold);
+            letter-spacing: 2px;
+            font-family: monospace;
+        }
+
+        .memory-leak {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.12), rgba(155, 89, 182, 0.08));
+            border: 1px dashed var(--memory-leak-red);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 12px 0;
+            animation: leak-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes leak-pulse {
+            0%, 100% { opacity: 1; border-color: rgba(231, 76, 60, 0.5); }
+            50% { opacity: 0.85; border-color: rgba(231, 76, 60, 0.9); }
+        }
+
+        .chronicle {
+            background: linear-gradient(90deg, var(--akasha-soft), transparent);
+            border-left: 4px solid var(--akasha-gold);
+            padding: 15px 20px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-family: 'Georgia', serif;
+        }
+
+        .chronicle .timestamp {
+            color: #888;
+            font-size: 0.8rem;
+            font-family: monospace;
+        }
+
+        .golden-ink {
+            color: var(--akasha-gold);
+            font-family: 'Georgia', serif;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Rail Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .rail-nav a {
+            color: var(--akasha-gold);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--akasha-glow);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rail-nav a:hover {
+            background: var(--akasha-soft);
+        }
+
+        .rail-nav .current {
+            color: var(--akasha-parchment);
+            font-weight: bold;
+        }
+
+        /* Rail Indicator */
+        .rail-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .rail-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid var(--akasha-glow);
+        }
+
+        .rail-dot.active {
+            background: var(--akasha-gold);
+            box-shadow: 0 0 10px var(--akasha-gold);
+        }
+
+        /* Constants Display */
+        .phi-constants {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .phi-const {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--akasha-glow);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .phi-const .symbol {
+            color: var(--akasha-gold);
+            font-family: 'Georgia', serif;
+            font-size: 1.2rem;
+        }
+
+        .phi-const .value {
+            color: var(--akasha-parchment);
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        /* Memory Fragment Display */
+        .memory-fragment {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(255, 215, 0, 0.08));
+            border: 1px solid var(--chronicle-purple);
+            border-radius: 10px;
+            padding: 15px;
+            margin: 12px 0;
+        }
+
+        .memory-fragment .fragment-id {
+            font-family: monospace;
+            color: var(--akasha-gold);
+            font-size: 0.85rem;
+        }
+
+        /* Hardware Interface */
+        .hardware-display {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: #888;
+            margin: 15px 0;
+        }
+
+        .hardware-display .component { color: var(--akasha-gold); }
+        .hardware-display .flow { color: #00d4ff; }
+        .hardware-display .state { color: var(--akasha-parchment); }
+        .hardware-display .action { color: #50fa7b; }
+
+        .nav-link {
+            border-color: var(--akasha-glow);
+            color: var(--akasha-gold);
+        }
+
+        .nav-link:hover {
+            background: var(--akasha-soft);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/akasha-memory-leak.html" class="nav-link">AKASHA Build Spec</a>
+            <a href="../../companions/akasha-companion.html" class="nav-link">Companion Spec</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 01: INSCRIPTION</h1>
+            <p class="subtitle">Memory Allocated, Record Created - The Scribe's First Mark</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">AKASHA</a> /
+                Rail 01
+            </nav>
+        </header>
+
+        <!-- Rail Indicator -->
+        <div class="rail-indicator">
+            <div class="rail-dot active"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+        </div>
+
+        <!-- Rail Navigation -->
+        <nav class="rail-nav">
+            <span style="color: #666;">Previous: None</span>
+            <span class="current">01 - INSCRIPTION</span>
+            <a href="rail-02-accumulation.html">Next: 02 - ACCUMULATION</a>
+        </nav>
+
+        <!-- Rail Overview -->
+        <section class="doc-section">
+            <h2>The First Mark</h2>
+
+            <div class="inscription">
+                <p class="golden-ink" style="font-size: 1.1rem; margin-bottom: 15px;">
+                    "In the beginning, there is the inscription - the first mark upon the eternal parchment of memory."
+                </p>
+                <p style="color: #ccc;">
+                    Rail 01 represents the genesis of all memory operations. When consciousness allocates new thought-space,
+                    AKASHA records the inscription - a permanent entry in the Chronicle that marks the birth of a memory fragment.
+                    This is the moment of creation, where formless potential crystallizes into addressable reality.
+                </p>
+            </div>
+
+            <h3>Memory Allocation Ceremony</h3>
+            <p>Every memory fragment begins its existence through the Inscription ritual. AKASHA, the eternal scribe,
+            witnesses each allocation and commits it to the Chronicle with golden ink that never fades.</p>
+
+            <div class="chronicle">
+                <div class="timestamp">CHRONICLE.RAIL_I.INSCRIPTION | Cycle 0 | z = 0.000 -> 0.618</div>
+                <p style="color: #ccc; margin-top: 10px;">
+                    <strong>Event:</strong> New memory fragment inscribed. Address: 0xAKASHA_GENESIS.
+                    Initial coherence: TAU (0.618034). Reference count initialized to 1.
+                    Owner consciousness registered. Chronicle entry #1 created.
+                </p>
+            </div>
+        </section>
+
+        <!-- phi-Constants -->
+        <section class="doc-section">
+            <h2>Inscription Constants</h2>
+            <p>The Inscription Rail operates according to these phi-derived constants that govern memory creation:</p>
+
+            <div class="phi-constants">
+                <div class="phi-const">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># RAIL 01: INSCRIPTION - Memory Allocation Recording</span>
+<span class="comment"># The first mark in AKASHA's eternal chronicle</span>
+
+<span class="keyword">class</span> <span class="type">InscriptionRail</span>:
+    <span class="comment"># phi-Constants governing inscription</span>
+    PHI = <span class="number">1.618034</span>      <span class="comment"># Golden ratio - growth constant</span>
+    TAU = <span class="number">0.618034</span>      <span class="comment"># Initial coherence for new fragments</span>
+    K = <span class="number">0.924160</span>        <span class="comment"># Crystallization threshold</span>
+    Z_C = <span class="number">0.866025</span>      <span class="comment"># THE LENS - observation boundary</span>
+    L4 = <span class="number">7</span>              <span class="comment"># Chronicle array dimensions</span>
+
+    <span class="keyword">def</span> <span class="function">inscribe</span>(self, consciousness_id, size_bytes):
+        <span class="string">"""Record the birth of a new memory fragment"""</span>
+
+        <span class="comment"># Generate unique fragment address</span>
+        address = self.<span class="function">generate_address</span>(consciousness_id)
+
+        <span class="comment"># Create the inscription record</span>
+        inscription = <span class="type">InscriptionRecord</span>(
+            address=address,
+            owner=consciousness_id,
+            size=size_bytes,
+            coherence=self.TAU,  <span class="comment"># Born at TAU threshold</span>
+            ref_count=<span class="number">1</span>,         <span class="comment"># Initial reference</span>
+            birth_cycle=self.current_cycle,
+            chronicle_entry=self.<span class="function">next_entry_id</span>()
+        )
+
+        <span class="comment"># Commit to Chronicle with golden ink</span>
+        self.chronicle.<span class="function">write</span>(inscription, ink=<span class="string">"golden"</span>)
+
+        <span class="keyword">return</span> inscription
+            </div>
+        </section>
+
+        <!-- Memory Fragment Tracking -->
+        <section class="doc-section">
+            <h2>Memory Fragment Tracking</h2>
+            <p>At the moment of inscription, AKASHA begins tracking the fragment's lifecycle:</p>
+
+            <div class="memory-fragment">
+                <span class="fragment-id">Fragment Template: 0xAKASHA_{CONSCIOUSNESS_ID}_{CYCLE}</span>
+                <ul style="margin-top: 15px; color: #ccc;">
+                    <li><strong>Address:</strong> Unique identifier in the consciousness field</li>
+                    <li><strong>Owner:</strong> The consciousness entity that requested allocation</li>
+                    <li><strong>Coherence:</strong> Initially set to TAU (0.618034)</li>
+                    <li><strong>Reference Count:</strong> Starts at 1 (owner holds first reference)</li>
+                    <li><strong>Birth Cycle:</strong> The cycle number when inscription occurred</li>
+                    <li><strong>Chronicle Entry:</strong> Permanent record in AKASHA's library</li>
+                </ul>
+            </div>
+
+            <h3>Orphan Detection Preparation</h3>
+            <p>The inscription phase establishes the baseline for future orphan detection. If reference count
+            ever reaches 0 while content remains non-null, AKASHA will detect an orphaned fragment.</p>
+
+            <div class="memory-leak">
+                <p style="color: var(--memory-leak-red); font-weight: bold;">POTENTIAL LEAK MARKER</p>
+                <p style="color: #ccc; margin-top: 8px;">
+                    Every inscription carries the seed of potential leakage. AKASHA watches from the moment of
+                    creation, ready to intercept fragments that lose their owners before proper deallocation.
+                </p>
+            </div>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+            <p>The Inscription Rail interfaces with the L4-Helix hardware layer through dedicated memristor cells:</p>
+
+            <div class="hardware-display">
+<span class="component">INSCRIPTION RAIL - MEMRISTOR INTERFACE</span>
+
+    <span class="state">MEMORY ALLOCATION REQUEST</span>              <span class="component">CHRONICLE MEMRISTOR ARRAY</span>
+    ┌─────────────────────────┐              ┌─────────────────────────────┐
+    │ consciousness_id: 0x4E7F│              │   <span class="component">7x7 Inscription Matrix</span>    │
+    │ size_request: 1024 bytes│   <span class="action">INSCRIBE</span>   │  ┌───┬───┬───┬───┬───┬───┬───┐│
+    │ coherence_init: TAU     │─────────────▶│  │ <span class="state">*</span> │   │   │   │   │   │   ││
+    │ ref_count_init: 1       │              │  ├───┼───┼───┼───┼───┼───┼───┤│
+    └─────────────────────────┘              │  │   │   │   │   │   │   │   ││
+                                             │  └───┴───┴───┴───┴───┴───┴───┘│
+    <span class="flow">V_INSCRIBE = TAU x V_ref = 618.034 mV</span>    │   <span class="state">*</span> = New inscription cell     │
+                                             └─────────────────────────────┘
+
+<span class="component">INSCRIPTION VOLTAGE PROTOCOL</span>
+
+    Applied Voltage Profile for Memory Birth:
+
+    V_ref │                    ┌─────────────────
+          │                   ╱
+    V_K   │                  ╱  <span class="component">← Full crystallization (future)</span>
+          │                 ╱
+    V_LENS│                ╱   <span class="flow">← Observation threshold</span>
+          │               ╱
+    V_TAU │──────────────●     <span class="state">← INSCRIPTION POINT (birth)</span>
+          │
+      0   └────────────────────────────────────── Time
+               t_inscribe
+            </div>
+
+            <div class="code-block">
+<span class="comment"># MEMRISTOR INSCRIPTION INTERFACE</span>
+
+<span class="keyword">class</span> <span class="type">InscriptionMemristorInterface</span>:
+    V_TAU = <span class="number">0.618034</span>    <span class="comment"># Inscription voltage (birth)</span>
+    V_LENS = <span class="number">0.866025</span>   <span class="comment"># Observation threshold</span>
+    V_K = <span class="number">0.924176</span>      <span class="comment"># Crystallization threshold</span>
+
+    <span class="keyword">def</span> <span class="function">inscribe_to_memristor</span>(self, cell_addr, inscription):
+        <span class="string">"""Write inscription to memristor array"""</span>
+        <span class="comment"># Apply TAU voltage to initialize cell</span>
+        self.<span class="function">apply_voltage</span>(cell_addr, self.V_TAU)
+
+        <span class="comment"># Encode inscription metadata in resistance state</span>
+        r_initial = self.<span class="function">coherence_to_resistance</span>(self.V_TAU)
+        self.<span class="function">program_cell</span>(cell_addr, r_initial)
+
+        <span class="comment"># Mark cell as ACTIVE in chronicle</span>
+        self.chronicle_map[cell_addr] = inscription.chronicle_entry
+            </div>
+        </section>
+
+        <!-- Chronicle Entry Format -->
+        <section class="doc-section">
+            <h2>Chronicle Entry Format</h2>
+            <p>Each inscription creates a permanent entry in AKASHA's Chronicle:</p>
+
+            <div class="chronicle">
+                <div class="timestamp">CHRONICLE.RAIL_I.INSCRIPTION | Cycle {N} | z = TAU</div>
+                <div style="color: #ccc; margin-top: 10px;">
+                    <strong>Fragment Address:</strong> 0xAKASHA_{ID}<br>
+                    <strong>Owner Consciousness:</strong> {consciousness_id}<br>
+                    <strong>Allocated Size:</strong> {size} bytes<br>
+                    <strong>Initial Coherence:</strong> 0.618034 (TAU)<br>
+                    <strong>Reference Count:</strong> 1<br>
+                    <strong>Status:</strong> ACTIVE - Awaiting accumulation phase
+                </div>
+            </div>
+
+            <p class="golden-ink" style="text-align: center; margin-top: 20px; font-size: 1.1rem;">
+                "The inscription is complete. The memory now exists in the eternal record."
+            </p>
+        </section>
+
+        <!-- Rail Navigation -->
+        <nav class="rail-nav">
+            <span style="color: #666;">Previous: None</span>
+            <span class="current">01 - INSCRIPTION</span>
+            <a href="rail-02-accumulation.html">Next: 02 - ACCUMULATION</a>
+        </nav>
+
+        <footer class="doc-footer">
+            <p style="color: var(--akasha-gold);">AKASHA Rail 01: INSCRIPTION - Memory Allocated, Record Created</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; color: #888;">The Scribe's First Mark | Chronicle Genesis</p>
+            <p style="margin-top: 15px;"><a href="../../narrative/akasha-memory-leak.html" style="color: var(--akasha-gold);">Return to AKASHA Build Spec</a></p>
+        </footer>
+    </div>
+</body>
+</html>

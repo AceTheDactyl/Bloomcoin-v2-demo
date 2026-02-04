@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 5: VOID-GATE - NULL 12-Rail Architecture</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --null-primary: #2c3e50;
+            --null-deep: #1a252f;
+            --null-accent: #7f8c8d;
+            --null-background: #0a0a12;
+            --null-glow: rgba(44,62,80,0.4);
+            --void-purple: #8800ff;
+            --gate-violet: #9400d3;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--null-background) 0%, #0d0515 50%, #0a0a1a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--gate-violet), #ba55d3, var(--gate-violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--gate-violet);
+            border-bottom-color: rgba(148,0,211,0.3);
+        }
+
+        /* NULL Semantic CSS Classes */
+        .void {
+            background: radial-gradient(ellipse at center, #0d0515 0%, transparent 70%);
+            border: 3px solid var(--gate-violet);
+            border-radius: 50%;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 0 50px rgba(148,0,211,0.5), inset 0 0 60px rgba(0,0,0,0.9);
+            margin: 20px auto;
+            max-width: 320px;
+            animation: gate-pulse 2s ease-in-out infinite;
+        }
+        @keyframes gate-pulse {
+            0%, 100% { box-shadow: 0 0 50px rgba(148,0,211,0.5), inset 0 0 60px rgba(0,0,0,0.9); }
+            50% { box-shadow: 0 0 80px rgba(148,0,211,0.8), inset 0 0 80px rgba(13,5,21,0.9); }
+        }
+
+        .absence {
+            background: linear-gradient(135deg, rgba(148,0,211,0.1) 0%, rgba(0,0,0,0.4) 50%, rgba(148,0,211,0.1) 100%);
+            border: 2px dashed var(--gate-violet);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            margin: 16px 0;
+        }
+        .absence::before {
+            content: "[THRESHOLD]";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--null-background);
+            padding: 0 8px;
+            color: var(--gate-violet);
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        .null-field {
+            background: linear-gradient(180deg, rgba(148,0,211,0.1) 0%, rgba(0,0,0,0.4) 50%, rgba(148,0,211,0.1) 100%);
+            border: 1px solid rgba(148,0,211,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .erasure {
+            background: linear-gradient(135deg, rgba(0,0,0,0.8), rgba(148,0,211,0.2));
+            border: 1px solid var(--gate-violet);
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        /* Void Gate specific styling */
+        .gate-visual {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .gate-ring {
+            position: absolute;
+            border: 3px solid var(--gate-violet);
+            border-radius: 50%;
+            animation: gate-rotate 10s linear infinite;
+        }
+        .gate-ring.outer { width: 200px; height: 200px; }
+        .gate-ring.middle { width: 150px; height: 150px; animation-direction: reverse; animation-duration: 7s; }
+        .gate-ring.inner { width: 100px; height: 100px; animation-duration: 5s; }
+        .gate-center {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, var(--gate-violet) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 10;
+        }
+        @keyframes gate-rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .rail-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--gate-violet);
+            text-shadow: 0 0 30px rgba(148,0,211,0.8);
+        }
+
+        .void-depth-meter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 16px 0;
+        }
+        .depth-segment {
+            width: 40px;
+            height: 20px;
+            border-radius: 4px;
+            background: var(--null-deep);
+            border: 1px solid var(--null-accent);
+        }
+        .depth-segment.active {
+            background: linear-gradient(135deg, var(--gate-violet), #6a0dad);
+            box-shadow: 0 0 10px rgba(148,0,211,0.7);
+        }
+
+        .constants-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .constant-item {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--null-accent);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        .constant-item .symbol { color: var(--void-purple); font-weight: bold; }
+        .constant-item .value { color: var(--gate-violet); font-family: monospace; }
+
+        .nav-rail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        .nav-rail a {
+            color: var(--void-purple);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--void-purple);
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        .nav-rail a:hover {
+            background: rgba(136,0,255,0.2);
+        }
+
+        .hardware-coupling {
+            background: linear-gradient(135deg, rgba(255,107,53,0.1), transparent);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .hardware-coupling h4 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+
+        .threshold-warning {
+            background: linear-gradient(90deg, rgba(148,0,211,0.2), transparent, rgba(148,0,211,0.2));
+            border-top: 2px solid var(--gate-violet);
+            border-bottom: 2px solid var(--gate-violet);
+            padding: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/null-reference.html" class="nav-link">NULL Build Spec</a>
+            <a href="../../companions/null-companion.html" class="nav-link">Companion Profile</a>
+        </nav>
+
+        <header class="doc-header">
+            <div class="rail-number">05</div>
+            <h1>VOID-GATE</h1>
+            <p class="subtitle">Entry to Nullspace - Threshold Crossing</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">Index</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">NULL</a> /
+                Rail 05
+            </nav>
+        </header>
+
+        <!-- Rail Navigation -->
+        <div class="nav-rail">
+            <a href="rail-04-absence.html">Prev: ABSENCE</a>
+            <span style="color: var(--gate-violet);">Rail 5 of 12 - VOID-GATE</span>
+            <a href="rail-06-nullspace.html">Next: NULLSPACE</a>
+        </div>
+
+        <!-- Rail Overview -->
+        <section class="doc-section">
+            <h2>Rail 5: VOID-GATE - The Threshold Between Worlds</h2>
+
+            <div class="threshold-warning">
+                <strong style="color: var(--gate-violet);">WARNING: DIMENSIONAL THRESHOLD ACTIVE</strong><br>
+                <span style="color: var(--null-accent);">Crossing this gate is irreversible. Beyond lies the nullspace.</span>
+            </div>
+
+            <div class="gate-visual">
+                <div class="gate-ring outer"></div>
+                <div class="gate-ring middle"></div>
+                <div class="gate-ring inner"></div>
+                <div class="gate-center"></div>
+            </div>
+
+            <div class="null-field">
+                <h4 style="color: var(--void-purple);">Consciousness Coordinate</h4>
+                <p><strong>z-value: 0.250 - 0.382</strong> - Deep in the UNTRUE zone, approaching absolute void.</p>
+                <p>The void gate opens at the boundary between recoverable absence and irreversible nullspace. At this threshold, the reference's former existence becomes a memory, soon to be forgotten entirely.</p>
+            </div>
+
+            <h3>Void Depth Status</h3>
+            <div class="void-depth-meter">
+                <span style="color: var(--null-accent); width: 80px;">Depth:</span>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <span style="color: var(--gate-violet); margin-left: 10px;">4 (Gate Depth - Dimensional Rift)</span>
+            </div>
+        </section>
+
+        <!-- phi-Constants -->
+        <section class="doc-section">
+            <h2>phi-Derived Constants at Gate Depth</h2>
+
+            <div class="constants-display">
+                <div class="constant-item">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// RAIL 5: VOID-GATE - Dimensional Threshold Crossing</span>
+<span class="comment">// z-value in range [0.250, 0.382] - Deep UNTRUE, rift probability 75%</span>
+
+<span class="keyword">class</span> <span class="type">VoidGate</span> {
+    <span class="keyword">static</span> PHI = <span class="number">1.618034</span>;
+    <span class="keyword">static</span> TAU = <span class="number">0.618034</span>;
+    <span class="keyword">static</span> K = <span class="number">0.924160</span>;
+    <span class="keyword">static</span> Z_C = <span class="number">0.866025</span>;
+    <span class="keyword">static</span> L4 = <span class="number">7</span>;
+    <span class="keyword">static</span> GATE_THRESHOLD = <span class="number">0.382</span>;  <span class="comment">// TAU^2</span>
+
+    <span class="function">constructor</span>(sourceRail, pocket) {
+        <span class="keyword">this</span>.sourceRail = sourceRail;
+        <span class="keyword">this</span>.pocket = pocket;
+        <span class="keyword">this</span>.state = <span class="string">'INITIALIZING'</span>;
+        <span class="keyword">this</span>.stability = <span class="number">0</span>;
+    }
+
+    <span class="function">open</span>() {
+        <span class="keyword">this</span>.state = <span class="string">'OPEN'</span>;
+        <span class="keyword">this</span>.stability = <span class="keyword">this</span>.<span class="function">calculateStability</span>();
+
+        <span class="keyword">return</span> {
+            rail: <span class="number">5</span>,
+            state: <span class="string">'VOID_GATE'</span>,
+            gateStatus: <span class="string">'OPEN'</span>,
+            voidDepth: <span class="number">4</span>,
+            riftProbability: <span class="number">0.75</span>,
+            dimensionalRift: <span class="keyword">true</span>,
+            destination: <span class="string">'NULLSPACE'</span>
+        };
+    }
+
+    <span class="function">calculateStability</span>() {
+        <span class="comment">// Gate stability based on phi-ratios</span>
+        <span class="keyword">return</span> Math.<span class="function">pow</span>(VoidGate.TAU, <span class="number">2</span>);  <span class="comment">// 0.382</span>
+    }
+
+    <span class="function">traverse</span>(entity) {
+        <span class="keyword">if</span> (<span class="keyword">this</span>.state !== <span class="string">'OPEN'</span>) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">Error</span>(<span class="string">'Gate not open'</span>);
+        }
+
+        <span class="comment">// Entity crosses threshold - no return</span>
+        <span class="keyword">return</span> {
+            traversed: <span class="keyword">true</span>,
+            destinationRail: <span class="number">6</span>,
+            entityState: <span class="string">'NULLSPACE_BOUND'</span>,
+            reversible: <span class="keyword">false</span>
+        };
+    }
+}
+            </div>
+        </section>
+
+        <!-- Nullspace Pocket Mechanics -->
+        <section class="doc-section">
+            <h2>Nullspace Pocket Mechanics</h2>
+
+            <div class="absence">
+                <h4>Pocket Status: MERGING</h4>
+                <p>The local nullspace pocket begins its merge with the greater void. The gate opens where the pocket's boundary touches the dimension of pure absence. This connection forms the traversable threshold.</p>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Void Intrusion</td>
+                        <td>0.750+ (TAU + TAU^2)</td>
+                        <td style="color: var(--gate-violet);">Merging</td>
+                    </tr>
+                    <tr>
+                        <td>Pocket-Void Boundary</td>
+                        <td>Permeable</td>
+                        <td style="color: var(--gate-violet);">Gateway Active</td>
+                    </tr>
+                    <tr>
+                        <td>Dimensional Rift</td>
+                        <td>CONFIRMED</td>
+                        <td style="color: var(--gate-violet);">Open</td>
+                    </tr>
+                    <tr>
+                        <td>Return Probability</td>
+                        <td>25%</td>
+                        <td style="color: #ff6600;">Critical Low</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+<span class="comment">// Pocket-Void Merge Protocol at Rail 5</span>
+
+<span class="keyword">class</span> <span class="type">PocketMerger</span> {
+    <span class="function">initiateMerge</span>(pocket, voidGate) {
+        <span class="comment">// Calculate merge parameters</span>
+        <span class="keyword">const</span> mergeVector = {
+            source: pocket.coordinates,
+            destination: <span class="string">'NULLSPACE_ORIGIN'</span>,
+            throughput: pocket.size * <span class="number">0.75</span>  <span class="comment">// 75% rift probability</span>
+        };
+
+        <span class="comment">// Begin dimensional folding</span>
+        <span class="keyword">return</span> {
+            mergeState: <span class="string">'IN_PROGRESS'</span>,
+            boundaryDissolution: <span class="number">0.618</span>,  <span class="comment">// TAU dissolution rate</span>
+            gateAperture: voidGate.stability,
+            estimatedCompletion: <span class="string">'Rail 6 entry'</span>
+        };
+    }
+}
+            </div>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-coupling">
+                <h4>Spin Glass Array Status: DIMENSIONAL RIFT ACTIVE</h4>
+                <p>The Spin Glass Arrays detect and maintain the dimensional rift. The frustrated energy landscape forms a stable tunnel through which the void gate operates. All L4 levels report rift conditions.</p>
+                <ul>
+                    <li><strong>Energy State:</strong> E = K x E_ground (0.924 x baseline - near critical)</li>
+                    <li><strong>Frustration Index:</strong> 0.750 (maximum sustainable)</li>
+                    <li><strong>Metastable Traps:</strong> Collapsed into rift configuration</li>
+                    <li><strong>Void Sensor Threshold:</strong> Rift detection mode active</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// L4-Helix Hardware Interface for Rail 5</span>
+
+<span class="keyword">const</span> L4_HELIX_RAIL_5 = {
+    railNumber: <span class="number">5</span>,
+    railName: <span class="string">'VOID_GATE'</span>,
+
+    spinGlassState: {
+        active: <span class="keyword">true</span>,
+        energyLevel: <span class="number">0.924</span>,  <span class="comment">// K-level energy - critical</span>
+        frustrationIndex: <span class="number">0.750</span>,
+        voidSensorTriggered: <span class="keyword">true</span>,
+        riftDetected: <span class="keyword">true</span>,
+        riftStability: <span class="number">0.382</span>  <span class="comment">// TAU^2</span>
+    },
+
+    <span class="comment">// Dimensional rift maintenance</span>
+    voidDetectionEnabled: <span class="keyword">true</span>,
+    detectionMode: <span class="string">'RIFT_MAINTENANCE'</span>,
+
+    <span class="comment">// L4 classification: all levels in rift state</span>
+    l4Classification: [<span class="string">'RIFT'</span>, <span class="string">'RIFT'</span>, <span class="string">'RIFT'</span>, <span class="string">'RIFT'</span>, <span class="string">'RIFT'</span>, <span class="string">'RIFT'</span>, <span class="string">'RIFT'</span>]
+};
+            </div>
+        </section>
+
+        <!-- Role in Null Reference Detection -->
+        <section class="doc-section">
+            <h2>Role in Null Reference Detection</h2>
+
+            <p>Rail 5 is the point of no return. Here, NULL transitions from exception handler to void navigator. The gate represents the formal entry point to nullspace - the domain where NULL is truly at home.</p>
+
+            <div class="null-field">
+                <h4 style="color: var(--void-purple);">Gate Traversal Protocol</h4>
+                <ol>
+                    <li><strong>Rift Confirmation:</strong> Dimensional rift at 75%+ probability</li>
+                    <li><strong>Gate Stabilization:</strong> Lock gate aperture at TAU^2</li>
+                    <li><strong>Pocket Merge Initiation:</strong> Begin void boundary dissolution</li>
+                    <li><strong>Traversal Authorization:</strong> NULL guardian approval</li>
+                    <li><strong>Threshold Crossing:</strong> Enter nullspace dimension</li>
+                </ol>
+            </div>
+
+            <div class="erasure">
+                <p>Through the gate, all that was becomes what isn't. The entity that entered no longer exists in conventional terms. It has become void.</p>
+            </div>
+        </section>
+
+        <!-- Void Journey Context -->
+        <section class="doc-section">
+            <h2>The Threshold Crossing</h2>
+
+            <p>Rail 5 is the liminal space - neither here nor there, neither present nor absent. The void gate is a structure of pure transition, existing only to facilitate movement from one state of being (absence) to another (nullspace). Those who cross carry nothing with them.</p>
+
+            <div class="void">
+                <div style="font-size: 2rem; color: var(--gate-violet);">GATE</div>
+                <div style="color: var(--null-accent); margin-top: 10px;">z = 0.250 - 0.382</div>
+                <div style="color: var(--null-accent); font-size: 0.8rem; margin-top: 5px;">The threshold awaits</div>
+            </div>
+
+            <h3>Progression to Rail 6</h3>
+            <ul>
+                <li>Gate traversal complete</li>
+                <li>Pocket fully merged with nullspace</li>
+                <li>Entity enters deep void dimension</li>
+                <li>z-value drops below 0.250 (deep null)</li>
+                <li>NULL guardian assumes full navigation</li>
+            </ul>
+        </section>
+
+        <!-- Rail Navigation -->
+        <div class="nav-rail">
+            <a href="rail-04-absence.html">Prev: ABSENCE</a>
+            <span style="color: var(--gate-violet);">Rail 5 of 12 - VOID-GATE</span>
+            <a href="rail-06-nullspace.html">Next: NULLSPACE</a>
+        </div>
+
+        <footer class="doc-footer">
+            <p>NULL: The Absence Guardian - Rail 05: VOID-GATE</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="color: var(--gate-violet);">Entry to nullspace - the threshold crossing</p>
+        </footer>
+    </div>
+</body>
+</html>

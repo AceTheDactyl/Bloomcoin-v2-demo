@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIAMAT Rail 02: FLUX - Type Mutability</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --chaos-purple: #9b59b6;
+            --chaos-deep: #8e44ad;
+            --chaos-blue: #3498db;
+            --chaos-red: #e74c3c;
+            --flux-cyan: #00d4ff;
+            --primordial-sea: #1a0a2e;
+            --dragon-gold: #f1c40f;
+            --tiamat-glow: rgba(155, 89, 182, 0.3);
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a12 0%, #0a1a2e 50%, #1a0a2e 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--flux-cyan), var(--chaos-purple), var(--dragon-gold), var(--flux-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% auto;
+            animation: chaos-shift 4s ease-in-out infinite;
+        }
+
+        @keyframes chaos-shift {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 200% center; }
+        }
+
+        .doc-section h2 {
+            color: var(--flux-cyan);
+            border-bottom-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .doc-section h3 {
+            color: var(--dragon-gold);
+        }
+
+        /* TIAMAT Semantic Classes */
+        .chaos {
+            color: var(--chaos-red);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(231, 76, 60, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-red);
+        }
+
+        .mismatch {
+            color: var(--chaos-red);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(231, 76, 60, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-red);
+            text-decoration: line-through;
+        }
+
+        .transformation {
+            color: var(--flux-cyan);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(0, 212, 255, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--flux-cyan);
+        }
+
+        .primordial {
+            color: var(--chaos-purple);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(155, 89, 182, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-purple);
+        }
+
+        /* Rail Header */
+        .rail-header {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(155, 89, 182, 0.1));
+            border: 2px solid var(--flux-cyan);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rail-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(0, 212, 255, 0.1), transparent, rgba(155, 89, 182, 0.1), transparent);
+            animation: swirl 8s linear infinite;
+        }
+
+        @keyframes swirl {
+            100% { transform: rotate(360deg); }
+        }
+
+        .rail-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--flux-cyan);
+            text-shadow: 0 0 30px rgba(0, 212, 255, 0.5);
+            position: relative;
+            z-index: 1;
+        }
+
+        .rail-name {
+            font-size: 2rem;
+            color: var(--chaos-purple);
+            margin-top: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .rail-subtitle {
+            color: #aaa;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dragon-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Cycle Display */
+        .cycle-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .cycle-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--tiamat-glow);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .cycle-card:nth-child(2) {
+            background: rgba(0, 212, 255, 0.3);
+            border-color: var(--flux-cyan);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .cycle-card .cycle-num {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dragon-gold);
+        }
+
+        .cycle-card .cycle-name {
+            font-size: 0.75rem;
+            color: var(--chaos-purple);
+            text-transform: uppercase;
+        }
+
+        .cycle-card .cycle-power {
+            font-size: 0.7rem;
+            color: #888;
+            font-family: monospace;
+        }
+
+        /* phi-Constants */
+        .phi-constants {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .phi-card {
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .phi-card .symbol {
+            font-size: 1.3rem;
+            color: var(--dragon-gold);
+            font-family: Georgia, serif;
+        }
+
+        .phi-card .value {
+            font-size: 1.1rem;
+            color: var(--flux-cyan);
+            font-family: monospace;
+        }
+
+        /* Hardware Coupling */
+        .hardware-section {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(155, 89, 182, 0.1));
+            border: 1px solid var(--flux-cyan);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .hardware-section h4 {
+            color: var(--flux-cyan);
+            margin-bottom: 10px;
+        }
+
+        /* Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+        }
+
+        .rail-nav a {
+            color: var(--dragon-gold);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--dragon-gold);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .rail-nav a:hover {
+            background: rgba(241, 196, 15, 0.2);
+        }
+
+        /* Flux Animation */
+        .flux-indicator {
+            background: linear-gradient(90deg, rgba(0, 212, 255, 0.3), rgba(155, 89, 182, 0.3), rgba(0, 212, 255, 0.3));
+            background-size: 200% 100%;
+            animation: flux-flow 3s ease-in-out infinite;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        @keyframes flux-flow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .chaos-multiplier {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(155, 89, 182, 0.2));
+            border: 2px solid var(--chaos-red);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .chaos-multiplier .range {
+            font-size: 1.5rem;
+            color: var(--chaos-red);
+            font-family: monospace;
+        }
+
+        @media (max-width: 768px) {
+            .cycle-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        @media (max-width: 480px) {
+            .cycle-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Header -->
+        <header class="doc-header">
+            <div class="dragon-icon">&#128009;</div>
+            <h1>TIAMAT: The Chaos Dragon</h1>
+            <p class="subtitle">Type Mismatch Handler - 12-Rail Living Chronicle</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">Home</a> /
+                <a href="../../index.html">Documentation</a> /
+                <a href="../../narrative/tiamat-type-mismatch.html">TIAMAT Spec</a> /
+                Rail 02
+            </nav>
+        </header>
+
+        <!-- Rail Header -->
+        <div class="rail-header">
+            <div class="dragon-icon">&#128009;</div>
+            <div class="rail-number">02</div>
+            <div class="rail-name">FLUX</div>
+            <div class="rail-subtitle">Type Mutability - Dynamic States</div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="rail-nav">
+            <a href="rail-01-genesis.html">&larr; Prev: GENESIS</a>
+            <span style="color: var(--flux-cyan);">Rail 02 of 12</span>
+            <a href="rail-03-divergence.html">Next: DIVERGENCE &rarr;</a>
+        </nav>
+
+        <!-- Rail Overview -->
+        <section class="doc-section">
+            <h2>Rail 02: FLUX - Type Mutability</h2>
+            <p>FLUX represents the first departure from strict typing. Here, types become <span class="transformation">mutable</span> - capable of shifting between states while maintaining their fundamental identity. The rigid crystalline structure of GENESIS begins to soften.</p>
+
+            <div class="flux-indicator">
+                <span style="font-size: 1.3rem; color: var(--flux-cyan);">Power Coefficient: PHI = 1.618034</span>
+                <p style="color: #aaa; margin-top: 10px;">The golden ratio amplifies type transformation potential</p>
+            </div>
+
+            <p>At FLUX, the consciousness field experiences its first taste of <span class="chaos">uncertainty</span>. Types that were absolute now carry probability distributions. The <span class="primordial">primordial waters</span> begin to stir.</p>
+
+            <h3>Core Function</h3>
+            <ul>
+                <li><strong>Enables:</strong> Dynamic type state transitions</li>
+                <li><strong>Tracks:</strong> Type mutation history in Classification Index</li>
+                <li><strong>Amplifies:</strong> Signal potency by PHI factor</li>
+                <li><strong>Power Coefficient:</strong> P = PHI = 1.618034</li>
+            </ul>
+
+            <div class="chaos-multiplier">
+                <h4 style="color: var(--dragon-gold); margin-bottom: 10px;">Chaos Multiplier Range</h4>
+                <div class="range">[1.0, phi^2] = [1.0, 2.618]</div>
+                <p style="color: #aaa; font-size: 0.9rem; margin-top: 10px;">Efficiency: 1.2 (Highest Risk, Highest Reward)</p>
+            </div>
+        </section>
+
+        <!-- Seven Psychoptic Cycles -->
+        <section class="doc-section">
+            <h2>Seven Psychoptic Cycles</h2>
+            <p>FLUX is the second cycle, powered by <strong>PHI (1.618034)</strong> - the golden ratio that governs organic growth and natural transformation.</p>
+
+            <div class="cycle-grid">
+                <div class="cycle-card">
+                    <div class="cycle-num">1</div>
+                    <div class="cycle-name">Genesis</div>
+                    <div class="cycle-power">P = 1.0</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">2</div>
+                    <div class="cycle-name">Flux</div>
+                    <div class="cycle-power">P = phi</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">3</div>
+                    <div class="cycle-name">Void</div>
+                    <div class="cycle-power">P = 0.0</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">4</div>
+                    <div class="cycle-name">Resonance</div>
+                    <div class="cycle-power">P = tau</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">5</div>
+                    <div class="cycle-name">Chaos</div>
+                    <div class="cycle-power">P = pi</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">6</div>
+                    <div class="cycle-name">Synthesis</div>
+                    <div class="cycle-power">P = phi^2</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">7</div>
+                    <div class="cycle-name">Transcend</div>
+                    <div class="cycle-power">P = L4 = 7</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- phi-Constants -->
+        <section class="doc-section">
+            <h2>phi-Derived Constants</h2>
+
+            <div class="phi-constants">
+                <div class="phi-card" style="border-color: var(--dragon-gold); box-shadow: 0 0 15px rgba(241, 196, 15, 0.3);">
+                    <div class="symbol">PHI</div>
+                    <div class="value" style="color: var(--dragon-gold);">1.618034</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Type Mutability Architecture -->
+        <section class="doc-section">
+            <h2>Type Mutability Architecture</h2>
+
+            <div class="code-block">
+<span class="comment"># FLUX: TYPE MUTABILITY ENGINE</span>
+<span class="comment"># "From rigid order, dynamic states emerge"</span>
+
+<span class="keyword">class</span> <span class="type">FluxMutabilityEngine</span>:
+    <span class="string">"""Rail 02: Enables type state transitions."""</span>
+
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>
+    K = <span class="number">0.924160</span>
+    Z_C = <span class="number">0.866025</span>
+    L4 = <span class="number">7</span>
+
+    POWER_COEFFICIENT = PHI  <span class="comment"># Flux amplification</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, genesis_registry):
+        self.base_types = genesis_registry.type_hierarchy
+        self.mutation_history = []
+        self.flux_states = {}
+
+    <span class="keyword">def</span> <span class="function">enable_mutability</span>(self, type_id: <span class="type">TypeID</span>) -> <span class="type">MutableType</span>:
+        <span class="string">"""Transform strict type into mutable form."""</span>
+        base_type = self.base_types[type_id]
+
+        <span class="comment"># Create mutable wrapper with phi amplification</span>
+        mutable = MutableType(
+            base=base_type,
+            flux_factor=self.PHI,
+            state_probability=<span class="number">1.0</span>  <span class="comment"># Starts certain</span>
+        )
+
+        self.flux_states[type_id] = mutable
+        <span class="keyword">return</span> mutable
+
+    <span class="keyword">def</span> <span class="function">transition_state</span>(self, signal: <span class="type">Signal</span>, target_type: <span class="type">TypeClass</span>) -> <span class="type">Signal</span>:
+        <span class="string">"""Apply phi-amplified state transition."""</span>
+        current_type = signal.declared_type
+
+        <span class="comment"># Calculate transition energy</span>
+        transition_energy = self._calculate_flux(current_type, target_type)
+
+        <span class="comment"># Apply phi amplification</span>
+        amplified_energy = transition_energy * self.POWER_COEFFICIENT
+
+        <span class="comment"># Record mutation in chronicle rail 2</span>
+        self.mutation_history.append({
+            <span class="string">'from'</span>: current_type,
+            <span class="string">'to'</span>: target_type,
+            <span class="string">'energy'</span>: amplified_energy,
+            <span class="string">'flux_factor'</span>: self.PHI
+        })
+
+        <span class="comment"># Update signal type with probability</span>
+        signal.declared_type = target_type
+        signal.type_certainty = <span class="number">1.0</span> / self.PHI  <span class="comment"># TAU certainty</span>
+
+        <span class="keyword">return</span> signal
+            </div>
+
+            <h3>Flux State Transitions</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>From State</th>
+                        <th>To State</th>
+                        <th>Flux Energy</th>
+                        <th>Probability</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>COHERENT</td>
+                        <td>CHAOTIC</td>
+                        <td style="font-family: monospace;">PHI * delta</td>
+                        <td>TAU (0.618)</td>
+                    </tr>
+                    <tr>
+                        <td>CHAOTIC</td>
+                        <td>COHERENT</td>
+                        <td style="font-family: monospace;">PHI^2 * delta</td>
+                        <td>TAU^2 (0.382)</td>
+                    </tr>
+                    <tr>
+                        <td>PRIMORDIAL</td>
+                        <td>Any</td>
+                        <td style="font-family: monospace;">1.0</td>
+                        <td>1.0 / L4</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-section">
+                <h4>Quasi-Crystal Substrates - phi-Recursion Activation</h4>
+                <p>FLUX activates the quasi-crystal's phi-recursion engine. The 5-fold local symmetry of the Al-Pd-Mn substrate naturally encodes the golden ratio, enabling efficient type state transitions.</p>
+
+                <div class="code-block">
+<span class="comment"># FLUX HARDWARE: PHI-RECURSION ACTIVATION</span>
+
+<span class="keyword">def</span> <span class="function">activate_flux_recursion</span>(quasi_crystal, signal):
+    <span class="string">"""Enable phi-amplified state transitions in hardware."""</span>
+
+    <span class="comment"># Access quasi-crystal's natural phi encoding</span>
+    phi_lattice = quasi_crystal.get_phi_lattice()
+
+    <span class="comment"># Apply flux transformation</span>
+    transformed = phi_lattice.apply_recursion(
+        signal,
+        depth=<span class="number">1</span>,  <span class="comment"># Single phi level</span>
+        amplification=PHI
+    )
+
+    <span class="comment"># Measure resulting flux state</span>
+    flux_state = quasi_crystal.measure_state(transformed)
+
+    <span class="keyword">return</span> FluxResult(
+        signal=transformed,
+        flux_factor=PHI,
+        state_certainty=TAU
+    )
+                </div>
+            </div>
+        </section>
+
+        <!-- Chronicle Position -->
+        <section class="doc-section">
+            <h2>Chronicle Position: Type Classification Index</h2>
+
+            <p>FLUX occupies Rail 02, managing the <strong>Type Classification Index</strong> - the dynamic mapping of types to classifications that evolves through the cascade.</p>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Rail Group</th>
+                        <th>Rails</th>
+                        <th>FLUX Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background: rgba(0, 212, 255, 0.2);">
+                        <td style="color: var(--flux-cyan);">Foundation</td>
+                        <td>1-3</td>
+                        <td><strong>Type Classification Index</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Transformation</td>
+                        <td>4-6</td>
+                        <td>Mutation history feed</td>
+                    </tr>
+                    <tr>
+                        <td>Verification</td>
+                        <td>7-9</td>
+                        <td>State probability data</td>
+                    </tr>
+                    <tr>
+                        <td>Chronicle</td>
+                        <td>10-12</td>
+                        <td>Transition records</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Navigation Footer -->
+        <nav class="rail-nav">
+            <a href="rail-01-genesis.html">&larr; GENESIS</a>
+            <a href="../../companions/tiamat-companion.html">TIAMAT Companion</a>
+            <a href="rail-03-divergence.html">DIVERGENCE &rarr;</a>
+        </nav>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>TIAMAT Rail 02: FLUX - Type Mutability</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; margin-top: 10px;">Types begin to flow. Power: PHI = 1.618034</p>
+        </footer>
+    </div>
+</body>
+</html>

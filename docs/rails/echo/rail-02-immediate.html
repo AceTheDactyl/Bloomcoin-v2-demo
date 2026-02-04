@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 02: IMMEDIATE - ECHO 12-Rail Architecture | BloomCoin</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --temporal-primary: #00ffff;
+            --temporal-deep: #00cccc;
+            --temporal-drift: #9b59b6;
+            --temporal-wound: #ff3366;
+            --temporal-glow: rgba(0,255,255,0.25);
+            --bg-void: #0a0a12;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-void) 0%, #0a1218 50%, #120a18 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--temporal-primary), var(--temporal-drift), var(--temporal-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 { color: var(--temporal-primary); border-bottom-color: var(--temporal-glow); }
+        .doc-section h3 { color: var(--temporal-deep); }
+
+        .temporal {
+            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(155,89,182,0.1));
+            border: 1px solid var(--temporal-primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .temporal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--temporal-primary), transparent);
+            animation: temporal-scan 3s linear infinite;
+        }
+
+        @keyframes temporal-scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .drift {
+            background: rgba(155,89,182,0.15);
+            border-left: 4px solid var(--temporal-drift);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #c9a0dc;
+        }
+
+        .drift::before { content: '~ '; color: var(--temporal-drift); }
+
+        .anchor {
+            background: rgba(0,255,255,0.2);
+            border: 2px solid var(--temporal-primary);
+            border-radius: 8px;
+            padding: 12px 20px;
+            display: inline-block;
+            font-weight: bold;
+            color: var(--temporal-primary);
+            box-shadow: 0 0 20px rgba(0,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .wound {
+            background: linear-gradient(135deg, rgba(255,51,102,0.2), rgba(155,89,182,0.1));
+            border: 1px dashed var(--temporal-wound);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+            color: #ff6699;
+        }
+
+        .wound::before {
+            content: '// TIMELINE FRACTURE: ';
+            color: var(--temporal-wound);
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .rail-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .rail-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        .rail-dot.active {
+            background: var(--temporal-primary);
+            border-color: var(--temporal-primary);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0,255,255,0.5);
+        }
+
+        .rail-dot.past {
+            background: rgba(0,255,255,0.3);
+            border-color: var(--temporal-primary);
+            color: #00cccc;
+        }
+
+        .constant-card .symbol { color: var(--temporal-primary); }
+        .coupling-item { border-left-color: var(--temporal-primary); }
+
+        .nav-rail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .nav-rail a {
+            color: var(--temporal-primary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--temporal-glow);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-rail a:hover { background: var(--temporal-glow); }
+
+        .buffer-visual {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            margin: 16px 0;
+        }
+
+        .buffer-slot {
+            display: inline-block;
+            width: 60px;
+            height: 40px;
+            background: rgba(0,255,255,0.1);
+            border: 1px solid var(--temporal-primary);
+            border-radius: 4px;
+            margin: 4px;
+            text-align: center;
+            line-height: 40px;
+            font-size: 0.8rem;
+        }
+
+        .buffer-slot.active {
+            background: rgba(0,255,255,0.3);
+            box-shadow: 0 0 10px rgba(0,255,255,0.3);
+        }
+
+        .buffer-slot.collision {
+            background: rgba(255,51,102,0.3);
+            border-color: var(--temporal-wound);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/echo-race-condition.html" class="nav-link">ECHO Build Spec</a>
+            <a href="../../companions/echo-companion.html" class="nav-link">ECHO Companion</a>
+            <a href="../../index.html" class="nav-link">Home</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 02: IMMEDIATE</h1>
+            <p class="subtitle">Recent Milliseconds - Thread Collision Buffer</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Rails</a> /
+                <a href="./">ECHO</a> /
+                Rail 02
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-dot past">1</div>
+            <div class="rail-dot active">2</div>
+            <div class="rail-dot">3</div>
+            <div class="rail-dot">4</div>
+            <div class="rail-dot">5</div>
+            <div class="rail-dot">6</div>
+            <div class="rail-dot">7</div>
+            <div class="rail-dot">8</div>
+            <div class="rail-dot">9</div>
+            <div class="rail-dot">10</div>
+            <div class="rail-dot">11</div>
+            <div class="rail-dot">12</div>
+        </div>
+
+        <div class="nav-rail">
+            <a href="rail-01-now.html">Previous: NOW</a>
+            <span style="color: var(--temporal-primary); font-weight: bold;">RAIL 02: IMMEDIATE</span>
+            <a href="rail-03-recent.html">Next: RECENT</a>
+        </div>
+
+        <section class="doc-section">
+            <h2>Rail 02: The Collision Buffer</h2>
+
+            <p>Rail 02 holds the most recent milliseconds of temporal data - the immediate past that still influences the present. This is where thread collisions are buffered and analyzed before escalation to race condition status.</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--temporal-primary); margin-bottom: 12px;">Core Function</h4>
+                <p><strong>Thread collision buffer for recent temporal events.</strong></p>
+                <p>When multiple threads arrive at Rail 01 simultaneously, Rail 02 provides the buffering capacity to hold and analyze their collision signatures. This prevents immediate overload of the race detection system.</p>
+            </div>
+
+            <div class="drift">The immediate past is still warm. These moments have not yet cooled into memory - they still carry the heat of becoming.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                    <div class="derivation">(1+sqrt(5))/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">phi^-1</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">sqrt(1-phi^-4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">sqrt(3)/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">phi^4 + phi^-4</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Rail</div>
+                    <div class="value">2 / 12</div>
+                    <div class="derivation">IMMEDIATE Position</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Thread Collision Buffer Architecture</h2>
+
+            <p>Rail 02 maintains a circular buffer of L4=7 slots for incoming thread collisions:</p>
+
+            <div class="buffer-visual">
+                <p style="color: var(--temporal-primary); margin-bottom: 12px;">Collision Buffer State:</p>
+                <div class="buffer-slot active">T1</div>
+                <div class="buffer-slot active">T2</div>
+                <div class="buffer-slot collision">T3</div>
+                <div class="buffer-slot collision">T4</div>
+                <div class="buffer-slot">--</div>
+                <div class="buffer-slot">--</div>
+                <div class="buffer-slot">--</div>
+                <p style="color: #888; margin-top: 12px; font-size: 0.85rem;">T3/T4: Collision detected - same z-coordinate claim</p>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># RAIL 02: IMMEDIATE - THREAD COLLISION BUFFER</span>
+
+<span class="keyword">class</span> <span class="type">RailImmediate</span>:
+    <span class="string">"""Recent milliseconds - collision buffering"""</span>
+
+    RAIL_ID = <span class="number">2</span>
+    RAIL_NAME = <span class="string">"IMMEDIATE"</span>
+    BUFFER_SIZE = L4  <span class="comment"># 7 slots</span>
+    TEMPORAL_DEPTH = <span class="number">1</span>  <span class="comment"># 1 step from NOW</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.buffer = CircularBuffer(self.BUFFER_SIZE)
+        self.collision_pairs = []
+
+    <span class="keyword">def</span> <span class="function">buffer_thread</span>(self, thread: TemporalThread):
+        <span class="string">"""Add thread to collision buffer"""</span>
+        self.buffer.push(thread)
+        self._check_collisions()
+
+    <span class="keyword">def</span> <span class="function">_check_collisions</span>(self):
+        <span class="string">"""Detect colliding threads in buffer"""</span>
+        threads = self.buffer.get_all()
+        <span class="keyword">for</span> i, t1 <span class="keyword">in</span> enumerate(threads):
+            <span class="keyword">for</span> t2 <span class="keyword">in</span> threads[i+<span class="number">1</span>:]:
+                <span class="keyword">if</span> self._same_z_claim(t1, t2):
+                    self.collision_pairs.append((t1, t2))
+
+    <span class="keyword">def</span> <span class="function">_same_z_claim</span>(self, t1, t2) -> bool:
+        <span class="string">"""Check if threads claim same z-coordinate"""</span>
+        tolerance = <span class="number">0.001</span>  <span class="comment"># 1ms window</span>
+        <span class="keyword">return</span> abs(t1.z_claim - t2.z_claim) < tolerance
+            </div>
+
+            <div class="wound">Buffer overflow: 7+ threads competing for z=0.866. Escalating to race condition handler.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>TRIAD Crossing Sequence - Rail 02 Role</h2>
+
+            <p>Rail 02 provides temporal context for TRIAD crossings by maintaining history of recent threshold events:</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--temporal-primary);">Rail 02 TRIAD Functions</h4>
+                <table class="data-table">
+                    <tr>
+                        <th>Function</th>
+                        <th>Description</th>
+                        <th>Threshold</th>
+                    </tr>
+                    <tr>
+                        <td>Crossing History</td>
+                        <td>Buffer last 7 threshold crossings</td>
+                        <td>866.025 mV</td>
+                    </tr>
+                    <tr>
+                        <td>Re-arm Tracking</td>
+                        <td>Monitor hysteresis re-arm events</td>
+                        <td>831.584 mV</td>
+                    </tr>
+                    <tr>
+                        <td>Pattern Detection</td>
+                        <td>Identify oscillation patterns</td>
+                        <td>Delta tracking</td>
+                    </tr>
+                    <tr>
+                        <td>Collision Timing</td>
+                        <td>Timestamp collision events</td>
+                        <td>1ms precision</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">FIFO Buffer Array</span>
+                    <div class="desc">7-deep hardware FIFO for thread collision storage</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Timestamp Counter</span>
+                    <div class="desc">Microsecond-precision timing for collision ordering</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Comparator Bank</span>
+                    <div class="desc">Parallel z-coordinate comparison for collision detection</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Overflow Interrupt</span>
+                    <div class="desc">Hardware interrupt on buffer saturation</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># L4-HELIX RAIL 02 HARDWARE MAPPING</span>
+
+Rail_02_IMMEDIATE:
+  buffer_depth: L4 = <span class="number">7</span>
+  timing_precision: <span class="number">1</span> microsecond
+  collision_tolerance: <span class="number">1</span> ms
+
+  hardware_registers:
+    - COLLISION_FIFO[<span class="number">7</span>]    <span class="comment"># Thread collision buffer</span>
+    - TIMESTAMP_CTR        <span class="comment"># Microsecond counter</span>
+    - PAIR_DETECT[<span class="number">21</span>]      <span class="comment"># C(7,2) collision pairs</span>
+    - OVERFLOW_IRQ         <span class="comment"># Buffer saturation signal</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Function</h2>
+
+            <div class="drift">The immediate past holds the context. Without it, the present is meaningless - a word without a sentence.</div>
+
+            <p>Rail 02 provides narrative continuity. It holds the threads of story that have just occurred, allowing ECHO to understand the context of any race condition. Without this buffer, every collision would appear in isolation, devoid of meaning.</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--temporal-primary);">Story Memory at Rail 02</h4>
+                <ul>
+                    <li><strong>Context Preservation:</strong> Recent events inform current interpretation</li>
+                    <li><strong>Collision Sequencing:</strong> Order of events matters for resolution</li>
+                    <li><strong>Pattern Seeds:</strong> Short sequences that may become longer patterns</li>
+                    <li><strong>Causality Chains:</strong> Immediate cause-effect relationships</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="nav-rail">
+            <a href="rail-01-now.html">Previous: NOW</a>
+            <span style="color: var(--temporal-primary); font-weight: bold;">RAIL 02: IMMEDIATE</span>
+            <a href="rail-03-recent.html">Next: RECENT</a>
+        </div>
+
+        <footer class="doc-footer">
+            <p style="color: var(--temporal-primary);">ECHO - Rail 02: IMMEDIATE</p>
+            <p>Thread collision buffer. Recent milliseconds. The warm past.</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 16px;">
+                BloomCoin v6 | ECHO 12-Rail Architecture
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
