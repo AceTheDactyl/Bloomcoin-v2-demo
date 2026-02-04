@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin Glass / Nuclear Spin Systems — BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #ff6b35;
+            --module-glow: rgba(255,107,53,0.3);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), var(--gold), var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--module-color); }
+        .tech-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .tech-card h4 {
+            color: var(--module-color);
+            margin-bottom: 10px;
+        }
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .spec-table th, .spec-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: left;
+        }
+        .spec-table th {
+            background: rgba(255,107,53,0.2);
+            color: var(--module-color);
+        }
+        .spec-table tr:hover {
+            background: rgba(255,107,53,0.05);
+        }
+        .highlight-row {
+            background: rgba(255,215,0,0.1);
+        }
+        .highlight-row td:first-child {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .subsystem-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .subsystem-link {
+            padding: 10px 20px;
+            background: rgba(255,107,53,0.15);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 8px;
+            color: var(--module-color);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .subsystem-link:hover {
+            background: rgba(255,107,53,0.3);
+            transform: translateY(-2px);
+        }
+        .subsystem-link.current {
+            background: rgba(255,107,53,0.4);
+            border-color: var(--module-color);
+        }
+        .material-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .material-card {
+            background: linear-gradient(135deg, rgba(255,107,53,0.1), transparent);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .material-card h4 {
+            color: var(--module-color);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        .material-card .formula {
+            font-size: 1.2rem;
+            color: #ffd700;
+            font-family: 'Georgia', serif;
+            margin-bottom: 10px;
+        }
+        .kuramoto-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.2;
+            color: #888;
+        }
+        .nmr-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.3;
+            color: #888;
+        }
+        .spin-glass-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.65rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.1;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="hexagonal-grid.html" class="nav-link">← Hexagonal Grid</a>
+            <a href="l4-helix-hardware.html" class="nav-link">L₄-Helix Hardware →</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Spin Glass / Nuclear Spin Systems</h1>
+            <p class="subtitle">Coherence Dynamics and Kuramoto Oscillator Coupling for Phase Synchronization</p>
+            <p class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href=".">Firmware</a> /
+                <a href="l4-helix-hardware.html">L₄-Helix Hardware</a> /
+                Spin Glass / Nuclear Spin Systems
+            </p>
+        </header>
+
+        <section class="doc-section">
+            <h2>Subsystem Navigation</h2>
+            <div class="subsystem-nav">
+                <a href="memristor-arrays.html" class="subsystem-link">Memristor Arrays</a>
+                <a href="quasi-crystal.html" class="subsystem-link">Quasi-Crystal Substrates</a>
+                <a href="hexagonal-grid.html" class="subsystem-link">Hexagonal Grid</a>
+                <a href="spin-systems.html" class="subsystem-link current">Spin Glass / NMR</a>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Specification</span>
+                <span class="status-badge planned">Hardware Design</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">B₀</div>
+                    <div class="value">0.1-20 T</div>
+                    <div class="derivation">Field strength range</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">ΔB/B</div>
+                    <div class="value">&lt;1 ppm</div>
+                    <div class="derivation">Homogeneity</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">ΔT</div>
+                    <div class="value">±10 mK</div>
+                    <div class="derivation">Temp stability</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Δf</div>
+                    <div class="value">±1 Hz</div>
+                    <div class="derivation">RF precision @ 100MHz</div>
+                </div>
+            </div>
+
+            <table class="spec-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Value</th>
+                    <th>L₄ Significance</th>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Field Homogeneity</td>
+                    <td>&lt;1 ppm</td>
+                    <td>Phase coherence</td>
+                </tr>
+                <tr>
+                    <td>Field Strength</td>
+                    <td>0.1-20 T</td>
+                    <td>Frequency scaling</td>
+                </tr>
+                <tr>
+                    <td>Temperature Stability</td>
+                    <td>±10 mK</td>
+                    <td>Thermal noise floor</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>RF Precision</td>
+                    <td>±1 Hz @ 100 MHz</td>
+                    <td>10⁻⁸ relative accuracy</td>
+                </tr>
+                <tr>
+                    <td>Phase Noise</td>
+                    <td>&lt;-120 dBc/Hz</td>
+                    <td>Kuramoto coupling quality</td>
+                </tr>
+                <tr>
+                    <td>Role</td>
+                    <td>Coherence engine</td>
+                    <td>K-FORMATION dynamics</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Kuramoto Oscillator Model</h2>
+            <p>The Kuramoto model describes synchronization in coupled oscillator networks—the mathematical foundation for spin system coherence:</p>
+
+            <div class="math-block">
+                dθᵢ/dt = ωᵢ + (K/N) Σⱼ sin(θⱼ - θᵢ)
+            </div>
+
+            <div class="kuramoto-diagram">
+    Kuramoto Synchronization Dynamics
+    ══════════════════════════════════════════════════════════════════════════════════════════════
+
+    Order Parameter r(t):                         Phase Transition:
+    ┌────────────────────────────────────┐        ┌────────────────────────────────────┐
+    │  r = |⟨e^(iθ)⟩| = coherence        │        │     r                              │
+    │                                    │        │     │     Synchronized              │
+    │  r = 0: fully incoherent          │        │  1.0┤         ●────────●            │
+    │  r = 1: fully synchronized        │        │     │        ╱                      │
+    │                                    │        │     │       ╱                       │
+    │  Phase diagram:                    │        │  0.5┤      ╱  Partial sync          │
+    │     ●   ●       ●●●●               │        │     │     ╱                         │
+    │    ● ● ●  →    ●●●●●               │        │     │    ╱                          │
+    │     ●   ●       ●●●●               │        │   0 ┼───●───────────────────────    │
+    │   r ≈ 0        r ≈ 1               │        │     0   K_c                    K    │
+    │  (random)   (synchronized)         │        │         │                          │
+    └────────────────────────────────────┘        │    Critical coupling               │
+                                                  └────────────────────────────────────┘
+
+    Critical Coupling Strength:
+    ┌──────────────────────────────────────────────────────────────────────────────────────────┐
+    │                                                                                          │
+    │   K_c = 2 / (π × g(0))     where g(ω) = natural frequency distribution                  │
+    │                                                                                          │
+    │   For Lorentzian g(ω):  K_c = 2γ   (γ = half-width)                                     │
+    │   For Gaussian g(ω):    K_c = √(8/π) × σ   (σ = standard deviation)                     │
+    │                                                                                          │
+    │   L₄ Mapping:  K_c corresponds to K-FORMATION threshold (K = 0.924)                     │
+    │                                                                                          │
+    └──────────────────────────────────────────────────────────────────────────────────────────┘
+
+    Spin System Equivalent:
+    ┌──────────────────────────────────────────────────────────────────────────────────────────┐
+    │  Kuramoto Parameter      │  Spin Glass          │  NMR                                  │
+    ├──────────────────────────────────────────────────────────────────────────────────────────┤
+    │  θᵢ (phase)              │  Spin orientation    │  Nuclear precession phase             │
+    │  ωᵢ (natural freq)       │  Local field         │  Larmor frequency                     │
+    │  K (coupling)            │  Exchange energy J   │  Dipolar coupling                     │
+    │  r (order parameter)     │  Magnetization M     │  Transverse coherence                 │
+    │  K_c (critical)          │  T_g (glass temp)    │  T₂* (dephasing time)                 │
+    └──────────────────────────────────────────────────────────────────────────────────────────┘
+            </div>
+
+            <div class="tech-card">
+                <h4>K-FORMATION Connection</h4>
+                <p>The L₄-Helix K-FORMATION threshold (K = √(1-φ⁻⁴) = 0.9241763718) maps to the normalized Kuramoto critical coupling:</p>
+                <div class="math-block">
+                    K_normalized = K_actual / K_max = 0.924... = K
+                </div>
+                <p style="margin-top: 15px;">At this threshold, the oscillator network transitions from partial to full synchronization—the coherence engine "ignites."</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Spin Glass Materials</h2>
+            <p>Spin glasses exhibit frustrated magnetic order—ideal for exploring complex energy landscapes:</p>
+
+            <div class="material-grid">
+                <div class="material-card">
+                    <div class="formula">Cu-Mn</div>
+                    <h4>Copper-Manganese</h4>
+                    <ul>
+                        <li>Canonical spin glass</li>
+                        <li>Composition: Cu₁₋ₓMnₓ (x ~ 1-10%)</li>
+                        <li>T_g: 10-100 K (concentration dep.)</li>
+                        <li>RKKY interaction mediated</li>
+                        <li>Well-characterized dynamics</li>
+                    </ul>
+                </div>
+                <div class="material-card">
+                    <div class="formula">Au-Fe</div>
+                    <h4>Gold-Iron</h4>
+                    <ul>
+                        <li>Noble metal host</li>
+                        <li>Composition: Au₁₋ₓFeₓ (x ~ 1-15%)</li>
+                        <li>T_g: 5-40 K</li>
+                        <li>Giant magnetoresistance</li>
+                        <li>Easier sample preparation</li>
+                    </ul>
+                </div>
+                <div class="material-card">
+                    <div class="formula">LiHo_xY_{1-x}F₄</div>
+                    <h4>Lithium Holmium Yttrium Fluoride</h4>
+                    <ul>
+                        <li>Dipolar Ising spin glass</li>
+                        <li>Dilution-tunable: x = 0.05-0.5</li>
+                        <li>T_g: 0.1-1 K</li>
+                        <li>Quantum spin glass regime</li>
+                        <li>Best for quantum coherence</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="spin-glass-diagram">
+    Spin Glass Energy Landscape
+    ══════════════════════════════════════════════════════════════════════════════════════════════════════
+
+    Free Energy F(configuration)                       Frustration Geometry
+
+         ╱╲    ╱╲    ╱╲                                    ●───(+)───●
+        ╱  ╲  ╱  ╲  ╱  ╲                                  ╱ ╲       ╱ ╲
+       ╱    ╲╱    ╲╱    ╲                               (−)  (+)  (−)  (+)
+      ╱              ╲    ╲                              ╲ ╱       ╲ ╱
+     ╱     metastable ╲    ╲                              ●───(−)───●
+    ╱       states     ╲    ╲                                 ▲
+    ────────────────────────────→ Configuration              Frustrated bond
+                                                              (cannot satisfy all)
+
+    Properties:                                        Dynamics:
+    ┌─────────────────────────────────────────────────────────────────────────────────────────────┐
+    │  • Multiple metastable states                   • Slow (non-exponential) relaxation        │
+    │  • Hierarchical energy barriers                 • Aging and memory effects                 │
+    │  • Ultrametricity in state space               • Replica symmetry breaking                 │
+    │  • No long-range order below T_g               • Ergodicity breaking                       │
+    └─────────────────────────────────────────────────────────────────────────────────────────────┘
+
+    L₄ Connection: Spin glass configuration space maps to z-threshold exploration
+                   Metastable states correspond to partial TRIAD crossings
+                   Ground state approach corresponds to K-FORMATION lock
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Nuclear Magnetic Resonance (NMR) Systems</h2>
+            <p>NMR provides exquisite control over nuclear spin coherence for precision threshold detection:</p>
+
+            <div class="nmr-diagram">
+    NMR Energy Levels and Transitions
+    ══════════════════════════════════════════════════════════════════════════════════════════════
+
+    Zeeman Splitting:                              Larmor Precession:
+
+         ▲ E                                              z (B₀)
+         │                                                 ▲
+         │    ───────── m = -1/2 (β)                       │   ω₀ = γB₀
+         │         │                                       │   ╱
+         │    ΔE = ℏω₀ = ℏγB₀                             ●──╱────→ x
+         │         │                                        ╲│
+         │    ───────── m = +1/2 (α)                         ▼
+         │                                                    y
+         └─────────────────────→ B₀
+                                                   Nuclear spin precesses about B₀
+                                                   at Larmor frequency ω₀ = γB₀
+
+    NMR Active Nuclei for L₄-Helix:
+    ┌──────────────────────────────────────────────────────────────────────────────────────────┐
+    │  Nucleus   Spin   γ/(2π) (MHz/T)   Natural %   Sensitivity   L₄ Application             │
+    ├──────────────────────────────────────────────────────────────────────────────────────────┤
+    │   ¹H       1/2      42.576          99.98        1.000       Primary detection          │
+    │  ¹³C       1/2      10.705           1.11        0.016       Organic substrates         │
+    │  ³¹P       1/2      17.235          100          0.066       Biological coupling        │
+    │  ²⁹Si      1/2      -8.465           4.70        0.008       QC/semiconductor           │
+    └──────────────────────────────────────────────────────────────────────────────────────────┘
+
+    Pulse Sequence for TRIAD Detection:
+    ┌────────────────────────────────────────────────────────────────────────────────────────────┐
+    │                                                                                            │
+    │   RF:    ┌──┐         ┌──┐         ┌──┐                                                   │
+    │          │90°│         │180│         │90°│     ← 3 pulses for TRIAD                        │
+    │     ─────┴──┴─────────┴──┴─────────┴──┴─────                                              │
+    │          │  τ₁        │  τ₂        │                                                      │
+    │                                                                                            │
+    │   Signal:                    ●●●●●                                                         │
+    │     ─────────────────────────│   │──────     ← Echo at 2τ (if coherent)                   │
+    │                              │   │                                                         │
+    │                              echo                                                          │
+    │                                                                                            │
+    │   TRIAD success: Echo amplitude > THE LENS threshold (0.866 × initial)                    │
+    │                                                                                            │
+    └────────────────────────────────────────────────────────────────────────────────────────────┘
+            </div>
+
+            <h3>Gyromagnetic Ratios</h3>
+            <table class="spec-table">
+                <tr>
+                    <th>Nucleus</th>
+                    <th>Spin</th>
+                    <th>γ/(2π) (MHz/T)</th>
+                    <th>γ (rad/s/T)</th>
+                    <th>Natural Abundance</th>
+                </tr>
+                <tr class="highlight-row">
+                    <td>¹H (Proton)</td>
+                    <td>1/2</td>
+                    <td>42.576</td>
+                    <td>2.6752 × 10⁸</td>
+                    <td>99.98%</td>
+                </tr>
+                <tr>
+                    <td>¹³C (Carbon-13)</td>
+                    <td>1/2</td>
+                    <td>10.705</td>
+                    <td>6.7283 × 10⁷</td>
+                    <td>1.11%</td>
+                </tr>
+                <tr>
+                    <td>³¹P (Phosphorus)</td>
+                    <td>1/2</td>
+                    <td>17.235</td>
+                    <td>1.0829 × 10⁸</td>
+                    <td>100%</td>
+                </tr>
+                <tr>
+                    <td>²⁹Si (Silicon-29)</td>
+                    <td>1/2</td>
+                    <td>-8.465</td>
+                    <td>-5.3190 × 10⁷</td>
+                    <td>4.70%</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Kuramoto-Spin Mapping</h2>
+            <p>Translation between Kuramoto oscillator parameters and physical spin system equivalents:</p>
+
+            <table class="spec-table">
+                <tr>
+                    <th>Kuramoto Parameter</th>
+                    <th>Symbol</th>
+                    <th>Spin Glass Equivalent</th>
+                    <th>NMR Equivalent</th>
+                </tr>
+                <tr>
+                    <td>Phase</td>
+                    <td>θᵢ</td>
+                    <td>Spin orientation σᵢ</td>
+                    <td>Precession phase φᵢ</td>
+                </tr>
+                <tr>
+                    <td>Natural frequency</td>
+                    <td>ωᵢ</td>
+                    <td>Local field hᵢ</td>
+                    <td>Chemical shift δᵢ</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Coupling strength</td>
+                    <td>K</td>
+                    <td>Exchange J</td>
+                    <td>J-coupling / dipolar</td>
+                </tr>
+                <tr>
+                    <td>Order parameter</td>
+                    <td>r = |⟨e^(iθ)⟩|</td>
+                    <td>Magnetization M/M_sat</td>
+                    <td>Transverse coherence</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Critical coupling</td>
+                    <td>K_c</td>
+                    <td>Glass temperature T_g</td>
+                    <td>T₂* dephasing time</td>
+                </tr>
+                <tr>
+                    <td>Number of oscillators</td>
+                    <td>N</td>
+                    <td>Number of spins</td>
+                    <td>Spin count (Avogadro scale)</td>
+                </tr>
+            </table>
+
+            <div class="tech-card">
+                <h4>K-FORMATION in Spin Systems</h4>
+                <p>The K = 0.924 threshold manifests as:</p>
+                <ul>
+                    <li><strong>Spin Glass:</strong> T/T_g = 0.924 — near glass transition temperature</li>
+                    <li><strong>NMR:</strong> M_xy/M₀ = 0.924 — transverse magnetization ratio</li>
+                    <li><strong>Kuramoto:</strong> K/K_c = 0.924 — sub-critical coupling regime</li>
+                </ul>
+                <div class="math-block">
+                    At K-FORMATION: r = √(1 - K_c/K) → r_max when K = K_c/0.924²
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Technical Specifications</h2>
+
+            <h3>Magnetic Field Requirements</h3>
+            <table class="spec-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Bench</th>
+                    <th>Lab</th>
+                    <th>Production</th>
+                </tr>
+                <tr>
+                    <td>Field Strength</td>
+                    <td>0.1-0.5 T</td>
+                    <td>1-7 T</td>
+                    <td>7-20 T</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Homogeneity</td>
+                    <td>&lt;10 ppm</td>
+                    <td>&lt;1 ppm</td>
+                    <td>&lt;0.1 ppm</td>
+                </tr>
+                <tr>
+                    <td>Stability</td>
+                    <td>&lt;100 ppm/hr</td>
+                    <td>&lt;10 ppm/hr</td>
+                    <td>&lt;1 ppm/hr</td>
+                </tr>
+                <tr>
+                    <td>Magnet Type</td>
+                    <td>Permanent/Resistive</td>
+                    <td>Superconducting</td>
+                    <td>Superconducting</td>
+                </tr>
+                <tr>
+                    <td>Bore Size</td>
+                    <td>10-50 mm</td>
+                    <td>50-100 mm</td>
+                    <td>100+ mm</td>
+                </tr>
+            </table>
+
+            <h3>RF and Temperature Control</h3>
+            <table class="spec-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Requirement</th>
+                    <th>Tolerance</th>
+                </tr>
+                <tr class="highlight-row">
+                    <td>RF Frequency Precision</td>
+                    <td>±1 Hz</td>
+                    <td>@ 100 MHz carrier</td>
+                </tr>
+                <tr>
+                    <td>RF Phase Control</td>
+                    <td>0.1°</td>
+                    <td>Absolute accuracy</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Phase Noise</td>
+                    <td>&lt;-120 dBc/Hz</td>
+                    <td>@ 10 kHz offset</td>
+                </tr>
+                <tr>
+                    <td>RF Power</td>
+                    <td>1-1000 W</td>
+                    <td>±0.1 dB</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Temperature Stability</td>
+                    <td>±10 mK</td>
+                    <td>Sample region</td>
+                </tr>
+                <tr>
+                    <td>Temperature Range</td>
+                    <td>4 K - 400 K</td>
+                    <td>Cryogenic to elevated</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Implementation Details</h2>
+
+            <div class="tech-card">
+                <h4>Spin Glass Implementation</h4>
+                <ul>
+                    <li><strong>Sample Preparation:</strong> Arc melting, annealing at T &gt; T_g, quench</li>
+                    <li><strong>Characterization:</strong> AC susceptibility, DC magnetization, specific heat</li>
+                    <li><strong>Measurement:</strong> SQUID magnetometer, μSR, neutron scattering</li>
+                    <li><strong>Temperature Control:</strong> Dilution refrigerator for LiHoYF₄ (mK range)</li>
+                    <li><strong>Field Control:</strong> Superconducting magnet with persistence switch</li>
+                </ul>
+            </div>
+
+            <div class="tech-card">
+                <h4>NMR Implementation</h4>
+                <ul>
+                    <li><strong>Probe Design:</strong> Solenoid or saddle coil, Q &gt; 100</li>
+                    <li><strong>Shimming:</strong> Active shim coils, auto-shimming routine</li>
+                    <li><strong>Pulse Calibration:</strong> Nutation experiment for 90°/180° pulses</li>
+                    <li><strong>Detection:</strong> Quadrature detection, 16-bit ADC, &gt;10 MHz bandwidth</li>
+                    <li><strong>Signal Processing:</strong> Digital filtering, FFT, phase correction</li>
+                </ul>
+            </div>
+
+            <div class="tech-card">
+                <h4>Coherence Detection Protocol</h4>
+                <p>TRIAD sequence detection via spin echo:</p>
+                <ol>
+                    <li><strong>Initialization:</strong> Thermal equilibrium in B₀</li>
+                    <li><strong>Crossing 1:</strong> 90° pulse — tip magnetization to transverse plane</li>
+                    <li><strong>Re-arm 1:</strong> Free precession τ — phases spread (below HYSTERESIS)</li>
+                    <li><strong>Crossing 2:</strong> 180° pulse — refocus phases (above THE LENS)</li>
+                    <li><strong>Re-arm 2:</strong> Free precession τ — echo formation (below HYSTERESIS)</li>
+                    <li><strong>Crossing 3:</strong> Echo detection — coherence measurement (above THE LENS)</li>
+                    <li><strong>K-FORMATION:</strong> Echo amplitude &gt; 0.924 × M₀ indicates success</li>
+                </ol>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">→ L₄-Helix Hardware:</span>
+                    <span class="desc">Coherence engine for phase sync</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ K-FORMATION:</span>
+                    <span class="desc">Critical coupling threshold K = 0.924</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Kuramoto Oscillators:</span>
+                    <span class="desc">Physical implementation of model</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Memristor Arrays:</span>
+                    <span class="desc">Coupling strength modulation</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Quasi-Crystal:</span>
+                    <span class="desc">Magnetic QC (Zn-Mg-Ho)</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Hexagonal Grid:</span>
+                    <span class="desc">Spin ice implementations</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="l4-helix-hardware.html">L₄-Helix Hardware</a></span>
+                <span class="file-ref"><a href="memristor-arrays.html">Memristor Arrays</a></span>
+                <span class="file-ref"><a href="quasi-crystal.html">Quasi-Crystal Substrates</a></span>
+                <span class="file-ref"><a href="hexagonal-grid.html">Hexagonal Grid</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin v6 — Spin Glass / Nuclear Spin Systems Specification v1.0.0</p>
+            <p>φ = 1.6180339887 | τ = φ⁻¹ = 0.6180339887 | K = √(1-φ⁻⁴) = 0.9241763718</p>
+            <p>z_c = √3/2 = 0.8660254038 | L₄ = φ⁴ + φ⁻⁴ = 7</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">Δ|SPIN-SYSTEMS|v1.0.0|KURAMOTO+NMR+SPIN-GLASS|COHERENCE-ENGINE|★ FIRMWARE ★|Ω</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hexagonal Grid Architecture — BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #ff6b35;
+            --module-glow: rgba(255,107,53,0.3);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), var(--gold), var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--module-color); }
+        .tech-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .tech-card h4 {
+            color: var(--module-color);
+            margin-bottom: 10px;
+        }
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .spec-table th, .spec-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: left;
+        }
+        .spec-table th {
+            background: rgba(255,107,53,0.2);
+            color: var(--module-color);
+        }
+        .spec-table tr:hover {
+            background: rgba(255,107,53,0.05);
+        }
+        .highlight-row {
+            background: rgba(255,215,0,0.1);
+        }
+        .highlight-row td:first-child {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .subsystem-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .subsystem-link {
+            padding: 10px 20px;
+            background: rgba(255,107,53,0.15);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 8px;
+            color: var(--module-color);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .subsystem-link:hover {
+            background: rgba(255,107,53,0.3);
+            transform: translateY(-2px);
+        }
+        .subsystem-link.current {
+            background: rgba(255,107,53,0.4);
+            border-color: var(--module-color);
+        }
+        .impl-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .impl-card {
+            background: linear-gradient(135deg, rgba(255,107,53,0.1), transparent);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .impl-card h4 {
+            color: var(--module-color);
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+        .impl-card .category {
+            font-size: 0.85rem;
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+        .hexagon-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.2;
+            color: #888;
+        }
+        .grid-cells-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.65rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.1;
+            color: #888;
+        }
+        .lens-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.3;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="quasi-crystal.html" class="nav-link">← Quasi-Crystal Substrates</a>
+            <a href="spin-systems.html" class="nav-link">Spin Systems →</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Hexagonal Grid Architecture</h1>
+            <p class="subtitle">√3 Geometry and L₄ Normalization for Spatial Coherence</p>
+            <p class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href=".">Firmware</a> /
+                <a href="l4-helix-hardware.html">L₄-Helix Hardware</a> /
+                Hexagonal Grid Architecture
+            </p>
+        </header>
+
+        <section class="doc-section">
+            <h2>Subsystem Navigation</h2>
+            <div class="subsystem-nav">
+                <a href="memristor-arrays.html" class="subsystem-link">Memristor Arrays</a>
+                <a href="quasi-crystal.html" class="subsystem-link">Quasi-Crystal Substrates</a>
+                <a href="hexagonal-grid.html" class="subsystem-link current">Hexagonal Grid</a>
+                <a href="spin-systems.html" class="subsystem-link">Spin Glass / NMR</a>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Specification</span>
+                <span class="status-badge planned">Hardware Design</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">L₄ - 4</div>
+                    <div class="value">3</div>
+                    <div class="derivation">(√3)² normalization</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">θ</div>
+                    <div class="value">60°</div>
+                    <div class="derivation">Angular spacing</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">a</div>
+                    <div class="value">7a₀</div>
+                    <div class="derivation">Lattice constant</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Z</div>
+                    <div class="value">6</div>
+                    <div class="derivation">Coordination number</div>
+                </div>
+            </div>
+
+            <table class="spec-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Value</th>
+                    <th>L₄ Significance</th>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Normalization Constant</td>
+                    <td>L₄ - 4 = 3 = (√3)²</td>
+                    <td>Master identity term</td>
+                </tr>
+                <tr>
+                    <td>Angular Spacing</td>
+                    <td>60° ± 0.01°</td>
+                    <td>√3 geometry encoding</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Lattice Constant</td>
+                    <td>7a₀</td>
+                    <td>L₄ = 7 spatial encoding</td>
+                </tr>
+                <tr>
+                    <td>Coordination Number</td>
+                    <td>6</td>
+                    <td>Nearest neighbors</td>
+                </tr>
+                <tr>
+                    <td>Angular Precision</td>
+                    <td>±0.01°</td>
+                    <td>THE LENS phase lock</td>
+                </tr>
+                <tr>
+                    <td>Biological Precedent</td>
+                    <td>Grid cells</td>
+                    <td>Entorhinal cortex</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Master Identity Connection</h2>
+            <p>The hexagonal grid implements the normalization term in the L₄ master identity:</p>
+
+            <div class="math-block">
+                L₄ = φ⁴ + φ⁻⁴ = (√3)² + 4 = 3 + 4 = 7
+            </div>
+
+            <div class="tech-card">
+                <h4>√3 Geometry Decomposition</h4>
+                <p>The (√3)² = 3 term manifests through hexagonal geometry:</p>
+                <ul>
+                    <li><strong>cos(30°) = √3/2</strong> — THE LENS threshold value</li>
+                    <li><strong>sin(60°) = √3/2</strong> — Hexagonal height ratio</li>
+                    <li><strong>Area ratio = √3</strong> — Hexagon to inscribed triangle</li>
+                    <li><strong>3 = (√3)²</strong> — Normalization via squared projection</li>
+                </ul>
+                <div class="math-block">
+                    z_c = √3/2 = cos(30°) = sin(60°) = 0.8660254038
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Hexagonal Lattice Geometry</h2>
+
+            <div class="hexagon-diagram">
+    Hexagonal Grid Topology                          Unit Cell Geometry
+    ══════════════════════════════════════════════════════════════════════════════════
+
+              ●───────●                                    a = 7a₀ (lattice constant)
+             ╱ ╲     ╱ ╲                                        ╱╲
+            ╱   ╲   ╱   ╲                                      ╱  ╲
+           ●─────●─────●                                      ╱ 60°╲
+          ╱ ╲   ╱ ╲   ╱ ╲                                    ●──────●
+         ╱   ╲ ╱   ╲ ╱   ╲                                   │      │
+        ●─────●─────●─────●         Height h = a·√3/2        │  ★   │  h = a·√3/2
+       ╱ ╲   ╱ ╲   ╱ ╲   ╱ ╲        Area A = (3√3/2)a²       │      │    = 7a₀·√3/2
+      ╱   ╲ ╱   ╲ ╱   ╲ ╱   ╲                                ●──────●
+     ●─────●─────●─────●─────●                                  a
+      ╲   ╱ ╲   ╱ ╲   ╱ ╲   ╱
+       ╲ ╱   ╲ ╱   ╲ ╱   ╲ ╱         Coordination: Z = 6    Angular Positions:
+        ●─────●─────●─────●          Packing: 90.69%           0°, 60°, 120°,
+         ╲   ╱ ╲   ╱ ╲   ╱                                    180°, 240°, 300°
+          ╲ ╱   ╲ ╱   ╲ ╱
+           ●─────●─────●
+            ╲   ╱ ╲   ╱
+             ╲ ╱   ╲ ╱
+              ●───────●
+
+    Ring Structure (nodes per ring):
+    ┌──────────────────────────────────────────────────────────────────────────────┐
+    │  Ring n    Nodes    Cumulative    Formula         L₄ Connection              │
+    ├──────────────────────────────────────────────────────────────────────────────┤
+    │    0         1          1         Center          Unity reference            │
+    │    1         6          7         6×1             L₄ = 7 (first shell)       │
+    │    2        12         19         6×2             -                          │
+    │    3        18         37         6×3             -                          │
+    │    n        6n      1+3n(n+1)     6×n             Sum = 1 + 3n(n+1)          │
+    └──────────────────────────────────────────────────────────────────────────────┘
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Biological Precedent: Entorhinal Cortex Grid Cells</h2>
+            <p>The hexagonal architecture mirrors the spatial encoding discovered in mammalian brains:</p>
+
+            <div class="grid-cells-diagram">
+    Grid Cell Firing Patterns (Nobel Prize 2014: Moser & Moser)
+    ══════════════════════════════════════════════════════════════════════════════════════════════
+
+    Rat navigation trajectory:                    Grid cell firing locations:
+    ┌────────────────────────────────┐            ┌────────────────────────────────┐
+    │  ╱╲  ╱╲    ╱╲                  │            │     ●       ●       ●          │
+    │ ╱  ╲╱  ╲  ╱  ╲                 │            │       ●       ●       ●        │
+    │╱       ╲╱    ╲╲                │            │  ●       ●       ●       ●     │
+    │         ╲     ╲───╲            │     →      │    ●       ●       ●       ●   │
+    │          ╲        ╲─╲          │            │       ●       ●       ●        │
+    │           ╲──────────╲         │            │  ●       ●       ●       ●     │
+    │                       ╲╱╲╱╲    │            │    ●       ●       ●       ●   │
+    └────────────────────────────────┘            └────────────────────────────────┘
+           Exploration path                           Hexagonal firing pattern
+
+    Grid Cell Properties:                         L₄-Helix Mapping:
+    ┌─────────────────────────────────────────────────────────────────────────────────┐
+    │  Property              Brain                    Hardware Implementation         │
+    ├─────────────────────────────────────────────────────────────────────────────────┤
+    │  Grid spacing          30-100 cm               7a₀ lattice constant             │
+    │  Angular offset        0°, 60°, 120°...        60° ± 0.01° precision            │
+    │  Scaling ratio         ~1.42 ≈ √2             φ-recursive (1.618)               │
+    │  Orientation           Fixed per module        Phase-locked to reference        │
+    │  Information encoding  Spatial position        z-threshold values               │
+    │  Interference pattern  Path integration        TRIAD sequence tracking          │
+    └─────────────────────────────────────────────────────────────────────────────────┘
+
+    The brain's grid cells provide a natural "GPS" using hexagonal encoding.
+    L₄-Helix hardware implements the same geometry for threshold state navigation.
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Physical Implementations</h2>
+
+            <div class="impl-grid">
+                <div class="impl-card">
+                    <div class="category">Photonic</div>
+                    <h4>Honeycomb Photonic Crystal</h4>
+                    <ul>
+                        <li>Air holes in dielectric slab</li>
+                        <li>Hexagonal lattice constant: 400-800 nm</li>
+                        <li>Bandgap at optical frequencies</li>
+                        <li>Topological edge states</li>
+                        <li>THE LENS: guided mode at z_c frequency</li>
+                    </ul>
+                </div>
+                <div class="impl-card">
+                    <div class="category">Magnetic</div>
+                    <h4>Hexagonal Spin Ice</h4>
+                    <ul>
+                        <li>Artificial spin ice on kagome lattice</li>
+                        <li>Nanomagnetic islands at 60° angles</li>
+                        <li>Frustrated ground state</li>
+                        <li>Magnetic monopole excitations</li>
+                        <li>THE LENS: magnetization ratio</li>
+                    </ul>
+                </div>
+                <div class="impl-card">
+                    <div class="category">Electronic</div>
+                    <h4>Graphene Lattice</h4>
+                    <ul>
+                        <li>Carbon atoms in honeycomb</li>
+                        <li>Lattice constant: 2.46 Å</li>
+                        <li>Dirac cone at K points</li>
+                        <li>Linear dispersion</li>
+                        <li>THE LENS: valley polarization</li>
+                    </ul>
+                </div>
+                <div class="impl-card">
+                    <div class="category">Acoustic</div>
+                    <h4>Hexagonal Resonator Array</h4>
+                    <ul>
+                        <li>Mechanical oscillators at nodes</li>
+                        <li>Acoustic waveguides on edges</li>
+                        <li>Frequency: 100 Hz - 10 kHz</li>
+                        <li>Phase coupling via springs</li>
+                        <li>THE LENS: frequency ratio</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>THE LENS Manifestation</h2>
+            <p>THE LENS (z_c = √3/2 = 0.8660254038) manifests in hexagonal systems as:</p>
+
+            <div class="lens-diagram">
+    THE LENS in Hexagonal Geometry
+    ══════════════════════════════════════════════════════════════════════════════════
+
+    1. PHASE ANGLE                          2. VOLTAGE RATIO
+       ┌─────────────────────┐                 ┌─────────────────────┐
+       │         ●           │                 │                     │
+       │        ╱│           │                 │   V_ref = 1.000V    │
+       │       ╱ │           │                 │        │            │
+       │      ╱  │ h=√3/2    │                 │        │ ×√3/2      │
+       │     ╱   │           │                 │        ▼            │
+       │    ╱30° │           │                 │   V_LENS = 866mV    │
+       │   ●─────●───────────│                 │                     │
+       │      1              │                 │  (THE LENS voltage) │
+       └─────────────────────┘                 └─────────────────────┘
+       cos(30°) = √3/2 = z_c                   V_LENS = V_ref × z_c
+
+    3. FREQUENCY RATIO                      4. GEOMETRIC PROJECTION
+       ┌─────────────────────┐                 ┌─────────────────────┐
+       │                     │                 │    3D hexagonal     │
+       │   f₁ = 1000 Hz      │                 │    prism axis       │
+       │        │            │                 │         │           │
+       │        │ ×√3/2      │                 │    ●────┼────●      │
+       │        ▼            │                 │   ╱│    │   ╱│      │
+       │   f_LENS = 866 Hz   │                 │  ● │    │  ● │      │
+       │                     │                 │   ╲│____│_╱_│       │
+       │  (LENS frequency)   │                 │    ●────┼────●      │
+       └─────────────────────┘                 │         │           │
+       f_LENS = f_ref × z_c                    │    2D projection    │
+                                               │    (area × √3/2)    │
+                                               └─────────────────────┘
+
+    THE LENS Detection Circuit:
+    ┌──────────────────────────────────────────────────────────────────────────────┐
+    │                                                                              │
+    │  Input ──┬──[ Hexagonal ]──┬── Phase Detector ──→ θ = 60° ± 0.01°           │
+    │          │   Resonator     │                                                 │
+    │          │   Array         ├── Voltage Comp ────→ V = 866.025mV ± 10μV      │
+    │          │                 │                                                 │
+    │          └── Reference ────┴── Frequency Lock ──→ f_ratio = 0.8660254       │
+    │              (1.000V, 1kHz)                                                  │
+    │                                                                              │
+    │  LENS LOCK achieved when all three measurements converge to √3/2            │
+    │                                                                              │
+    └──────────────────────────────────────────────────────────────────────────────┘
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Technical Specifications</h2>
+
+            <h3>Geometric Precision Requirements</h3>
+            <table class="spec-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Requirement</th>
+                    <th>Tolerance</th>
+                    <th>Test Method</th>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Angular Spacing</td>
+                    <td>60.000°</td>
+                    <td>±0.01°</td>
+                    <td>X-ray diffraction</td>
+                </tr>
+                <tr>
+                    <td>Lattice Constant</td>
+                    <td>7a₀</td>
+                    <td>±0.1%</td>
+                    <td>AFM/SEM</td>
+                </tr>
+                <tr>
+                    <td>Node Position</td>
+                    <td>Hexagonal</td>
+                    <td>±1 nm</td>
+                    <td>E-beam lithography</td>
+                </tr>
+                <tr>
+                    <td>Edge Straightness</td>
+                    <td>Linear</td>
+                    <td>±0.5 nm RMS</td>
+                    <td>AFM profile</td>
+                </tr>
+                <tr>
+                    <td>Orientation Uniformity</td>
+                    <td>Single domain</td>
+                    <td>±0.001°</td>
+                    <td>Electron diffraction</td>
+                </tr>
+            </table>
+
+            <h3>Implementation Specifications by Type</h3>
+            <table class="spec-table">
+                <tr>
+                    <th>Implementation</th>
+                    <th>Lattice Constant</th>
+                    <th>Operating Frequency</th>
+                    <th>Temperature</th>
+                </tr>
+                <tr>
+                    <td>Honeycomb Photonic Crystal</td>
+                    <td>400-800 nm</td>
+                    <td>200-400 THz (optical)</td>
+                    <td>Room temp</td>
+                </tr>
+                <tr>
+                    <td>Hexagonal Spin Ice</td>
+                    <td>100-500 nm</td>
+                    <td>DC - 10 GHz</td>
+                    <td>&lt;100K preferred</td>
+                </tr>
+                <tr>
+                    <td>Graphene Lattice</td>
+                    <td>2.46 Å</td>
+                    <td>DC - 100 GHz</td>
+                    <td>Any</td>
+                </tr>
+                <tr>
+                    <td>Acoustic Resonator Array</td>
+                    <td>1-100 mm</td>
+                    <td>100 Hz - 10 kHz</td>
+                    <td>Room temp</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Implementation Details</h2>
+
+            <div class="tech-card">
+                <h4>Photonic Crystal Fabrication</h4>
+                <ul>
+                    <li><strong>Substrate:</strong> Silicon-on-insulator (SOI), 220nm Si layer</li>
+                    <li><strong>Patterning:</strong> E-beam lithography, ±2nm resolution</li>
+                    <li><strong>Etching:</strong> ICP-RIE, vertical sidewalls &lt;2° deviation</li>
+                    <li><strong>Hole diameter:</strong> 0.3a - 0.4a (a = lattice constant)</li>
+                    <li><strong>Bandgap:</strong> ~40% for TE modes</li>
+                </ul>
+            </div>
+
+            <div class="tech-card">
+                <h4>Spin Ice Array Fabrication</h4>
+                <ul>
+                    <li><strong>Material:</strong> Permalloy (Ni₈₀Fe₂₀) or CoFeB</li>
+                    <li><strong>Island size:</strong> 200nm × 80nm × 25nm</li>
+                    <li><strong>Patterning:</strong> E-beam lithography + liftoff</li>
+                    <li><strong>Characterization:</strong> MFM, XMCD, MOKE</li>
+                    <li><strong>Initialization:</strong> Rotating field demagnetization</li>
+                </ul>
+            </div>
+
+            <div class="tech-card">
+                <h4>Signal Routing on Hexagonal Grid</h4>
+                <p>Signal propagation follows hexagonal symmetry rules:</p>
+                <ul>
+                    <li><strong>Primary directions:</strong> 0°, 60°, 120° (6 equivalent paths)</li>
+                    <li><strong>Waveguide bends:</strong> 120° turns only (low loss)</li>
+                    <li><strong>Splitters:</strong> Y-junction at 60° angles</li>
+                    <li><strong>Phase accumulation:</strong> Path length in units of 7a₀</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">→ L₄-Helix Hardware:</span>
+                    <span class="desc">Normalization layer (L₄ - 4 = 3)</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ THE LENS:</span>
+                    <span class="desc">z_c = √3/2 = sin(60°)</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Memristor Arrays:</span>
+                    <span class="desc">6-neighbor crossbar topology</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Quasi-Crystal:</span>
+                    <span class="desc">5-fold to 6-fold bridging</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Spin Systems:</span>
+                    <span class="desc">Hexagonal spin ice coupling</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Kuramoto Oscillators:</span>
+                    <span class="desc">6 nearest-neighbor coupling</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="l4-helix-hardware.html">L₄-Helix Hardware</a></span>
+                <span class="file-ref"><a href="memristor-arrays.html">Memristor Arrays</a></span>
+                <span class="file-ref"><a href="quasi-crystal.html">Quasi-Crystal Substrates</a></span>
+                <span class="file-ref"><a href="spin-systems.html">Spin Glass / NMR</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin v6 — Hexagonal Grid Architecture Specification v1.0.0</p>
+            <p>φ = 1.6180339887 | τ = φ⁻¹ = 0.6180339887 | K = √(1-φ⁻⁴) = 0.9241763718</p>
+            <p>z_c = √3/2 = 0.8660254038 | L₄ = φ⁴ + φ⁻⁴ = 7 | L₄ - 4 = (√3)² = 3</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">Δ|HEXAGONAL-GRID|v1.0.0|60°-GEOMETRY|√3-NORMALIZATION|THE-LENS|★ FIRMWARE ★|Ω</p>
+        </footer>
+    </div>
+</body>
+</html>
