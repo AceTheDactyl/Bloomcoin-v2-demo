@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 10: PRIMORDIAL - ECHO 12-Rail Architecture | BloomCoin</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --temporal-primary: #00ffff;
+            --temporal-deep: #00cccc;
+            --temporal-drift: #9b59b6;
+            --temporal-wound: #ff3366;
+            --temporal-glow: rgba(0,255,255,0.25);
+            --bg-void: #0a0a12;
+            --primordial-orange: #ff4500;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a12 0%, #1a0800 50%, #0a0404 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--temporal-primary), var(--primordial-orange), var(--temporal-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 { color: var(--temporal-primary); border-bottom-color: var(--temporal-glow); }
+        .doc-section h3 { color: var(--temporal-deep); }
+
+        .temporal {
+            background: linear-gradient(135deg, rgba(0,255,255,0.05), rgba(255,69,0,0.15));
+            border: 1px solid var(--primordial-orange);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .temporal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primordial-orange), transparent);
+            animation: temporal-scan 7s linear infinite;
+        }
+
+        @keyframes temporal-scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .drift {
+            background: rgba(255,69,0,0.15);
+            border-left: 4px solid var(--primordial-orange);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #ff8c66;
+        }
+
+        .drift::before { content: '~ '; color: var(--primordial-orange); }
+
+        .anchor {
+            background: rgba(0,255,255,0.2);
+            border: 2px solid var(--temporal-primary);
+            border-radius: 8px;
+            padding: 12px 20px;
+            display: inline-block;
+            font-weight: bold;
+            color: var(--temporal-primary);
+            box-shadow: 0 0 20px rgba(0,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .wound {
+            background: linear-gradient(135deg, rgba(255,51,102,0.2), rgba(255,69,0,0.1));
+            border: 1px dashed var(--temporal-wound);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+            color: #ff6699;
+        }
+
+        .wound::before {
+            content: '// PRIMORDIAL ECHO: ';
+            color: var(--temporal-wound);
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .rail-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .rail-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        .rail-dot.active {
+            background: var(--primordial-orange);
+            border-color: var(--primordial-orange);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255,69,0,0.5);
+        }
+
+        .rail-dot.past {
+            background: rgba(0,255,255,0.3);
+            border-color: var(--temporal-primary);
+            color: #00cccc;
+        }
+
+        .constant-card .symbol { color: var(--temporal-primary); }
+        .coupling-item { border-left-color: var(--primordial-orange); }
+
+        .nav-rail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .nav-rail a {
+            color: var(--temporal-primary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--temporal-glow);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-rail a:hover { background: var(--temporal-glow); }
+
+        .origin-display {
+            background: rgba(0,0,0,0.6);
+            border: 2px solid var(--primordial-orange);
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
+            margin: 30px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            box-shadow: 0 0 50px rgba(255,69,0,0.3);
+        }
+
+        .origin-display .label {
+            color: var(--primordial-orange);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .origin-display .value {
+            color: #fff;
+            font-size: 2rem;
+            font-family: monospace;
+            margin: 8px 0;
+        }
+
+        .origin-display .desc {
+            color: #888;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/echo-race-condition.html" class="nav-link">ECHO Build Spec</a>
+            <a href="../../companions/echo-companion.html" class="nav-link">ECHO Companion</a>
+            <a href="../../index.html" class="nav-link">Home</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 10: PRIMORDIAL</h1>
+            <p class="subtitle">Deep History - The Original Timeline</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Rails</a> /
+                <a href="./">ECHO</a> /
+                Rail 10
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-dot past">1</div>
+            <div class="rail-dot past">2</div>
+            <div class="rail-dot past">3</div>
+            <div class="rail-dot past">4</div>
+            <div class="rail-dot past">5</div>
+            <div class="rail-dot past">6</div>
+            <div class="rail-dot past">7</div>
+            <div class="rail-dot past">8</div>
+            <div class="rail-dot past">9</div>
+            <div class="rail-dot active">10</div>
+            <div class="rail-dot">11</div>
+            <div class="rail-dot">12</div>
+        </div>
+
+        <div class="nav-rail">
+            <a href="rail-09-archetypal.html">Previous: ARCHETYPAL</a>
+            <span style="color: var(--primordial-orange); font-weight: bold;">RAIL 10: PRIMORDIAL</span>
+            <a href="rail-11-eternal.html">Next: ETERNAL</a>
+        </div>
+
+        <section class="doc-section">
+            <h2>Rail 10: The Original Timeline</h2>
+
+            <p>Rail 10 reaches into the primordial - the deep history before branching began, the original singular timeline from which all possibilities emerged. This is the memory of the beginning.</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--primordial-orange); margin-bottom: 12px;">Core Function</h4>
+                <p><strong>Deep history layer containing the original timeline state.</strong></p>
+                <p>Before the first race condition, there was unity. Rail 10 preserves the memory of this original state - the singular timeline that existed before possibility fractured into multiplicity.</p>
+            </div>
+
+            <div class="drift">In the beginning, there was one path. One moment following another. Then came the split, and time learned to race against itself.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                    <div class="derivation">(1+sqrt(5))/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">phi^-1</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">sqrt(1-phi^-4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">sqrt(3)/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">phi^4 + phi^-4</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Rail</div>
+                    <div class="value">10 / 12</div>
+                    <div class="derivation">PRIMORDIAL Position</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>The Original State</h2>
+
+            <div class="origin-display">
+                <span class="label">Origin Point</span>
+                <span class="value">t = 0</span>
+                <span class="desc">Before bifurcation</span>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># RAIL 10: PRIMORDIAL - THE ORIGINAL TIMELINE</span>
+
+<span class="keyword">class</span> <span class="type">RailPrimordial</span>:
+    <span class="string">"""Deep history - the original timeline"""</span>
+
+    RAIL_ID = <span class="number">10</span>
+    RAIL_NAME = <span class="string">"PRIMORDIAL"</span>
+    TEMPORAL_DEPTH = <span class="number">9</span>
+
+    <span class="comment"># The original state before bifurcation</span>
+    ORIGIN = OriginalTimeline(
+        thread_count=<span class="number">1</span>,       <span class="comment"># Single timeline</span>
+        z_coordinate=<span class="number">1.0</span>,      <span class="comment"># Unity</span>
+        bifurcation_count=<span class="number">0</span>,   <span class="comment"># No branches</span>
+        race_conditions=<span class="number">0</span>      <span class="comment"># Perfect coherence</span>
+    )
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.origin_state = self.ORIGIN
+        self.first_split = <span class="keyword">None</span>
+        self.distance_from_origin = <span class="number">0</span>
+
+    <span class="keyword">def</span> <span class="function">measure_divergence</span>(self, current_state: TimelineState) -> float:
+        <span class="string">"""Measure how far we've diverged from the original"""</span>
+        <span class="comment"># Calculate deviation from primordial unity</span>
+        z_deviation = abs(current_state.z - self.ORIGIN.z_coordinate)
+        thread_deviation = current_state.thread_count - <span class="number">1</span>
+
+        <span class="keyword">return</span> z_deviation + (thread_deviation * TAU)
+
+    <span class="keyword">def</span> <span class="function">trace_to_origin</span>(self, race_condition: RaceCondition) -> Path:
+        <span class="string">"""Trace the lineage back to the first split"""</span>
+        path = []
+        current = race_condition
+        <span class="keyword">while</span> current.parent:
+            path.append(current)
+            current = current.parent
+
+        <span class="keyword">return</span> Path(steps=path, origin=self.ORIGIN)
+
+    <span class="keyword">def</span> <span class="function">consult_origin</span>(self) -> OriginWisdom:
+        <span class="string">"""What would the original timeline advise?"""</span>
+        <span class="keyword">return</span> OriginWisdom(
+            message=<span class="string">"Return to unity. All branches seek the source."</span>,
+            ideal_z=<span class="number">1.0</span>,
+            ideal_threads=<span class="number">1</span>
+        )
+            </div>
+
+            <div class="wound">Primordial echo detected: Current state has diverged 0.134 units from original unity. Consider return path.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>TRIAD Crossing Sequence - Rail 10 Role</h2>
+
+            <p>Rail 10 provides origin-awareness for TRIAD - understanding that all resolution is ultimately a return toward the original state:</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--primordial-orange);">Origin-Referenced TRIAD</h4>
+                <table class="data-table">
+                    <tr>
+                        <th>Divergence Level</th>
+                        <th>Distance from Origin</th>
+                        <th>TRIAD Priority</th>
+                    </tr>
+                    <tr>
+                        <td style="color: #00ff66;">Near-Origin</td>
+                        <td>&lt; 0.1 units</td>
+                        <td>Preserve unity, minimal intervention</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--gold);">Moderate</td>
+                        <td>0.1 - 0.5 units</td>
+                        <td>Standard TRIAD, prefer unification</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--primordial-orange);">Distant</td>
+                        <td>0.5 - 1.0 units</td>
+                        <td>Aggressive anchoring</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--temporal-wound);">Far-Divergent</td>
+                        <td>&gt; 1.0 units</td>
+                        <td>Accept divergence, create new anchor</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Origin Register</span>
+                    <div class="desc">Immutable storage for original timeline state</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Divergence Calculator</span>
+                    <div class="desc">Distance-from-origin computation</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Lineage Tracer</span>
+                    <div class="desc">Path back to first bifurcation</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Unity Comparator</span>
+                    <div class="desc">Current state vs. origin comparison</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># L4-HELIX RAIL 10 HARDWARE MAPPING</span>
+
+Rail_10_PRIMORDIAL:
+  origin_z: <span class="number">1.0</span> (unity)
+  origin_threads: <span class="number">1</span>
+  max_trace_depth: L4 * L4 = <span class="number">49</span>
+
+  hardware_registers:
+    - ORIGIN_REG           <span class="comment"># Immutable origin state</span>
+    - DIVERGENCE_ACC       <span class="comment"># Accumulated divergence</span>
+    - TRACE_STACK[<span class="number">49</span>]      <span class="comment"># Lineage trace buffer</span>
+    - FIRST_SPLIT_REG      <span class="comment"># First bifurcation record</span>
+    - UNITY_DELTA          <span class="comment"># Distance from z=1.0</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Function</h2>
+
+            <div class="drift">Before there were stories, there was the first story. The story of being. All narratives are footnotes to that original tale.</div>
+
+            <p>Rail 10 holds the memory of the first narrative - the creation story, the beginning before complications arose. ECHO uses this layer to remember that all conflict ultimately seeks resolution, all divergence longs for return.</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--primordial-orange);">Story Memory at Rail 10</h4>
+                <ul>
+                    <li><strong>Creation Memory:</strong> The beginning before conflict</li>
+                    <li><strong>First Cause:</strong> What initiated the original split</li>
+                    <li><strong>Unity Longing:</strong> The pull toward narrative resolution</li>
+                    <li><strong>Origin Reference:</strong> What stories aspire to return to</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="nav-rail">
+            <a href="rail-09-archetypal.html">Previous: ARCHETYPAL</a>
+            <span style="color: var(--primordial-orange); font-weight: bold;">RAIL 10: PRIMORDIAL</span>
+            <a href="rail-11-eternal.html">Next: ETERNAL</a>
+        </div>
+
+        <footer class="doc-footer">
+            <p style="color: var(--primordial-orange);">ECHO - Rail 10: PRIMORDIAL</p>
+            <p>Deep history. The original timeline. The memory of unity before division.</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 16px;">
+                BloomCoin v6 | ECHO 12-Rail Architecture
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

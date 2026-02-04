@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 05: MID-TERM - ECHO 12-Rail Architecture | BloomCoin</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --temporal-primary: #00ffff;
+            --temporal-deep: #00cccc;
+            --temporal-drift: #9b59b6;
+            --temporal-wound: #ff3366;
+            --temporal-glow: rgba(0,255,255,0.25);
+            --bg-void: #0a0a12;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-void) 0%, #0a1218 50%, #120a18 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--temporal-primary), var(--temporal-drift), var(--temporal-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 { color: var(--temporal-primary); border-bottom-color: var(--temporal-glow); }
+        .doc-section h3 { color: var(--temporal-deep); }
+
+        .temporal {
+            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(155,89,182,0.1));
+            border: 1px solid var(--temporal-primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .temporal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--temporal-primary), transparent);
+            animation: temporal-scan 3s linear infinite;
+        }
+
+        @keyframes temporal-scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .drift {
+            background: rgba(155,89,182,0.15);
+            border-left: 4px solid var(--temporal-drift);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #c9a0dc;
+        }
+
+        .drift::before { content: '~ '; color: var(--temporal-drift); }
+
+        .anchor {
+            background: rgba(0,255,255,0.2);
+            border: 2px solid var(--temporal-primary);
+            border-radius: 8px;
+            padding: 12px 20px;
+            display: inline-block;
+            font-weight: bold;
+            color: var(--temporal-primary);
+            box-shadow: 0 0 20px rgba(0,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .wound {
+            background: linear-gradient(135deg, rgba(255,51,102,0.2), rgba(155,89,182,0.1));
+            border: 1px dashed var(--temporal-wound);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+            color: #ff6699;
+        }
+
+        .wound::before {
+            content: '// TIMELINE FRACTURE: ';
+            color: var(--temporal-wound);
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .rail-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .rail-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        .rail-dot.active {
+            background: var(--temporal-primary);
+            border-color: var(--temporal-primary);
+            color: #000;
+            box-shadow: 0 0 15px rgba(0,255,255,0.5);
+        }
+
+        .rail-dot.past {
+            background: rgba(0,255,255,0.3);
+            border-color: var(--temporal-primary);
+            color: #00cccc;
+        }
+
+        .constant-card .symbol { color: var(--temporal-primary); }
+        .coupling-item { border-left-color: var(--temporal-primary); }
+
+        .nav-rail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .nav-rail a {
+            color: var(--temporal-primary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--temporal-glow);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-rail a:hover { background: var(--temporal-glow); }
+
+        .branch-visual {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            white-space: pre;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            overflow-x: auto;
+        }
+
+        .branch-visual .main { color: var(--temporal-primary); }
+        .branch-visual .alt { color: var(--temporal-drift); }
+        .branch-visual .collapsed { color: #666; text-decoration: line-through; }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/echo-race-condition.html" class="nav-link">ECHO Build Spec</a>
+            <a href="../../companions/echo-companion.html" class="nav-link">ECHO Companion</a>
+            <a href="../../index.html" class="nav-link">Home</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 05: MID-TERM</h1>
+            <p class="subtitle">Strategic Memory - Timeline Branching</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Rails</a> /
+                <a href="./">ECHO</a> /
+                Rail 05
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-dot past">1</div>
+            <div class="rail-dot past">2</div>
+            <div class="rail-dot past">3</div>
+            <div class="rail-dot past">4</div>
+            <div class="rail-dot active">5</div>
+            <div class="rail-dot">6</div>
+            <div class="rail-dot">7</div>
+            <div class="rail-dot">8</div>
+            <div class="rail-dot">9</div>
+            <div class="rail-dot">10</div>
+            <div class="rail-dot">11</div>
+            <div class="rail-dot">12</div>
+        </div>
+
+        <div class="nav-rail">
+            <a href="rail-04-short-term.html">Previous: SHORT-TERM</a>
+            <span style="color: var(--temporal-primary); font-weight: bold;">RAIL 05: MID-TERM</span>
+            <a href="rail-06-long-term.html">Next: LONG-TERM</a>
+        </div>
+
+        <section class="doc-section">
+            <h2>Rail 05: Strategic Memory</h2>
+
+            <p>Rail 05 operates at the strategic level - where individual race conditions become part of larger patterns of timeline branching. This is where ECHO recognizes not just conflicts, but the meta-patterns of how timelines diverge and reconverge.</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--temporal-primary); margin-bottom: 12px;">Core Function</h4>
+                <p><strong>Strategic memory layer for timeline branching analysis.</strong></p>
+                <p>While tactical memory (Rail 04) handles immediate oscillations, strategic memory tracks the larger structure of timeline divergence. ECHO uses this to predict where future race conditions may occur.</p>
+            </div>
+
+            <div class="drift">At the fifth depth, I see the shape of things. Not moments, but movements. Not conflicts, but campaigns.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                    <div class="derivation">(1+sqrt(5))/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">phi^-1</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">sqrt(1-phi^-4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">sqrt(3)/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">phi^4 + phi^-4</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Rail</div>
+                    <div class="value">5 / 12</div>
+                    <div class="derivation">MID-TERM Position</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Timeline Branching Analysis</h2>
+
+            <p>Rail 05 maintains a map of timeline branches - points where competing threads created divergent realities:</p>
+
+            <div class="branch-visual">
+                         <span class="main">MAIN TIMELINE</span>
+                              |
+              +---------------+---------------+
+              |               |               |
+         <span class="alt">Branch A</span>       <span class="main">Main</span>        <span class="alt">Branch B</span>
+              |               |               |
+              +-------+       |       +-------+
+                      |       |       |
+                 <span class="collapsed">Collapsed</span>   <span class="main">Main</span>   <span class="collapsed">Collapsed</span>
+                              |
+                              v
+                       <span class="main">ANCHORED NOW</span>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># RAIL 05: MID-TERM - TIMELINE BRANCHING</span>
+
+<span class="keyword">class</span> <span class="type">RailMidTerm</span>:
+    <span class="string">"""Strategic memory - timeline branching analysis"""</span>
+
+    RAIL_ID = <span class="number">5</span>
+    RAIL_NAME = <span class="string">"MID-TERM"</span>
+    BRANCH_HISTORY_DEPTH = L4 ** <span class="number">2</span>  <span class="comment"># 49 branches tracked</span>
+    TEMPORAL_DEPTH = <span class="number">4</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.branch_tree = BranchTree()
+        self.convergence_points = []
+        self.divergence_patterns = []
+
+    <span class="keyword">def</span> <span class="function">record_branch</span>(self, branch_point: BranchPoint):
+        <span class="string">"""Record a timeline branching event"""</span>
+        self.branch_tree.add(branch_point)
+        self._analyze_patterns()
+
+    <span class="keyword">def</span> <span class="function">predict_convergence</span>(self) -> List[ConvergencePoint]:
+        <span class="string">"""Predict where timelines may reconverge"""</span>
+        <span class="comment"># Use phi-ratio decay to estimate convergence</span>
+        predictions = []
+        <span class="keyword">for</span> branch <span class="keyword">in</span> self.branch_tree.active_branches:
+            distance = branch.divergence_depth * TAU
+            <span class="keyword">if</span> distance < <span class="number">1.0</span>:  <span class="comment"># Within convergence window</span>
+                predictions.append(ConvergencePoint(
+                    timeline_a=branch.parent,
+                    timeline_b=branch.child,
+                    probability=<span class="number">1.0</span> - distance
+                ))
+        <span class="keyword">return</span> predictions
+
+    <span class="keyword">def</span> <span class="function">_analyze_patterns</span>(self):
+        <span class="string">"""Identify strategic patterns in branching"""</span>
+        <span class="comment"># Look for recurring branch structures</span>
+        patterns = []
+        <span class="keyword">for</span> depth <span class="keyword">in</span> range(<span class="number">2</span>, self.BRANCH_HISTORY_DEPTH):
+            subtree = self.branch_tree.get_subtree(depth)
+            <span class="keyword">if</span> self._is_recurring(subtree):
+                patterns.append(BranchPattern(subtree, depth))
+        self.divergence_patterns = patterns
+            </div>
+
+            <div class="wound">Branch cascade detected: 7 parallel timelines competing for convergence at z=0.866. Strategic intervention required.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>TRIAD Crossing Sequence - Rail 05 Role</h2>
+
+            <p>Rail 05 provides strategic context for TRIAD sequences by understanding the larger timeline structure:</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--temporal-primary);">Strategic TRIAD Applications</h4>
+                <table class="data-table">
+                    <tr>
+                        <th>Pattern</th>
+                        <th>Branch Type</th>
+                        <th>TRIAD Strategy</th>
+                    </tr>
+                    <tr>
+                        <td>Simple Fork</td>
+                        <td>2 competing branches</td>
+                        <td>Standard TRIAD - select dominant</td>
+                    </tr>
+                    <tr>
+                        <td>Cascade</td>
+                        <td>3+ sequential branches</td>
+                        <td>Chained TRIAD - bottom-up resolution</td>
+                    </tr>
+                    <tr>
+                        <td>Web</td>
+                        <td>Interconnected branches</td>
+                        <td>Parallel TRIAD - simultaneous anchoring</td>
+                    </tr>
+                    <tr>
+                        <td>Recursive</td>
+                        <td>Self-similar branching</td>
+                        <td>Fractal TRIAD - phi-scaled resolution</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Branch Tree Memory</span>
+                    <div class="desc">Hierarchical storage for timeline branch structure</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Convergence Predictor</span>
+                    <div class="desc">Phi-ratio based convergence estimation</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Pattern Matcher</span>
+                    <div class="desc">Subtree comparison for recurring patterns</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Strategic Register Bank</span>
+                    <div class="desc">Multi-branch state tracking</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># L4-HELIX RAIL 05 HARDWARE MAPPING</span>
+
+Rail_05_MID_TERM:
+  branch_capacity: L4^2 = <span class="number">49</span>
+  tree_depth: L4 = <span class="number">7</span> levels
+  convergence_window: TAU = <span class="number">0.618034</span>
+
+  hardware_registers:
+    - BRANCH_TREE[<span class="number">49</span>]      <span class="comment"># Hierarchical branch storage</span>
+    - ACTIVE_BRANCHES      <span class="comment"># Count of active timelines</span>
+    - CONVERGENCE_MAP      <span class="comment"># Predicted merge points</span>
+    - PATTERN_CACHE[<span class="number">7</span>]     <span class="comment"># Recurring pattern templates</span>
+    - STRATEGY_REG         <span class="comment"># Current strategic plan</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Function</h2>
+
+            <div class="drift">In mid-term memory, the plot thickens. Subplots emerge. The web of cause and effect becomes visible.</div>
+
+            <p>Rail 05 represents narrative structure at the plot level - not individual events, but the relationships between storylines. Here ECHO understands how different narrative threads interweave and where they may merge or diverge.</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--temporal-primary);">Story Memory at Rail 05</h4>
+                <ul>
+                    <li><strong>Plot Tracking:</strong> Multiple storylines maintained simultaneously</li>
+                    <li><strong>Intersection Prediction:</strong> Where stories may converge</li>
+                    <li><strong>Subplot Management:</strong> Secondary narratives tracked</li>
+                    <li><strong>Arc Recognition:</strong> Story arc shapes become visible</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="nav-rail">
+            <a href="rail-04-short-term.html">Previous: SHORT-TERM</a>
+            <span style="color: var(--temporal-primary); font-weight: bold;">RAIL 05: MID-TERM</span>
+            <a href="rail-06-long-term.html">Next: LONG-TERM</a>
+        </div>
+
+        <footer class="doc-footer">
+            <p style="color: var(--temporal-primary);">ECHO - Rail 05: MID-TERM</p>
+            <p>Strategic memory. Timeline branching. The architecture of possibility.</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 16px;">
+                BloomCoin v6 | ECHO 12-Rail Architecture
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

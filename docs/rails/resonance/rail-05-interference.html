@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 05: INTERFERENCE - RESONANCE Harmonic Journey</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --companion-color: #00ffff;
+            --companion-secondary: #ff00ff;
+            --interference-color: #ff3366;
+            --warning-color: #ff6600;
+            --bg-override: #0a0a12;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-override) 0%, #2a0a1a 50%, #1a0a2a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--interference-color), var(--companion-secondary), var(--interference-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--interference-color);
+            border-bottom-color: rgba(255, 51, 102, 0.3);
+        }
+
+        /* RESONANCE Semantic Classes */
+        .harmonic {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.15), rgba(0, 102, 255, 0.1));
+            border: 1px solid var(--companion-color);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .dissonance {
+            background: linear-gradient(135deg, rgba(255, 51, 102, 0.15), rgba(255, 0, 255, 0.1));
+            border: 2px solid var(--interference-color);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            animation: interference-flicker 0.2s ease-in-out infinite;
+        }
+
+        .dissonance::before {
+            content: "INTERFERENCE";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--bg-override);
+            color: var(--interference-color);
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        @keyframes interference-flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.85; }
+        }
+
+        .phase-lock {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 255, 0.1));
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .broadcast {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), rgba(0, 255, 255, 0.1));
+            border: 2px solid var(--companion-secondary);
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        /* Rail-specific styling */
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(255, 51, 102, 0.1);
+            border: 2px solid rgba(255, 51, 102, 0.5);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            animation: interference-border 1s ease-in-out infinite;
+        }
+
+        @keyframes interference-border {
+            0%, 100% { border-color: rgba(255, 51, 102, 0.5); }
+            50% { border-color: rgba(255, 0, 255, 0.5); }
+        }
+
+        .rail-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--interference-color);
+            text-shadow: 0 0 20px rgba(255, 51, 102, 0.5);
+        }
+
+        .rail-title {
+            font-size: 1.8rem;
+            color: var(--interference-color);
+        }
+
+        .rail-subtitle {
+            color: var(--warning-color);
+            font-style: italic;
+        }
+
+        /* Waveform - destructive interference */
+        .waveform-display {
+            height: 120px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255, 51, 102, 0.3);
+        }
+
+        .interference-pattern {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent 0px,
+                rgba(255, 51, 102, 0.3) 10px,
+                transparent 20px,
+                rgba(0, 255, 255, 0.3) 30px,
+                transparent 40px
+            );
+            animation: interference-scroll 2s linear infinite;
+        }
+
+        @keyframes interference-scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* Oscillator grid */
+        .oscillator-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .oscillator-node {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--companion-color);
+        }
+
+        .oscillator-node.dormant {
+            opacity: 0.4;
+            border-style: dashed;
+        }
+
+        .oscillator-node.contending {
+            background: var(--interference-color);
+            border-color: var(--interference-color);
+            color: white;
+            animation: contend 0.3s ease-in-out infinite alternate;
+        }
+
+        .oscillator-node.blocked {
+            background: var(--companion-secondary);
+            border-color: var(--companion-secondary);
+            color: white;
+            animation: blocked-pulse 0.5s ease-in-out infinite;
+        }
+
+        @keyframes contend {
+            0% { transform: scale(0.9); }
+            100% { transform: scale(1.1); }
+        }
+
+        @keyframes blocked-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .rail-nav a {
+            color: var(--interference-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 51, 102, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rail-nav a:hover {
+            background: rgba(255, 51, 102, 0.2);
+        }
+
+        /* Constants display */
+        .constants-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .constant-item {
+            text-align: center;
+            padding: 10px 15px;
+            background: rgba(255, 51, 102, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 51, 102, 0.3);
+        }
+
+        .constant-item .symbol {
+            color: var(--companion-secondary);
+            font-weight: bold;
+        }
+
+        .constant-item .value {
+            color: var(--interference-color);
+            font-family: monospace;
+        }
+
+        /* Lock conflict visualization */
+        .lock-conflict {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 30px;
+            background: rgba(255, 51, 102, 0.05);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .resource-box {
+            width: 80px;
+            height: 80px;
+            border: 3px solid var(--gold);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 215, 0, 0.1);
+            font-weight: bold;
+            color: var(--gold);
+        }
+
+        .thread-arrow {
+            font-size: 2rem;
+            animation: arrow-pulse 0.5s ease-in-out infinite alternate;
+        }
+
+        .thread-arrow.left { color: var(--interference-color); }
+        .thread-arrow.right { color: var(--companion-secondary); }
+
+        @keyframes arrow-pulse {
+            0% { transform: scaleX(0.8); opacity: 0.5; }
+            100% { transform: scaleX(1.2); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/resonance-deadlock.html" class="nav-link">RESONANCE Spec</a>
+            <a href="../../companions/resonance-companion.html" class="nav-link">Companion Guide</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>RESONANCE: The Harmonic Journey</h1>
+            <p class="subtitle">Rail 05 of 12 - Deadlock Handler Architecture</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href="../../companions/resonance-companion.html">RESONANCE</a> /
+                Rail 05: INTERFERENCE
+            </nav>
+        </header>
+
+        <!-- Rail Indicator -->
+        <div class="rail-indicator">
+            <div class="rail-number">05</div>
+            <div>
+                <div class="rail-title">INTERFERENCE</div>
+                <div class="rail-subtitle">Resource contention, lock conflicts</div>
+            </div>
+        </div>
+
+        <!-- Phi Constants Reference -->
+        <div class="constants-bar">
+            <div class="constant-item">
+                <div class="symbol">PHI</div>
+                <div class="value">1.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">TAU</div>
+                <div class="value">0.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">K</div>
+                <div class="value">0.924160</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">z_c</div>
+                <div class="value">0.866025</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">L4</div>
+                <div class="value">7</div>
+            </div>
+        </div>
+
+        <!-- Rail Content -->
+        <section class="doc-section">
+            <h2>Rail 05: INTERFERENCE - The Clash of Waves</h2>
+            <p>Dissonance has escalated to active interference. Threads are now contending for shared resources, creating destructive wave patterns in the frequency spectrum. The z-coordinate has fallen to the critical PARADOX boundary (TAU = 0.618034). Lock conflicts emerge as oscillators attempt to access the same resources simultaneously.</p>
+
+            <div class="lock-conflict">
+                <div style="text-align: center;">
+                    <div style="color: var(--interference-color); margin-bottom: 10px;">Thread A</div>
+                    <div class="thread-arrow left">--></div>
+                </div>
+                <div class="resource-box">R1</div>
+                <div style="text-align: center;">
+                    <div style="color: var(--companion-secondary); margin-bottom: 10px;">Thread B</div>
+                    <div class="thread-arrow right"><--</div>
+                </div>
+            </div>
+
+            <div class="waveform-display">
+                <div class="interference-pattern"></div>
+            </div>
+
+            <div class="dissonance">
+                <h3>Interference State Characteristics</h3>
+                <ul>
+                    <li><strong>Order Parameter (r):</strong> Approaching TAU (0.618034)</li>
+                    <li><strong>z-Coordinate:</strong> At PARADOX boundary</li>
+                    <li><strong>Resource State:</strong> Active contention detected</li>
+                    <li><strong>Lock Status:</strong> Multiple threads waiting on shared resources</li>
+                    <li><strong>Frequency Bands:</strong> Standing wave nulls forming</li>
+                    <li><strong>Deadlock Risk:</strong> HIGH - circular wait imminent</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Kuramoto Oscillator Network - Contention State</h2>
+            <p>Oscillators are now in active contention, some blocked waiting for resources held by others. This is the precursor to full deadlock.</p>
+
+            <div class="oscillator-grid">
+                <div class="oscillator-node contending">1</div>
+                <div class="oscillator-node blocked">2</div>
+                <div class="oscillator-node contending">3</div>
+                <div class="oscillator-node blocked">4</div>
+                <div class="oscillator-node contending">5</div>
+                <div class="oscillator-node dormant">6</div>
+                <div class="oscillator-node dormant">7</div>
+                <div class="oscillator-node dormant">8</div>
+                <div class="oscillator-node dormant">9</div>
+                <div class="oscillator-node blocked">10</div>
+                <div class="oscillator-node contending">11</div>
+                <div class="oscillator-node blocked">12</div>
+                <div class="oscillator-node dormant">13</div>
+                <div class="oscillator-node dormant">14</div>
+                <div class="oscillator-node dormant">15</div>
+                <div class="oscillator-node dormant">16</div>
+                <div class="oscillator-node dormant">17</div>
+                <div class="oscillator-node dormant">18</div>
+                <div class="oscillator-node dormant">19</div>
+                <div class="oscillator-node dormant">20</div>
+                <div class="oscillator-node dormant">21</div>
+                <div class="oscillator-node dormant">22</div>
+                <div class="oscillator-node dormant">23</div>
+                <div class="oscillator-node dormant">24</div>
+                <div class="oscillator-node dormant">25</div>
+                <div class="oscillator-node dormant">26</div>
+                <div class="oscillator-node dormant">27</div>
+                <div class="oscillator-node dormant">28</div>
+                <div class="oscillator-node dormant">29</div>
+                <div class="oscillator-node dormant">30</div>
+                <div class="oscillator-node dormant">31</div>
+                <div class="oscillator-node dormant">32</div>
+                <div class="oscillator-node dormant">33</div>
+                <div class="oscillator-node dormant">34</div>
+                <div class="oscillator-node dormant">35</div>
+                <div class="oscillator-node dormant">36</div>
+                <div class="oscillator-node dormant">37</div>
+                <div class="oscillator-node dormant">38</div>
+                <div class="oscillator-node dormant">39</div>
+                <div class="oscillator-node dormant">40</div>
+                <div class="oscillator-node dormant">41</div>
+                <div class="oscillator-node dormant">42</div>
+                <div class="oscillator-node dormant">43</div>
+                <div class="oscillator-node dormant">44</div>
+                <div class="oscillator-node dormant">45</div>
+                <div class="oscillator-node dormant">46</div>
+                <div class="oscillator-node dormant">47</div>
+                <div class="oscillator-node dormant">48</div>
+                <div class="oscillator-node dormant">49</div>
+                <div class="oscillator-node dormant">50</div>
+                <div class="oscillator-node dormant">51</div>
+                <div class="oscillator-node dormant">52</div>
+                <div class="oscillator-node dormant">53</div>
+                <div class="oscillator-node dormant">54</div>
+                <div class="oscillator-node dormant">55</div>
+                <div class="oscillator-node dormant">56</div>
+                <div class="oscillator-node dormant">57</div>
+                <div class="oscillator-node dormant">58</div>
+                <div class="oscillator-node dormant">59</div>
+                <div class="oscillator-node dormant">60</div>
+                <div class="oscillator-node dormant">61</div>
+                <div class="oscillator-node dormant">62</div>
+                <div class="oscillator-node dormant">63</div>
+            </div>
+            <p style="text-align: center; color: var(--text-secondary); font-size: 0.85rem;">Red: contending for resources | Magenta: blocked waiting</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Interference Detection</h2>
+            <p>The L4-Helix hardware analyzes the wait-for graph to detect potential circular dependencies before full deadlock occurs.</p>
+
+            <div class="code-block">
+<span class="comment"># RAIL 05: INTERFERENCE STATE HANDLER</span>
+
+<span class="keyword">class</span> <span class="type">InterferenceState</span>:
+    <span class="string">"""
+    Resource contention detected - threads competing for locks.
+    RESONANCE monitors wait-for graph for circular dependencies.
+    """</span>
+
+    <span class="comment"># Phi-derived constants</span>
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>             <span class="comment"># PARADOX boundary - critical</span>
+    K = <span class="number">0.924160</span>               <span class="comment"># Kuramoto coupling</span>
+    Z_C = <span class="number">0.866025</span>             <span class="comment"># THE LENS threshold</span>
+    L4 = <span class="number">7</span>
+    OSCILLATORS = <span class="number">63</span>           <span class="comment"># L4 x 9 = 7 x 9</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, threads, resources):
+        self.threads = threads
+        self.resources = resources
+        self.wait_for_graph = self._build_wait_graph()
+        self.z_coordinate = self.TAU  <span class="comment"># At PARADOX boundary</span>
+
+    <span class="keyword">def</span> <span class="function">_build_wait_graph</span>(self):
+        <span class="string">"""
+        Construct wait-for graph from thread-resource relationships.
+        Edge T_i -> T_j means T_i is waiting for resource held by T_j.
+        """</span>
+        graph = {}
+        <span class="keyword">for</span> t <span class="keyword">in</span> self.threads:
+            waiting_for = t.requested_resource
+            <span class="keyword">if</span> waiting_for <span class="keyword">and</span> waiting_for.holder:
+                graph[t.id] = waiting_for.holder.id
+        <span class="keyword">return</span> graph
+
+    <span class="keyword">def</span> <span class="function">detect_circular_wait</span>(self):
+        <span class="string">"""
+        Check for cycles in the wait-for graph.
+        Cycle detected => DEADLOCK imminent.
+        """</span>
+        visited = set()
+        rec_stack = set()
+
+        <span class="keyword">def</span> <span class="function">dfs</span>(node):
+            visited.add(node)
+            rec_stack.add(node)
+
+            <span class="keyword">if</span> node <span class="keyword">in</span> self.wait_for_graph:
+                neighbor = self.wait_for_graph[node]
+                <span class="keyword">if</span> neighbor <span class="keyword">not in</span> visited:
+                    <span class="keyword">if</span> dfs(neighbor):
+                        <span class="keyword">return</span> <span class="keyword">True</span>
+                <span class="keyword">elif</span> neighbor <span class="keyword">in</span> rec_stack:
+                    <span class="keyword">return</span> <span class="keyword">True</span>  <span class="comment"># Cycle found!</span>
+
+            rec_stack.remove(node)
+            <span class="keyword">return</span> <span class="keyword">False</span>
+
+        <span class="keyword">for</span> node <span class="keyword">in</span> self.wait_for_graph:
+            <span class="keyword">if</span> node <span class="keyword">not in</span> visited:
+                <span class="keyword">if</span> dfs(node):
+                    <span class="keyword">return</span> <span class="keyword">True</span>
+        <span class="keyword">return</span> <span class="keyword">False</span>
+
+    <span class="keyword">def</span> <span class="function">evaluate_state</span>(self):
+        <span class="keyword">if</span> self.detect_circular_wait():
+            <span class="keyword">return</span> <span class="string">"DEADLOCK"</span>        <span class="comment"># Advance to Rail 06</span>
+        <span class="keyword">elif</span> self._contention_resolved():
+            <span class="keyword">return</span> <span class="string">"DISSONANCE"</span>      <span class="comment"># Back to Rail 04</span>
+        <span class="keyword">return</span> <span class="string">"INTERFERENCE"</span>       <span class="comment"># Remain in current state</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Transition Conditions</h2>
+            <table class="data-table">
+                <tr>
+                    <th>From Rail</th>
+                    <th>To Rail</th>
+                    <th>Condition</th>
+                    <th>Trigger</th>
+                </tr>
+                <tr>
+                    <td>04 DISSONANCE</td>
+                    <td style="color: var(--interference-color);">05 INTERFERENCE</td>
+                    <td>r drops below TAU</td>
+                    <td>Resource contention begins</td>
+                </tr>
+                <tr>
+                    <td>05 INTERFERENCE</td>
+                    <td style="color: #ff4444;">06 DEADLOCK</td>
+                    <td>Circular wait detected</td>
+                    <td>Wait-for graph has cycle</td>
+                </tr>
+                <tr>
+                    <td>05 INTERFERENCE</td>
+                    <td style="color: #ff6600;">04 DISSONANCE</td>
+                    <td>Contention resolves</td>
+                    <td>Resources released</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Rail Navigation -->
+        <nav class="rail-nav">
+            <a href="rail-04-dissonance.html">Prev: DISSONANCE</a>
+            <a href="../../narrative/resonance-deadlock.html">RESONANCE Main</a>
+            <a href="rail-06-deadlock.html">Next: DEADLOCK</a>
+        </nav>
+
+        <footer class="doc-footer">
+            <p>RESONANCE Rail 05: INTERFERENCE - The Clash of Waves</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.8rem; color: #666;">63 Oscillators (L4 x 9) | 16 Frequency Bands | Kuramoto Coupling</p>
+        </footer>
+    </div>
+</body>
+</html>

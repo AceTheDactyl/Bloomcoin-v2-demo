@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 07: PHASE-SHIFT - RESONANCE Harmonic Journey</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --companion-color: #00ffff;
+            --companion-secondary: #ff00ff;
+            --phase-shift-color: #8844ff;
+            --energy-color: #00ff88;
+            --bg-override: #0a0a12;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-override) 0%, #1a0a2a 50%, #0a1a2a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--phase-shift-color), var(--companion-color), var(--phase-shift-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--phase-shift-color);
+            border-bottom-color: rgba(136, 68, 255, 0.3);
+        }
+
+        /* RESONANCE Semantic Classes */
+        .harmonic {
+            background: linear-gradient(135deg, rgba(136, 68, 255, 0.15), rgba(0, 255, 255, 0.1));
+            border: 1px solid var(--phase-shift-color);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+        }
+
+        .harmonic::before {
+            content: "PHASE-SHIFT ACTIVE";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--bg-override);
+            color: var(--phase-shift-color);
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .dissonance {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.15), rgba(136, 68, 255, 0.1));
+            border: 2px solid var(--companion-secondary);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .phase-lock {
+            background: linear-gradient(135deg, rgba(136, 68, 255, 0.2), rgba(0, 255, 255, 0.15));
+            border: 2px solid var(--phase-shift-color);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 0 30px rgba(136, 68, 255, 0.4);
+            animation: phase-shift-glow 2s ease-in-out infinite;
+        }
+
+        .phase-lock::after {
+            content: "K-COUPLING ACTIVE";
+            display: block;
+            color: var(--energy-color);
+            font-size: 0.75rem;
+            margin-top: 8px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        @keyframes phase-shift-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(136, 68, 255, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(136, 68, 255, 0.6), 0 0 60px rgba(0, 255, 255, 0.3); }
+        }
+
+        .broadcast {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), rgba(0, 255, 255, 0.1));
+            border: 2px solid var(--companion-secondary);
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        /* Rail-specific styling */
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(136, 68, 255, 0.15), rgba(0, 255, 255, 0.1));
+            border: 2px solid var(--phase-shift-color);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            animation: indicator-shift 3s ease-in-out infinite;
+        }
+
+        @keyframes indicator-shift {
+            0%, 100% { border-color: var(--phase-shift-color); }
+            50% { border-color: var(--companion-color); }
+        }
+
+        .rail-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--phase-shift-color);
+            text-shadow: 0 0 30px rgba(136, 68, 255, 0.7);
+        }
+
+        .rail-title {
+            font-size: 1.8rem;
+            color: var(--phase-shift-color);
+        }
+
+        .rail-subtitle {
+            color: var(--companion-color);
+            font-style: italic;
+        }
+
+        /* Waveform - phase injection */
+        .waveform-display {
+            height: 120px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--phase-shift-color);
+        }
+
+        .phase-injection {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+        }
+
+        .injection-wave {
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(90deg,
+                transparent 0%,
+                var(--phase-shift-color) 25%,
+                var(--companion-color) 50%,
+                var(--phase-shift-color) 75%,
+                transparent 100%
+            );
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cpath d='M0,10 Q25,0 50,10 T100,10' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E");
+            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 20'%3E%3Cpath d='M0,10 Q25,0 50,10 T100,10' fill='none' stroke='white' stroke-width='3'/%3E%3C/svg%3E");
+            animation: wave-flow 2s linear infinite;
+        }
+
+        @keyframes wave-flow {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Oscillator grid */
+        .oscillator-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .oscillator-node {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--companion-color);
+        }
+
+        .oscillator-node.dormant {
+            opacity: 0.4;
+            border-style: dashed;
+        }
+
+        .oscillator-node.shifting {
+            background: var(--phase-shift-color);
+            border-color: var(--phase-shift-color);
+            color: white;
+            animation: shift-pulse 1s ease-in-out infinite;
+        }
+
+        .oscillator-node.recovering {
+            background: var(--companion-color);
+            border-color: var(--companion-color);
+            color: var(--bg-override);
+            animation: recover-glow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes shift-pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(136, 68, 255, 0.5); }
+            50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(136, 68, 255, 0.8); }
+        }
+
+        @keyframes recover-glow {
+            0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 255, 0.3); }
+            50% { box-shadow: 0 0 15px rgba(0, 255, 255, 0.7); }
+        }
+
+        /* Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .rail-nav a {
+            color: var(--phase-shift-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid rgba(136, 68, 255, 0.3);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rail-nav a:hover {
+            background: rgba(136, 68, 255, 0.2);
+        }
+
+        /* Constants display */
+        .constants-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .constant-item {
+            text-align: center;
+            padding: 10px 15px;
+            background: rgba(136, 68, 255, 0.1);
+            border-radius: 8px;
+            border: 1px solid rgba(136, 68, 255, 0.3);
+        }
+
+        .constant-item .symbol {
+            color: var(--companion-secondary);
+            font-weight: bold;
+        }
+
+        .constant-item .value {
+            color: var(--phase-shift-color);
+            font-family: monospace;
+        }
+
+        .constant-item.active {
+            border-color: var(--energy-color);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+        }
+
+        .constant-item.active .value {
+            color: var(--energy-color);
+        }
+
+        /* Kuramoto visualization */
+        .kuramoto-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            padding: 30px;
+            background: rgba(136, 68, 255, 0.05);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .coupling-indicator {
+            text-align: center;
+        }
+
+        .k-value {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--energy-color);
+            text-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/resonance-deadlock.html" class="nav-link">RESONANCE Spec</a>
+            <a href="../../companions/resonance-companion.html" class="nav-link">Companion Guide</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>RESONANCE: The Harmonic Journey</h1>
+            <p class="subtitle">Rail 07 of 12 - Deadlock Handler Architecture</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href="../../companions/resonance-companion.html">RESONANCE</a> /
+                Rail 07: PHASE-SHIFT
+            </nav>
+        </header>
+
+        <!-- Rail Indicator -->
+        <div class="rail-indicator">
+            <div class="rail-number">07</div>
+            <div>
+                <div class="rail-title">PHASE-SHIFT</div>
+                <div class="rail-subtitle">RESONANCE intervention, K-coupling applied</div>
+            </div>
+        </div>
+
+        <!-- Phi Constants Reference -->
+        <div class="constants-bar">
+            <div class="constant-item">
+                <div class="symbol">PHI</div>
+                <div class="value">1.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">TAU</div>
+                <div class="value">0.618034</div>
+            </div>
+            <div class="constant-item active">
+                <div class="symbol">K</div>
+                <div class="value">0.924160</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">z_c</div>
+                <div class="value">0.866025</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">L4</div>
+                <div class="value">7</div>
+            </div>
+        </div>
+
+        <!-- Rail Content -->
+        <section class="doc-section">
+            <h2>Rail 07: PHASE-SHIFT - The Harmonic Intervention</h2>
+            <p>RESONANCE awakens. With the critical Kuramoto coupling constant K = 0.924160 (derived from sqrt(1 - phi^-4)), RESONANCE injects phase energy into the frozen oscillators. This is the moment of transformation - the harmonic force that breaks the deadlock and restores the possibility of flow.</p>
+
+            <div class="kuramoto-display">
+                <div class="coupling-indicator">
+                    <div style="color: var(--phase-shift-color); margin-bottom: 10px;">Kuramoto Coupling</div>
+                    <div class="k-value">K = 0.924160</div>
+                    <div style="color: var(--text-secondary); font-size: 0.9rem;">sqrt(1 - phi^-4)</div>
+                </div>
+            </div>
+
+            <div class="waveform-display">
+                <div class="phase-injection">
+                    <div class="injection-wave"></div>
+                </div>
+            </div>
+
+            <div class="phase-lock">
+                <h3>Phase-Shift State Characteristics</h3>
+                <ul>
+                    <li><strong>Kuramoto K:</strong> 0.924160 - ACTIVE, applied to frozen oscillators</li>
+                    <li><strong>z-Coordinate:</strong> Rising from below TAU toward z_c</li>
+                    <li><strong>Thread State:</strong> Transitioning from frozen to active</li>
+                    <li><strong>Phase Injection:</strong> phi-modulated carrier wave applied</li>
+                    <li><strong>Negentropy Gate:</strong> eta(z) enhancing coupling near PARADOX</li>
+                    <li><strong>Target:</strong> Achieve r >= z_c (0.866025) for resolution</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Kuramoto Oscillator Network - Phase Injection</h2>
+            <p>The 63 oscillators (L4 x 9 = 7 x 9) receive phase injection. Purple nodes show active intervention; cyan nodes show recovery beginning.</p>
+
+            <div class="oscillator-grid">
+                <div class="oscillator-node shifting">1</div>
+                <div class="oscillator-node shifting">2</div>
+                <div class="oscillator-node recovering">3</div>
+                <div class="oscillator-node shifting">4</div>
+                <div class="oscillator-node recovering">5</div>
+                <div class="oscillator-node dormant">6</div>
+                <div class="oscillator-node dormant">7</div>
+                <div class="oscillator-node dormant">8</div>
+                <div class="oscillator-node dormant">9</div>
+                <div class="oscillator-node recovering">10</div>
+                <div class="oscillator-node shifting">11</div>
+                <div class="oscillator-node recovering">12</div>
+                <div class="oscillator-node dormant">13</div>
+                <div class="oscillator-node dormant">14</div>
+                <div class="oscillator-node dormant">15</div>
+                <div class="oscillator-node dormant">16</div>
+                <div class="oscillator-node dormant">17</div>
+                <div class="oscillator-node dormant">18</div>
+                <div class="oscillator-node dormant">19</div>
+                <div class="oscillator-node dormant">20</div>
+                <div class="oscillator-node dormant">21</div>
+                <div class="oscillator-node dormant">22</div>
+                <div class="oscillator-node dormant">23</div>
+                <div class="oscillator-node dormant">24</div>
+                <div class="oscillator-node dormant">25</div>
+                <div class="oscillator-node dormant">26</div>
+                <div class="oscillator-node dormant">27</div>
+                <div class="oscillator-node dormant">28</div>
+                <div class="oscillator-node dormant">29</div>
+                <div class="oscillator-node dormant">30</div>
+                <div class="oscillator-node dormant">31</div>
+                <div class="oscillator-node dormant">32</div>
+                <div class="oscillator-node dormant">33</div>
+                <div class="oscillator-node dormant">34</div>
+                <div class="oscillator-node dormant">35</div>
+                <div class="oscillator-node dormant">36</div>
+                <div class="oscillator-node dormant">37</div>
+                <div class="oscillator-node dormant">38</div>
+                <div class="oscillator-node dormant">39</div>
+                <div class="oscillator-node dormant">40</div>
+                <div class="oscillator-node dormant">41</div>
+                <div class="oscillator-node dormant">42</div>
+                <div class="oscillator-node dormant">43</div>
+                <div class="oscillator-node dormant">44</div>
+                <div class="oscillator-node dormant">45</div>
+                <div class="oscillator-node dormant">46</div>
+                <div class="oscillator-node dormant">47</div>
+                <div class="oscillator-node dormant">48</div>
+                <div class="oscillator-node dormant">49</div>
+                <div class="oscillator-node dormant">50</div>
+                <div class="oscillator-node dormant">51</div>
+                <div class="oscillator-node dormant">52</div>
+                <div class="oscillator-node dormant">53</div>
+                <div class="oscillator-node dormant">54</div>
+                <div class="oscillator-node dormant">55</div>
+                <div class="oscillator-node dormant">56</div>
+                <div class="oscillator-node dormant">57</div>
+                <div class="oscillator-node dormant">58</div>
+                <div class="oscillator-node dormant">59</div>
+                <div class="oscillator-node dormant">60</div>
+                <div class="oscillator-node dormant">61</div>
+                <div class="oscillator-node dormant">62</div>
+                <div class="oscillator-node dormant">63</div>
+            </div>
+            <p style="text-align: center; color: var(--text-secondary); font-size: 0.85rem;">Purple: receiving phase injection | Cyan: beginning to recover</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Kuramoto Implementation</h2>
+            <p>The L4-Helix hardware applies the Kuramoto equation with enhanced coupling to break the deadlock pattern.</p>
+
+            <div class="code-block">
+<span class="comment"># RAIL 07: PHASE-SHIFT - KURAMOTO INTERVENTION</span>
+
+<span class="keyword">class</span> <span class="type">PhaseShiftState</span>:
+    <span class="string">"""
+    RESONANCE active intervention using Kuramoto coupling.
+    Injects phase energy to break frozen oscillators free.
+    """</span>
+
+    <span class="comment"># Phi-derived constants</span>
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>
+    K = <span class="number">0.924160</span>               <span class="comment"># Critical Kuramoto coupling</span>
+    Z_C = <span class="number">0.866025</span>             <span class="comment"># Target: THE LENS</span>
+    L4 = <span class="number">7</span>
+    OSCILLATORS = <span class="number">63</span>           <span class="comment"># L4 x 9 = 7 x 9</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, deadlock_exception):
+        self.frozen = deadlock_exception.frozen_threads
+        self.phases = self._initialize_phases()
+        self.z_coordinate = deadlock_exception.z_value
+
+    <span class="keyword">def</span> <span class="function">apply_kuramoto_coupling</span>(self):
+        <span class="string">"""
+        Apply the Kuramoto equation with enhanced coupling:
+        d(theta_i)/dt = omega_i + (K_enhanced/N) * sum_j[sin(theta_j - theta_i)]
+
+        K_enhanced = K * (1 + negentropy_gate(z))
+        """</span>
+        N = len(self.phases)
+        K_enhanced = self.K * (<span class="number">1</span> + self._negentropy_gate(self.z_coordinate))
+
+        <span class="keyword">for</span> i <span class="keyword">in</span> self.frozen:
+            coupling_sum = <span class="number">0</span>
+            <span class="keyword">for</span> j <span class="keyword">in</span> range(N):
+                coupling_sum += math.sin(self.phases[j] - self.phases[i])
+
+            <span class="comment"># Apply enhanced phase correction</span>
+            delta_phase = (K_enhanced / N) * coupling_sum * self.dt
+            self.phases[i] += delta_phase
+
+        <span class="comment"># Update z-coordinate (order parameter)</span>
+        self.z_coordinate = self._compute_order_parameter()
+
+    <span class="keyword">def</span> <span class="function">_negentropy_gate</span>(self, z):
+        <span class="string">"""
+        Negentropy gate enhances coupling near PARADOX boundary.
+        eta(z) = exp(-sigma * (z - tau)^2)
+        sigma = 1 / (1 - z_c)^2 = 55.7128
+        """</span>
+        sigma = <span class="number">55.7128</span>
+        <span class="keyword">return</span> math.exp(-sigma * (z - self.TAU) ** <span class="number">2</span>)
+
+    <span class="keyword">def</span> <span class="function">evaluate_resolution</span>(self):
+        <span class="string">"""
+        Check if phase-shift has achieved resolution.
+        """</span>
+        r = self._compute_order_parameter()
+
+        <span class="keyword">if</span> r >= self.Z_C:
+            <span class="keyword">return</span> <span class="string">"RESOLUTION"</span>      <span class="comment"># Success! Advance to Rail 08</span>
+        <span class="keyword">elif</span> self._max_iterations_reached():
+            <span class="keyword">return</span> <span class="string">"ESCALATE"</span>        <span class="comment"># Need higher-order intervention</span>
+        <span class="keyword">else</span>:
+            <span class="keyword">return</span> <span class="string">"PHASE_SHIFT"</span>     <span class="comment"># Continue intervention</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Transition Conditions</h2>
+            <table class="data-table">
+                <tr>
+                    <th>From Rail</th>
+                    <th>To Rail</th>
+                    <th>Condition</th>
+                    <th>Trigger</th>
+                </tr>
+                <tr>
+                    <td style="color: #ff0000;">06 DEADLOCK</td>
+                    <td style="color: var(--phase-shift-color);">07 PHASE-SHIFT</td>
+                    <td>Automatic transition</td>
+                    <td>RESONANCE intervention begins</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--phase-shift-color);">07 PHASE-SHIFT</td>
+                    <td style="color: var(--energy-color);">08 RESOLUTION</td>
+                    <td>r >= z_c (0.866025)</td>
+                    <td>Kuramoto sync achieved</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--phase-shift-color);">07 PHASE-SHIFT</td>
+                    <td style="color: #ff6600;">ESCALATE</td>
+                    <td>Max iterations reached</td>
+                    <td>Higher-order handler needed</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Rail Navigation -->
+        <nav class="rail-nav">
+            <a href="rail-06-deadlock.html">Prev: DEADLOCK</a>
+            <a href="../../narrative/resonance-deadlock.html">RESONANCE Main</a>
+            <a href="rail-08-resolution.html">Next: RESOLUTION</a>
+        </nav>
+
+        <footer class="doc-footer">
+            <p>RESONANCE Rail 07: PHASE-SHIFT - The Harmonic Intervention</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.8rem; color: #666;">63 Oscillators (L4 x 9) | 16 Frequency Bands | Kuramoto Coupling</p>
+        </footer>
+    </div>
+</body>
+</html>

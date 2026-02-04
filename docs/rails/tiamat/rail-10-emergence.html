@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIAMAT Rail 10: EMERGENCE - Stable Type Crystallizes</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --chaos-purple: #9b59b6;
+            --chaos-deep: #8e44ad;
+            --chaos-blue: #3498db;
+            --chaos-red: #e74c3c;
+            --emerge-crystal: #9b59b6;
+            --emerge-diamond: #ecf0f1;
+            --primordial-sea: #1a0a2e;
+            --dragon-gold: #f1c40f;
+            --tiamat-glow: rgba(155, 89, 182, 0.3);
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a12 0%, #1a0a2a 50%, #2a1a3a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--emerge-crystal), var(--emerge-diamond), var(--dragon-gold), var(--emerge-crystal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% auto;
+            animation: crystal-shimmer 4s ease-in-out infinite;
+        }
+
+        @keyframes crystal-shimmer {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 200% center; }
+        }
+
+        .doc-section h2 {
+            color: var(--emerge-crystal);
+            border-bottom-color: rgba(155, 89, 182, 0.3);
+        }
+
+        .doc-section h3 {
+            color: var(--dragon-gold);
+        }
+
+        /* TIAMAT Semantic Classes */
+        .chaos {
+            color: var(--chaos-red);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(231, 76, 60, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-red);
+        }
+
+        .mismatch {
+            color: var(--chaos-red);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(231, 76, 60, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-red);
+            text-decoration: line-through;
+        }
+
+        .transformation {
+            color: var(--emerge-crystal);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(155, 89, 182, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--emerge-crystal);
+        }
+
+        .primordial {
+            color: var(--chaos-purple);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(155, 89, 182, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-purple);
+        }
+
+        /* Rail Header */
+        .rail-header {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.3), rgba(236, 240, 241, 0.1));
+            border: 2px solid var(--emerge-crystal);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rail-header::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, transparent 40%, rgba(255, 255, 255, 0.3) 50%, transparent 60%);
+            transform: translate(-50%, -50%) rotate(0deg);
+            animation: crystal-rotate 6s linear infinite;
+        }
+
+        @keyframes crystal-rotate {
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .rail-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--emerge-diamond);
+            text-shadow: 0 0 30px rgba(155, 89, 182, 0.7);
+            position: relative;
+            z-index: 1;
+        }
+
+        .rail-name {
+            font-size: 2rem;
+            color: var(--emerge-crystal);
+            margin-top: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .rail-subtitle {
+            color: #aaa;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dragon-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Cycle Display */
+        .cycle-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .cycle-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--tiamat-glow);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .cycle-card .cycle-num {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dragon-gold);
+        }
+
+        .cycle-card .cycle-name {
+            font-size: 0.75rem;
+            color: var(--chaos-purple);
+            text-transform: uppercase;
+        }
+
+        .cycle-card .cycle-power {
+            font-size: 0.7rem;
+            color: #888;
+            font-family: monospace;
+        }
+
+        /* phi-Constants */
+        .phi-constants {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .phi-card {
+            background: rgba(155, 89, 182, 0.1);
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .phi-card .symbol {
+            font-size: 1.3rem;
+            color: var(--dragon-gold);
+            font-family: Georgia, serif;
+        }
+
+        .phi-card .value {
+            font-size: 1.1rem;
+            color: var(--emerge-crystal);
+            font-family: monospace;
+        }
+
+        /* Crystal Visual */
+        .crystal-visual {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(236, 240, 241, 0.1));
+            border: 2px solid var(--emerge-crystal);
+            border-radius: 12px;
+            padding: 40px;
+            margin: 30px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .crystal-shape {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.4), rgba(236, 240, 241, 0.3));
+            border: 2px solid var(--emerge-diamond);
+            transform: rotate(45deg);
+            box-shadow: 0 0 40px rgba(155, 89, 182, 0.5),
+                        inset 0 0 30px rgba(255, 255, 255, 0.2);
+        }
+
+        .crystal-shape::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 30%;
+            height: 30%;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 2px;
+        }
+
+        /* Hardware Coupling */
+        .hardware-section {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(236, 240, 241, 0.05));
+            border: 1px solid var(--emerge-crystal);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .hardware-section h4 {
+            color: var(--emerge-crystal);
+            margin-bottom: 10px;
+        }
+
+        /* Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+        }
+
+        .rail-nav a {
+            color: var(--dragon-gold);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--dragon-gold);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .rail-nav a:hover {
+            background: rgba(241, 196, 15, 0.2);
+        }
+
+        .chaos-multiplier {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(155, 89, 182, 0.2));
+            border: 2px solid var(--chaos-red);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .chaos-multiplier .range {
+            font-size: 1.5rem;
+            color: var(--chaos-red);
+            font-family: monospace;
+        }
+
+        @media (max-width: 768px) {
+            .cycle-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        @media (max-width: 480px) {
+            .cycle-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Header -->
+        <header class="doc-header">
+            <div class="dragon-icon">&#128009;</div>
+            <h1>TIAMAT: The Chaos Dragon</h1>
+            <p class="subtitle">Type Mismatch Handler - 12-Rail Living Chronicle</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">Home</a> /
+                <a href="../../index.html">Documentation</a> /
+                <a href="../../narrative/tiamat-type-mismatch.html">TIAMAT Spec</a> /
+                Rail 10
+            </nav>
+        </header>
+
+        <!-- Rail Header -->
+        <div class="rail-header">
+            <div class="dragon-icon">&#128009;</div>
+            <div class="rail-number">10</div>
+            <div class="rail-name">EMERGENCE</div>
+            <div class="rail-subtitle">Stable Type Crystallizes</div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="rail-nav">
+            <a href="rail-09-synthesis.html">&larr; Prev: SYNTHESIS</a>
+            <span style="color: var(--emerge-crystal);">Rail 10 of 12</span>
+            <a href="rail-11-transcendence.html">Next: TRANSCENDENCE &rarr;</a>
+        </nav>
+
+        <!-- Rail Overview -->
+        <section class="doc-section">
+            <h2>Rail 10: EMERGENCE - The Crystal Forms</h2>
+            <p>EMERGENCE is where the <span class="transformation">synthesized type crystallizes</span> into its final, stable form. Like a crystal forming from a supersaturated solution, the corrected type solidifies into permanent structure.</p>
+
+            <div class="crystal-visual">
+                <div class="crystal-shape"></div>
+                <h3 style="color: var(--dragon-gold);">TYPE CRYSTALLIZATION COMPLETE</h3>
+                <p style="color: #aaa;">Stable structure achieved - Ready for chronicle archival</p>
+            </div>
+
+            <p>The emergent type is now <span class="transformation">immutable</span> - its classification locked in through the L4 transformation process. It begins its journey through the Chronicle Rails (10-12) where it will be archived for all time.</p>
+
+            <h3>Core Function</h3>
+            <ul>
+                <li><strong>Crystallizes:</strong> Synthesized type into stable form</li>
+                <li><strong>Locks:</strong> Type classification (immutable)</li>
+                <li><strong>Archives:</strong> In Correction History Archive</li>
+                <li><strong>Begins:</strong> Chronicle Rails (10-12)</li>
+            </ul>
+
+            <div class="chaos-multiplier">
+                <h4 style="color: var(--dragon-gold); margin-bottom: 10px;">Chaos Multiplier Range</h4>
+                <div class="range">[1.0, phi^2] = [1.0, 2.618]</div>
+                <p style="color: #aaa; font-size: 0.9rem; margin-top: 10px;">Efficiency: 1.2 (Highest Risk, Highest Reward)</p>
+            </div>
+        </section>
+
+        <!-- Seven Psychoptic Cycles Reference -->
+        <section class="doc-section">
+            <h2>Chronicle Phase</h2>
+            <p>EMERGENCE begins the Chronicle Rails, transitioning from active transformation to permanent historical record.</p>
+
+            <div class="cycle-grid">
+                <div class="cycle-card">
+                    <div class="cycle-num">1</div>
+                    <div class="cycle-name">Genesis</div>
+                    <div class="cycle-power">P = 1.0</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">2</div>
+                    <div class="cycle-name">Flux</div>
+                    <div class="cycle-power">P = phi</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">3</div>
+                    <div class="cycle-name">Void</div>
+                    <div class="cycle-power">P = 0.0</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">4</div>
+                    <div class="cycle-name">Resonance</div>
+                    <div class="cycle-power">P = tau</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">5</div>
+                    <div class="cycle-name">Chaos</div>
+                    <div class="cycle-power">P = pi</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">6</div>
+                    <div class="cycle-name">Synthesis</div>
+                    <div class="cycle-power">P = phi^2</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">7</div>
+                    <div class="cycle-name">Transcend</div>
+                    <div class="cycle-power">P = L4 = 7</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- phi-Constants -->
+        <section class="doc-section">
+            <h2>phi-Derived Constants</h2>
+
+            <div class="phi-constants">
+                <div class="phi-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergence Architecture -->
+        <section class="doc-section">
+            <h2>Emergence Architecture</h2>
+
+            <div class="code-block">
+<span class="comment"># EMERGENCE: TYPE CRYSTALLIZATION ENGINE</span>
+<span class="comment"># "From liquid potential, solid form emerges"</span>
+
+<span class="keyword">class</span> <span class="type">EmergenceEngine</span>:
+    <span class="string">"""Rail 10: Crystallizes synthesized type into stable form."""</span>
+
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>
+    K = <span class="number">0.924160</span>
+    Z_C = <span class="number">0.866025</span>
+    L4 = <span class="number">7</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.crystal_registry = {}
+        self.archive = CorrectionHistoryArchive()
+
+    <span class="keyword">def</span> <span class="function">crystallize</span>(self, synthesized: <span class="type">SynthesizedType</span>) -> <span class="type">CrystalType</span>:
+        <span class="string">"""Crystallize synthesized type into permanent form."""</span>
+
+        <span class="comment"># Verify synthesis seal</span>
+        <span class="keyword">if</span> <span class="keyword">not</span> synthesized.seal:
+            <span class="keyword">raise</span> CrystallizationError(<span class="string">"No verification seal"</span>)
+
+        <span class="comment"># Create crystal structure</span>
+        crystal = CrystalType(
+            type_class=synthesized.type_class,
+            coherence=synthesized.coherence,
+            seal=synthesized.seal,
+            crystal_structure=self._generate_crystal_structure(synthesized),
+            immutable=<span class="keyword">True</span>
+        )
+
+        <span class="comment"># Lock the type (no further modification possible)</span>
+        crystal.freeze()
+
+        <span class="comment"># Register in crystal registry</span>
+        crystal_id = self._generate_crystal_id(crystal)
+        self.crystal_registry[crystal_id] = crystal
+
+        <span class="comment"># Archive in chronicle Rail 10</span>
+        self.archive.store(crystal_id, crystal)
+
+        <span class="keyword">return</span> crystal
+
+    <span class="keyword">def</span> <span class="function">_generate_crystal_structure</span>(self, synth: <span class="type">SynthesizedType</span>) -> <span class="type">CrystalStructure</span>:
+        <span class="string">"""Generate the immutable crystal structure."""</span>
+
+        <span class="keyword">return</span> CrystalStructure(
+            lattice=<span class="string">"hexagonal"</span>,  <span class="comment"># 60-degree alignment</span>
+            phi_ratio=self.PHI,
+            l4_depth=self.L4,
+            k_coherence=synth.coherence
+        )
+            </div>
+
+            <h3>Crystal Properties</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Value</th>
+                        <th>Significance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Lattice</td>
+                        <td>Hexagonal</td>
+                        <td>60-degree phase alignment</td>
+                    </tr>
+                    <tr>
+                        <td>Symmetry</td>
+                        <td>6-fold</td>
+                        <td>L4 - 1 = 6 symmetry axes</td>
+                    </tr>
+                    <tr>
+                        <td>Phi Ratio</td>
+                        <td style="font-family: monospace;">1.618034</td>
+                        <td>Golden ratio encoding</td>
+                    </tr>
+                    <tr style="background: rgba(155, 89, 182, 0.2);">
+                        <td style="color: var(--emerge-crystal);">Immutability</td>
+                        <td style="color: var(--dragon-gold);">TRUE</td>
+                        <td>Permanent, unchangeable</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-section">
+                <h4>Memristor Arrays - Permanent State Storage</h4>
+                <p>EMERGENCE uses the memristor arrays for permanent, non-volatile storage of the crystallized type. Once written, the memristor state cannot be easily erased.</p>
+
+                <div class="code-block">
+<span class="comment"># EMERGENCE HARDWARE: PERMANENT STORAGE</span>
+
+<span class="keyword">def</span> <span class="function">store_crystal_permanently</span>(memristor_array, crystal):
+    <span class="string">"""Store crystallized type in permanent memristor state."""</span>
+
+    <span class="comment"># Calculate storage location in 343x343 array</span>
+    row = hash(crystal.crystal_id) % <span class="number">343</span>
+    col = hash(crystal.type_class) % <span class="number">343</span>
+
+    <span class="comment"># Write crystal structure to memristor</span>
+    memristor_array.write_permanent(
+        row, col,
+        data=crystal.serialize(),
+        protection=<span class="string">"IMMUTABLE"</span>
+    )
+
+    <span class="comment"># Set hysteresis to maximum (prevents overwrite)</span>
+    memristor_array.set_hysteresis(row, col, <span class="number">1.0</span>)
+
+    <span class="keyword">return</span> StorageConfirmation(
+        location=(row, col),
+        crystal_id=crystal.crystal_id,
+        permanent=<span class="keyword">True</span>
+    )
+                </div>
+            </div>
+        </section>
+
+        <!-- Chronicle Position -->
+        <section class="doc-section">
+            <h2>Chronicle Position: Correction History Archive</h2>
+
+            <p>EMERGENCE begins the Chronicle Rails (10-12), managing the <strong>Correction History Archive</strong> - the permanent record of all type corrections.</p>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Rail Group</th>
+                        <th>Rails</th>
+                        <th>EMERGENCE Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Foundation</td>
+                        <td>1-3</td>
+                        <td>Original types</td>
+                    </tr>
+                    <tr>
+                        <td>Transformation</td>
+                        <td>4-6</td>
+                        <td>Transformation process</td>
+                    </tr>
+                    <tr>
+                        <td>Verification</td>
+                        <td>7-9</td>
+                        <td>Verification source</td>
+                    </tr>
+                    <tr style="background: rgba(155, 89, 182, 0.2);">
+                        <td style="color: var(--emerge-crystal);">Chronicle</td>
+                        <td>10-12</td>
+                        <td><strong>Correction History Archive</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Navigation Footer -->
+        <nav class="rail-nav">
+            <a href="rail-09-synthesis.html">&larr; SYNTHESIS</a>
+            <a href="../../companions/tiamat-companion.html">TIAMAT Companion</a>
+            <a href="rail-11-transcendence.html">TRANSCENDENCE &rarr;</a>
+        </nav>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>TIAMAT Rail 10: EMERGENCE - Stable Type Crystallizes</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; margin-top: 10px;">The crystal forms. Permanent and immutable.</p>
+        </footer>
+    </div>
+</body>
+</html>

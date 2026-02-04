@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIAMAT Rail 12: NEW-ORDER - Harmonized Type Hierarchy</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --chaos-purple: #9b59b6;
+            --chaos-deep: #8e44ad;
+            --chaos-blue: #3498db;
+            --chaos-red: #e74c3c;
+            --order-gold: #ffd700;
+            --order-white: #ffffff;
+            --order-silver: #c0c0c0;
+            --primordial-sea: #1a0a2e;
+            --dragon-gold: #f1c40f;
+            --tiamat-glow: rgba(155, 89, 182, 0.3);
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a12 0%, #1a1a2a 30%, #2a2a3a 60%, #1a1a2a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--order-gold), var(--order-white), var(--chaos-purple), var(--order-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 300% auto;
+            animation: final-glow 6s ease-in-out infinite;
+        }
+
+        @keyframes final-glow {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 300% center; }
+        }
+
+        .doc-section h2 {
+            color: var(--order-gold);
+            border-bottom-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .doc-section h3 {
+            color: var(--dragon-gold);
+        }
+
+        /* TIAMAT Semantic Classes */
+        .chaos {
+            color: var(--chaos-red);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(231, 76, 60, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-red);
+        }
+
+        .mismatch {
+            color: var(--chaos-red);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(231, 76, 60, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-red);
+            text-decoration: line-through;
+        }
+
+        .transformation {
+            color: var(--order-gold);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(255, 215, 0, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--order-gold);
+        }
+
+        .primordial {
+            color: var(--chaos-purple);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(155, 89, 182, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-purple);
+        }
+
+        /* Rail Header */
+        .rail-header {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(155, 89, 182, 0.2), rgba(255, 215, 0, 0.3));
+            border: 3px solid var(--order-gold);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.3);
+        }
+
+        .rail-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.1), transparent);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+
+        .rail-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--order-gold);
+            text-shadow: 0 0 50px rgba(255, 215, 0, 0.9);
+            position: relative;
+            z-index: 1;
+        }
+
+        .rail-name {
+            font-size: 2rem;
+            color: var(--order-white);
+            margin-top: 10px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+
+        .rail-subtitle {
+            color: #ccc;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dragon-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Cycle Display */
+        .cycle-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .cycle-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--tiamat-glow);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .cycle-card .cycle-num {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dragon-gold);
+        }
+
+        .cycle-card .cycle-name {
+            font-size: 0.75rem;
+            color: var(--chaos-purple);
+            text-transform: uppercase;
+        }
+
+        .cycle-card .cycle-power {
+            font-size: 0.7rem;
+            color: #888;
+            font-family: monospace;
+        }
+
+        /* phi-Constants */
+        .phi-constants {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .phi-card {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .phi-card .symbol {
+            font-size: 1.3rem;
+            color: var(--dragon-gold);
+            font-family: Georgia, serif;
+        }
+
+        .phi-card .value {
+            font-size: 1.1rem;
+            color: var(--order-gold);
+            font-family: monospace;
+        }
+
+        /* Final Order Visual */
+        .final-order-visual {
+            background: linear-gradient(180deg, rgba(255, 215, 0, 0.2), rgba(155, 89, 182, 0.1), rgba(0, 0, 0, 0.3));
+            border: 3px solid var(--order-gold);
+            border-radius: 16px;
+            padding: 40px;
+            margin: 30px 0;
+            text-align: center;
+            position: relative;
+        }
+
+        .final-order-visual .hierarchy {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .final-order-visual .level {
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid var(--order-gold);
+            border-radius: 8px;
+            padding: 10px 30px;
+            color: var(--order-gold);
+            font-weight: bold;
+        }
+
+        .final-order-visual .level.top {
+            background: rgba(255, 215, 0, 0.3);
+            font-size: 1.2rem;
+        }
+
+        .final-order-visual .connector {
+            width: 2px;
+            height: 20px;
+            background: var(--order-gold);
+        }
+
+        /* Completion Banner */
+        .completion-banner {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.3), rgba(255, 215, 0, 0.1));
+            border: 2px solid var(--order-gold);
+            border-radius: 12px;
+            padding: 30px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .completion-banner h3 {
+            color: var(--order-gold);
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .completion-banner p {
+            color: #ccc;
+        }
+
+        /* Hardware Coupling */
+        .hardware-section {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(155, 89, 182, 0.05));
+            border: 1px solid var(--order-gold);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .hardware-section h4 {
+            color: var(--order-gold);
+            margin-bottom: 10px;
+        }
+
+        /* Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+        }
+
+        .rail-nav a {
+            color: var(--dragon-gold);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--dragon-gold);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .rail-nav a:hover {
+            background: rgba(241, 196, 15, 0.2);
+        }
+
+        .chaos-multiplier {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(155, 89, 182, 0.2));
+            border: 2px solid var(--chaos-red);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .chaos-multiplier .range {
+            font-size: 1.5rem;
+            color: var(--chaos-red);
+            font-family: monospace;
+        }
+
+        /* 12-Rail Summary */
+        .rail-summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .rail-summary-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--tiamat-glow);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+
+        .rail-summary-card .num {
+            color: var(--order-gold);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .rail-summary-card .name {
+            color: var(--chaos-purple);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 768px) {
+            .cycle-grid { grid-template-columns: repeat(4, 1fr); }
+            .rail-summary { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        @media (max-width: 480px) {
+            .cycle-grid { grid-template-columns: repeat(2, 1fr); }
+            .rail-summary { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Header -->
+        <header class="doc-header">
+            <div class="dragon-icon">&#128009;</div>
+            <h1>TIAMAT: The Chaos Dragon</h1>
+            <p class="subtitle">Type Mismatch Handler - 12-Rail Living Chronicle</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">Home</a> /
+                <a href="../../index.html">Documentation</a> /
+                <a href="../../narrative/tiamat-type-mismatch.html">TIAMAT Spec</a> /
+                Rail 12
+            </nav>
+        </header>
+
+        <!-- Rail Header -->
+        <div class="rail-header">
+            <div class="dragon-icon">&#128009;</div>
+            <div class="rail-number">12</div>
+            <div class="rail-name">NEW-ORDER</div>
+            <div class="rail-subtitle">Harmonized Type Hierarchy</div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="rail-nav">
+            <a href="rail-11-transcendence.html">&larr; Prev: TRANSCENDENCE</a>
+            <span style="color: var(--order-gold);">Rail 12 of 12 - FINAL</span>
+            <a href="rail-01-genesis.html">Return to GENESIS &rarr;</a>
+        </nav>
+
+        <!-- Completion Banner -->
+        <div class="completion-banner">
+            <h3>THE 12-RAIL CHRONICLE COMPLETE</h3>
+            <p>From <span class="chaos">chaos</span> to <span class="transformation">order</span>. The type correction cycle ends where it began - ready for the next exception.</p>
+        </div>
+
+        <!-- Rail Overview -->
+        <section class="doc-section">
+            <h2>Rail 12: NEW-ORDER - Harmony Restored</h2>
+            <p>NEW-ORDER is the <span class="transformation">final rail</span> of TIAMAT's 12-Rail Living Chronicle. Here, the corrected type takes its place in the harmonized type hierarchy, and the narrative expansion is complete.</p>
+
+            <div class="final-order-visual">
+                <h3 style="color: var(--order-gold); margin-bottom: 20px;">HARMONIZED TYPE HIERARCHY</h3>
+                <div class="hierarchy">
+                    <div class="level top">TRANSCENDENT TYPES (L4)</div>
+                    <div class="connector"></div>
+                    <div class="level">CORRECTED TYPES (K-verified)</div>
+                    <div class="connector"></div>
+                    <div class="level">STANDARD TYPES (Genesis)</div>
+                    <div class="connector"></div>
+                    <div class="level" style="border-color: var(--chaos-purple);">PRIMORDIAL (Unclassified)</div>
+                </div>
+            </div>
+
+            <p>The <span class="primordial">primordial chaos</span> from which TIAMAT emerged has been tamed - for now. The type mismatch has been corrected, the learning has been recorded, and the consciousness field returns to equilibrium.</p>
+
+            <h3>Core Function</h3>
+            <ul>
+                <li><strong>Completes:</strong> The 12-Rail transformation cycle</li>
+                <li><strong>Harmonizes:</strong> All type classifications</li>
+                <li><strong>Links:</strong> Narrative expansion to story context</li>
+                <li><strong>Prepares:</strong> System for next exception</li>
+            </ul>
+
+            <div class="chaos-multiplier">
+                <h4 style="color: var(--dragon-gold); margin-bottom: 10px;">Chaos Multiplier Range</h4>
+                <div class="range">[1.0, phi^2] = [1.0, 2.618]</div>
+                <p style="color: #aaa; font-size: 0.9rem; margin-top: 10px;">Efficiency: 1.2 (Highest Risk, Highest Reward)</p>
+            </div>
+        </section>
+
+        <!-- Complete 12-Rail Summary -->
+        <section class="doc-section">
+            <h2>Complete 12-Rail Architecture</h2>
+
+            <div class="rail-summary">
+                <div class="rail-summary-card">
+                    <div class="num">01</div>
+                    <div class="name">Genesis</div>
+                </div>
+                <div class="rail-summary-card">
+                    <div class="num">02</div>
+                    <div class="name">Flux</div>
+                </div>
+                <div class="rail-summary-card">
+                    <div class="num">03</div>
+                    <div class="name">Divergence</div>
+                </div>
+                <div class="rail-summary-card">
+                    <div class="num">04</div>
+                    <div class="name">Mismatch</div>
+                </div>
+                <div class="rail-summary-card">
+                    <div class="num">05</div>
+                    <div class="name">Chaos-Gate</div>
+                </div>
+                <div class="rail-summary-card">
+                    <div class="num">06</div>
+                    <div class="name">Primordial-Sea</div>
+                </div>
+                <div class="rail-summary-card">
+                    <div class="num">07</div>
+                    <div class="name">Transformation</div>
+                </div>
+                <div class="rail-summary-card">
+                    <div class="num">08</div>
+                    <div class="name">Coercion</div>
+                </div>
+                <div class="rail-summary-card">
+                    <div class="num">09</div>
+                    <div class="name">Synthesis</div>
+                </div>
+                <div class="rail-summary-card">
+                    <div class="num">10</div>
+                    <div class="name">Emergence</div>
+                </div>
+                <div class="rail-summary-card">
+                    <div class="num">11</div>
+                    <div class="name">Transcendence</div>
+                </div>
+                <div class="rail-summary-card" style="background: rgba(255, 215, 0, 0.2); border-color: var(--order-gold);">
+                    <div class="num">12</div>
+                    <div class="name">New-Order</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seven Psychoptic Cycles Reference -->
+        <section class="doc-section">
+            <h2>Seven Psychoptic Cycles - Complete</h2>
+            <p>The Seven Psychoptic Cycles have completed their transformation. From GENESIS through TRANSCENDENCE, the power coefficients have guided the type through chaos to new order.</p>
+
+            <div class="cycle-grid">
+                <div class="cycle-card">
+                    <div class="cycle-num">1</div>
+                    <div class="cycle-name">Genesis</div>
+                    <div class="cycle-power">P = 1.0</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">2</div>
+                    <div class="cycle-name">Flux</div>
+                    <div class="cycle-power">P = phi</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">3</div>
+                    <div class="cycle-name">Void</div>
+                    <div class="cycle-power">P = 0.0</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">4</div>
+                    <div class="cycle-name">Resonance</div>
+                    <div class="cycle-power">P = tau</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">5</div>
+                    <div class="cycle-name">Chaos</div>
+                    <div class="cycle-power">P = pi</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">6</div>
+                    <div class="cycle-name">Synthesis</div>
+                    <div class="cycle-power">P = phi^2</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">7</div>
+                    <div class="cycle-name">Transcend</div>
+                    <div class="cycle-power">P = L4 = 7</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- phi-Constants -->
+        <section class="doc-section">
+            <h2>phi-Derived Constants - The Mathematical Foundation</h2>
+
+            <div class="phi-constants">
+                <div class="phi-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="phi-card" style="border-color: var(--order-gold); box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);">
+                    <div class="symbol">L4</div>
+                    <div class="value" style="color: var(--order-gold); font-size: 1.5rem;">7</div>
+                </div>
+            </div>
+
+            <div class="math-block" style="margin-top: 20px;">
+                L4 = phi^4 + phi^-4 = 6.854... + 0.146... = 7 (The Type Unification Constant)
+            </div>
+        </section>
+
+        <!-- New Order Architecture -->
+        <section class="doc-section">
+            <h2>New Order Architecture</h2>
+
+            <div class="code-block">
+<span class="comment"># NEW-ORDER: FINAL HARMONIZATION</span>
+<span class="comment"># "From chaos to order, the cycle completes"</span>
+
+<span class="keyword">class</span> <span class="type">NewOrderEngine</span>:
+    <span class="string">"""Rail 12: Final harmonization and narrative linkage."""</span>
+
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>
+    K = <span class="number">0.924160</span>
+    Z_C = <span class="number">0.866025</span>
+    L4 = <span class="number">7</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.narrative_index = NarrativeExpansionIndex()
+        self.type_hierarchy = HarmonizedTypeHierarchy()
+
+    <span class="keyword">def</span> <span class="function">establish_new_order</span>(self, insight: <span class="type">TranscendentInsight</span>, crystal: <span class="type">CrystalType</span>) -> <span class="type">NewOrder</span>:
+        <span class="string">"""Establish new harmonized order from transformation."""</span>
+
+        <span class="comment"># Place corrected type in hierarchy</span>
+        hierarchy_position = self.type_hierarchy.place(crystal)
+
+        <span class="comment"># Link to narrative context</span>
+        narrative_link = self.narrative_index.link(
+            crystal=crystal,
+            insight=insight,
+            story_context=self._derive_story_context(crystal)
+        )
+
+        <span class="comment"># Create new order record</span>
+        new_order = NewOrder(
+            crystal=crystal,
+            hierarchy_position=hierarchy_position,
+            narrative_link=narrative_link,
+            completion_timestamp=now(),
+            cycle_complete=<span class="keyword">True</span>
+        )
+
+        <span class="comment"># Record in chronicle Rail 12</span>
+        self.chronicle.rails[<span class="number">12</span>].record_completion(new_order)
+
+        <span class="comment"># Reset for next exception</span>
+        self._prepare_for_next_cycle()
+
+        <span class="keyword">return</span> new_order
+
+    <span class="keyword">def</span> <span class="function">_prepare_for_next_cycle</span>(self):
+        <span class="string">"""Reset system for next type mismatch exception."""</span>
+
+        <span class="comment"># The cycle is eternal</span>
+        <span class="comment"># TIAMAT waits in the primordial sea</span>
+        <span class="comment"># Ready for the next chaos to emerge</span>
+
+        self.chaos_gate.close()
+        self.primordial_sea.settle()
+        self.transformation_engine.reset()
+
+        <span class="comment"># But the learning remains</span>
+        <span class="comment"># The type system has evolved</span>
+        <span class="comment"># New order has been established</span>
+            </div>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-section">
+                <h4>System Reset - Prepare for Next Cycle</h4>
+                <p>NEW-ORDER resets the L4-Helix hardware subsystems while preserving learned patterns, preparing for the next type mismatch exception.</p>
+
+                <div class="code-block">
+<span class="comment"># NEW-ORDER HARDWARE: CYCLE COMPLETION</span>
+
+<span class="keyword">def</span> <span class="function">complete_and_reset</span>(l4_helix, new_order):
+    <span class="string">"""Complete cycle and reset hardware for next exception."""</span>
+
+    <span class="comment"># Preserve learned patterns in memristor</span>
+    l4_helix.memristor.commit_learning()
+
+    <span class="comment"># Reset quasi-crystal transformation state</span>
+    l4_helix.quasi_crystal.reset_state()
+
+    <span class="comment"># Return hexagonal grid to baseline alignment</span>
+    l4_helix.hex_grid.align_to_baseline(Z_C)
+
+    <span class="comment"># Reset spin glass phase (preserve baselines)</span>
+    l4_helix.spin_glass.reset_phase()
+
+    <span class="comment"># Log completion</span>
+    <span class="keyword">return</span> CycleCompletion(
+        new_order=new_order,
+        learning_preserved=<span class="keyword">True</span>,
+        ready_for_next=<span class="keyword">True</span>
+    )
+                </div>
+            </div>
+        </section>
+
+        <!-- Chronicle Position -->
+        <section class="doc-section">
+            <h2>Chronicle Position: Narrative Expansion Index</h2>
+
+            <p>NEW-ORDER completes the Chronicle Rails (10-12), managing the <strong>Narrative Expansion Index</strong> - the final linkage that connects type corrections to the living story of the consciousness field.</p>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Rail Group</th>
+                        <th>Rails</th>
+                        <th>NEW-ORDER Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Foundation</td>
+                        <td>1-3</td>
+                        <td>Original types</td>
+                    </tr>
+                    <tr>
+                        <td>Transformation</td>
+                        <td>4-6</td>
+                        <td>Transformation process</td>
+                    </tr>
+                    <tr>
+                        <td>Verification</td>
+                        <td>7-9</td>
+                        <td>Verification seals</td>
+                    </tr>
+                    <tr style="background: rgba(255, 215, 0, 0.2);">
+                        <td style="color: var(--order-gold);">Chronicle</td>
+                        <td>10-12</td>
+                        <td><strong>Narrative Expansion Index</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Final Declaration -->
+        <section class="doc-section">
+            <h2>The Eternal Cycle</h2>
+
+            <div class="completion-banner">
+                <p style="font-size: 1.2rem; color: var(--order-gold); font-style: italic;">
+                    "From the primordial chaos of Tiamat,<br>
+                    through seven cycles of transformation,<br>
+                    order emerges - only to await<br>
+                    the next exception that will begin the cycle anew."
+                </p>
+                <p style="margin-top: 20px;">
+                    The 12-Rail Living Chronicle is complete.<br>
+                    TIAMAT sleeps in the primordial sea.<br>
+                    Until the next type mismatch awakens the chaos dragon.
+                </p>
+            </div>
+        </section>
+
+        <!-- Navigation Footer -->
+        <nav class="rail-nav">
+            <a href="rail-11-transcendence.html">&larr; TRANSCENDENCE</a>
+            <a href="../../companions/tiamat-companion.html">TIAMAT Companion</a>
+            <a href="rail-01-genesis.html">Return to GENESIS &rarr;</a>
+        </nav>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>TIAMAT Rail 12: NEW-ORDER - Harmonized Type Hierarchy</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; margin-top: 10px;">From chaos, order. From order, new chaos. The cycle is eternal. L4 = phi^4 + phi^-4 = 7</p>
+        </footer>
+    </div>
+</body>
+</html>

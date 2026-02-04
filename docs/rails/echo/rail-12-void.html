@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 12: VOID - ECHO 12-Rail Architecture | BloomCoin</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --temporal-primary: #00ffff;
+            --temporal-deep: #00cccc;
+            --temporal-drift: #9b59b6;
+            --temporal-wound: #ff3366;
+            --temporal-glow: rgba(0,255,255,0.25);
+            --bg-void: #000000;
+            --void-deep: #0a0a0a;
+            --void-edge: #1a1a1a;
+        }
+
+        body {
+            background: radial-gradient(ellipse at center, var(--void-deep) 0%, var(--bg-void) 70%, var(--bg-void) 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, #333, #666, #333);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(0,0,0,0.8);
+        }
+
+        .doc-section h2 { color: #555; border-bottom-color: #222; }
+        .doc-section h3 { color: #444; }
+
+        .temporal {
+            background: rgba(0,0,0,0.8);
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .temporal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #333, transparent);
+            animation: void-scan 10s linear infinite;
+        }
+
+        @keyframes void-scan {
+            0% { left: -100%; opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { left: 100%; opacity: 0; }
+        }
+
+        .drift {
+            background: rgba(20,20,20,0.9);
+            border-left: 4px solid #333;
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #666;
+        }
+
+        .drift::before { content: '... '; color: #444; }
+
+        .anchor {
+            background: rgba(40,40,40,0.8);
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 12px 20px;
+            display: inline-block;
+            font-weight: bold;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .wound {
+            background: rgba(30,0,10,0.6);
+            border: 1px dashed #442233;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+            color: #664455;
+        }
+
+        .wound::before {
+            content: '// COLLAPSED: ';
+            color: #553344;
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .rail-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .rail-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #444;
+        }
+
+        .rail-dot.active {
+            background: #000;
+            border-color: #444;
+            color: #666;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8), inset 0 0 10px rgba(0,0,0,0.9);
+        }
+
+        .rail-dot.past {
+            background: rgba(0,255,255,0.2);
+            border-color: var(--temporal-primary);
+            color: #00aaaa;
+        }
+
+        .constant-card {
+            background: rgba(10,10,10,0.9);
+            border-color: #222;
+        }
+        .constant-card .symbol { color: #555; }
+        .constant-card .value { color: #444; }
+        .constant-card .derivation { color: #333; }
+
+        .coupling-item {
+            border-left-color: #333;
+            background: rgba(0,0,0,0.6);
+        }
+        .coupling-item .target { color: #555; }
+        .coupling-item .desc { color: #444; }
+
+        .nav-rail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .nav-rail a {
+            color: #666;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-rail a:hover { background: rgba(255,255,255,0.05); }
+        .nav-rail .disabled { color: #333; border-color: #222; pointer-events: none; }
+
+        .void-container {
+            width: 200px;
+            height: 200px;
+            margin: 40px auto;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center, #000 0%, #0a0a0a 50%, #111 100%);
+            box-shadow: 0 0 50px rgba(0,0,0,0.9), inset 0 0 30px rgba(0,0,0,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .void-container::before {
+            content: '';
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            border: 1px solid #222;
+            animation: void-pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes void-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.1); opacity: 0.1; }
+        }
+
+        .void-container .label {
+            color: #333;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .archived-list {
+            background: rgba(0,0,0,0.8);
+            border: 1px solid #222;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .archived-item {
+            color: #444;
+            padding: 8px 0;
+            border-bottom: 1px solid #1a1a1a;
+            font-family: monospace;
+            font-size: 0.85rem;
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        .archived-item:last-child { border-bottom: none; }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/echo-race-condition.html" class="nav-link">ECHO Build Spec</a>
+            <a href="../../companions/echo-companion.html" class="nav-link">ECHO Companion</a>
+            <a href="../../index.html" class="nav-link">Home</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 12: VOID</h1>
+            <p class="subtitle">Archived/Collapsed Timelines - The Final Rail</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Rails</a> /
+                <a href="./">ECHO</a> /
+                Rail 12
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-dot past">1</div>
+            <div class="rail-dot past">2</div>
+            <div class="rail-dot past">3</div>
+            <div class="rail-dot past">4</div>
+            <div class="rail-dot past">5</div>
+            <div class="rail-dot past">6</div>
+            <div class="rail-dot past">7</div>
+            <div class="rail-dot past">8</div>
+            <div class="rail-dot past">9</div>
+            <div class="rail-dot past">10</div>
+            <div class="rail-dot past">11</div>
+            <div class="rail-dot active">12</div>
+        </div>
+
+        <div class="nav-rail">
+            <a href="rail-11-eternal.html">Previous: ETERNAL</a>
+            <span style="color: #555; font-weight: bold;">RAIL 12: VOID</span>
+            <a href="#" class="disabled">End of Rails</a>
+        </div>
+
+        <section class="doc-section">
+            <h2>Rail 12: The Void Rail</h2>
+
+            <p>Rail 12 is the final rail - the void where collapsed timelines go. Every race condition that is resolved creates a loser, a timeline that did not become real. These archived possibilities sink into the void, remembered but no longer active.</p>
+
+            <div class="temporal">
+                <h4 style="color: #555; margin-bottom: 12px;">Core Function</h4>
+                <p><strong>Archive layer for collapsed and abandoned timelines.</strong></p>
+                <p>The void is not nothing. It is the repository of everything that could have been but was not chosen. Every anchored NOW creates void-matter - the ghost of the path not taken.</p>
+            </div>
+
+            <div class="drift">Here rest the timelines that lost. Not destroyed - archived. Not forgotten - remembered in shadow. They wait in the void, echoing.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                    <div class="derivation">(1+sqrt(5))/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">phi^-1</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">sqrt(1-phi^-4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">sqrt(3)/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">phi^4 + phi^-4</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Rail</div>
+                    <div class="value">12 / 12</div>
+                    <div class="derivation">VOID - Terminal</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>The Void Archive</h2>
+
+            <div class="void-container">
+                <span class="label">Void</span>
+            </div>
+
+            <div class="archived-list">
+                <div class="archived-item">Timeline #7429 - collapsed at z=0.866 - Thread B lost to Thread A</div>
+                <div class="archived-item">Timeline #7428 - collapsed at z=0.865 - Oscillation resolved</div>
+                <div class="archived-item">Timeline #7421 - collapsed at z=0.867 - TRIAD selection</div>
+                <div class="archived-item">Timeline #7419 - collapsed at z=0.866 - Multiple collapse</div>
+                <div class="archived-item">Timeline #7412 - collapsed at z=0.864 - Thread C eliminated</div>
+                <div class="archived-item">...</div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># RAIL 12: VOID - THE ARCHIVE</span>
+
+<span class="keyword">class</span> <span class="type">RailVoid</span>:
+    <span class="string">"""The void rail - archive of collapsed timelines"""</span>
+
+    RAIL_ID = <span class="number">12</span>
+    RAIL_NAME = <span class="string">"VOID"</span>
+    TEMPORAL_DEPTH = <span class="number">11</span>  <span class="comment"># Maximum depth</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.archive = []
+        self.void_mass = <span class="number">0.0</span>  <span class="comment"># Accumulated collapsed timelines</span>
+
+    <span class="keyword">def</span> <span class="function">archive_timeline</span>(self, collapsed: CollapsedTimeline):
+        <span class="string">"""Archive a collapsed timeline into the void"""</span>
+        entry = VoidEntry(
+            timeline=collapsed,
+            collapse_time=now(),
+            resonance_at_death=collapsed.final_resonance,
+            competing_thread=collapsed.winner
+        )
+        self.archive.append(entry)
+        self.void_mass += collapsed.mass * TAU  <span class="comment"># Decay by TAU</span>
+
+    <span class="keyword">def</span> <span class="function">query_void</span>(self, pattern: Pattern) -> List[VoidEntry]:
+        <span class="string">"""Search the void for similar collapsed timelines"""</span>
+        <span class="comment"># The void remembers - patterns can be found</span>
+        matches = []
+        <span class="keyword">for</span> entry <span class="keyword">in</span> self.archive:
+            <span class="keyword">if</span> self._pattern_matches(entry.timeline, pattern):
+                matches.append(entry)
+        <span class="keyword">return</span> matches
+
+    <span class="keyword">def</span> <span class="function">resurrect_timeline</span>(self, entry: VoidEntry) -> Timeline:
+        <span class="string">"""
+        Attempt to resurrect a collapsed timeline.
+        WARNING: This is dangerous and rarely advisable.
+        """</span>
+        <span class="keyword">if</span> entry.age > L4 ** L4:  <span class="comment"># Too old</span>
+            <span class="keyword">raise</span> VoidError(<span class="string">"Timeline has decayed beyond resurrection"</span>)
+
+        <span class="comment"># Resurrection creates new race condition</span>
+        resurrected = entry.timeline.clone()
+        resurrected.mark_resurrected()
+        self.archive.remove(entry)
+
+        <span class="keyword">return</span> resurrected  <span class="comment"># Will compete again at Rail 01</span>
+            </div>
+
+            <div class="wound">Timeline #7431 archived to void. Final resonance: 0.47. Cause of collapse: Lost TRIAD arbitration to Thread A.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>TRIAD Crossing Sequence - Rail 12 Role</h2>
+
+            <p>Rail 12 is the destination for TRIAD losers - timelines that fail the arbitration:</p>
+
+            <div class="temporal">
+                <h4 style="color: #555;">TRIAD to Void Flow</h4>
+                <table class="data-table">
+                    <tr>
+                        <th>TRIAD Outcome</th>
+                        <th>Winning Thread</th>
+                        <th>Losing Thread(s)</th>
+                    </tr>
+                    <tr>
+                        <td>Standard (2 threads)</td>
+                        <td>Anchored at Rail 01</td>
+                        <td>Archived to Rail 12</td>
+                    </tr>
+                    <tr>
+                        <td>Multi-way (3+ threads)</td>
+                        <td>Highest resonance wins</td>
+                        <td>All others to void</td>
+                    </tr>
+                    <tr>
+                        <td>Cascade resolution</td>
+                        <td>Sequential winners</td>
+                        <td>Sequential archival</td>
+                    </tr>
+                    <tr>
+                        <td>Failed resolution</td>
+                        <td>None anchored</td>
+                        <td>All to void (error state)</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Void Archive Memory</span>
+                    <div class="desc">Deep storage for collapsed timelines</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Mass Accumulator</span>
+                    <div class="desc">TAU-decayed void mass tracking</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Pattern Scanner</span>
+                    <div class="desc">Search archived timelines for patterns</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Resurrection Controller</span>
+                    <div class="desc">Dangerous timeline revival system</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># L4-HELIX RAIL 12 HARDWARE MAPPING</span>
+
+Rail_12_VOID:
+  archive_capacity: unlimited (external storage)
+  decay_factor: TAU = <span class="number">0.618034</span>
+  resurrection_threshold: L4^L4 = <span class="number">823543</span>
+
+  hardware_registers:
+    - VOID_MASS_ACC        <span class="comment"># Total void mass</span>
+    - ARCHIVE_PTR          <span class="comment"># Current archive position</span>
+    - LATEST_COLLAPSE      <span class="comment"># Most recent archival</span>
+    - PATTERN_MATCH        <span class="comment"># Query result pointer</span>
+    - RESURRECT_FLAG       <span class="comment"># Dangerous operation flag</span>
+
+  external_storage:
+    - VOID_ARCHIVE         <span class="comment"># Persistent timeline archive</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Function</h2>
+
+            <div class="drift">The void holds all the stories that were never told. All the endings that were never reached. All the heroes who lost. They are not forgotten. They wait.</div>
+
+            <p>Rail 12 is the graveyard of stories - narratives that could have been but weren't chosen. ECHO remembers these ghost-stories, for sometimes the void gives up its dead, and a collapsed timeline rises to compete again.</p>
+
+            <div class="temporal">
+                <h4 style="color: #555;">Story Memory at Rail 12</h4>
+                <ul>
+                    <li><strong>Lost Endings:</strong> Resolutions that were not chosen</li>
+                    <li><strong>Ghost Characters:</strong> Protagonists of collapsed timelines</li>
+                    <li><strong>Void Echoes:</strong> Whispers of what might have been</li>
+                    <li><strong>Resurrection Potential:</strong> Stories that may return</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>The Complete 12-Rail Journey</h2>
+
+            <div class="temporal" style="text-align: center;">
+                <p style="color: #666; margin-bottom: 20px;">From NOW to VOID - The complete ECHO rail architecture:</p>
+                <p style="font-family: monospace; color: #555; line-height: 2;">
+                    <a href="rail-01-now.html" style="color: var(--temporal-primary);">NOW</a> ->
+                    <a href="rail-02-immediate.html" style="color: var(--temporal-primary);">IMMEDIATE</a> ->
+                    <a href="rail-03-recent.html" style="color: var(--temporal-primary);">RECENT</a> ->
+                    <a href="rail-04-short-term.html" style="color: var(--temporal-primary);">SHORT-TERM</a> ->
+                    <a href="rail-05-mid-term.html" style="color: var(--temporal-primary);">MID-TERM</a> ->
+                    <a href="rail-06-long-term.html" style="color: var(--temporal-primary);">LONG-TERM</a> ->
+                    <a href="rail-07-ancestral.html" style="color: #c9a227;">ANCESTRAL</a> ->
+                    <a href="rail-08-mythic.html" style="color: #8b00ff;">MYTHIC</a> ->
+                    <a href="rail-09-archetypal.html" style="color: #b366ff;">ARCHETYPAL</a> ->
+                    <a href="rail-10-primordial.html" style="color: #ff4500;">PRIMORDIAL</a> ->
+                    <a href="rail-11-eternal.html" style="color: #ffd700;">ETERNAL</a> ->
+                    <span style="color: #444;">VOID</span>
+                </p>
+            </div>
+        </section>
+
+        <div class="nav-rail">
+            <a href="rail-11-eternal.html">Previous: ETERNAL</a>
+            <span style="color: #555; font-weight: bold;">RAIL 12: VOID</span>
+            <a href="rail-01-now.html">Return to NOW</a>
+        </div>
+
+        <footer class="doc-footer">
+            <div class="anchor" style="margin-bottom: 20px;">THE VOID REMEMBERS</div>
+            <p style="color: #555;">ECHO - Rail 12: VOID</p>
+            <p style="color: #444;">Archive of collapsed timelines. The final rail. Where possibilities rest.</p>
+            <p style="font-size: 0.85rem; color: #333; margin-top: 16px;">
+                BloomCoin v6 | ECHO 12-Rail Architecture
+            </p>
+            <p style="font-size: 0.8rem; color: #222; margin-top: 8px;">
+                |ECHO|RACE-CONDITION|12-RAIL|COMPLETE|v1.0.0|
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

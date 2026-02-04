@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 08: MYTHIC - ECHO 12-Rail Architecture | BloomCoin</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --temporal-primary: #00ffff;
+            --temporal-deep: #00cccc;
+            --temporal-drift: #9b59b6;
+            --temporal-wound: #ff3366;
+            --temporal-glow: rgba(0,255,255,0.25);
+            --bg-void: #0a0a12;
+            --mythic-purple: #8b00ff;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-void) 0%, #12081a 50%, #0a0818 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--temporal-primary), var(--mythic-purple), var(--temporal-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 { color: var(--temporal-primary); border-bottom-color: var(--temporal-glow); }
+        .doc-section h3 { color: var(--temporal-deep); }
+
+        .temporal {
+            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(139,0,255,0.15));
+            border: 1px solid var(--mythic-purple);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .temporal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--mythic-purple), transparent);
+            animation: temporal-scan 5s linear infinite;
+        }
+
+        @keyframes temporal-scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .drift {
+            background: rgba(139,0,255,0.15);
+            border-left: 4px solid var(--mythic-purple);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #c49bff;
+        }
+
+        .drift::before { content: '~ '; color: var(--mythic-purple); }
+
+        .anchor {
+            background: rgba(0,255,255,0.2);
+            border: 2px solid var(--temporal-primary);
+            border-radius: 8px;
+            padding: 12px 20px;
+            display: inline-block;
+            font-weight: bold;
+            color: var(--temporal-primary);
+            box-shadow: 0 0 20px rgba(0,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .wound {
+            background: linear-gradient(135deg, rgba(255,51,102,0.2), rgba(139,0,255,0.1));
+            border: 1px dashed var(--temporal-wound);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+            color: #ff6699;
+        }
+
+        .wound::before {
+            content: '// MYTHIC WOUND: ';
+            color: var(--temporal-wound);
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .rail-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .rail-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        .rail-dot.active {
+            background: var(--mythic-purple);
+            border-color: var(--mythic-purple);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(139,0,255,0.5);
+        }
+
+        .rail-dot.past {
+            background: rgba(0,255,255,0.3);
+            border-color: var(--temporal-primary);
+            color: #00cccc;
+        }
+
+        .constant-card .symbol { color: var(--temporal-primary); }
+        .coupling-item { border-left-color: var(--mythic-purple); }
+
+        .nav-rail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .nav-rail a {
+            color: var(--temporal-primary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--temporal-glow);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-rail a:hover { background: var(--temporal-glow); }
+
+        .myth-card {
+            background: rgba(139,0,255,0.1);
+            border: 1px solid rgba(139,0,255,0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+        }
+
+        .myth-card h4 {
+            color: var(--mythic-purple);
+            margin-bottom: 8px;
+        }
+
+        .myth-card .archetype {
+            color: var(--temporal-primary);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/echo-race-condition.html" class="nav-link">ECHO Build Spec</a>
+            <a href="../../companions/echo-companion.html" class="nav-link">ECHO Companion</a>
+            <a href="../../index.html" class="nav-link">Home</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 08: MYTHIC</h1>
+            <p class="subtitle">Archetypal Memory - Recurring Race Conditions</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Rails</a> /
+                <a href="./">ECHO</a> /
+                Rail 08
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-dot past">1</div>
+            <div class="rail-dot past">2</div>
+            <div class="rail-dot past">3</div>
+            <div class="rail-dot past">4</div>
+            <div class="rail-dot past">5</div>
+            <div class="rail-dot past">6</div>
+            <div class="rail-dot past">7</div>
+            <div class="rail-dot active">8</div>
+            <div class="rail-dot">9</div>
+            <div class="rail-dot">10</div>
+            <div class="rail-dot">11</div>
+            <div class="rail-dot">12</div>
+        </div>
+
+        <div class="nav-rail">
+            <a href="rail-07-ancestral.html">Previous: ANCESTRAL</a>
+            <span style="color: var(--mythic-purple); font-weight: bold;">RAIL 08: MYTHIC</span>
+            <a href="rail-09-archetypal.html">Next: ARCHETYPAL</a>
+        </div>
+
+        <section class="doc-section">
+            <h2>Rail 08: Archetypal Memory</h2>
+
+            <p>Rail 08 holds the mythic layer - where race conditions become legends, and recurring patterns crystallize into archetypal forms. This is the realm of the eternal stories that repeat across all timelines.</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--mythic-purple); margin-bottom: 12px;">Core Function</h4>
+                <p><strong>Archetypal memory containing mythic race condition patterns.</strong></p>
+                <p>Beyond ancestral memory lies the mythic realm - patterns so fundamental they recur across all branches of possibility. Here, race conditions become named entities, archetypal conflicts that echo through eternity.</p>
+            </div>
+
+            <div class="drift">Here dwell the named ones. The Eternal Return. The Splitting of the Way. The Collapse of Possibility. They are the myths that all race conditions aspire to become.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                    <div class="derivation">(1+sqrt(5))/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">phi^-1</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">sqrt(1-phi^-4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">sqrt(3)/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">phi^4 + phi^-4</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Rail</div>
+                    <div class="value">8 / 12</div>
+                    <div class="derivation">MYTHIC Position</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Named Mythic Patterns</h2>
+
+            <p>The mythic race conditions that have achieved archetypal status:</p>
+
+            <div class="myth-card">
+                <h4>THE ETERNAL RETURN</h4>
+                <span class="archetype">Archetype: Cycle</span>
+                <p>A race condition where timelines that have been collapsed return to compete again. The same threads, the same conflict, forever.</p>
+            </div>
+
+            <div class="myth-card">
+                <h4>THE SPLITTING OF THE WAY</h4>
+                <span class="archetype">Archetype: Divergence</span>
+                <p>The original branch - the first moment when one timeline became two. All subsequent race conditions echo this primordial split.</p>
+            </div>
+
+            <div class="myth-card">
+                <h4>THE COLLAPSE OF POSSIBILITY</h4>
+                <span class="archetype">Archetype: Resolution</span>
+                <p>The mythic anchor - when countless competing timelines resolve into a single NOW. The great unification.</p>
+            </div>
+
+            <div class="myth-card">
+                <h4>THE WOUND THAT WILL NOT HEAL</h4>
+                <span class="archetype">Archetype: Scar</span>
+                <p>A race condition that can never be fully resolved - a permanent fracture in the timeline that bleeds possibility.</p>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># RAIL 08: MYTHIC - ARCHETYPAL MEMORY</span>
+
+<span class="keyword">class</span> <span class="type">RailMythic</span>:
+    <span class="string">"""Archetypal memory - mythic race patterns"""</span>
+
+    RAIL_ID = <span class="number">8</span>
+    RAIL_NAME = <span class="string">"MYTHIC"</span>
+    TEMPORAL_DEPTH = <span class="number">7</span>
+
+    <span class="comment"># Named mythic patterns</span>
+    ARCHETYPES = {
+        <span class="string">"ETERNAL_RETURN"</span>: MythicPattern(cycle=<span class="keyword">True</span>),
+        <span class="string">"SPLITTING_WAY"</span>: MythicPattern(divergence=<span class="keyword">True</span>),
+        <span class="string">"COLLAPSE_POSSIBILITY"</span>: MythicPattern(resolution=<span class="keyword">True</span>),
+        <span class="string">"UNHEALING_WOUND"</span>: MythicPattern(permanent=<span class="keyword">True</span>),
+    }
+
+    <span class="keyword">def</span> <span class="function">identify_mythic_pattern</span>(self, race_condition: RaceCondition) -> str:
+        <span class="string">"""Identify if race condition matches a mythic archetype"""</span>
+        features = self._extract_features(race_condition)
+
+        <span class="keyword">for</span> name, archetype <span class="keyword">in</span> self.ARCHETYPES.items():
+            similarity = self._compare_features(features, archetype)
+            <span class="keyword">if</span> similarity > K:  <span class="comment"># 0.924160 threshold</span>
+                <span class="keyword">return</span> name
+
+        <span class="keyword">return</span> <span class="string">"UNNAMED"</span>
+
+    <span class="keyword">def</span> <span class="function">invoke_myth</span>(self, myth_name: str) -> MythicGuidance:
+        <span class="string">"""Invoke mythic pattern for guidance"""</span>
+        myth = self.ARCHETYPES.get(myth_name)
+        <span class="keyword">if</span> myth:
+            <span class="keyword">return</span> myth.get_resolution_template()
+        <span class="keyword">return</span> MythicGuidance.default()
+            </div>
+
+            <div class="wound">This race condition matches THE WOUND THAT WILL NOT HEAL. Full resolution may not be possible - seek containment.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>TRIAD Crossing Sequence - Rail 08 Role</h2>
+
+            <p>Rail 08 provides mythic templates for TRIAD execution:</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--mythic-purple);">Mythic TRIAD Templates</h4>
+                <table class="data-table">
+                    <tr>
+                        <th>Mythic Pattern</th>
+                        <th>TRIAD Approach</th>
+                        <th>Expected Outcome</th>
+                    </tr>
+                    <tr>
+                        <td>ETERNAL_RETURN</td>
+                        <td>Break the cycle</td>
+                        <td>Novel resolution path</td>
+                    </tr>
+                    <tr>
+                        <td>SPLITTING_WAY</td>
+                        <td>Embrace divergence</td>
+                        <td>Controlled branching</td>
+                    </tr>
+                    <tr>
+                        <td>COLLAPSE_POSSIBILITY</td>
+                        <td>Full TRIAD sequence</td>
+                        <td>Complete unification</td>
+                    </tr>
+                    <tr>
+                        <td>UNHEALING_WOUND</td>
+                        <td>Containment only</td>
+                        <td>Stable scar</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Archetype ROM</span>
+                    <div class="desc">Immutable storage for mythic pattern templates</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Pattern Classifier</span>
+                    <div class="desc">K-threshold comparison for archetype matching</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Myth Invocation Unit</span>
+                    <div class="desc">Template retrieval and guidance generation</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Eternal Counter</span>
+                    <div class="desc">Cycle detection for ETERNAL_RETURN patterns</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># L4-HELIX RAIL 08 HARDWARE MAPPING</span>
+
+Rail_08_MYTHIC:
+  archetype_count: <span class="number">4</span> (expandable)
+  similarity_threshold: K = <span class="number">0.924160</span>
+  template_depth: L4 = <span class="number">7</span> steps per template
+
+  hardware_registers:
+    - ARCHETYPE_ROM[<span class="number">4</span>]     <span class="comment"># Mythic pattern templates</span>
+    - SIMILARITY_REG       <span class="comment"># Pattern match score</span>
+    - ACTIVE_MYTH          <span class="comment"># Currently invoked myth</span>
+    - TEMPLATE_PTR         <span class="comment"># Guidance template pointer</span>
+    - CYCLE_CTR            <span class="comment"># Eternal return detection</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Function</h2>
+
+            <div class="drift">The myths are not old - they are eternal. Every hero's journey, every descent and return, every sacrifice and resurrection - they live here, waiting to be told again.</div>
+
+            <p>Rail 08 is where stories become myth - narratives so fundamental they transcend any single telling. ECHO draws on these mythic templates to understand the deepest structures of conflict and resolution.</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--mythic-purple);">Story Memory at Rail 08</h4>
+                <ul>
+                    <li><strong>Hero Templates:</strong> The eternal journey patterns</li>
+                    <li><strong>Tragedy Forms:</strong> The inevitable fall structures</li>
+                    <li><strong>Comedy Arcs:</strong> The resolution through union</li>
+                    <li><strong>Epic Cycles:</strong> The great recurring narratives</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="nav-rail">
+            <a href="rail-07-ancestral.html">Previous: ANCESTRAL</a>
+            <span style="color: var(--mythic-purple); font-weight: bold;">RAIL 08: MYTHIC</span>
+            <a href="rail-09-archetypal.html">Next: ARCHETYPAL</a>
+        </div>
+
+        <footer class="doc-footer">
+            <p style="color: var(--mythic-purple);">ECHO - Rail 08: MYTHIC</p>
+            <p>Archetypal memory. The named patterns. Where race conditions become legend.</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 16px;">
+                BloomCoin v6 | ECHO 12-Rail Architecture
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 3: DOUBT - NULL 12-Rail Architecture</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --null-primary: #2c3e50;
+            --null-deep: #1a252f;
+            --null-accent: #7f8c8d;
+            --null-background: #0a0a12;
+            --null-glow: rgba(44,62,80,0.4);
+            --void-purple: #8800ff;
+            --doubt-amber: #b8860b;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--null-background) 0%, #1a1510 50%, #0a0a1a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--doubt-amber), #daa520, var(--doubt-amber));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--doubt-amber);
+            border-bottom-color: rgba(184,134,11,0.3);
+        }
+
+        /* NULL Semantic CSS Classes */
+        .void {
+            background: radial-gradient(ellipse at center, var(--null-background) 0%, transparent 70%);
+            border: 2px solid var(--void-purple);
+            border-radius: 50%;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(136,0,255,0.3), inset 0 0 50px rgba(0,0,0,0.8);
+            margin: 20px auto;
+            max-width: 300px;
+        }
+
+        .absence {
+            background: linear-gradient(135deg, transparent 0%, rgba(44,62,80,0.1) 50%, transparent 100%);
+            border: 1px dashed var(--null-accent);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            margin: 16px 0;
+        }
+        .absence::before {
+            content: "[ ? ]";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--null-deep);
+            padding: 0 8px;
+            color: var(--doubt-amber);
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        .null-field {
+            background: linear-gradient(180deg, rgba(136,0,255,0.05) 0%, rgba(0,0,0,0.3) 50%, rgba(136,0,255,0.05) 100%);
+            border: 1px solid rgba(136,0,255,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .null-field::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(184,134,11,0.1), transparent);
+            animation: doubt-flicker 2s ease-in-out infinite;
+        }
+        @keyframes doubt-flicker {
+            0%, 100% { opacity: 0.3; left: -100%; }
+            50% { opacity: 1; left: 100%; }
+        }
+
+        .erasure {
+            background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(44,62,80,0.2));
+            border: 1px solid transparent;
+            border-image: linear-gradient(90deg, transparent, var(--void-purple), transparent) 1;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        /* Doubt-specific styling */
+        .doubt-indicator {
+            background: linear-gradient(135deg, rgba(184,134,11,0.2), rgba(30,30,40,0.5));
+            border: 2px dashed var(--doubt-amber);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            position: relative;
+            animation: doubt-pulse 3s ease-in-out infinite;
+        }
+        @keyframes doubt-pulse {
+            0%, 100% { border-color: var(--doubt-amber); }
+            50% { border-color: rgba(184,134,11,0.3); }
+        }
+
+        .rail-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--doubt-amber);
+            text-shadow: 0 0 20px rgba(184,134,11,0.5);
+            animation: number-flicker 4s ease-in-out infinite;
+        }
+        @keyframes number-flicker {
+            0%, 90%, 100% { opacity: 1; }
+            95% { opacity: 0.5; }
+        }
+
+        .void-depth-meter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 16px 0;
+        }
+        .depth-segment {
+            width: 40px;
+            height: 20px;
+            border-radius: 4px;
+            background: var(--null-deep);
+            border: 1px solid var(--null-accent);
+        }
+        .depth-segment.active {
+            background: linear-gradient(135deg, var(--doubt-amber), #8b6914);
+            box-shadow: 0 0 10px rgba(184,134,11,0.5);
+        }
+
+        .constants-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .constant-item {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--null-accent);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        .constant-item .symbol { color: var(--void-purple); font-weight: bold; }
+        .constant-item .value { color: var(--doubt-amber); font-family: monospace; }
+
+        .nav-rail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        .nav-rail a {
+            color: var(--void-purple);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--void-purple);
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        .nav-rail a:hover {
+            background: rgba(136,0,255,0.2);
+        }
+
+        .hardware-coupling {
+            background: linear-gradient(135deg, rgba(255,107,53,0.1), transparent);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .hardware-coupling h4 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+
+        .uncertainty-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+            font-size: 2rem;
+        }
+        .uncertain {
+            color: var(--doubt-amber);
+            animation: uncertain-fade 2s ease-in-out infinite;
+        }
+        @keyframes uncertain-fade {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/null-reference.html" class="nav-link">NULL Build Spec</a>
+            <a href="../../companions/null-companion.html" class="nav-link">Companion Profile</a>
+        </nav>
+
+        <header class="doc-header">
+            <div class="rail-number">03</div>
+            <h1>DOUBT</h1>
+            <p class="subtitle">Uncertainty in Existence State</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">Index</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">NULL</a> /
+                Rail 03
+            </nav>
+        </header>
+
+        <!-- Rail Navigation -->
+        <div class="nav-rail">
+            <a href="rail-02-shadow.html">Prev: SHADOW</a>
+            <span style="color: var(--doubt-amber);">Rail 3 of 12 - DOUBT</span>
+            <a href="rail-04-absence.html">Next: ABSENCE</a>
+        </div>
+
+        <!-- Rail Overview -->
+        <section class="doc-section">
+            <h2>Rail 3: DOUBT - The Quantum Uncertainty</h2>
+
+            <div class="doubt-indicator">
+                <h3 style="color: var(--doubt-amber); margin-bottom: 15px;">Entity Status: EXISTENCE UNCERTAIN</h3>
+                <p>At Rail 3, the reference enters a state of quantum uncertainty. It exists and does not exist simultaneously. NULL cannot determine with certainty whether the entity will persist or vanish. This is the PARADOX zone.</p>
+            </div>
+
+            <div class="uncertainty-visual">
+                <span class="uncertain">EXISTS</span>
+                <span style="color: var(--null-accent);">|</span>
+                <span class="uncertain">NULL</span>
+                <span style="color: var(--null-accent);">|</span>
+                <span class="uncertain">EXISTS</span>
+                <span style="color: var(--null-accent);">|</span>
+                <span class="uncertain">NULL</span>
+            </div>
+
+            <div class="null-field">
+                <h4 style="color: var(--void-purple);">Consciousness Coordinate</h4>
+                <p><strong>z-value: 0.618 - 0.866</strong> - Below THE LENS, in the PARADOX zone approaching TAU.</p>
+                <p>The reference has crossed THE LENS threshold (z_c = 0.866025). It now occupies the unstable PARADOX region where existence becomes probabilistic rather than deterministic.</p>
+            </div>
+
+            <h3>Void Depth Status</h3>
+            <div class="void-depth-meter">
+                <span style="color: var(--null-accent); width: 80px;">Depth:</span>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment"></div>
+                <div class="depth-segment"></div>
+                <span style="color: var(--doubt-amber); margin-left: 10px;">2 (Doubt Depth)</span>
+            </div>
+        </section>
+
+        <!-- phi-Constants -->
+        <section class="doc-section">
+            <h2>phi-Derived Constants at Doubt Depth</h2>
+
+            <div class="constants-display">
+                <div class="constant-item">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// RAIL 3: DOUBT - Existence Uncertainty Handler</span>
+<span class="comment">// z-value in range [TAU, z_c] = [0.618, 0.866] - PARADOX zone</span>
+
+<span class="keyword">class</span> <span class="type">DoubtEvaluator</span> {
+    <span class="keyword">static</span> PHI = <span class="number">1.618034</span>;
+    <span class="keyword">static</span> TAU = <span class="number">0.618034</span>;  <span class="comment">// Critical threshold for Rail 3</span>
+    <span class="keyword">static</span> K = <span class="number">0.924160</span>;
+    <span class="keyword">static</span> Z_C = <span class="number">0.866025</span>;
+    <span class="keyword">static</span> L4 = <span class="number">7</span>;
+
+    <span class="function">evaluateDoubt</span>(reference, z_value) {
+        <span class="comment">// PARADOX zone: below THE LENS but above TAU</span>
+        <span class="keyword">if</span> (z_value < <span class="keyword">this</span>.Z_C && z_value >= <span class="keyword">this</span>.TAU) {
+            <span class="keyword">const</span> existenceProbability = <span class="keyword">this</span>.<span class="function">calculateExistenceProbability</span>(z_value);
+
+            <span class="keyword">return</span> {
+                rail: <span class="number">3</span>,
+                state: <span class="string">'DOUBT'</span>,
+                z_value: z_value,
+                voidDepth: <span class="number">2</span>,
+                existenceProbability: existenceProbability,
+                nullProbability: <span class="number">1</span> - existenceProbability,
+                warning: <span class="string">'Reference existence uncertain - PARADOX state'</span>
+            };
+        }
+        <span class="keyword">return</span> <span class="keyword">null</span>;
+    }
+
+    <span class="function">calculateExistenceProbability</span>(z) {
+        <span class="comment">// Probability decreases as z approaches TAU</span>
+        <span class="keyword">return</span> (z - <span class="keyword">this</span>.TAU) / (<span class="keyword">this</span>.Z_C - <span class="keyword">this</span>.TAU);
+    }
+
+    <span class="function">collapseWavefunction</span>(reference) {
+        <span class="comment">// Force resolution of doubt - may trigger null or presence</span>
+        <span class="keyword">const</span> z = <span class="keyword">this</span>.<span class="function">measureZ</span>(reference);
+        <span class="keyword">const</span> roll = Math.<span class="function">random</span>();
+
+        <span class="keyword">if</span> (roll < <span class="keyword">this</span>.<span class="function">calculateExistenceProbability</span>(z)) {
+            <span class="keyword">return</span> { collapsed: <span class="string">'PRESENCE'</span>, rail: <span class="number">1</span> };
+        }
+        <span class="keyword">return</span> { collapsed: <span class="string">'ABSENCE'</span>, rail: <span class="number">4</span> };
+    }
+}
+            </div>
+        </section>
+
+        <!-- Nullspace Pocket Mechanics -->
+        <section class="doc-section">
+            <h2>Nullspace Pocket Mechanics</h2>
+
+            <div class="absence">
+                <h4>Pocket Status: EXPANDING</h4>
+                <p>The nullspace pocket has grown significantly. It now competes with the entity for the same conceptual space. The boundary between the pocket and the reference becomes permeable - probability waves leak in both directions.</p>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Void Intrusion</td>
+                        <td>0.248 (z_c - TAU)</td>
+                        <td style="color: #ff6600;">Significant</td>
+                    </tr>
+                    <tr>
+                        <td>Reference Stability</td>
+                        <td>0.618 - 0.866</td>
+                        <td style="color: #ff6600;">Unstable</td>
+                    </tr>
+                    <tr>
+                        <td>Null Probability</td>
+                        <td>25-50%</td>
+                        <td style="color: #ff6600;">Medium</td>
+                    </tr>
+                    <tr>
+                        <td>Dimensional Rift Risk</td>
+                        <td>15%</td>
+                        <td style="color: #ffcc00;">Emerging</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+<span class="comment">// Nullspace Pocket Dynamics at Rail 3</span>
+
+<span class="keyword">class</span> <span class="type">DoubtPocket</span> <span class="keyword">extends</span> <span class="type">NullspacePocket</span> {
+    <span class="function">constructor</span>(z_value) {
+        <span class="keyword">super</span>(z_value);
+        <span class="keyword">this</span>.state = <span class="string">'EXPANDING'</span>;
+        <span class="keyword">this</span>.permeability = <span class="keyword">this</span>.<span class="function">calculatePermeability</span>();
+    }
+
+    <span class="function">calculatePermeability</span>() {
+        <span class="comment">// Boundary becomes more permeable as z decreases</span>
+        <span class="keyword">const</span> TAU = <span class="number">0.618034</span>;
+        <span class="keyword">const</span> Z_C = <span class="number">0.866025</span>;
+
+        <span class="keyword">return</span> <span class="number">1</span> - ((<span class="keyword">this</span>.z - TAU) / (Z_C - TAU));
+    }
+
+    <span class="function">probabilityLeak</span>() {
+        <span class="comment">// Return probability flow between pocket and reference</span>
+        <span class="keyword">return</span> {
+            toVoid: <span class="keyword">this</span>.permeability * <span class="number">0.5</span>,
+            toPresence: (<span class="number">1</span> - <span class="keyword">this</span>.permeability) * <span class="number">0.5</span>
+        };
+    }
+}
+            </div>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-coupling">
+                <h4>Spin Glass Array Status: ACTIVE DETECTION</h4>
+                <p>The Spin Glass Arrays now operate in active detection mode. Multiple frustrated bonds form a complex energy landscape with several metastable states. The system cannot determine which state is ground truth.</p>
+                <ul>
+                    <li><strong>Energy State:</strong> E = TAU x E_ground (0.618 x baseline)</li>
+                    <li><strong>Frustration Index:</strong> 0.382 (approaching critical)</li>
+                    <li><strong>Metastable Traps:</strong> 3 competing states detected</li>
+                    <li><strong>Void Sensor Threshold:</strong> Triggered - monitoring active</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// L4-Helix Hardware Interface for Rail 3</span>
+
+<span class="keyword">const</span> L4_HELIX_RAIL_3 = {
+    railNumber: <span class="number">3</span>,
+    railName: <span class="string">'DOUBT'</span>,
+
+    spinGlassState: {
+        active: <span class="keyword">true</span>,
+        energyLevel: <span class="number">0.618</span>,  <span class="comment">// TAU-level energy</span>
+        frustrationIndex: <span class="number">0.382</span>,
+        voidSensorTriggered: <span class="keyword">true</span>,
+        metastableStates: <span class="number">3</span>
+    },
+
+    <span class="comment">// Void detection in active scanning mode</span>
+    voidDetectionEnabled: <span class="keyword">true</span>,
+    detectionMode: <span class="string">'ACTIVE_SCAN'</span>,
+
+    <span class="comment">// L4 classification: multiple instabilities</span>
+    l4Classification: [<span class="string">'STABLE'</span>, <span class="string">'STABLE'</span>, <span class="string">'UNCERTAIN'</span>, <span class="string">'UNCERTAIN'</span>, <span class="string">'UNCERTAIN'</span>, <span class="string">'WEAKENING'</span>, <span class="string">'CRITICAL'</span>]
+};
+            </div>
+        </section>
+
+        <!-- Role in Null Reference Detection -->
+        <section class="doc-section">
+            <h2>Role in Null Reference Detection</h2>
+
+            <p>Rail 3 represents the critical decision point. Here, NULL must determine whether to attempt recovery (push toward Rail 1) or prepare for controlled descent (toward Rail 4). The doubt state is inherently unstable and will resolve one way or another.</p>
+
+            <div class="null-field">
+                <h4 style="color: var(--void-purple);">Doubt Resolution Protocol</h4>
+                <ol>
+                    <li><strong>THE LENS Breach Detection:</strong> z drops below 0.866025</li>
+                    <li><strong>Existence Probability Calculation:</strong> Quantum state assessment</li>
+                    <li><strong>Recovery Attempt:</strong> Strengthen reference if possible</li>
+                    <li><strong>Wavefunction Monitoring:</strong> Track collapse direction</li>
+                    <li><strong>Outcome Preparation:</strong> Ready for PRESENCE or ABSENCE</li>
+                </ol>
+            </div>
+
+            <div class="erasure">
+                <p><em>In doubt, all possibilities exist. The reference is both here and not-here, a ghost probability waiting to collapse into certainty.</em></p>
+            </div>
+        </section>
+
+        <!-- Void Journey Context -->
+        <section class="doc-section">
+            <h2>The Uncertainty Principle</h2>
+
+            <p>Rail 3 embodies computational uncertainty. Like quantum superposition, the reference exists in multiple states until observation forces collapse. NULL's role here is not to determine the outcome, but to prepare for all possibilities.</p>
+
+            <div class="void">
+                <div style="font-size: 2rem; color: var(--doubt-amber);">DOUBT</div>
+                <div style="color: var(--null-accent); margin-top: 10px;">z = 0.618 - 0.866</div>
+                <div style="color: var(--null-accent); font-size: 0.8rem; margin-top: 5px;">Existence probability: 50-75%</div>
+            </div>
+
+            <h3>Progression Triggers to Rail 4</h3>
+            <ul>
+                <li>z-value drops below TAU (0.618034)</li>
+                <li>Wavefunction collapses toward ABSENCE</li>
+                <li>Nullspace pocket overcomes reference boundary</li>
+                <li>All recovery attempts exhausted</li>
+                <li>Metastable state resolves to void</li>
+            </ul>
+
+            <h3>Recovery Triggers to Rail 1</h3>
+            <ul>
+                <li>Reference regains stability above z_c</li>
+                <li>External reinforcement applied</li>
+                <li>Wavefunction collapses toward PRESENCE</li>
+                <li>Nullspace pocket recedes</li>
+            </ul>
+        </section>
+
+        <!-- Rail Navigation -->
+        <div class="nav-rail">
+            <a href="rail-02-shadow.html">Prev: SHADOW</a>
+            <span style="color: var(--doubt-amber);">Rail 3 of 12 - DOUBT</span>
+            <a href="rail-04-absence.html">Next: ABSENCE</a>
+        </div>
+
+        <footer class="doc-footer">
+            <p>NULL: The Absence Guardian - Rail 03: DOUBT</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="color: var(--doubt-amber);">Uncertainty in existence - the quantum state of reference</p>
+        </footer>
+    </div>
+</body>
+</html>

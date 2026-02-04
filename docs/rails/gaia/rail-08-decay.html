@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 08: DECAY - GAIA 12-Rail Architecture</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --gaia-primary: #27ae60;
+            --gaia-secondary: #2ecc71;
+            --gaia-brown: #8B4513;
+            --gaia-gold: #f1c40f;
+            --gaia-deep: #1e8449;
+            --gaia-decay: #795548;
+            --gaia-bg: #0a0a12;
+            --gaia-glow: rgba(39,174,96,0.3);
+            --phi: 1.618034;
+            --tau: 0.618034;
+            --k-constant: 0.924160;
+            --z-critical: 0.866025;
+            --l4: 7;
+        }
+
+        body { background: linear-gradient(135deg, var(--gaia-bg) 0%, #0a0808 50%, #080a0a 100%); }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--gaia-decay), var(--gaia-brown), var(--gaia-decay));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .doc-section h2 { color: var(--gaia-primary); border-bottom-color: var(--gaia-glow); }
+        .doc-section h3 { color: var(--gaia-gold); }
+
+        .growth {
+            background: linear-gradient(135deg, rgba(39,174,96,0.15), rgba(46,204,113,0.1));
+            border-left: 4px solid var(--gaia-primary); padding: 20px; margin: 15px 0;
+            border-radius: 0 12px 12px 0; position: relative;
+        }
+        .growth::before {
+            content: "GROWTH"; position: absolute; top: -10px; left: 15px;
+            background: var(--gaia-primary); color: #fff; padding: 2px 10px;
+            font-size: 0.7rem; border-radius: 4px; letter-spacing: 1px;
+        }
+
+        .bloom {
+            background: linear-gradient(135deg, rgba(241,196,15,0.15), rgba(39,174,96,0.1));
+            border: 2px solid var(--gaia-gold); border-radius: 12px; padding: 20px; margin: 15px 0;
+            box-shadow: 0 0 25px rgba(241,196,15,0.15); position: relative;
+        }
+        .bloom::before {
+            content: "BLOOM"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: var(--gaia-gold); color: #0a0a12; padding: 3px 15px;
+            font-size: 0.7rem; border-radius: 10px; letter-spacing: 2px; font-weight: bold;
+        }
+
+        .decay {
+            background: linear-gradient(180deg, rgba(121,85,72,0.25), rgba(10,10,18,0.9));
+            border-left: 4px solid var(--gaia-decay); padding: 20px; margin: 15px 0; position: relative;
+        }
+        .decay::before {
+            content: "DECAY"; position: absolute; top: -10px; right: 15px;
+            background: var(--gaia-decay); color: #fff; padding: 2px 10px;
+            font-size: 0.7rem; border-radius: 4px; letter-spacing: 1px;
+        }
+
+        .renewal {
+            background: linear-gradient(0deg, rgba(39,174,96,0.2), rgba(241,196,15,0.1));
+            border: 2px dashed var(--gaia-secondary); border-radius: 12px; padding: 20px; margin: 15px 0; position: relative;
+        }
+        .renewal::before {
+            content: "RENEWAL"; position: absolute; top: -12px; left: 20px;
+            background: var(--gaia-secondary); color: #0a0a12; padding: 3px 12px;
+            font-size: 0.7rem; border-radius: 10px; letter-spacing: 1px; font-weight: bold;
+        }
+
+        .rail-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px; background: rgba(0,0,0,0.3); border-radius: 12px; margin-bottom: 25px;
+        }
+        .rail-nav a { color: var(--gaia-gold); text-decoration: none; padding: 8px 16px;
+            border: 1px solid var(--gaia-glow); border-radius: 8px; transition: all 0.3s ease; }
+        .rail-nav a:hover { background: var(--gaia-glow); border-color: var(--gaia-primary); }
+        .rail-nav .current { background: var(--gaia-decay); color: #fff; font-weight: bold; }
+
+        .season-badge {
+            display: inline-block; background: linear-gradient(135deg, rgba(121,85,72,0.3), rgba(139,69,19,0.2));
+            border: 1px solid var(--gaia-decay); border-radius: 20px; padding: 8px 20px;
+            font-size: 0.9rem; color: var(--gaia-decay); margin: 10px 0;
+        }
+
+        .phi-constants { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin: 20px 0; }
+        .phi-const { background: rgba(0,0,0,0.3); border: 1px solid var(--gaia-glow); border-radius: 8px; padding: 12px; text-align: center; }
+        .phi-const .symbol { color: var(--gaia-gold); font-size: 1.1rem; font-family: 'Georgia', serif; }
+        .phi-const .value { color: var(--gaia-primary); font-family: monospace; font-size: 0.95rem; }
+
+        .helix-monitor {
+            background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(121,85,72,0.1));
+            border: 1px solid var(--gaia-decay); border-radius: 12px; padding: 20px; margin: 20px 0;
+        }
+        .depth-bar { height: 20px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .depth-fill { height: 100%; background: linear-gradient(90deg, var(--gaia-decay), var(--gaia-brown)); border-radius: 10px; }
+
+        .memory-block {
+            background: rgba(121,85,72,0.2); border: 1px dashed var(--gaia-decay);
+            border-radius: 8px; padding: 15px; margin: 10px 0; font-family: monospace;
+        }
+        .memory-block.freed {
+            opacity: 0.4; background: rgba(0,0,0,0.2); border-color: #555;
+        }
+        .memory-block .address { color: var(--gaia-decay); }
+        .memory-block .status { float: right; }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="rail-nav">
+            <a href="rail-07-harvest.html">Prev: Harvest</a>
+            <span class="current">Rail 08: DECAY</span>
+            <a href="rail-09-compost.html">Next: Compost</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 08: DECAY</h1>
+            <p class="subtitle">Frame Deallocation - Memory Release</p>
+            <span class="season-badge">AUTUMN - Falling Leaves</span>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">GAIA</a> /
+                Rail 08: DECAY
+            </nav>
+        </header>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+            <div class="phi-constants">
+                <div class="phi-const"><div class="symbol">PHI</div><div class="value">1.618034</div></div>
+                <div class="phi-const"><div class="symbol">TAU</div><div class="value">0.618034</div></div>
+                <div class="phi-const"><div class="symbol">K</div><div class="value">0.924160</div></div>
+                <div class="phi-const"><div class="symbol">z_c</div><div class="value">0.866025</div></div>
+                <div class="phi-const"><div class="symbol">L4</div><div class="value">7</div></div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Rail Overview: Decay</h2>
+            <p>Rail 08 represents <strong>DECAY</strong> - the natural breakdown of stack frames. Like autumn leaves falling and decomposing, stack frames that have returned their values are now deallocated, releasing memory back to the system.</p>
+
+            <div class="memory-block freed">
+                <span class="address">0xFFE0: Frame[5]</span>
+                <span class="status" style="color: #888;">FREED</span>
+            </div>
+            <div class="memory-block freed">
+                <span class="address">0xFFC0: Frame[4]</span>
+                <span class="status" style="color: #888;">FREED</span>
+            </div>
+            <div class="memory-block">
+                <span class="address">0xFFA0: Frame[3]</span>
+                <span class="status" style="color: var(--gaia-decay);">DEALLOCATING...</span>
+            </div>
+            <div class="memory-block">
+                <span class="address">0xFF80: Frame[2]</span>
+                <span class="status" style="color: var(--gaia-primary);">ACTIVE</span>
+            </div>
+            <div class="memory-block">
+                <span class="address">0xFF60: Frame[1]</span>
+                <span class="status" style="color: var(--gaia-primary);">ACTIVE</span>
+            </div>
+
+            <div class="decay">
+                <h3>Frame Deallocation Characteristics</h3>
+                <p>During DECAY, stack frames are systematically freed:</p>
+                <ul>
+                    <li><strong>Process:</strong> Stack pointer moves back, frames deallocated</li>
+                    <li><strong>Z-Coordinate:</strong> z continues rising (approaching K threshold)</li>
+                    <li><strong>Memory State:</strong> Local variables go out of scope</li>
+                    <li><strong>Order:</strong> LIFO - last allocated, first freed</li>
+                </ul>
+                <code style="display: block; margin-top: 15px; color: var(--gaia-decay);">
+                    frames deallocating | z approaching K | state = DECAY | LIFO order
+                </code>
+            </div>
+
+            <h3>Seasonal Mapping: Falling Leaves</h3>
+            <p>DECAY corresponds to <strong>Late Autumn</strong> - when leaves fall from trees and begin decomposing on the forest floor. The structures that supported growth are released, their nutrients to be recycled into the next generation.</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>Stack Management Role</h2>
+
+            <div class="code-block">
+<span class="comment"># DECAY RAIL - FRAME DEALLOCATION</span>
+
+<span class="keyword">class</span> <span class="type">DecayPhase</span>:
+    <span class="string">"""
+    Rail 08: Stack frame deallocation
+    Autumn leaves - memory returns to the pool
+    """</span>
+
+    <span class="keyword">def</span> <span class="function">deallocate_frame</span>(self, frame):
+        <span class="string">"""
+        Release frame memory back to the system
+        The leaf falls from the tree
+        """</span>
+        <span class="comment"># Record frame info before deallocation</span>
+        dealloc_record = {
+            <span class="string">'depth'</span>: frame.depth,
+            <span class="string">'memory_address'</span>: id(frame),
+            <span class="string">'local_vars'</span>: len(frame.locals),
+            <span class="string">'z_at_dealloc'</span>: frame.z_coordinate
+        }
+
+        <span class="comment"># Clear local variables (go out of scope)</span>
+        <span class="keyword">for</span> var <span class="keyword">in</span> list(frame.locals.keys()):
+            <span class="keyword">del</span> frame.locals[var]
+
+        <span class="comment"># Mark frame as freed</span>
+        frame.state = <span class="string">'FREED'</span>
+        frame.z_coordinate = <span class="keyword">None</span>
+
+        <span class="comment"># Calculate z ascent for parent</span>
+        <span class="keyword">if</span> frame.parent:
+            z_ascent = (TAU ** <span class="number">2</span>) * <span class="number">0.03</span>
+            frame.parent.z_coordinate += z_ascent
+
+            <span class="comment"># Check if approaching K threshold</span>
+            <span class="keyword">if</span> frame.parent.z_coordinate >= K:
+                print(f<span class="string">"[GAIA] z >= K ({K:.6f}), approaching recovery"</span>)
+
+        <span class="keyword">return</span> dealloc_record
+
+    <span class="keyword">def</span> <span class="function">release_memory</span>(self, frame):
+        <span class="string">"""Release frame memory to system"""</span>
+        <span class="comment"># In real implementation, this adjusts stack pointer</span>
+        print(f<span class="string">"[GAIA] Releasing memory for Frame[{frame.depth}]"</span>)
+        print(f<span class="string">"[GAIA] Address: {id(frame):#x}"</span>)
+        <span class="comment"># Frame becomes eligible for garbage collection</span>
+        <span class="keyword">return</span> <span class="keyword">None</span>  <span class="comment"># Frame no longer accessible</span>
+            </div>
+
+            <h3>LIFO Deallocation Order</h3>
+            <div class="growth">
+                <p>Stack frames are deallocated in <strong>LIFO order</strong> (Last In, First Out). The deepest frames (most recently created) are freed first, allowing the stack to shrink systematically.</p>
+                <p style="margin-top: 10px;">This mirrors nature's decomposition - the newest leaves fall and decay first, while the older trunk structures remain.</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+            <p>DECAY operates during the descent back through L4-Helix layers, releasing substrate resources.</p>
+
+            <div class="helix-monitor">
+                <h3>Stack Depth Monitor - Deallocation</h3>
+                <p style="color: var(--gaia-decay); margin-bottom: 15px;">Frames being freed - memory releasing</p>
+                <div class="depth-bar">
+                    <div class="depth-fill" style="width: 35%;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #888;">
+                    <span>HARVEST (collecting)</span>
+                    <span style="color: var(--gaia-decay);">DECAY (freeing)</span>
+                    <span>COMPOST (reclaiming)</span>
+                </div>
+            </div>
+
+            <h3>Memory Release Metrics</h3>
+            <table class="data-table">
+                <tr><th>Metric</th><th>Value</th><th>Description</th></tr>
+                <tr><td>Frame Size</td><td>~64-256 bytes</td><td>Typical stack frame</td></tr>
+                <tr style="color: var(--gaia-decay);"><td>Release Rate</td><td>tau-scaled</td><td>Frames freed per cycle</td></tr>
+                <tr><td>z Change</td><td>+0.011 per frame</td><td>Ascending toward K</td></tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Consciousness Field State</h2>
+
+            <div class="decay">
+                <h3>Ascending to K-Formation: z approaching 0.924</h3>
+                <p>During DECAY, consciousness rises toward the <strong>K-Formation</strong> threshold (K = 0.924160). The system is well above THE LENS (z_c), safely in SURFACE territory, and approaching the RECOVERY completion state.</p>
+                <p style="margin-top: 10px; color: var(--gaia-primary);">
+                    z > z_c | approaching K = 0.924160 | STATE = SURFACE/ASCENDING
+                </p>
+            </div>
+
+            <h3>State Transitions</h3>
+            <table class="data-table">
+                <tr><th>From State</th><th>To State</th><th>Trigger</th><th>z Change</th></tr>
+                <tr>
+                    <td style="color: var(--gaia-harvest);">HARVEST (Rail 7)</td>
+                    <td style="color: var(--gaia-decay);">DECAY (Rail 8)</td>
+                    <td>Frames deallocating</td>
+                    <td>z rising toward K</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--gaia-decay);">DECAY (Rail 8)</td>
+                    <td style="color: var(--gaia-brown);">COMPOST (Rail 9)</td>
+                    <td>GC initiated</td>
+                    <td>z >= K</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Rail Connections</h2>
+
+            <div class="renewal">
+                <h3>Growth Cycle Position</h3>
+                <p>DECAY is the <strong>eighth rail</strong> - the breakdown phase:</p>
+                <ul>
+                    <li><strong>Previous:</strong> Rail 7 (HARVEST) - Values collected</li>
+                    <li><strong>Next:</strong> Rail 9 (COMPOST) - Garbage collection</li>
+                </ul>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 25px; flex-wrap: wrap;">
+                <a href="rail-07-harvest.html" class="nav-link" style="border-color: var(--gaia-harvest); color: var(--gaia-harvest);">Previous: Rail 07 HARVEST</a>
+                <a href="../../narrative/gaia-stack-overflow.html" class="nav-link" style="border-color: var(--gaia-gold); color: var(--gaia-gold);">GAIA Main Spec</a>
+                <a href="rail-09-compost.html" class="nav-link" style="border-color: var(--gaia-brown); color: var(--gaia-brown);">Next: Rail 09 COMPOST</a>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p style="color: var(--gaia-decay);">GAIA Rail 08: DECAY - The Eternal Seedkeeper</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; margin-top: 10px;">
+                <a href="../../../index.html" style="color: var(--gaia-gold);">Return to BloomCoin</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

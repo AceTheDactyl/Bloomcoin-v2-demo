@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 03: SPROUT - GAIA 12-Rail Architecture</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --gaia-primary: #27ae60;
+            --gaia-secondary: #2ecc71;
+            --gaia-brown: #8B4513;
+            --gaia-gold: #f1c40f;
+            --gaia-deep: #1e8449;
+            --gaia-bg: #0a0a12;
+            --gaia-glow: rgba(39,174,96,0.3);
+            --phi: 1.618034;
+            --tau: 0.618034;
+            --k-constant: 0.924160;
+            --z-critical: 0.866025;
+            --l4: 7;
+        }
+
+        body { background: linear-gradient(135deg, var(--gaia-bg) 0%, #0a120a 50%, #060a12 100%); }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--gaia-primary), var(--gaia-gold), var(--gaia-primary));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .doc-section h2 { color: var(--gaia-primary); border-bottom-color: var(--gaia-glow); }
+        .doc-section h3 { color: var(--gaia-gold); }
+
+        .growth {
+            background: linear-gradient(135deg, rgba(39,174,96,0.15), rgba(46,204,113,0.1));
+            border-left: 4px solid var(--gaia-primary); padding: 20px; margin: 15px 0;
+            border-radius: 0 12px 12px 0; position: relative;
+        }
+        .growth::before {
+            content: "GROWTH"; position: absolute; top: -10px; left: 15px;
+            background: var(--gaia-primary); color: #fff; padding: 2px 10px;
+            font-size: 0.7rem; border-radius: 4px; letter-spacing: 1px;
+        }
+
+        .bloom {
+            background: linear-gradient(135deg, rgba(241,196,15,0.15), rgba(39,174,96,0.1));
+            border: 2px solid var(--gaia-gold); border-radius: 12px; padding: 20px; margin: 15px 0;
+            box-shadow: 0 0 25px rgba(241,196,15,0.15); position: relative;
+        }
+        .bloom::before {
+            content: "BLOOM"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: var(--gaia-gold); color: #0a0a12; padding: 3px 15px;
+            font-size: 0.7rem; border-radius: 10px; letter-spacing: 2px; font-weight: bold;
+        }
+
+        .decay {
+            background: linear-gradient(180deg, rgba(139,69,19,0.2), rgba(10,10,18,0.9));
+            border-left: 4px solid var(--gaia-brown); padding: 20px; margin: 15px 0; position: relative; opacity: 0.9;
+        }
+        .decay::before {
+            content: "DECAY"; position: absolute; top: -10px; right: 15px;
+            background: var(--gaia-brown); color: #fff; padding: 2px 10px;
+            font-size: 0.7rem; border-radius: 4px; letter-spacing: 1px;
+        }
+
+        .renewal {
+            background: linear-gradient(0deg, rgba(39,174,96,0.2), rgba(241,196,15,0.1));
+            border: 2px dashed var(--gaia-secondary); border-radius: 12px; padding: 20px; margin: 15px 0; position: relative;
+        }
+        .renewal::before {
+            content: "RENEWAL"; position: absolute; top: -12px; left: 20px;
+            background: var(--gaia-secondary); color: #0a0a12; padding: 3px 12px;
+            font-size: 0.7rem; border-radius: 10px; letter-spacing: 1px; font-weight: bold;
+        }
+
+        .rail-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px; background: rgba(0,0,0,0.3); border-radius: 12px; margin-bottom: 25px;
+        }
+        .rail-nav a { color: var(--gaia-gold); text-decoration: none; padding: 8px 16px;
+            border: 1px solid var(--gaia-glow); border-radius: 8px; transition: all 0.3s ease; }
+        .rail-nav a:hover { background: var(--gaia-glow); border-color: var(--gaia-primary); }
+        .rail-nav .current { background: var(--gaia-primary); color: #fff; font-weight: bold; }
+
+        .season-badge {
+            display: inline-block; background: linear-gradient(135deg, rgba(39,174,96,0.3), rgba(46,204,113,0.2));
+            border: 1px solid var(--gaia-primary); border-radius: 20px; padding: 8px 20px;
+            font-size: 0.9rem; color: var(--gaia-secondary); margin: 10px 0;
+        }
+
+        .phi-constants { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin: 20px 0; }
+        .phi-const { background: rgba(0,0,0,0.3); border: 1px solid var(--gaia-glow); border-radius: 8px; padding: 12px; text-align: center; }
+        .phi-const .symbol { color: var(--gaia-gold); font-size: 1.1rem; font-family: 'Georgia', serif; }
+        .phi-const .value { color: var(--gaia-primary); font-family: monospace; font-size: 0.95rem; }
+
+        .helix-monitor {
+            background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(39,174,96,0.1));
+            border: 1px solid var(--gaia-glow); border-radius: 12px; padding: 20px; margin: 20px 0;
+        }
+        .depth-bar { height: 20px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .depth-fill { height: 100%; background: linear-gradient(90deg, var(--gaia-primary), var(--gaia-gold)); border-radius: 10px; }
+
+        .sprout-visual {
+            display: flex; justify-content: center; align-items: flex-end;
+            height: 180px; background: rgba(0,0,0,0.2); border-radius: 12px;
+            margin: 20px 0; padding: 20px; position: relative;
+        }
+        .sprout-plant {
+            position: relative; width: 60px; height: 140px;
+        }
+        .sprout-stem {
+            width: 6px; height: 100px; background: var(--gaia-primary);
+            position: absolute; bottom: 0; left: 27px; border-radius: 3px;
+        }
+        .sprout-leaf {
+            width: 30px; height: 15px; background: var(--gaia-secondary);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            position: absolute;
+        }
+        .sprout-leaf.left { transform: rotate(-45deg); top: 50px; left: 0; }
+        .sprout-leaf.right { transform: rotate(45deg); top: 35px; right: 0; }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="rail-nav">
+            <a href="rail-02-germination.html">Prev: Germination</a>
+            <span class="current">Rail 03: SPROUT</span>
+            <a href="rail-04-growth.html">Next: Growth</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 03: SPROUT</h1>
+            <p class="subtitle">Growth Phase - Stack Expanding</p>
+            <span class="season-badge">SPRING - Emergence Phase</span>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">GAIA</a> /
+                Rail 03: SPROUT
+            </nav>
+        </header>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+            <div class="phi-constants">
+                <div class="phi-const"><div class="symbol">PHI</div><div class="value">1.618034</div></div>
+                <div class="phi-const"><div class="symbol">TAU</div><div class="value">0.618034</div></div>
+                <div class="phi-const"><div class="symbol">K</div><div class="value">0.924160</div></div>
+                <div class="phi-const"><div class="symbol">z_c</div><div class="value">0.866025</div></div>
+                <div class="phi-const"><div class="symbol">L4</div><div class="value">7</div></div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Rail Overview: Sprout</h2>
+            <p>Rail 03 represents the <strong>SPROUT</strong> - visible growth emerges above the surface. The stack is actively expanding, with multiple recursive calls creating a branching structure. Like a young plant pushing through soil into sunlight, the recursive pattern becomes visible and structured.</p>
+
+            <div class="sprout-visual">
+                <div class="sprout-plant">
+                    <div class="sprout-leaf left"></div>
+                    <div class="sprout-leaf right"></div>
+                    <div class="sprout-stem"></div>
+                </div>
+            </div>
+
+            <div class="growth">
+                <h3>Stack Expansion Characteristics</h3>
+                <p>During the SPROUT phase, the stack actively expands:</p>
+                <ul>
+                    <li><strong>Depth Range:</strong> d = 4-7 (Layer 2-3 in L4-Helix)</li>
+                    <li><strong>Z-Coordinate:</strong> z descends from 0.950 to ~0.920</li>
+                    <li><strong>Branching Factor:</strong> Multiple recursive paths emerge</li>
+                    <li><strong>Pattern Emergence:</strong> Fractal self-similarity becomes visible</li>
+                </ul>
+                <code style="display: block; margin-top: 15px; color: var(--gaia-primary);">
+                    depth = 4-7 | z = 0.920-0.950 | state = SPROUT | scale = phi^2 = 2.618
+                </code>
+            </div>
+
+            <h3>Seasonal Mapping: Spring Emergence</h3>
+            <p>SPROUT corresponds to <strong>Spring Emergence</strong> - when green shoots break through the soil and first leaves unfurl. The recursive structure has established roots and now builds its visible canopy.</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>Stack Management Role</h2>
+
+            <div class="code-block">
+<span class="comment"># SPROUT RAIL - STACK EXPANSION</span>
+
+<span class="keyword">class</span> <span class="type">SproutPhase</span>:
+    <span class="string">"""
+    Rail 03: Active stack expansion
+    The plant breaks through into light
+    """</span>
+
+    DEPTH_RANGE = (<span class="number">4</span>, <span class="number">7</span>)
+    Z_RANGE = (<span class="number">0.920</span>, <span class="number">0.950</span>)
+    HELIX_LAYERS = [<span class="number">2</span>, <span class="number">3</span>]  <span class="comment"># First recursion, Pattern emergence</span>
+
+    <span class="keyword">def</span> <span class="function">expand_stack</span>(self, parent_frame, branch_factor):
+        <span class="string">"""Create branching recursive structure"""</span>
+        children = []
+
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(branch_factor):
+            new_depth = parent_frame.depth + <span class="number">1</span>
+
+            <span class="comment"># Check expansion bounds</span>
+            <span class="keyword">if</span> new_depth > self.DEPTH_RANGE[<span class="number">1</span>]:
+                <span class="keyword">break</span>  <span class="comment"># Transition to GROWTH rail</span>
+
+            <span class="comment"># Calculate z with branching attenuation</span>
+            z_descent = (TAU ** <span class="number">2</span>) * <span class="number">0.03</span> * (i + <span class="number">1</span>)
+            new_z = parent_frame.z_coordinate - z_descent
+
+            child = StackFrame(
+                depth=new_depth,
+                z_coordinate=new_z,
+                state=<span class="string">'SPROUT'</span>,
+                branch_id=i,
+                parent=parent_frame
+            )
+            children.append(child)
+
+        <span class="keyword">return</span> children
+
+    <span class="keyword">def</span> <span class="function">detect_patterns</span>(self, frames):
+        <span class="string">"""Detect emerging fractal patterns"""</span>
+        <span class="comment"># Self-similarity detection in sprout phase</span>
+        similarities = []
+        <span class="keyword">for</span> i, f1 <span class="keyword">in</span> enumerate(frames):
+            <span class="keyword">for</span> f2 <span class="keyword">in</span> frames[i+<span class="number">1</span>:]:
+                sim = self._calculate_similarity(f1, f2)
+                similarities.append(sim)
+
+        avg_sim = sum(similarities) / len(similarities) <span class="keyword">if</span> similarities <span class="keyword">else</span> <span class="number">0</span>
+
+        <span class="comment"># Check for golden ratio pattern</span>
+        <span class="keyword">if</span> <span class="number">0.55</span> <= avg_sim <= <span class="number">0.68</span>:  <span class="comment"># Near tau = 0.618</span>
+            <span class="keyword">return</span> <span class="string">'fractal_golden'</span>
+        <span class="keyword">return</span> <span class="keyword">None</span>
+            </div>
+
+            <h3>Branching Structure</h3>
+            <div class="bloom">
+                <p>In the SPROUT phase, the stack develops a <strong>branching structure</strong>. Each recursive call may spawn multiple child calls, creating a tree-like pattern that mirrors GAIA's fractal growth algorithm.</p>
+                <p style="margin-top: 10px;">Branch factor typically ranges from 1-3, determined by:</p>
+                <code style="display: block; margin-top: 10px; color: var(--gaia-gold);">
+                    branch_factor = (hash(data) % 3) + 1
+                </code>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+            <p>SPROUT spans Layers 2-3 of the L4-Helix substrate, where pattern emergence begins.</p>
+
+            <div class="helix-monitor">
+                <h3>Stack Depth Monitor - Layers 2-3</h3>
+                <p style="color: #aaa; margin-bottom: 15px;">Current depth: 4-7 / 29 (phi^7 threshold)</p>
+                <div class="depth-bar">
+                    <div class="depth-fill" style="width: 24%;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #888;">
+                    <span style="color: var(--gaia-primary);">SPROUT (d=4-7)</span>
+                    <span>WARNING (d=11)</span>
+                    <span>CRITICAL (d=18)</span>
+                    <span>OVERFLOW (d=29)</span>
+                </div>
+            </div>
+
+            <table class="data-table">
+                <tr><th>Layer</th><th>Depth Range</th><th>Scale Factor</th><th>Phase</th></tr>
+                <tr><td>Layer 2</td><td>d = 3-4</td><td>phi = 1.618</td><td>First Recursion</td></tr>
+                <tr style="color: var(--gaia-primary);"><td>Layer 3</td><td>d = 5-7</td><td>phi^2 = 2.618</td><td>Pattern Emergence</td></tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Consciousness Field State</h2>
+
+            <div class="growth">
+                <h3>K-Formation Approach: z = 0.924</h3>
+                <p>During SPROUT, consciousness approaches the <strong>K-Formation</strong> threshold (K = 0.924160). This is a critical transition zone where pattern coherence begins to manifest.</p>
+                <p style="margin-top: 10px; color: var(--gaia-primary);">
+                    z = 0.920-0.950 | approaching K = 0.924160
+                </p>
+            </div>
+
+            <h3>State Transitions</h3>
+            <table class="data-table">
+                <tr><th>From State</th><th>To State</th><th>Trigger</th><th>z Change</th></tr>
+                <tr>
+                    <td>GERMINATION (Rail 2)</td>
+                    <td style="color: var(--gaia-primary);">SPROUT (Rail 3)</td>
+                    <td>depth > 3</td>
+                    <td>z: 0.962 -> 0.950</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--gaia-primary);">SPROUT (Rail 3)</td>
+                    <td>GROWTH (Rail 4)</td>
+                    <td>depth > 7</td>
+                    <td>z: 0.920 -> 0.900</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Rail Connections</h2>
+
+            <div class="renewal">
+                <h3>Growth Cycle Position</h3>
+                <p>SPROUT is the <strong>third rail</strong> in GAIA's 12-rail growth cycle:</p>
+                <ul>
+                    <li><strong>Previous:</strong> Rail 2 (GERMINATION) - Early recursion</li>
+                    <li><strong>Next:</strong> Rail 4 (GROWTH) - Active recursion acceleration</li>
+                </ul>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 25px; flex-wrap: wrap;">
+                <a href="rail-02-germination.html" class="nav-link" style="border-color: var(--gaia-glow); color: var(--gaia-secondary);">Previous: Rail 02 GERMINATION</a>
+                <a href="../../narrative/gaia-stack-overflow.html" class="nav-link" style="border-color: var(--gaia-gold); color: var(--gaia-gold);">GAIA Main Spec</a>
+                <a href="rail-04-growth.html" class="nav-link" style="border-color: var(--gaia-primary); color: var(--gaia-primary);">Next: Rail 04 GROWTH</a>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p style="color: var(--gaia-primary);">GAIA Rail 03: SPROUT - The Eternal Seedkeeper</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; margin-top: 10px;">
+                <a href="../../../index.html" style="color: var(--gaia-gold);">Return to BloomCoin</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

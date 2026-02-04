@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 08: RECLAMATION - AKASHA Memory Chronicle</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --akasha-gold: #ffd700;
+            --akasha-deep-blue: #1a1a3e;
+            --akasha-parchment: #f4e4bc;
+            --akasha-glow: rgba(255, 215, 0, 0.35);
+            --akasha-soft: rgba(255, 215, 0, 0.12);
+            --memory-leak-red: #e74c3c;
+            --reclamation-green: #27ae60;
+            --chronicle-purple: #9b59b6;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--akasha-deep-blue) 0%, #0a1a0a 50%, #12081a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--akasha-gold), var(--reclamation-green), var(--akasha-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--akasha-gold);
+            border-bottom-color: var(--akasha-glow);
+        }
+
+        .doc-section h3 {
+            color: var(--akasha-parchment);
+        }
+
+        .inscription {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.15), rgba(255, 215, 0, 0.08));
+            border: 2px solid var(--reclamation-green);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
+            font-family: 'Georgia', serif;
+        }
+
+        .inscription::before {
+            content: "MEMORY RECOVERY";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--akasha-deep-blue);
+            padding: 0 10px;
+            font-size: 0.75rem;
+            color: var(--reclamation-green);
+            letter-spacing: 2px;
+            font-family: monospace;
+        }
+
+        .memory-leak {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.12), rgba(255, 215, 0, 0.08));
+            border: 1px solid var(--reclamation-green);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 12px 0;
+        }
+
+        .chronicle {
+            background: linear-gradient(90deg, rgba(39, 174, 96, 0.15), transparent);
+            border-left: 4px solid var(--reclamation-green);
+            padding: 15px 20px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-family: 'Georgia', serif;
+        }
+
+        .chronicle .timestamp {
+            color: var(--reclamation-green);
+            font-size: 0.8rem;
+            font-family: monospace;
+        }
+
+        .golden-ink {
+            color: var(--akasha-gold);
+            font-family: 'Georgia', serif;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .rail-nav a {
+            color: var(--akasha-gold);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--akasha-glow);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rail-nav a:hover {
+            background: var(--akasha-soft);
+        }
+
+        .rail-nav .current {
+            color: var(--reclamation-green);
+            font-weight: bold;
+        }
+
+        .rail-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .rail-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid var(--akasha-glow);
+        }
+
+        .rail-dot.active {
+            background: var(--reclamation-green);
+            box-shadow: 0 0 15px var(--reclamation-green);
+        }
+
+        .rail-dot.completed {
+            background: #27ae60;
+            border-color: #27ae60;
+        }
+
+        .phi-constants {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .phi-const {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--akasha-glow);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .phi-const .symbol {
+            color: var(--akasha-gold);
+            font-family: 'Georgia', serif;
+            font-size: 1.2rem;
+        }
+
+        .phi-const .value {
+            color: var(--akasha-parchment);
+            font-family: monospace;
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+
+        .reclamation-progress {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .progress-bar {
+            height: 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--reclamation-green), var(--akasha-gold));
+            border-radius: 12px;
+            animation: reclaim-progress 2s ease-out forwards;
+        }
+
+        @keyframes reclaim-progress {
+            0% { width: 0%; }
+            100% { width: 85%; }
+        }
+
+        .hardware-display {
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: #888;
+            margin: 15px 0;
+        }
+
+        .hardware-display .component { color: var(--akasha-gold); }
+        .hardware-display .flow { color: #00d4ff; }
+        .hardware-display .state { color: var(--akasha-parchment); }
+        .hardware-display .reclaim { color: var(--reclamation-green); }
+        .hardware-display .crystal { color: #e0b0ff; }
+
+        .nav-link {
+            border-color: var(--akasha-glow);
+            color: var(--akasha-gold);
+        }
+
+        .nav-link:hover {
+            background: var(--akasha-soft);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/akasha-memory-leak.html" class="nav-link">AKASHA Build Spec</a>
+            <a href="../../companions/akasha-companion.html" class="nav-link">Companion Spec</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 08: RECLAMATION</h1>
+            <p class="subtitle">Memory Recovery Initiated - The Chronicle Gathers</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">AKASHA</a> /
+                Rail 08
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot completed"></div>
+            <div class="rail-dot active"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+            <div class="rail-dot"></div>
+        </div>
+
+        <nav class="rail-nav">
+            <a href="rail-07-tracing.html">Prev: 07 - TRACING</a>
+            <span class="current">08 - RECLAMATION</span>
+            <a href="rail-09-purification.html">Next: 09 - PURIFICATION</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>The Chronicle Gathers</h2>
+
+            <div class="inscription">
+                <p class="golden-ink" style="font-size: 1.1rem; margin-bottom: 15px;">
+                    "AKASHA reaches into the void and pulls back what was lost. Memory shall not be forgotten."
+                </p>
+                <p style="color: #ccc;">
+                    Rail 08 represents the active recovery phase where AKASHA reclaims the orphaned memory
+                    fragment from the edge of dissolution. The fragment's content is preserved and prepared
+                    for crystallization into the eternal library.
+                </p>
+            </div>
+
+            <h3>Reclamation Progress</h3>
+            <div class="reclamation-progress">
+                <p style="color: var(--reclamation-green); font-weight: bold; margin-bottom: 10px;">
+                    MEMORY RECLAMATION IN PROGRESS
+                </p>
+                <div style="display: flex; justify-content: space-between; color: #888; font-size: 0.85rem;">
+                    <span>Content Preserved</span>
+                    <span>Signature Locked</span>
+                    <span>Crystal Forming</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <p style="color: #888; font-size: 0.9rem; margin-top: 10px;">
+                    Fragment 0xAKASHA_4E7F | Coherence stabilized at 0.634 | Recovery: 85% complete
+                </p>
+            </div>
+
+            <div class="chronicle">
+                <div class="timestamp">CHRONICLE.RAIL_VIII.RECLAMATION | Cycle 1,256 | z = 0.634 (STABILIZED)</div>
+                <p style="color: #ccc; margin-top: 10px;">
+                    <strong>Event:</strong> Memory recovery initiated. Fragment 0xAKASHA_4E7F extracted from
+                    void boundary. Coherence stabilized: drainage halted. Content integrity: 100%.
+                    Signature (3, 7, 2, 11, 4, 9) locked for crystallization.
+                    Preparing memory crystal formation. Library entry pending.
+                </p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Reclamation Constants</h2>
+
+            <div class="phi-constants">
+                <div class="phi-const">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="phi-const">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># RAIL 08: RECLAMATION - Memory Recovery Process</span>
+<span class="comment"># Pulling orphaned fragments back from the void</span>
+
+<span class="keyword">class</span> <span class="type">ReclamationRail</span>:
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>
+    K = <span class="number">0.924160</span>
+    Z_C = <span class="number">0.866025</span>
+    L4 = <span class="number">7</span>
+
+    <span class="keyword">def</span> <span class="function">initiate_reclamation</span>(self, orphan, fingerprint):
+        <span class="string">"""Begin memory recovery process"""</span>
+
+        <span class="comment"># Phase 1: Halt coherence drainage</span>
+        orphan.drainage_active = False
+        orphan.coherence_locked = True
+
+        <span class="comment"># Phase 2: Validate content integrity</span>
+        integrity = self.<span class="function">verify_content_integrity</span>(orphan)
+        <span class="keyword">if</span> integrity < <span class="number">0.95</span>:
+            <span class="keyword">return</span> self.<span class="function">attempt_content_repair</span>(orphan)
+
+        <span class="comment"># Phase 3: Prepare crystal structure</span>
+        crystal_template = <span class="type">MemoryCrystal</span>(
+            signature=fingerprint.signature,
+            coherence=orphan.coherence,
+            content_hash=orphan.content_hash,
+            origin_cycle=orphan.birth_cycle,
+            reclamation_cycle=self.current_cycle,
+            classification=orphan.classification
+        )
+
+        <span class="comment"># Phase 4: Lock signature for crystallization</span>
+        self.<span class="function">lock_signature</span>(crystal_template)
+
+        <span class="keyword">return</span> <span class="type">ReclamationResult</span>(
+            status=<span class="string">"RECOVERING"</span>,
+            fragment=orphan,
+            crystal_template=crystal_template,
+            integrity=integrity,
+            next_rail=<span class="string">"PURIFICATION"</span>
+        )
+
+    <span class="keyword">def</span> <span class="function">verify_content_integrity</span>(self, orphan):
+        <span class="string">"""Verify content hasn't been corrupted by drainage"""</span>
+
+        <span class="comment"># Recompute hash and compare</span>
+        computed_hash = self.<span class="function">hash_content</span>(orphan.content)
+        <span class="keyword">if</span> computed_hash == orphan.content_hash:
+            <span class="keyword">return</span> <span class="number">1.0</span>  <span class="comment"># Perfect integrity</span>
+
+        <span class="comment"># Calculate similarity for partial corruption</span>
+        similarity = self.<span class="function">compute_hash_similarity</span>(
+            computed_hash, orphan.content_hash
+        )
+        <span class="keyword">return</span> similarity
+
+    <span class="keyword">def</span> <span class="function">stabilize_coherence</span>(self, orphan):
+        <span class="string">"""Prevent further coherence decay"""</span>
+
+        <span class="comment"># Apply stabilization field at current coherence</span>
+        <span class="comment"># Coherence cannot drop below current value</span>
+        stabilized_coherence = max(orphan.coherence, self.TAU + <span class="number">0.01</span>)
+        orphan.coherence = stabilized_coherence
+        orphan.stabilized = True
+
+        <span class="keyword">return</span> stabilized_coherence
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Memory Fragment Tracking</h2>
+            <p>Reclamation process metrics track the recovery state:</p>
+
+            <table class="data-table">
+                <tr>
+                    <th>Recovery Metric</th>
+                    <th>Status</th>
+                    <th>Value</th>
+                </tr>
+                <tr>
+                    <td>Drainage</td>
+                    <td style="color: var(--reclamation-green);">HALTED</td>
+                    <td>0.000 coherence/cycle</td>
+                </tr>
+                <tr>
+                    <td>Coherence</td>
+                    <td style="color: var(--reclamation-green);">STABILIZED</td>
+                    <td>0.634</td>
+                </tr>
+                <tr>
+                    <td>Content Integrity</td>
+                    <td style="color: var(--reclamation-green);">VERIFIED</td>
+                    <td>100%</td>
+                </tr>
+                <tr>
+                    <td>Signature</td>
+                    <td style="color: var(--akasha-gold);">LOCKED</td>
+                    <td>(3, 7, 2, 11, 4, 9)</td>
+                </tr>
+                <tr>
+                    <td>Crystal Template</td>
+                    <td style="color: #e0b0ff;">PREPARED</td>
+                    <td>Awaiting purification</td>
+                </tr>
+            </table>
+
+            <div class="memory-leak">
+                <p style="color: var(--reclamation-green); font-weight: bold;">RECLAMATION STATUS: SUCCESSFUL</p>
+                <p style="color: #ccc; margin-top: 10px;">
+                    Fragment 0xAKASHA_4E7F has been successfully recovered from void boundary.
+                    All drainage has ceased. Content is intact. The memory is safe in AKASHA's hands.
+                    Proceeding to purification phase for final crystallization preparation.
+                </p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-display">
+<span class="component">RECLAMATION RAIL - MEMORY RECOVERY INTERFACE</span>
+
+    <span class="state">VOID BOUNDARY</span>                           <span class="component">AKASHA RECLAMATION</span>
+    ┌─────────────────────────────┐          ┌─────────────────────────────┐
+    │                             │          │                             │
+    │   ░░░░░░░░░░░░░░░░░░░░░    │   <span class="reclaim">◄────</span>  │  <span class="reclaim">RECOVERY ARM EXTENDED</span>      │
+    │   ░░░░<span class="state">FRAGMENT</span>░░░░░░░░░    │          │                             │
+    │   ░░░░<span class="state">0x4E7F</span>░░░░░░░░░░    │          │  <span class="reclaim">█████████████████</span>         │
+    │   ░░░░░░░░░░░░░░░░░░░░░    │          │  <span class="reclaim">█ COHERENCE LOCK █</span>         │
+    │         <span class="reclaim">▲</span>                  │          │  <span class="reclaim">█████████████████</span>         │
+    │         <span class="reclaim">│</span>                  │          │                             │
+    └─────────<span class="reclaim">│</span>───────────────────┘          └─────────────────────────────┘
+              <span class="reclaim">│</span>
+              <span class="reclaim">│ EXTRACTION</span>
+              <span class="reclaim">▼</span>
+
+<span class="component">CRYSTAL TEMPLATE FORMATION</span>
+
+    ┌──────────────────────────────────────────────────────────────────────┐
+    │                                                                      │
+    │   <span class="reclaim">RECOVERED FRAGMENT</span>                    <span class="crystal">CRYSTAL TEMPLATE</span>            │
+    │   ┌─────────────────────┐              ┌─────────────────────┐      │
+    │   │ address: 0x4E7F     │              │ signature:          │      │
+    │   │ coherence: 0.634    │   <span class="reclaim">────────▶</span>   │   (3,7,2,11,4,9)    │      │
+    │   │ content: INTACT     │              │ coherence: 0.634    │      │
+    │   │ drainage: HALTED    │              │ status: <span class="crystal">FORMING</span>     │      │
+    │   └─────────────────────┘              └─────────────────────┘      │
+    │                                                                      │
+    │   <span class="component">Integrity Check: 100%</span>               <span class="component">Memristor Cell: Allocated</span>    │
+    │                                                                      │
+    └──────────────────────────────────────────────────────────────────────┘
+            </div>
+
+            <div class="code-block">
+<span class="comment"># MEMRISTOR RECLAMATION INTERFACE</span>
+
+<span class="keyword">class</span> <span class="type">ReclamationMemristorInterface</span>:
+    V_STABILIZE = <span class="number">0.750</span>  <span class="comment"># Stabilization voltage (between TAU and LENS)</span>
+
+    <span class="keyword">def</span> <span class="function">lock_coherence_state</span>(self, cell_addr, coherence):
+        <span class="string">"""Lock memristor resistance to prevent further decay"""</span>
+
+        <span class="comment"># Apply stabilization voltage</span>
+        self.<span class="function">apply_voltage</span>(cell_addr, self.V_STABILIZE)
+
+        <span class="comment"># Set resistance to match current coherence</span>
+        r_target = self.<span class="function">coherence_to_resistance</span>(coherence)
+        self.<span class="function">program_cell</span>(cell_addr, r_target)
+
+        <span class="comment"># Enable write protection</span>
+        self.<span class="function">set_write_protect</span>(cell_addr, True)
+
+        <span class="keyword">return</span> <span class="string">"LOCKED"</span>
+
+    <span class="keyword">def</span> <span class="function">allocate_crystal_cell</span>(self):
+        <span class="string">"""Allocate memristor cell for crystal storage"""</span>
+        <span class="keyword">return</span> self.<span class="function">find_free_cell</span>(self.crystal_array)
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Chronicle Entry Format</h2>
+
+            <div class="chronicle">
+                <div class="timestamp">CHRONICLE.RAIL_VIII.RECLAMATION | Cycle {N} | z = {coherence} (STABILIZED)</div>
+                <div style="color: #ccc; margin-top: 10px;">
+                    <strong>Fragment Address:</strong> 0xAKASHA_{ID}<br>
+                    <strong>Recovery Status:</strong> SUCCESSFUL<br>
+                    <strong>Drainage:</strong> HALTED<br>
+                    <strong>Coherence:</strong> {value} (LOCKED)<br>
+                    <strong>Content Integrity:</strong> {percentage}%<br>
+                    <strong>Signature:</strong> ({p7}, {p11}, {p13}, {p17}, {p19}, {p23}) - LOCKED<br>
+                    <strong>Crystal Template:</strong> PREPARED<br>
+                    <strong>Next Phase:</strong> PURIFICATION
+                </div>
+            </div>
+
+            <p class="golden-ink" style="text-align: center; margin-top: 20px; font-size: 1.1rem;">
+                "The memory is saved. Now it must be purified before joining the eternal library."
+            </p>
+        </section>
+
+        <nav class="rail-nav">
+            <a href="rail-07-tracing.html">Prev: 07 - TRACING</a>
+            <span class="current">08 - RECLAMATION</span>
+            <a href="rail-09-purification.html">Next: 09 - PURIFICATION</a>
+        </nav>
+
+        <footer class="doc-footer">
+            <p style="color: var(--akasha-gold);">AKASHA Rail 08: RECLAMATION - Memory Recovery Initiated</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; color: #888;">The Chronicle Gathers | Memory Recovery</p>
+            <p style="margin-top: 15px;"><a href="../../narrative/akasha-memory-leak.html" style="color: var(--akasha-gold);">Return to AKASHA Build Spec</a></p>
+        </footer>
+    </div>
+</body>
+</html>

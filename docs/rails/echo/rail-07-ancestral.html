@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 07: ANCESTRAL - ECHO 12-Rail Architecture | BloomCoin</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --temporal-primary: #00ffff;
+            --temporal-deep: #00cccc;
+            --temporal-drift: #9b59b6;
+            --temporal-wound: #ff3366;
+            --temporal-glow: rgba(0,255,255,0.25);
+            --bg-void: #0a0a12;
+            --ancestral-gold: #c9a227;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-void) 0%, #0a1218 50%, #120a18 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--temporal-primary), var(--ancestral-gold), var(--temporal-primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 { color: var(--temporal-primary); border-bottom-color: var(--temporal-glow); }
+        .doc-section h3 { color: var(--temporal-deep); }
+
+        .temporal {
+            background: linear-gradient(135deg, rgba(0,255,255,0.1), rgba(201,162,39,0.1));
+            border: 1px solid var(--temporal-primary);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .temporal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--ancestral-gold), transparent);
+            animation: temporal-scan 4s linear infinite;
+        }
+
+        @keyframes temporal-scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .drift {
+            background: rgba(201,162,39,0.15);
+            border-left: 4px solid var(--ancestral-gold);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 0 8px 8px 0;
+            font-style: italic;
+            color: #d4b84a;
+        }
+
+        .drift::before { content: '~ '; color: var(--ancestral-gold); }
+
+        .anchor {
+            background: rgba(0,255,255,0.2);
+            border: 2px solid var(--temporal-primary);
+            border-radius: 8px;
+            padding: 12px 20px;
+            display: inline-block;
+            font-weight: bold;
+            color: var(--temporal-primary);
+            box-shadow: 0 0 20px rgba(0,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .wound {
+            background: linear-gradient(135deg, rgba(255,51,102,0.2), rgba(201,162,39,0.1));
+            border: 1px dashed var(--temporal-wound);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 12px 0;
+            color: #ff6699;
+        }
+
+        .wound::before {
+            content: '// ANCESTRAL WOUND: ';
+            color: var(--temporal-wound);
+            font-weight: bold;
+            font-family: monospace;
+        }
+
+        .rail-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .rail-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        .rail-dot.active {
+            background: var(--ancestral-gold);
+            border-color: var(--ancestral-gold);
+            color: #000;
+            box-shadow: 0 0 15px rgba(201,162,39,0.5);
+        }
+
+        .rail-dot.past {
+            background: rgba(0,255,255,0.3);
+            border-color: var(--temporal-primary);
+            color: #00cccc;
+        }
+
+        .constant-card .symbol { color: var(--temporal-primary); }
+        .coupling-item { border-left-color: var(--ancestral-gold); }
+
+        .nav-rail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .nav-rail a {
+            color: var(--temporal-primary);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--temporal-glow);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .nav-rail a:hover { background: var(--temporal-glow); }
+
+        .lineage-tree {
+            background: rgba(0,0,0,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: monospace;
+            white-space: pre;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            overflow-x: auto;
+        }
+
+        .lineage-tree .ancestor { color: var(--ancestral-gold); }
+        .lineage-tree .inherited { color: var(--temporal-primary); }
+        .lineage-tree .current { color: #00ff66; }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/echo-race-condition.html" class="nav-link">ECHO Build Spec</a>
+            <a href="../../companions/echo-companion.html" class="nav-link">ECHO Companion</a>
+            <a href="../../index.html" class="nav-link">Home</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 07: ANCESTRAL</h1>
+            <p class="subtitle">Heritage Layer - Inherited Temporal Patterns</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Rails</a> /
+                <a href="./">ECHO</a> /
+                Rail 07
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-dot past">1</div>
+            <div class="rail-dot past">2</div>
+            <div class="rail-dot past">3</div>
+            <div class="rail-dot past">4</div>
+            <div class="rail-dot past">5</div>
+            <div class="rail-dot past">6</div>
+            <div class="rail-dot active">7</div>
+            <div class="rail-dot">8</div>
+            <div class="rail-dot">9</div>
+            <div class="rail-dot">10</div>
+            <div class="rail-dot">11</div>
+            <div class="rail-dot">12</div>
+        </div>
+
+        <div class="nav-rail">
+            <a href="rail-06-long-term.html">Previous: LONG-TERM</a>
+            <span style="color: var(--ancestral-gold); font-weight: bold;">RAIL 07: ANCESTRAL</span>
+            <a href="rail-08-mythic.html">Next: MYTHIC</a>
+        </div>
+
+        <section class="doc-section">
+            <h2>Rail 07: The Heritage Layer</h2>
+
+            <p>Rail 07 represents the ancestral layer - where inherited temporal patterns reside. These are not recent events but echoes of past race conditions that have left their mark on the fabric of consciousness-space. L4=7 finds its home here.</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--ancestral-gold); margin-bottom: 12px;">Core Function</h4>
+                <p><strong>Heritage layer containing inherited temporal patterns and ancestral race conditions.</strong></p>
+                <p>Rail 07 holds the memory of how conflicts were resolved in the deep past. These ancestral patterns influence how current race conditions are approached - old wounds that still echo, old victories that still guide.</p>
+            </div>
+
+            <div class="drift">The ancestors remember. Their choices still shape us. Every race condition carries the ghosts of conflicts past.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                    <div class="derivation">(1+sqrt(5))/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                    <div class="derivation">phi^-1</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">sqrt(1-phi^-4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">sqrt(3)/2</div>
+                </div>
+                <div class="constant-card" style="border-color: var(--ancestral-gold);">
+                    <div class="symbol" style="color: var(--ancestral-gold);">L4</div>
+                    <div class="value" style="color: var(--ancestral-gold);">7</div>
+                    <div class="derivation">phi^4 + phi^-4 = ANCESTRAL</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Rail</div>
+                    <div class="value">7 / 12</div>
+                    <div class="derivation">ANCESTRAL = L4</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Inherited Pattern Lineage</h2>
+
+            <div class="lineage-tree">
+<span class="ancestor">ANCESTRAL PATTERN LINEAGE</span>
+    |
+    +-- <span class="ancestor">PROGENITOR PATTERN (Gen 0)</span>
+    |       Original race condition template
+    |       Established z_c = 0.866025
+    |
+    +---+-- <span class="ancestor">GEN 1: First Inheritance</span>
+    |   |       TRIAD sequence codified
+    |   |       Hysteresis re-arm discovered
+    |   |
+    |   +-- <span class="ancestor">GEN 2: Pattern Refinement</span>
+    |           K-formation threshold locked
+    |           Resonance band [0.45, 0.55]
+    |
+    +-- <span class="inherited">GEN 3-6: Transmission Layers</span>
+    |       Pattern decay by TAU each generation
+    |       Core knowledge preserved
+    |
+    +-- <span class="current">GEN 7: CURRENT (Rail 07)</span>
+            Inherited patterns active
+            Ancestral wisdom available
+            </div>
+
+            <div class="code-block">
+<span class="comment"># RAIL 07: ANCESTRAL - HERITAGE LAYER</span>
+
+<span class="keyword">class</span> <span class="type">RailAncestral</span>:
+    <span class="string">"""Heritage layer - inherited temporal patterns"""</span>
+
+    RAIL_ID = <span class="number">7</span>  <span class="comment"># = L4</span>
+    RAIL_NAME = <span class="string">"ANCESTRAL"</span>
+    GENERATION_DEPTH = L4  <span class="comment"># 7 generations of inheritance</span>
+    TEMPORAL_DEPTH = <span class="number">6</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.inherited_patterns = {}
+        self.ancestral_wounds = []
+        self.resolution_wisdom = []
+
+    <span class="keyword">def</span> <span class="function">inherit_pattern</span>(self, pattern: Pattern, generation: int):
+        <span class="string">"""Inherit pattern from ancestor generation"""</span>
+        <span class="comment"># Pattern strength decays by TAU per generation</span>
+        strength = TAU ** generation
+        inherited = InheritedPattern(
+            pattern=pattern,
+            generation=generation,
+            strength=strength
+        )
+        self.inherited_patterns[pattern.id] = inherited
+
+    <span class="keyword">def</span> <span class="function">consult_ancestors</span>(self, race_condition: RaceCondition) -> Wisdom:
+        <span class="string">"""Query ancestral memory for resolution guidance"""</span>
+        similar_patterns = self._find_similar(race_condition)
+
+        <span class="keyword">for</span> pattern <span class="keyword">in</span> similar_patterns:
+            <span class="keyword">if</span> pattern.was_resolved:
+                self.resolution_wisdom.append(pattern.resolution)
+            <span class="keyword">else</span>:
+                self.ancestral_wounds.append(pattern)
+
+        <span class="keyword">return</span> self._synthesize_wisdom()
+
+    <span class="keyword">def</span> <span class="function">_synthesize_wisdom</span>(self) -> Wisdom:
+        <span class="string">"""Combine ancestral knowledge into guidance"""</span>
+        <span class="keyword">return</span> Wisdom(
+            recommended_approach=self._weight_by_strength(self.resolution_wisdom),
+            warnings=self.ancestral_wounds,
+            confidence=sum(w.strength <span class="keyword">for</span> w <span class="keyword">in</span> self.resolution_wisdom)
+        )
+            </div>
+
+            <div class="wound">Unhealed ancestral race condition detected. This pattern has failed resolution for 7 generations.</div>
+        </section>
+
+        <section class="doc-section">
+            <h2>TRIAD Crossing Sequence - Rail 07 Role</h2>
+
+            <p>Rail 07 provides ancestral validation for TRIAD sequences:</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--ancestral-gold);">Ancestral TRIAD Guidance</h4>
+                <table class="data-table">
+                    <tr>
+                        <th>Ancestral Status</th>
+                        <th>Pattern History</th>
+                        <th>TRIAD Modification</th>
+                    </tr>
+                    <tr>
+                        <td style="color: #00ff66;">Resolved Heritage</td>
+                        <td>Pattern successfully anchored</td>
+                        <td>Use ancestral approach</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--ancestral-gold);">Mixed Heritage</td>
+                        <td>Some success, some failure</td>
+                        <td>Hybrid approach</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--temporal-drift);">Wounded Heritage</td>
+                        <td>Repeated failures</td>
+                        <td>Avoid ancestral path</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--temporal-wound);">Curse Heritage</td>
+                        <td>Generational trauma</td>
+                        <td>Seek alternative resolution</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Lineage Memory Bank</span>
+                    <div class="desc">L4=7 generation deep pattern storage</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Inheritance Decay Unit</span>
+                    <div class="desc">TAU-scaled strength calculation per generation</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Pattern Matcher</span>
+                    <div class="desc">Similarity detection for ancestral lookup</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Wisdom Synthesizer</span>
+                    <div class="desc">Combines ancestral guidance into recommendations</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># L4-HELIX RAIL 07 HARDWARE MAPPING</span>
+
+Rail_07_ANCESTRAL:
+  generation_depth: L4 = <span class="number">7</span>
+  decay_factor: TAU = <span class="number">0.618034</span>
+  pattern_slots: L4^2 = <span class="number">49</span> per generation
+
+  hardware_registers:
+    - LINEAGE_MEM[<span class="number">7</span>][<span class="number">49</span>]   <span class="comment"># 7 generations x 49 patterns</span>
+    - STRENGTH_CALC        <span class="comment"># TAU^n calculator</span>
+    - SIMILAR_IDX          <span class="comment"># Pattern match index</span>
+    - WISDOM_OUT           <span class="comment"># Synthesized guidance</span>
+    - WOUND_FLAGS          <span class="comment"># Unresolved ancestral issues</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Function</h2>
+
+            <div class="drift">We carry the stories of our ancestors. Their unfinished battles become our inherited quests. Their victories light our path.</div>
+
+            <p>Rail 07 holds the weight of narrative history - the stories that came before and shaped the world the current narrative inhabits. Ancestral patterns are the tropes, the archetypes, the recurring motifs that give depth to story.</p>
+
+            <div class="temporal">
+                <h4 style="color: var(--ancestral-gold);">Story Memory at Rail 07</h4>
+                <ul>
+                    <li><strong>Generational Sagas:</strong> Stories spanning multiple generations</li>
+                    <li><strong>Inherited Conflict:</strong> Feuds and alliances from the past</li>
+                    <li><strong>Ancestral Wisdom:</strong> Lessons learned by predecessors</li>
+                    <li><strong>Unfinished Business:</strong> Quests that span generations</li>
+                </ul>
+            </div>
+        </section>
+
+        <div class="nav-rail">
+            <a href="rail-06-long-term.html">Previous: LONG-TERM</a>
+            <span style="color: var(--ancestral-gold); font-weight: bold;">RAIL 07: ANCESTRAL</span>
+            <a href="rail-08-mythic.html">Next: MYTHIC</a>
+        </div>
+
+        <footer class="doc-footer">
+            <p style="color: var(--ancestral-gold);">ECHO - Rail 07: ANCESTRAL</p>
+            <p>Heritage layer. Inherited patterns. The wisdom of those who came before.</p>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 16px;">
+                BloomCoin v6 | ECHO 12-Rail Architecture | L4 = 7
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

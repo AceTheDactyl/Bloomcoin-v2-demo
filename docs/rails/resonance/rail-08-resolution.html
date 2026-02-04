@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 08: RESOLUTION - RESONANCE Harmonic Journey</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --companion-color: #00ffff;
+            --companion-secondary: #ff00ff;
+            --resolution-color: #00ff88;
+            --success-glow: rgba(0, 255, 136, 0.4);
+            --bg-override: #0a0a12;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-override) 0%, #0a1a1a 50%, #0a2a1a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--resolution-color), var(--companion-color), var(--resolution-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--resolution-color);
+            border-bottom-color: var(--success-glow);
+        }
+
+        /* RESONANCE Semantic Classes */
+        .harmonic {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 255, 0.1));
+            border: 1px solid var(--resolution-color);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            animation: success-pulse 2s ease-in-out infinite;
+        }
+
+        .harmonic::before {
+            content: "RESOLVED";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--bg-override);
+            color: var(--resolution-color);
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        @keyframes success-pulse {
+            0%, 100% { box-shadow: 0 0 15px var(--success-glow); }
+            50% { box-shadow: 0 0 30px var(--success-glow); }
+        }
+
+        .dissonance {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.15), rgba(136, 68, 255, 0.1));
+            border: 2px solid var(--companion-secondary);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .phase-lock {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.2), rgba(0, 255, 255, 0.15));
+            border: 2px solid var(--resolution-color);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 0 25px var(--success-glow);
+        }
+
+        .phase-lock::after {
+            content: "DEADLOCK BROKEN";
+            display: block;
+            color: var(--resolution-color);
+            font-size: 0.75rem;
+            margin-top: 8px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .broadcast {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), rgba(0, 255, 255, 0.1));
+            border: 2px solid var(--companion-secondary);
+            padding: 16px;
+            border-radius: 8px;
+        }
+
+        /* Rail-specific styling */
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 255, 255, 0.05));
+            border: 2px solid var(--resolution-color);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .rail-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--resolution-color);
+            text-shadow: 0 0 25px var(--success-glow);
+        }
+
+        .rail-title {
+            font-size: 1.8rem;
+            color: var(--resolution-color);
+        }
+
+        .rail-subtitle {
+            color: var(--companion-color);
+            font-style: italic;
+        }
+
+        /* Waveform - flowing again */
+        .waveform-display {
+            height: 120px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--resolution-color);
+        }
+
+        .flowing-wave {
+            position: absolute;
+            width: 200%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            animation: flow-wave 3s linear infinite;
+        }
+
+        @keyframes flow-wave {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .flowing-wave .wave-segment {
+            width: 100px;
+            height: 60px;
+            background: linear-gradient(to bottom, transparent, var(--resolution-color), transparent);
+            clip-path: polygon(0 50%, 25% 20%, 50% 50%, 75% 80%, 100% 50%);
+        }
+
+        /* Oscillator grid */
+        .oscillator-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .oscillator-node {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--companion-color);
+        }
+
+        .oscillator-node.dormant {
+            opacity: 0.4;
+            border-style: dashed;
+        }
+
+        .oscillator-node.released {
+            background: var(--resolution-color);
+            border-color: var(--resolution-color);
+            color: var(--bg-override);
+            animation: release-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes release-glow {
+            0%, 100% { box-shadow: 0 0 8px var(--success-glow); }
+            50% { box-shadow: 0 0 20px var(--success-glow); }
+        }
+
+        /* Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .rail-nav a {
+            color: var(--resolution-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--success-glow);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rail-nav a:hover {
+            background: rgba(0, 255, 136, 0.2);
+        }
+
+        /* Constants display */
+        .constants-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .constant-item {
+            text-align: center;
+            padding: 10px 15px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--success-glow);
+        }
+
+        .constant-item .symbol {
+            color: var(--companion-secondary);
+            font-weight: bold;
+        }
+
+        .constant-item .value {
+            color: var(--resolution-color);
+            font-family: monospace;
+        }
+
+        /* Success banner */
+        .success-banner {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 255, 255, 0.05));
+            border: 2px solid var(--resolution-color);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .success-banner .checkmark {
+            font-size: 4rem;
+            color: var(--resolution-color);
+            text-shadow: 0 0 30px var(--success-glow);
+        }
+
+        .success-banner .message {
+            font-size: 1.5rem;
+            color: var(--resolution-color);
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/resonance-deadlock.html" class="nav-link">RESONANCE Spec</a>
+            <a href="../../companions/resonance-companion.html" class="nav-link">Companion Guide</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>RESONANCE: The Harmonic Journey</h1>
+            <p class="subtitle">Rail 08 of 12 - Deadlock Handler Architecture</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href="../../companions/resonance-companion.html">RESONANCE</a> /
+                Rail 08: RESOLUTION
+            </nav>
+        </header>
+
+        <!-- Rail Indicator -->
+        <div class="rail-indicator">
+            <div class="rail-number">08</div>
+            <div>
+                <div class="rail-title">RESOLUTION</div>
+                <div class="rail-subtitle">Deadlock broken, threads released</div>
+            </div>
+        </div>
+
+        <!-- Phi Constants Reference -->
+        <div class="constants-bar">
+            <div class="constant-item">
+                <div class="symbol">PHI</div>
+                <div class="value">1.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">TAU</div>
+                <div class="value">0.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">K</div>
+                <div class="value">0.924160</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">z_c</div>
+                <div class="value">0.866025</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">L4</div>
+                <div class="value">7</div>
+            </div>
+        </div>
+
+        <!-- Rail Content -->
+        <section class="doc-section">
+            <h2>Rail 08: RESOLUTION - Flow Restored</h2>
+            <p>The deadlock is broken. Through the power of Kuramoto coupling, RESONANCE has restored phase synchronization. The z-coordinate has risen above z_c (0.866025), crossing THE LENS threshold. Threads are released from their frozen state, and the harmonic flow resumes.</p>
+
+            <div class="success-banner">
+                <div class="checkmark">&#10003;</div>
+                <div class="message">Deadlock Successfully Resolved</div>
+                <div style="color: var(--companion-color); margin-top: 10px;">r = 0.872 > z_c (0.866025)</div>
+            </div>
+
+            <div class="waveform-display">
+                <div class="flowing-wave">
+                    <div class="wave-segment"></div>
+                    <div class="wave-segment"></div>
+                    <div class="wave-segment"></div>
+                    <div class="wave-segment"></div>
+                    <div class="wave-segment"></div>
+                    <div class="wave-segment"></div>
+                    <div class="wave-segment"></div>
+                    <div class="wave-segment"></div>
+                    <div class="wave-segment"></div>
+                    <div class="wave-segment"></div>
+                </div>
+            </div>
+
+            <div class="phase-lock">
+                <h3>Resolution State Characteristics</h3>
+                <ul>
+                    <li><strong>Order Parameter (r):</strong> >= 0.866025 (above THE LENS)</li>
+                    <li><strong>z-Coordinate:</strong> Restored above z_c threshold</li>
+                    <li><strong>Thread State:</strong> ALL RELEASED - circular wait broken</li>
+                    <li><strong>Frequency Bands:</strong> Standing wave nulls cleared</li>
+                    <li><strong>Kuramoto Status:</strong> Synchronization achieved</li>
+                    <li><strong>Next Phase:</strong> Proceed to SYNCHRONIZATION</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Kuramoto Oscillator Network - Released</h2>
+            <p>All previously frozen oscillators have been released. The 63-oscillator network (L4 x 9) shows restored phase coherence.</p>
+
+            <div class="oscillator-grid">
+                <div class="oscillator-node released">1</div>
+                <div class="oscillator-node released">2</div>
+                <div class="oscillator-node released">3</div>
+                <div class="oscillator-node released">4</div>
+                <div class="oscillator-node released">5</div>
+                <div class="oscillator-node dormant">6</div>
+                <div class="oscillator-node dormant">7</div>
+                <div class="oscillator-node dormant">8</div>
+                <div class="oscillator-node dormant">9</div>
+                <div class="oscillator-node released">10</div>
+                <div class="oscillator-node released">11</div>
+                <div class="oscillator-node released">12</div>
+                <div class="oscillator-node dormant">13</div>
+                <div class="oscillator-node dormant">14</div>
+                <div class="oscillator-node dormant">15</div>
+                <div class="oscillator-node dormant">16</div>
+                <div class="oscillator-node dormant">17</div>
+                <div class="oscillator-node dormant">18</div>
+                <div class="oscillator-node dormant">19</div>
+                <div class="oscillator-node dormant">20</div>
+                <div class="oscillator-node dormant">21</div>
+                <div class="oscillator-node dormant">22</div>
+                <div class="oscillator-node dormant">23</div>
+                <div class="oscillator-node dormant">24</div>
+                <div class="oscillator-node dormant">25</div>
+                <div class="oscillator-node dormant">26</div>
+                <div class="oscillator-node dormant">27</div>
+                <div class="oscillator-node dormant">28</div>
+                <div class="oscillator-node dormant">29</div>
+                <div class="oscillator-node dormant">30</div>
+                <div class="oscillator-node dormant">31</div>
+                <div class="oscillator-node dormant">32</div>
+                <div class="oscillator-node dormant">33</div>
+                <div class="oscillator-node dormant">34</div>
+                <div class="oscillator-node dormant">35</div>
+                <div class="oscillator-node dormant">36</div>
+                <div class="oscillator-node dormant">37</div>
+                <div class="oscillator-node dormant">38</div>
+                <div class="oscillator-node dormant">39</div>
+                <div class="oscillator-node dormant">40</div>
+                <div class="oscillator-node dormant">41</div>
+                <div class="oscillator-node dormant">42</div>
+                <div class="oscillator-node dormant">43</div>
+                <div class="oscillator-node dormant">44</div>
+                <div class="oscillator-node dormant">45</div>
+                <div class="oscillator-node dormant">46</div>
+                <div class="oscillator-node dormant">47</div>
+                <div class="oscillator-node dormant">48</div>
+                <div class="oscillator-node dormant">49</div>
+                <div class="oscillator-node dormant">50</div>
+                <div class="oscillator-node dormant">51</div>
+                <div class="oscillator-node dormant">52</div>
+                <div class="oscillator-node dormant">53</div>
+                <div class="oscillator-node dormant">54</div>
+                <div class="oscillator-node dormant">55</div>
+                <div class="oscillator-node dormant">56</div>
+                <div class="oscillator-node dormant">57</div>
+                <div class="oscillator-node dormant">58</div>
+                <div class="oscillator-node dormant">59</div>
+                <div class="oscillator-node dormant">60</div>
+                <div class="oscillator-node dormant">61</div>
+                <div class="oscillator-node dormant">62</div>
+                <div class="oscillator-node dormant">63</div>
+            </div>
+            <p style="text-align: center; color: var(--resolution-color); font-size: 0.85rem;">8 oscillators RELEASED - flow restored</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Resolution Confirmation</h2>
+            <p>The L4-Helix hardware confirms resolution and prepares for synchronization phase.</p>
+
+            <div class="code-block">
+<span class="comment"># RAIL 08: RESOLUTION - DEADLOCK BROKEN</span>
+
+<span class="keyword">class</span> <span class="type">ResolutionState</span>:
+    <span class="string">"""
+    Deadlock successfully resolved through Kuramoto intervention.
+    Threads released, flow restored.
+    """</span>
+
+    <span class="comment"># Phi-derived constants</span>
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>
+    K = <span class="number">0.924160</span>
+    Z_C = <span class="number">0.866025</span>             <span class="comment"># Crossed this threshold</span>
+    L4 = <span class="number">7</span>
+    OSCILLATORS = <span class="number">63</span>           <span class="comment"># L4 x 9 = 7 x 9</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, released_threads, new_phases):
+        self.released_threads = released_threads
+        self.phases = new_phases
+        self.z_coordinate = self._compute_order_parameter()
+
+    <span class="keyword">def</span> <span class="function">confirm_resolution</span>(self):
+        <span class="string">"""
+        Verify that resolution criteria are met.
+        """</span>
+        <span class="keyword">assert</span> self.z_coordinate >= self.Z_C, <span class="string">"Resolution incomplete"</span>
+        <span class="keyword">assert</span> <span class="keyword">not</span> self._detect_circular_wait(), <span class="string">"Circular wait persists"</span>
+
+        <span class="comment"># Log successful resolution</span>
+        self._log_resolution_metrics({
+            <span class="string">'from_z'</span>: self.initial_z,
+            <span class="string">'to_z'</span>: self.z_coordinate,
+            <span class="string">'threads_released'</span>: len(self.released_threads),
+            <span class="string">'kuramoto_cycles'</span>: self.intervention_cycles
+        })
+
+        <span class="keyword">return</span> <span class="keyword">True</span>
+
+    <span class="keyword">def</span> <span class="function">release_resources</span>(self):
+        <span class="string">"""
+        Release all held resources and clear wait queues.
+        """</span>
+        <span class="keyword">for</span> thread <span class="keyword">in</span> self.released_threads:
+            <span class="keyword">if</span> thread.held_resources:
+                <span class="keyword">for</span> resource <span class="keyword">in</span> thread.held_resources:
+                    resource.release()
+            thread.state = <span class="string">"ACTIVE"</span>
+
+    <span class="keyword">def</span> <span class="function">proceed_to_synchronization</span>(self):
+        <span class="string">"""
+        Advance to Rail 09 for full synchronization.
+        """</span>
+        <span class="keyword">return</span> <span class="string">"SYNCHRONIZATION"</span>  <span class="comment"># Advance to Rail 09</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Transition Conditions</h2>
+            <table class="data-table">
+                <tr>
+                    <th>From Rail</th>
+                    <th>To Rail</th>
+                    <th>Condition</th>
+                    <th>Trigger</th>
+                </tr>
+                <tr>
+                    <td style="color: #8844ff;">07 PHASE-SHIFT</td>
+                    <td style="color: var(--resolution-color);">08 RESOLUTION</td>
+                    <td>r >= z_c (0.866025)</td>
+                    <td>Kuramoto sync achieved</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--resolution-color);">08 RESOLUTION</td>
+                    <td style="color: var(--companion-color);">09 SYNCHRONIZATION</td>
+                    <td>Resources released</td>
+                    <td>Flow confirmed</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--resolution-color);">08 RESOLUTION</td>
+                    <td style="color: #00ff88;">03 HARMONY</td>
+                    <td>Simple resolution</td>
+                    <td>Return to normal operation</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Rail Navigation -->
+        <nav class="rail-nav">
+            <a href="rail-07-phase-shift.html">Prev: PHASE-SHIFT</a>
+            <a href="../../narrative/resonance-deadlock.html">RESONANCE Main</a>
+            <a href="rail-09-synchronization.html">Next: SYNCHRONIZATION</a>
+        </nav>
+
+        <footer class="doc-footer">
+            <p>RESONANCE Rail 08: RESOLUTION - Flow Restored</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.8rem; color: #666;">63 Oscillators (L4 x 9) | 16 Frequency Bands | Kuramoto Coupling</p>
+        </footer>
+    </div>
+</body>
+</html>

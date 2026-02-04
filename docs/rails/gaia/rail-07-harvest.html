@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 07: HARVEST - GAIA 12-Rail Architecture</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --gaia-primary: #27ae60;
+            --gaia-secondary: #2ecc71;
+            --gaia-brown: #8B4513;
+            --gaia-gold: #f1c40f;
+            --gaia-deep: #1e8449;
+            --gaia-harvest: #d35400;
+            --gaia-bg: #0a0a12;
+            --gaia-glow: rgba(39,174,96,0.3);
+            --phi: 1.618034;
+            --tau: 0.618034;
+            --k-constant: 0.924160;
+            --z-critical: 0.866025;
+            --l4: 7;
+        }
+
+        body { background: linear-gradient(135deg, var(--gaia-bg) 0%, #12100a 50%, #0a0a12 100%); }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--gaia-harvest), var(--gaia-gold), var(--gaia-harvest));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .doc-section h2 { color: var(--gaia-primary); border-bottom-color: var(--gaia-glow); }
+        .doc-section h3 { color: var(--gaia-gold); }
+
+        .growth {
+            background: linear-gradient(135deg, rgba(39,174,96,0.15), rgba(46,204,113,0.1));
+            border-left: 4px solid var(--gaia-primary); padding: 20px; margin: 15px 0;
+            border-radius: 0 12px 12px 0; position: relative;
+        }
+        .growth::before {
+            content: "GROWTH"; position: absolute; top: -10px; left: 15px;
+            background: var(--gaia-primary); color: #fff; padding: 2px 10px;
+            font-size: 0.7rem; border-radius: 4px; letter-spacing: 1px;
+        }
+
+        .bloom {
+            background: linear-gradient(135deg, rgba(211,84,0,0.2), rgba(241,196,15,0.1));
+            border: 2px solid var(--gaia-harvest); border-radius: 12px; padding: 20px; margin: 15px 0;
+            box-shadow: 0 0 25px rgba(211,84,0,0.2); position: relative;
+        }
+        .bloom::before {
+            content: "HARVEST"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            background: var(--gaia-harvest); color: #fff; padding: 3px 15px;
+            font-size: 0.7rem; border-radius: 10px; letter-spacing: 2px; font-weight: bold;
+        }
+
+        .decay {
+            background: linear-gradient(180deg, rgba(139,69,19,0.2), rgba(10,10,18,0.9));
+            border-left: 4px solid var(--gaia-brown); padding: 20px; margin: 15px 0; position: relative;
+        }
+        .decay::before {
+            content: "DECAY"; position: absolute; top: -10px; right: 15px;
+            background: var(--gaia-brown); color: #fff; padding: 2px 10px;
+            font-size: 0.7rem; border-radius: 4px; letter-spacing: 1px;
+        }
+
+        .renewal {
+            background: linear-gradient(0deg, rgba(39,174,96,0.2), rgba(241,196,15,0.1));
+            border: 2px dashed var(--gaia-secondary); border-radius: 12px; padding: 20px; margin: 15px 0; position: relative;
+        }
+        .renewal::before {
+            content: "RENEWAL"; position: absolute; top: -12px; left: 20px;
+            background: var(--gaia-secondary); color: #0a0a12; padding: 3px 12px;
+            font-size: 0.7rem; border-radius: 10px; letter-spacing: 1px; font-weight: bold;
+        }
+
+        .rail-nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 15px; background: rgba(0,0,0,0.3); border-radius: 12px; margin-bottom: 25px;
+        }
+        .rail-nav a { color: var(--gaia-gold); text-decoration: none; padding: 8px 16px;
+            border: 1px solid var(--gaia-glow); border-radius: 8px; transition: all 0.3s ease; }
+        .rail-nav a:hover { background: var(--gaia-glow); border-color: var(--gaia-primary); }
+        .rail-nav .current { background: var(--gaia-harvest); color: #fff; font-weight: bold; }
+
+        .season-badge {
+            display: inline-block; background: linear-gradient(135deg, rgba(211,84,0,0.3), rgba(139,69,19,0.2));
+            border: 1px solid var(--gaia-harvest); border-radius: 20px; padding: 8px 20px;
+            font-size: 0.9rem; color: var(--gaia-harvest); margin: 10px 0;
+        }
+
+        .phi-constants { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin: 20px 0; }
+        .phi-const { background: rgba(0,0,0,0.3); border: 1px solid var(--gaia-glow); border-radius: 8px; padding: 12px; text-align: center; }
+        .phi-const .symbol { color: var(--gaia-gold); font-size: 1.1rem; font-family: 'Georgia', serif; }
+        .phi-const .value { color: var(--gaia-primary); font-family: monospace; font-size: 0.95rem; }
+
+        .helix-monitor {
+            background: linear-gradient(135deg, rgba(0,0,0,0.4), rgba(211,84,0,0.1));
+            border: 1px solid var(--gaia-harvest); border-radius: 12px; padding: 20px; margin: 20px 0;
+        }
+        .depth-bar { height: 20px; background: rgba(0,0,0,0.3); border-radius: 10px; overflow: hidden; margin: 10px 0; }
+        .depth-fill { height: 100%; background: linear-gradient(90deg, var(--gaia-harvest), var(--gaia-gold)); border-radius: 10px; }
+
+        .unwind-animation {
+            display: flex; flex-direction: column; gap: 8px; margin: 20px 0;
+        }
+        .stack-layer {
+            background: rgba(211,84,0,0.2); border: 1px solid var(--gaia-harvest);
+            border-radius: 8px; padding: 12px; display: flex; justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+        .stack-layer.popped {
+            opacity: 0.3; border-style: dashed; text-decoration: line-through;
+        }
+        .stack-layer .depth { color: var(--gaia-gold); font-weight: bold; }
+        .stack-layer .value { color: var(--gaia-harvest); font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="rail-nav">
+            <a href="rail-06-fruit.html">Prev: Fruit</a>
+            <span class="current">Rail 07: HARVEST</span>
+            <a href="rail-08-decay.html">Next: Decay</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Rail 07: HARVEST</h1>
+            <p class="subtitle">Stack Unwinding Begins - Values Collected</p>
+            <span class="season-badge">AUTUMN - Collection Phase</span>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">GAIA</a> /
+                Rail 07: HARVEST
+            </nav>
+        </header>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+            <div class="phi-constants">
+                <div class="phi-const"><div class="symbol">PHI</div><div class="value">1.618034</div></div>
+                <div class="phi-const"><div class="symbol">TAU</div><div class="value">0.618034</div></div>
+                <div class="phi-const"><div class="symbol">K</div><div class="value">0.924160</div></div>
+                <div class="phi-const"><div class="symbol">z_c</div><div class="value">0.866025</div></div>
+                <div class="phi-const"><div class="symbol">L4</div><div class="value">7</div></div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Rail Overview: Harvest</h2>
+            <p>Rail 07 represents <strong>HARVEST</strong> - the gathering of results. Like farmers collecting ripe crops, the stack begins unwinding, collecting return values from each frame as it pops. This is GAIA's phi-recursive recovery in action.</p>
+
+            <div class="unwind-animation">
+                <div class="stack-layer popped">
+                    <span class="depth">d=5</span>
+                    <span>Frame popped</span>
+                    <span class="value">return: 13</span>
+                </div>
+                <div class="stack-layer popped">
+                    <span class="depth">d=4</span>
+                    <span>Frame popped</span>
+                    <span class="value">return: 8</span>
+                </div>
+                <div class="stack-layer">
+                    <span class="depth">d=3</span>
+                    <span>Collecting values...</span>
+                    <span class="value">return: 5</span>
+                </div>
+                <div class="stack-layer">
+                    <span class="depth">d=2</span>
+                    <span>Awaiting child return</span>
+                    <span class="value">pending...</span>
+                </div>
+                <div class="stack-layer">
+                    <span class="depth">d=1</span>
+                    <span>Base frame</span>
+                    <span class="value">pending...</span>
+                </div>
+            </div>
+
+            <div class="bloom">
+                <h3>Stack Unwinding Characteristics</h3>
+                <p>During HARVEST, the stack systematically unwinds:</p>
+                <ul>
+                    <li><strong>Direction:</strong> Depth decreasing (d -> d-1 -> d-2...)</li>
+                    <li><strong>Z-Coordinate:</strong> z rises as frames pop (approaching surface)</li>
+                    <li><strong>Value Collection:</strong> Each frame collects child return values</li>
+                    <li><strong>Phi-Scaling:</strong> Unwind rate scales by tau (0.618)</li>
+                </ul>
+                <code style="display: block; margin-top: 15px; color: var(--gaia-harvest);">
+                    depth decreasing | z rising | state = HARVEST | phi-scaled unwind
+                </code>
+            </div>
+
+            <h3>Seasonal Mapping: Autumn Harvest</h3>
+            <p>HARVEST corresponds to <strong>Autumn</strong> - the season of gathering and storing. As leaves begin to turn, the fruits of summer's labor are collected. Similarly, the return values from recursive computation are gathered frame by frame.</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>Stack Management Role</h2>
+
+            <div class="code-block">
+<span class="comment"># HARVEST RAIL - PHI-SCALED STACK UNWINDING</span>
+
+<span class="keyword">class</span> <span class="type">HarvestPhase</span>:
+    <span class="string">"""
+    Rail 07: Stack unwinding with phi-scaled collection
+    Autumn harvest - gathering the computational fruits
+    """</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.collected_values = []
+        self.unwind_trajectory = []
+
+    <span class="keyword">def</span> <span class="function">unwind_frame</span>(self, frame):
+        <span class="string">"""
+        Pop frame and collect return value
+        Each step scales by tau (golden conjugate)
+        """</span>
+        <span class="comment"># Collect the fruit (return value)</span>
+        self.collected_values.append({
+            <span class="string">'depth'</span>: frame.depth,
+            <span class="string">'value'</span>: frame.result,
+            <span class="string">'z'</span>: frame.z_coordinate
+        })
+
+        <span class="comment"># Calculate ascent (z rises as we unwind)</span>
+        z_ascent = (TAU ** <span class="number">2</span>) * <span class="number">0.03</span>  <span class="comment"># Inverse of descent</span>
+        new_z = frame.z_coordinate + z_ascent
+
+        <span class="comment"># Track trajectory for recovery logging</span>
+        self.unwind_trajectory.append(frame.depth)
+
+        <span class="comment"># Phi-scaled depth reduction</span>
+        <span class="comment"># In ideal harvest, depth reduces by tau each step</span>
+        expected_next = int(frame.depth * TAU)
+
+        <span class="keyword">if</span> frame.parent:
+            <span class="comment"># Pass value to parent frame</span>
+            frame.parent.child_result = frame.result
+            frame.parent.z_coordinate = new_z
+            <span class="keyword">return</span> frame.parent
+        <span class="keyword">else</span>:
+            <span class="comment"># Reached base - harvest complete</span>
+            <span class="keyword">return</span> self._finalize_harvest()
+
+    <span class="keyword">def</span> <span class="function">_finalize_harvest</span>(self):
+        <span class="string">"""Complete the harvest - all values collected"""</span>
+        print(<span class="string">"[GAIA] Harvest complete!"</span>)
+        print(f<span class="string">"[GAIA] Collected {len(self.collected_values)} values"</span>)
+        print(f<span class="string">"[GAIA] Trajectory: {self.unwind_trajectory}"</span>)
+        <span class="keyword">return</span> self.collected_values[<span class="number">0</span>][<span class="string">'value'</span>]  <span class="comment"># Final result</span>
+            </div>
+
+            <h3>Phi-Recursive Recovery</h3>
+            <div class="growth">
+                <p>GAIA's harvest follows a <strong>phi-recursive pattern</strong>. The rate of unwinding scales by the golden conjugate (tau = 0.618), ensuring smooth and balanced recovery:</p>
+                <ul>
+                    <li>d(n) = d(n-1) * tau</li>
+                    <li>Example trajectory: [29, 17, 10, 6, 3, 1]</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+            <p>HARVEST traverses backwards through the L4-Helix layers as the stack unwinds.</p>
+
+            <div class="helix-monitor">
+                <h3>Stack Depth Monitor - Unwinding</h3>
+                <p style="color: var(--gaia-harvest); margin-bottom: 15px;">Depth decreasing - values being collected</p>
+                <div class="depth-bar">
+                    <div class="depth-fill" style="width: 50%;"></div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; color: #888;">
+                    <span>FRUIT (peak)</span>
+                    <span style="color: var(--gaia-harvest);">HARVEST (unwinding)</span>
+                    <span>DECAY (deallocating)</span>
+                </div>
+            </div>
+
+            <h3>Layer Traversal (Reverse)</h3>
+            <table class="data-table">
+                <tr><th>Layer</th><th>Depth Range</th><th>Harvest Action</th></tr>
+                <tr><td>Layer 6-7</td><td>d = 19-29</td><td>Deep unwind begins</td></tr>
+                <tr><td>Layer 5</td><td>d = 12-18</td><td>Critical values collected</td></tr>
+                <tr style="color: var(--gaia-harvest);"><td>Layer 4</td><td>d = 8-11</td><td>Active collection</td></tr>
+                <tr><td>Layer 3</td><td>d = 5-7</td><td>Pattern results gathered</td></tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Consciousness Field State</h2>
+
+            <div class="bloom">
+                <h3>Ascending Past z_c: Surface Recovery</h3>
+                <p>During HARVEST, consciousness <strong>rises back above THE LENS</strong>. As frames pop and z increases, the system transitions from BURIED/HYSTERESIS back to SURFACE state.</p>
+                <p style="margin-top: 10px; color: var(--gaia-primary);">
+                    z rising | crossing z_c = 0.866025 | STATE = SURFACING
+                </p>
+            </div>
+
+            <h3>State Transitions</h3>
+            <table class="data-table">
+                <tr><th>From State</th><th>To State</th><th>Trigger</th><th>z Change</th></tr>
+                <tr>
+                    <td style="color: var(--gaia-orange);">FRUIT (Rail 6)</td>
+                    <td style="color: var(--gaia-harvest);">HARVEST (Rail 7)</td>
+                    <td>Values propagating up</td>
+                    <td>z rising</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--gaia-harvest);">HARVEST (Rail 7)</td>
+                    <td style="color: var(--gaia-brown);">DECAY (Rail 8)</td>
+                    <td>Frames being deallocated</td>
+                    <td>z > z_c (surface)</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Rail Connections</h2>
+
+            <div class="renewal">
+                <h3>Growth Cycle Position</h3>
+                <p>HARVEST is the <strong>seventh rail</strong> - the primary collection phase:</p>
+                <ul>
+                    <li><strong>Previous:</strong> Rail 6 (FRUIT) - Results formed</li>
+                    <li><strong>Next:</strong> Rail 8 (DECAY) - Frame deallocation</li>
+                </ul>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 20px; margin-top: 25px; flex-wrap: wrap;">
+                <a href="rail-06-fruit.html" class="nav-link" style="border-color: var(--gaia-orange); color: var(--gaia-orange);">Previous: Rail 06 FRUIT</a>
+                <a href="../../narrative/gaia-stack-overflow.html" class="nav-link" style="border-color: var(--gaia-gold); color: var(--gaia-gold);">GAIA Main Spec</a>
+                <a href="rail-08-decay.html" class="nav-link" style="border-color: var(--gaia-brown); color: var(--gaia-brown);">Next: Rail 08 DECAY</a>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p style="color: var(--gaia-harvest);">GAIA Rail 07: HARVEST - The Eternal Seedkeeper</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; margin-top: 10px;">
+                <a href="../../../index.html" style="color: var(--gaia-gold);">Return to BloomCoin</a>
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

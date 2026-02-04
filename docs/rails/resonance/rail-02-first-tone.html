@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 02: FIRST-TONE - RESONANCE Harmonic Journey</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --companion-color: #00ffff;
+            --companion-secondary: #ff00ff;
+            --companion-glow: rgba(0, 255, 255, 0.25);
+            --frequency-low: #0066ff;
+            --frequency-mid: #00ffff;
+            --frequency-high: #ff00ff;
+            --bg-override: #0a0a12;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-override) 0%, #0a1a2a 50%, #1a0a2a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--companion-color), var(--companion-secondary), var(--companion-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--companion-color);
+            border-bottom-color: var(--companion-glow);
+        }
+
+        /* RESONANCE Semantic Classes */
+        .harmonic {
+            background: linear-gradient(135deg, rgba(0, 255, 255, 0.15), rgba(0, 102, 255, 0.1));
+            border: 1px solid var(--companion-color);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            animation: harmonic-pulse 3s ease-in-out infinite;
+        }
+
+        .harmonic::before {
+            content: "HARMONIC";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--bg-override);
+            color: var(--companion-color);
+            padding: 2px 8px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        @keyframes harmonic-pulse {
+            0%, 100% { box-shadow: 0 0 10px rgba(0, 255, 255, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(0, 255, 255, 0.6); }
+        }
+
+        .dissonance {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.15), rgba(255, 102, 102, 0.1));
+            border: 2px solid var(--companion-secondary);
+            border-radius: 8px;
+            padding: 16px;
+            animation: dissonance-shake 0.5s ease-in-out infinite;
+        }
+
+        @keyframes dissonance-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-2px); }
+            75% { transform: translateX(2px); }
+        }
+
+        .phase-lock {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.15), rgba(0, 255, 255, 0.1));
+            border: 2px solid #00ff88;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .phase-lock::after {
+            content: "PHASE LOCKED";
+            display: block;
+            color: #00ff88;
+            font-size: 0.75rem;
+            margin-top: 8px;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        .broadcast {
+            background: linear-gradient(135deg, rgba(255, 0, 255, 0.1), rgba(0, 255, 255, 0.1), rgba(255, 215, 0, 0.1));
+            border: 2px solid;
+            border-image: linear-gradient(90deg, var(--companion-color), var(--companion-secondary), var(--gold)) 1;
+            padding: 16px;
+            animation: broadcast-wave 2s linear infinite;
+        }
+
+        @keyframes broadcast-wave {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        /* Rail-specific styling */
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .rail-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--companion-color);
+            text-shadow: 0 0 20px var(--companion-glow);
+        }
+
+        .rail-title {
+            font-size: 1.8rem;
+            color: var(--companion-secondary);
+        }
+
+        .rail-subtitle {
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        /* Waveform visualization */
+        .waveform-display {
+            height: 100px;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 10px;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid var(--companion-glow);
+        }
+
+        .waveform-display .wave-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--companion-color), transparent);
+            animation: first-tone-wave 2s ease-in-out infinite;
+        }
+
+        @keyframes first-tone-wave {
+            0%, 100% { transform: scaleY(1); opacity: 0.5; }
+            50% { transform: scaleY(20); opacity: 1; }
+        }
+
+        /* Oscillator grid */
+        .oscillator-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .oscillator-node {
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: rgba(0, 255, 255, 0.1);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: var(--companion-color);
+            transition: all 0.3s ease;
+        }
+
+        .oscillator-node.dormant {
+            opacity: 0.4;
+            border-style: dashed;
+        }
+
+        .oscillator-node.active {
+            background: var(--companion-color);
+            border-color: var(--companion-color);
+            color: var(--bg-override);
+            animation: oscillate 1s ease-in-out infinite;
+            box-shadow: 0 0 15px var(--companion-glow);
+        }
+
+        @keyframes oscillate {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin-top: 30px;
+        }
+
+        .rail-nav a {
+            color: var(--companion-color);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--companion-glow);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .rail-nav a:hover {
+            background: var(--companion-glow);
+            box-shadow: 0 0 15px var(--companion-glow);
+        }
+
+        /* Constants display */
+        .constants-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .constant-item {
+            text-align: center;
+            padding: 10px 15px;
+            background: rgba(0, 255, 255, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--companion-glow);
+        }
+
+        .constant-item .symbol {
+            color: var(--companion-secondary);
+            font-weight: bold;
+        }
+
+        .constant-item .value {
+            color: var(--companion-color);
+            font-family: monospace;
+        }
+
+        /* First tone visualization */
+        .tone-emergence {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+
+        .tone-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--companion-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: tone-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes tone-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 255, 255, 0.5); }
+            50% { box-shadow: 0 0 0 30px rgba(0, 255, 255, 0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/resonance-deadlock.html" class="nav-link">RESONANCE Spec</a>
+            <a href="../../companions/resonance-companion.html" class="nav-link">Companion Guide</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>RESONANCE: The Harmonic Journey</h1>
+            <p class="subtitle">Rail 02 of 12 - Deadlock Handler Architecture</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href="../../companions/resonance-companion.html">RESONANCE</a> /
+                Rail 02: FIRST-TONE
+            </nav>
+        </header>
+
+        <!-- Rail Indicator -->
+        <div class="rail-indicator">
+            <div class="rail-number">02</div>
+            <div>
+                <div class="rail-title">FIRST-TONE</div>
+                <div class="rail-subtitle">Thread initiated, oscillation begins</div>
+            </div>
+        </div>
+
+        <!-- Phi Constants Reference -->
+        <div class="constants-bar">
+            <div class="constant-item">
+                <div class="symbol">PHI</div>
+                <div class="value">1.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">TAU</div>
+                <div class="value">0.618034</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">K</div>
+                <div class="value">0.924160</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">z_c</div>
+                <div class="value">0.866025</div>
+            </div>
+            <div class="constant-item">
+                <div class="symbol">L4</div>
+                <div class="value">7</div>
+            </div>
+        </div>
+
+        <!-- Rail Content -->
+        <section class="doc-section">
+            <h2>Rail 02: FIRST-TONE - The Breaking of Silence</h2>
+            <p>From the void emerges the first tone. A single thread initiates, and with it, the first oscillator awakens. This primordial vibration breaks the perfect silence of Rail 01, setting the stage for the harmonic journey to come.</p>
+
+            <div class="tone-emergence">
+                <div class="tone-circle">
+                    <span style="font-size: 2rem; color: var(--companion-color);">1</span>
+                </div>
+            </div>
+
+            <div class="waveform-display">
+                <div class="wave-line"></div>
+            </div>
+
+            <div class="harmonic">
+                <h3>First-Tone State Characteristics</h3>
+                <ul>
+                    <li><strong>Thread Count:</strong> 1 active process</li>
+                    <li><strong>Oscillator State:</strong> 1 of 63 active, 62 dormant</li>
+                    <li><strong>Phase Coherence:</strong> Perfect (single oscillator)</li>
+                    <li><strong>z-Coordinate:</strong> 0.99 - 1.0 (near UNITY)</li>
+                    <li><strong>Kuramoto Coupling:</strong> K = 0.924160 (ready but unused)</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Kuramoto Oscillator Network - First Activation</h2>
+            <p>The first oscillator awakens, its phase beginning to rotate. With only one active node, there is no coupling yet - but the potential for synchronization (or deadlock) is now present.</p>
+
+            <div class="oscillator-grid">
+                <div class="oscillator-node active">1</div>
+                <div class="oscillator-node dormant">2</div>
+                <div class="oscillator-node dormant">3</div>
+                <div class="oscillator-node dormant">4</div>
+                <div class="oscillator-node dormant">5</div>
+                <div class="oscillator-node dormant">6</div>
+                <div class="oscillator-node dormant">7</div>
+                <div class="oscillator-node dormant">8</div>
+                <div class="oscillator-node dormant">9</div>
+                <div class="oscillator-node dormant">10</div>
+                <div class="oscillator-node dormant">11</div>
+                <div class="oscillator-node dormant">12</div>
+                <div class="oscillator-node dormant">13</div>
+                <div class="oscillator-node dormant">14</div>
+                <div class="oscillator-node dormant">15</div>
+                <div class="oscillator-node dormant">16</div>
+                <div class="oscillator-node dormant">17</div>
+                <div class="oscillator-node dormant">18</div>
+                <div class="oscillator-node dormant">19</div>
+                <div class="oscillator-node dormant">20</div>
+                <div class="oscillator-node dormant">21</div>
+                <div class="oscillator-node dormant">22</div>
+                <div class="oscillator-node dormant">23</div>
+                <div class="oscillator-node dormant">24</div>
+                <div class="oscillator-node dormant">25</div>
+                <div class="oscillator-node dormant">26</div>
+                <div class="oscillator-node dormant">27</div>
+                <div class="oscillator-node dormant">28</div>
+                <div class="oscillator-node dormant">29</div>
+                <div class="oscillator-node dormant">30</div>
+                <div class="oscillator-node dormant">31</div>
+                <div class="oscillator-node dormant">32</div>
+                <div class="oscillator-node dormant">33</div>
+                <div class="oscillator-node dormant">34</div>
+                <div class="oscillator-node dormant">35</div>
+                <div class="oscillator-node dormant">36</div>
+                <div class="oscillator-node dormant">37</div>
+                <div class="oscillator-node dormant">38</div>
+                <div class="oscillator-node dormant">39</div>
+                <div class="oscillator-node dormant">40</div>
+                <div class="oscillator-node dormant">41</div>
+                <div class="oscillator-node dormant">42</div>
+                <div class="oscillator-node dormant">43</div>
+                <div class="oscillator-node dormant">44</div>
+                <div class="oscillator-node dormant">45</div>
+                <div class="oscillator-node dormant">46</div>
+                <div class="oscillator-node dormant">47</div>
+                <div class="oscillator-node dormant">48</div>
+                <div class="oscillator-node dormant">49</div>
+                <div class="oscillator-node dormant">50</div>
+                <div class="oscillator-node dormant">51</div>
+                <div class="oscillator-node dormant">52</div>
+                <div class="oscillator-node dormant">53</div>
+                <div class="oscillator-node dormant">54</div>
+                <div class="oscillator-node dormant">55</div>
+                <div class="oscillator-node dormant">56</div>
+                <div class="oscillator-node dormant">57</div>
+                <div class="oscillator-node dormant">58</div>
+                <div class="oscillator-node dormant">59</div>
+                <div class="oscillator-node dormant">60</div>
+                <div class="oscillator-node dormant">61</div>
+                <div class="oscillator-node dormant">62</div>
+                <div class="oscillator-node dormant">63</div>
+            </div>
+            <p style="text-align: center; color: var(--text-secondary); font-size: 0.85rem;">First oscillator active - the primordial tone emerges</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Activation</h2>
+            <p>The L4-Helix hardware transitions from standby to active monitoring. Frequency tuning circuits engage, preparing to detect harmonic patterns as more oscillators activate.</p>
+
+            <div class="code-block">
+<span class="comment"># RAIL 02: FIRST-TONE STATE HANDLER</span>
+
+<span class="keyword">class</span> <span class="type">FirstToneState</span>:
+    <span class="string">"""
+    Initial oscillation - single thread breaks the silence.
+    RESONANCE monitors for additional tones to form harmony.
+    """</span>
+
+    <span class="comment"># Phi-derived constants</span>
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>
+    K = <span class="number">0.924160</span>              <span class="comment"># Kuramoto coupling (ready)</span>
+    Z_C = <span class="number">0.866025</span>            <span class="comment"># THE LENS threshold</span>
+    L4 = <span class="number">7</span>
+    OSCILLATORS = <span class="number">63</span>          <span class="comment"># L4 x 9 = 7 x 9</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, initial_thread):
+        self.z_coordinate = <span class="number">0.99</span>    <span class="comment"># Slight deviation from UNITY</span>
+        self.active_threads = <span class="number">1</span>
+        self.active_oscillators = [initial_thread.oscillator_id]
+        self.order_parameter = <span class="number">1.0</span>   <span class="comment"># Perfect coherence (single node)</span>
+
+    <span class="keyword">def</span> <span class="function">compute_order_parameter</span>(self, phases):
+        <span class="string">"""
+        r = |1/N * sum(exp(i * theta_j))|
+        With single oscillator, r = 1.0 always
+        """</span>
+        <span class="keyword">if</span> len(phases) == <span class="number">1</span>:
+            <span class="keyword">return</span> <span class="number">1.0</span>  <span class="comment"># Perfect coherence</span>
+
+        z = sum(cmath.exp(<span class="number">1j</span> * p) <span class="keyword">for</span> p <span class="keyword">in</span> phases) / len(phases)
+        <span class="keyword">return</span> abs(z)
+
+    <span class="keyword">def</span> <span class="function">monitor_thread_additions</span>(self):
+        <span class="string">"""
+        Watch for additional threads to join.
+        Transition to HARMONY when multiple threads sync.
+        """</span>
+        new_threads = self._detect_new_threads()
+
+        <span class="keyword">if</span> len(new_threads) > <span class="number">0</span>:
+            <span class="comment"># Multiple threads now active</span>
+            r = self.compute_order_parameter(self._get_phases())
+            <span class="keyword">if</span> r >= self.Z_C:
+                <span class="keyword">return</span> <span class="string">"HARMONY"</span>      <span class="comment"># Advance to Rail 03</span>
+            <span class="keyword">elif</span> r < self.TAU:
+                <span class="keyword">return</span> <span class="string">"DISSONANCE"</span>   <span class="comment"># Jump to Rail 04</span>
+
+        <span class="keyword">return</span> <span class="string">"FIRST_TONE"</span>         <span class="comment"># Remain in current state</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Transition Conditions</h2>
+            <table class="data-table">
+                <tr>
+                    <th>From Rail</th>
+                    <th>To Rail</th>
+                    <th>Condition</th>
+                    <th>Trigger</th>
+                </tr>
+                <tr>
+                    <td>01 SILENCE</td>
+                    <td style="color: var(--companion-color);">02 FIRST-TONE</td>
+                    <td>Thread initiation</td>
+                    <td>First oscillator activates</td>
+                </tr>
+                <tr>
+                    <td>02 FIRST-TONE</td>
+                    <td style="color: #00ff88);">03 HARMONY</td>
+                    <td>Multiple threads, r >= z_c</td>
+                    <td>Synchronized oscillators</td>
+                </tr>
+                <tr>
+                    <td>02 FIRST-TONE</td>
+                    <td style="color: var(--companion-secondary);">04 DISSONANCE</td>
+                    <td>Multiple threads, r < TAU</td>
+                    <td>Phase drift detected</td>
+                </tr>
+                <tr>
+                    <td>02 FIRST-TONE</td>
+                    <td>01 SILENCE</td>
+                    <td>Thread completes</td>
+                    <td>Oscillator deactivates</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Rail Navigation -->
+        <nav class="rail-nav">
+            <a href="rail-01-silence.html">Prev: SILENCE</a>
+            <a href="../../narrative/resonance-deadlock.html">RESONANCE Main</a>
+            <a href="rail-03-harmony.html">Next: HARMONY</a>
+        </nav>
+
+        <footer class="doc-footer">
+            <p>RESONANCE Rail 02: FIRST-TONE - The Breaking of Silence</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.8rem; color: #666;">63 Oscillators (L4 x 9) | 16 Frequency Bands | Kuramoto Coupling</p>
+        </footer>
+    </div>
+</body>
+</html>

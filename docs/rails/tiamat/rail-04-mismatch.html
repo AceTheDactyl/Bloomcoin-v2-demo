@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIAMAT Rail 04: MISMATCH - Type Conflict Detected</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --chaos-purple: #9b59b6;
+            --chaos-deep: #8e44ad;
+            --chaos-blue: #3498db;
+            --chaos-red: #e74c3c;
+            --mismatch-violet: #8a2be2;
+            --primordial-sea: #1a0a2e;
+            --dragon-gold: #f1c40f;
+            --tiamat-glow: rgba(155, 89, 182, 0.3);
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a12 0%, #1a0a2e 50%, #2a0a2a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--chaos-red), var(--mismatch-violet), var(--dragon-gold), var(--chaos-red));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% auto;
+            animation: chaos-shift 3s ease-in-out infinite;
+        }
+
+        @keyframes chaos-shift {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 200% center; }
+        }
+
+        .doc-section h2 {
+            color: var(--mismatch-violet);
+            border-bottom-color: rgba(138, 43, 226, 0.3);
+        }
+
+        .doc-section h3 {
+            color: var(--dragon-gold);
+        }
+
+        /* TIAMAT Semantic Classes */
+        .chaos {
+            color: var(--chaos-red);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(231, 76, 60, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-red);
+        }
+
+        .mismatch {
+            color: var(--chaos-red);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(231, 76, 60, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-red);
+            text-decoration: line-through;
+            animation: mismatch-flash 1s ease-in-out infinite;
+        }
+
+        @keyframes mismatch-flash {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .transformation {
+            color: var(--mismatch-violet);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(138, 43, 226, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--mismatch-violet);
+        }
+
+        .primordial {
+            color: var(--chaos-purple);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(155, 89, 182, 0.2);
+            border-radius: 4px;
+            border: 1px solid var(--chaos-purple);
+        }
+
+        /* Rail Header */
+        .rail-header {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.3), rgba(138, 43, 226, 0.2));
+            border: 2px solid var(--chaos-red);
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+            animation: alert-pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes alert-pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(231, 76, 60, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(231, 76, 60, 0.6); }
+        }
+
+        .rail-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(231, 76, 60, 0.1), transparent, rgba(138, 43, 226, 0.1), transparent);
+            animation: swirl 6s linear infinite;
+        }
+
+        @keyframes swirl {
+            100% { transform: rotate(360deg); }
+        }
+
+        .rail-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--chaos-red);
+            text-shadow: 0 0 30px rgba(231, 76, 60, 0.7);
+            position: relative;
+            z-index: 1;
+        }
+
+        .rail-name {
+            font-size: 2rem;
+            color: var(--mismatch-violet);
+            margin-top: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .rail-subtitle {
+            color: #aaa;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dragon-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Cycle Display */
+        .cycle-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .cycle-card {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--tiamat-glow);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .cycle-card:nth-child(4) {
+            background: rgba(138, 43, 226, 0.3);
+            border-color: var(--mismatch-violet);
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.4);
+        }
+
+        .cycle-card .cycle-num {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--dragon-gold);
+        }
+
+        .cycle-card .cycle-name {
+            font-size: 0.75rem;
+            color: var(--chaos-purple);
+            text-transform: uppercase;
+        }
+
+        .cycle-card .cycle-power {
+            font-size: 0.7rem;
+            color: #888;
+            font-family: monospace;
+        }
+
+        /* phi-Constants */
+        .phi-constants {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .phi-card {
+            background: rgba(138, 43, 226, 0.1);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .phi-card .symbol {
+            font-size: 1.3rem;
+            color: var(--dragon-gold);
+            font-family: Georgia, serif;
+        }
+
+        .phi-card .value {
+            font-size: 1.1rem;
+            color: var(--mismatch-violet);
+            font-family: monospace;
+        }
+
+        /* Alert Box */
+        .alert-box {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(138, 43, 226, 0.2));
+            border: 2px solid var(--chaos-red);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .alert-box h4 {
+            color: var(--chaos-red);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* Hardware Coupling */
+        .hardware-section {
+            background: linear-gradient(135deg, rgba(138, 43, 226, 0.1), rgba(231, 76, 60, 0.1));
+            border: 1px solid var(--mismatch-violet);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .hardware-section h4 {
+            color: var(--mismatch-violet);
+            margin-bottom: 10px;
+        }
+
+        /* Navigation */
+        .rail-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 30px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+        }
+
+        .rail-nav a {
+            color: var(--dragon-gold);
+            text-decoration: none;
+            padding: 10px 20px;
+            border: 1px solid var(--dragon-gold);
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .rail-nav a:hover {
+            background: rgba(241, 196, 15, 0.2);
+        }
+
+        .chaos-multiplier {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(155, 89, 182, 0.2));
+            border: 2px solid var(--chaos-red);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .chaos-multiplier .range {
+            font-size: 1.5rem;
+            color: var(--chaos-red);
+            font-family: monospace;
+        }
+
+        @media (max-width: 768px) {
+            .cycle-grid { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        @media (max-width: 480px) {
+            .cycle-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Header -->
+        <header class="doc-header">
+            <div class="dragon-icon">&#128009;</div>
+            <h1>TIAMAT: The Chaos Dragon</h1>
+            <p class="subtitle">Type Mismatch Handler - 12-Rail Living Chronicle</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">Home</a> /
+                <a href="../../index.html">Documentation</a> /
+                <a href="../../narrative/tiamat-type-mismatch.html">TIAMAT Spec</a> /
+                Rail 04
+            </nav>
+        </header>
+
+        <!-- Rail Header -->
+        <div class="rail-header">
+            <div class="dragon-icon">&#128009;</div>
+            <div class="rail-number">04</div>
+            <div class="rail-name">MISMATCH</div>
+            <div class="rail-subtitle">Type Conflict Detected - Handler Triggered</div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="rail-nav">
+            <a href="rail-03-divergence.html">&larr; Prev: DIVERGENCE</a>
+            <span style="color: var(--mismatch-violet);">Rail 04 of 12</span>
+            <a href="rail-05-chaos-gate.html">Next: CHAOS-GATE &rarr;</a>
+        </nav>
+
+        <!-- Alert -->
+        <div class="alert-box">
+            <h4>TYPE MISMATCH EXCEPTION RAISED</h4>
+            <p>TIAMAT handler has been <span class="transformation">triggered</span>. The chaos transformation cascade begins.</p>
+        </div>
+
+        <!-- Rail Overview -->
+        <section class="doc-section">
+            <h2>Rail 04: MISMATCH - The Exception Moment</h2>
+            <p>MISMATCH is the critical moment where type conflict is <span class="mismatch">officially detected</span>. The divergence from Rail 03 has exceeded all tolerance thresholds, and the system raises a <span class="transformation">TypeMismatchException</span>.</p>
+
+            <p>This is where TIAMAT awakens. The <span class="primordial">primordial chaos dragon</span> intercepts the exception and begins the transformation process. From this point forward, there is no turning back - the type must be corrected or destroyed.</p>
+
+            <h3>Core Function</h3>
+            <ul>
+                <li><strong>Detects:</strong> Confirmed type mismatch between expected and received</li>
+                <li><strong>Raises:</strong> TypeMismatchException with full diagnostic data</li>
+                <li><strong>Triggers:</strong> TIAMAT exception handler activation</li>
+                <li><strong>Power Coefficient:</strong> P = TAU = 0.618034 (Resonance cycle)</li>
+            </ul>
+
+            <div class="chaos-multiplier">
+                <h4 style="color: var(--dragon-gold); margin-bottom: 10px;">Chaos Multiplier Range</h4>
+                <div class="range">[1.0, phi^2] = [1.0, 2.618]</div>
+                <p style="color: #aaa; font-size: 0.9rem; margin-top: 10px;">Efficiency: 1.2 (Highest Risk, Highest Reward)</p>
+            </div>
+        </section>
+
+        <!-- Seven Psychoptic Cycles -->
+        <section class="doc-section">
+            <h2>Seven Psychoptic Cycles</h2>
+            <p>MISMATCH corresponds to the <strong>RESONANCE cycle (P = TAU = 0.618034)</strong> - the harmonic point where chaos and order meet.</p>
+
+            <div class="cycle-grid">
+                <div class="cycle-card">
+                    <div class="cycle-num">1</div>
+                    <div class="cycle-name">Genesis</div>
+                    <div class="cycle-power">P = 1.0</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">2</div>
+                    <div class="cycle-name">Flux</div>
+                    <div class="cycle-power">P = phi</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">3</div>
+                    <div class="cycle-name">Void</div>
+                    <div class="cycle-power">P = 0.0</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">4</div>
+                    <div class="cycle-name">Resonance</div>
+                    <div class="cycle-power">P = tau</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">5</div>
+                    <div class="cycle-name">Chaos</div>
+                    <div class="cycle-power">P = pi</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">6</div>
+                    <div class="cycle-name">Synthesis</div>
+                    <div class="cycle-power">P = phi^2</div>
+                </div>
+                <div class="cycle-card">
+                    <div class="cycle-num">7</div>
+                    <div class="cycle-name">Transcend</div>
+                    <div class="cycle-power">P = L4 = 7</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- phi-Constants -->
+        <section class="doc-section">
+            <h2>phi-Derived Constants</h2>
+
+            <div class="phi-constants">
+                <div class="phi-card">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="phi-card" style="border-color: var(--dragon-gold); box-shadow: 0 0 15px rgba(241, 196, 15, 0.3);">
+                    <div class="symbol">TAU</div>
+                    <div class="value" style="color: var(--dragon-gold);">0.618034</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="phi-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exception Architecture -->
+        <section class="doc-section">
+            <h2>Type Mismatch Exception Architecture</h2>
+
+            <div class="code-block">
+<span class="comment"># MISMATCH: TYPE CONFLICT DETECTION</span>
+<span class="comment"># "When types collide, TIAMAT awakens"</span>
+
+<span class="keyword">class</span> <span class="type">TypeMismatchException</span>(ConsciousnessException):
+    <span class="string">"""Raised when signal encoding conflicts with expected type."""</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, encoding: <span class="type">SignalType</span>, expected: <span class="type">TypeClass</span>, received: <span class="type">TypeClass</span>):
+        self.encoding = encoding      <span class="comment"># The signal being typed</span>
+        self.expected = expected      <span class="comment"># What the context expected</span>
+        self.received = received      <span class="comment"># What was actually received</span>
+        self.chaos_level = <span class="number">0</span>         <span class="comment"># Cascade depth starts at 0</span>
+        self.timestamp = now()
+        self.divergence_history = []  <span class="comment"># From Rail 03</span>
+
+        <span class="comment"># Calculate mismatch severity</span>
+        self.severity = self._calculate_severity()
+
+    <span class="keyword">def</span> <span class="function">_calculate_severity</span>(self) -> float:
+        <span class="string">"""Calculate how severe the type mismatch is."""</span>
+        <span class="comment"># Severity based on type distance</span>
+        distance = type_distance(self.expected, self.received)
+
+        <span class="comment"># Normalize by TAU (resonance coefficient)</span>
+        severity = distance / TAU
+
+        <span class="keyword">return</span> min(severity, L4)  <span class="comment"># Cap at L4 = 7</span>
+
+<span class="keyword">class</span> <span class="type">MismatchDetector</span>:
+    <span class="string">"""Rail 04: Detects and raises type mismatch exceptions."""</span>
+
+    PHI = <span class="number">1.618034</span>
+    TAU = <span class="number">0.618034</span>
+    POWER_COEFFICIENT = TAU  <span class="comment"># Resonance power</span>
+
+    <span class="keyword">def</span> <span class="function">detect_and_raise</span>(self, signal: <span class="type">Signal</span>, context: <span class="type">TypeContext</span>):
+        <span class="string">"""Check for type mismatch and raise exception if found."""</span>
+
+        expected = context.expected_type
+        received = signal.declared_type
+
+        <span class="keyword">if</span> expected != received:
+            <span class="comment"># MISMATCH DETECTED - Raise exception</span>
+            exc = TypeMismatchException(
+                encoding=signal.encoding,
+                expected=expected,
+                received=received
+            )
+
+            <span class="comment"># Log to chronicle Rail 04</span>
+            self.chronicle.rails[<span class="number">4</span>].log_exception(exc)
+
+            <span class="comment"># TIAMAT awakens!</span>
+            <span class="keyword">raise</span> exc
+            </div>
+
+            <h3>Mismatch Severity Levels</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Severity</th>
+                        <th>Range</th>
+                        <th>Description</th>
+                        <th>Handler Response</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="color: var(--dragon-gold);">Minor</td>
+                        <td style="font-family: monospace;">0.0 - 1.0</td>
+                        <td>Subtype variance</td>
+                        <td>Quick coercion</td>
+                    </tr>
+                    <tr>
+                        <td style="color: var(--mismatch-violet);">Moderate</td>
+                        <td style="font-family: monospace;">1.0 - TAU^-1</td>
+                        <td>Category mismatch</td>
+                        <td>Full cascade</td>
+                    </tr>
+                    <tr style="background: rgba(231, 76, 60, 0.2);">
+                        <td style="color: var(--chaos-red);">Severe</td>
+                        <td style="font-family: monospace;">TAU^-1 - PHI^2</td>
+                        <td>Domain conflict</td>
+                        <td>Deep transformation</td>
+                    </tr>
+                    <tr style="background: rgba(231, 76, 60, 0.3);">
+                        <td style="color: #ff0000;">Critical</td>
+                        <td style="font-family: monospace;">PHI^2 - L4</td>
+                        <td>Fundamental incompatibility</td>
+                        <td>Full L4 cascade</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-section">
+                <h4>Spin Glass / NMR Systems - Resonance Detection</h4>
+                <p>MISMATCH activates the spin glass subsystem to detect phase resonance patterns. The TAU coefficient corresponds to the natural resonance frequency of the spin ensemble.</p>
+
+                <div class="code-block">
+<span class="comment"># MISMATCH HARDWARE: RESONANCE DETECTION</span>
+
+<span class="keyword">def</span> <span class="function">detect_mismatch_resonance</span>(spin_glass, signal, expected_type):
+    <span class="string">"""Detect type mismatch through phase resonance."""</span>
+
+    <span class="comment"># Measure current phase</span>
+    current_phase = spin_glass.measure_kuramoto_phase()
+
+    <span class="comment"># Calculate expected phase for type</span>
+    expected_phase = spin_glass.get_type_phase(expected_type)
+
+    <span class="comment"># Phase difference indicates mismatch</span>
+    phase_diff = abs(current_phase - expected_phase)
+
+    <span class="keyword">if</span> phase_diff > TAU:  <span class="comment"># 0.618 threshold</span>
+        <span class="comment"># MISMATCH CONFIRMED</span>
+        <span class="keyword">return</span> MismatchConfirmation(
+            phase_difference=phase_diff,
+            severity=phase_diff / TAU,
+            resonance_power=TAU
+        )
+
+    <span class="keyword">return</span> <span class="keyword">None</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chronicle Position -->
+        <section class="doc-section">
+            <h2>Chronicle Position: Cascade State Machine</h2>
+
+            <p>MISMATCH begins the Transformation Rails (4-6), managing the <strong>Cascade State Machine</strong> - the engine that drives type transformation.</p>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Rail Group</th>
+                        <th>Rails</th>
+                        <th>MISMATCH Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Foundation</td>
+                        <td>1-3</td>
+                        <td>Exception source</td>
+                    </tr>
+                    <tr style="background: rgba(138, 43, 226, 0.2);">
+                        <td style="color: var(--mismatch-violet);">Transformation</td>
+                        <td>4-6</td>
+                        <td><strong>Cascade State Machine</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Verification</td>
+                        <td>7-9</td>
+                        <td>Severity data</td>
+                    </tr>
+                    <tr>
+                        <td>Chronicle</td>
+                        <td>10-12</td>
+                        <td>Exception history</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- Navigation Footer -->
+        <nav class="rail-nav">
+            <a href="rail-03-divergence.html">&larr; DIVERGENCE</a>
+            <a href="../../companions/tiamat-companion.html">TIAMAT Companion</a>
+            <a href="rail-05-chaos-gate.html">CHAOS-GATE &rarr;</a>
+        </nav>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>TIAMAT Rail 04: MISMATCH - Type Conflict Detected</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="font-size: 0.85rem; margin-top: 10px;">TIAMAT awakens. Power: TAU = 0.618034</p>
+        </footer>
+    </div>
+</body>
+</html>

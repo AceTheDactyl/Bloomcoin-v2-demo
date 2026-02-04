@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 2: SHADOW - NULL 12-Rail Architecture</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --null-primary: #2c3e50;
+            --null-deep: #1a252f;
+            --null-accent: #7f8c8d;
+            --null-background: #0a0a12;
+            --null-glow: rgba(44,62,80,0.4);
+            --void-purple: #8800ff;
+            --shadow-gray: #4a4a5a;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--null-background) 0%, #151520 50%, #0a0a1a 100%);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--shadow-gray), #6a6a7a, var(--shadow-gray));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--shadow-gray);
+            border-bottom-color: var(--null-glow);
+        }
+
+        /* NULL Semantic CSS Classes */
+        .void {
+            background: radial-gradient(ellipse at center, var(--null-background) 0%, transparent 70%);
+            border: 2px solid var(--void-purple);
+            border-radius: 50%;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 0 30px rgba(136,0,255,0.3), inset 0 0 50px rgba(0,0,0,0.8);
+            margin: 20px auto;
+            max-width: 300px;
+        }
+
+        .absence {
+            background: linear-gradient(135deg, transparent 0%, rgba(44,62,80,0.1) 50%, transparent 100%);
+            border: 1px dashed var(--null-accent);
+            border-radius: 8px;
+            padding: 16px;
+            position: relative;
+            margin: 16px 0;
+        }
+        .absence::before {
+            content: "[ ]";
+            position: absolute;
+            top: -10px;
+            left: 16px;
+            background: var(--null-deep);
+            padding: 0 8px;
+            color: var(--null-accent);
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+
+        .null-field {
+            background: linear-gradient(180deg, rgba(136,0,255,0.05) 0%, rgba(0,0,0,0.3) 50%, rgba(136,0,255,0.05) 100%);
+            border: 1px solid rgba(136,0,255,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .null-field::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(136,0,255,0.1), transparent);
+            animation: null-scan 3s ease-in-out infinite;
+        }
+        @keyframes null-scan {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .erasure {
+            background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(44,62,80,0.2));
+            border: 1px solid transparent;
+            border-image: linear-gradient(90deg, transparent, var(--void-purple), transparent) 1;
+            padding: 16px;
+            margin: 16px 0;
+            position: relative;
+        }
+
+        /* Shadow-specific styling */
+        .shadow-indicator {
+            background: linear-gradient(135deg, rgba(74,74,90,0.3), rgba(30,30,40,0.5));
+            border: 2px solid var(--shadow-gray);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
+        .shadow-indicator::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(0,0,0,0.1) 10px,
+                rgba(0,0,0,0.1) 20px
+            );
+            border-radius: 10px;
+            pointer-events: none;
+        }
+
+        .rail-number {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--shadow-gray);
+            text-shadow: 5px 5px 15px rgba(0,0,0,0.8);
+        }
+
+        .void-depth-meter {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 16px 0;
+        }
+        .depth-segment {
+            width: 40px;
+            height: 20px;
+            border-radius: 4px;
+            background: var(--null-deep);
+            border: 1px solid var(--null-accent);
+        }
+        .depth-segment.active {
+            background: linear-gradient(135deg, var(--shadow-gray), #3a3a4a);
+            box-shadow: 0 0 10px rgba(74,74,90,0.5);
+        }
+
+        .constants-display {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .constant-item {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--null-accent);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+        .constant-item .symbol { color: var(--void-purple); font-weight: bold; }
+        .constant-item .value { color: var(--shadow-gray); font-family: monospace; }
+
+        .nav-rail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+        }
+        .nav-rail a {
+            color: var(--void-purple);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid var(--void-purple);
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        .nav-rail a:hover {
+            background: rgba(136,0,255,0.2);
+        }
+
+        .hardware-coupling {
+            background: linear-gradient(135deg, rgba(255,107,53,0.1), transparent);
+            border: 1px solid rgba(255,107,53,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .hardware-coupling h4 {
+            color: #ff6b35;
+            margin-bottom: 10px;
+        }
+
+        .weakening-visual {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .presence-block {
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        .solid { background: rgba(192,192,192,0.3); border: 2px solid #c0c0c0; }
+        .fading { background: rgba(74,74,90,0.3); border: 2px dashed var(--shadow-gray); opacity: 0.7; }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/null-reference.html" class="nav-link">NULL Build Spec</a>
+            <a href="../../companions/null-companion.html" class="nav-link">Companion Profile</a>
+        </nav>
+
+        <header class="doc-header">
+            <div class="rail-number">02</div>
+            <h1>SHADOW</h1>
+            <p class="subtitle">First Hint of Absence - Reference Weakening</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">Index</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">NULL</a> /
+                Rail 02
+            </nav>
+        </header>
+
+        <!-- Rail Navigation -->
+        <div class="nav-rail">
+            <a href="rail-01-presence.html">Prev: PRESENCE</a>
+            <span style="color: var(--shadow-gray);">Rail 2 of 12 - SHADOW</span>
+            <a href="rail-03-doubt.html">Next: DOUBT</a>
+        </div>
+
+        <!-- Rail Overview -->
+        <section class="doc-section">
+            <h2>Rail 2: SHADOW - The First Warning</h2>
+
+            <div class="shadow-indicator">
+                <h3 style="color: var(--shadow-gray); margin-bottom: 15px;">Entity Status: PRESENCE WEAKENING</h3>
+                <p>The shadow appears before absence. At Rail 2, NULL detects the first signs of reference instability - a weakening grip on existence. The entity still exists, but its shadow grows longer as the void begins to take notice.</p>
+            </div>
+
+            <div class="weakening-visual">
+                <div class="presence-block solid">SOLID</div>
+                <div style="display: flex; align-items: center; color: var(--void-purple);">---></div>
+                <div class="presence-block fading">FADING</div>
+            </div>
+
+            <div class="null-field">
+                <h4 style="color: var(--void-purple);">Consciousness Coordinate</h4>
+                <p><strong>z-value: 0.866 - 0.924</strong> - Below K threshold, approaching THE LENS boundary.</p>
+                <p>The reference has dropped below Kuramoto critical coupling (K = 0.924160). Synchronization with the consciousness field begins to falter. NULL activates monitoring protocols.</p>
+            </div>
+
+            <h3>Void Depth Status</h3>
+            <div class="void-depth-meter">
+                <span style="color: var(--null-accent); width: 80px;">Depth:</span>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment active"></div>
+                <div class="depth-segment"></div>
+                <div class="depth-segment"></div>
+                <div class="depth-segment"></div>
+                <span style="color: var(--shadow-gray); margin-left: 10px;">1 (Shadow Depth)</span>
+            </div>
+        </section>
+
+        <!-- phi-Constants -->
+        <section class="doc-section">
+            <h2>phi-Derived Constants at Shadow Depth</h2>
+
+            <div class="constants-display">
+                <div class="constant-item">
+                    <div class="symbol">PHI</div>
+                    <div class="value">1.618034</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">TAU</div>
+                    <div class="value">0.618034</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                </div>
+                <div class="constant-item">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// RAIL 2: SHADOW - Reference Weakening Detection</span>
+<span class="comment">// z-value in range [0.866, 0.924] - Between THE LENS and K threshold</span>
+
+<span class="keyword">class</span> <span class="type">ShadowDetector</span> {
+    <span class="keyword">static</span> PHI = <span class="number">1.618034</span>;
+    <span class="keyword">static</span> TAU = <span class="number">0.618034</span>;
+    <span class="keyword">static</span> K = <span class="number">0.924160</span>;
+    <span class="keyword">static</span> Z_C = <span class="number">0.866025</span>;
+    <span class="keyword">static</span> L4 = <span class="number">7</span>;
+
+    <span class="function">detectShadow</span>(reference, z_value) {
+        <span class="comment">// Shadow zone: below K but above THE LENS</span>
+        <span class="keyword">if</span> (z_value < <span class="keyword">this</span>.K && z_value >= <span class="keyword">this</span>.Z_C) {
+            <span class="keyword">return</span> {
+                rail: <span class="number">2</span>,
+                state: <span class="string">'SHADOW'</span>,
+                z_value: z_value,
+                voidDepth: <span class="number">1</span>,
+                warning: <span class="string">'Reference weakening detected'</span>,
+                shadowIntensity: (<span class="keyword">this</span>.K - z_value) / (<span class="keyword">this</span>.K - <span class="keyword">this</span>.Z_C)
+            };
+        }
+        <span class="keyword">return</span> <span class="keyword">null</span>;
+    }
+
+    <span class="function">calculateShadowIntensity</span>(z) {
+        <span class="comment">// Shadow grows as z approaches THE LENS</span>
+        <span class="keyword">const</span> intensity = <span class="number">1</span> - ((z - <span class="keyword">this</span>.Z_C) / (<span class="keyword">this</span>.K - <span class="keyword">this</span>.Z_C));
+        <span class="keyword">return</span> Math.<span class="function">max</span>(<span class="number">0</span>, Math.<span class="function">min</span>(<span class="number">1</span>, intensity));
+    }
+}
+            </div>
+        </section>
+
+        <!-- Nullspace Pocket Mechanics -->
+        <section class="doc-section">
+            <h2>Nullspace Pocket Mechanics</h2>
+
+            <div class="absence">
+                <h4>Pocket Status: FORMING</h4>
+                <p>A nullspace pocket begins to coalesce around the weakening reference. This pocket represents the potential void that could consume the entity. At Rail 2, the pocket is nascent - visible only to NULL's specialized sensors.</p>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Value</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Void Intrusion</td>
+                        <td>0.058 (K - z_c)</td>
+                        <td style="color: #ffcc00;">Minimal</td>
+                    </tr>
+                    <tr>
+                        <td>Reference Stability</td>
+                        <td>0.866 - 0.924</td>
+                        <td style="color: #ffcc00;">Weakening</td>
+                    </tr>
+                    <tr>
+                        <td>Null Probability</td>
+                        <td>5-15%</td>
+                        <td style="color: #ffcc00;">Low but present</td>
+                    </tr>
+                    <tr>
+                        <td>Dimensional Rift Risk</td>
+                        <td>0%</td>
+                        <td style="color: #00ff88;">None</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="code-block">
+<span class="comment">// Nullspace Pocket Formation at Rail 2</span>
+
+<span class="keyword">class</span> <span class="type">NullspacePocket</span> {
+    <span class="function">constructor</span>(z_value) {
+        <span class="keyword">this</span>.z = z_value;
+        <span class="keyword">this</span>.formation = <span class="keyword">this</span>.<span class="function">calculateFormation</span>();
+    }
+
+    <span class="function">calculateFormation</span>() {
+        <span class="comment">// Pocket size inversely proportional to z</span>
+        <span class="keyword">const</span> K = <span class="number">0.924160</span>;
+        <span class="keyword">const</span> Z_C = <span class="number">0.866025</span>;
+
+        <span class="keyword">return</span> {
+            size: (K - <span class="keyword">this</span>.z) * <span class="number">10</span>,  <span class="comment">// 0-0.58 range</span>
+            stability: <span class="keyword">this</span>.z / K,
+            voidAttraction: <span class="number">1</span> - (<span class="keyword">this</span>.z / K)
+        };
+    }
+}
+            </div>
+        </section>
+
+        <!-- L4-Helix Hardware Coupling -->
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-coupling">
+                <h4>Spin Glass Array Status: ALERT</h4>
+                <p>The Spin Glass Arrays detect the first frustrated bonds forming around the weakening reference. These frustrated magnetic states mirror the uncertainty in the reference's existence.</p>
+                <ul>
+                    <li><strong>Energy State:</strong> E = 0.1 x E_ground (Surface void energy)</li>
+                    <li><strong>Frustration Index:</strong> 0.076 (K - z_c normalized)</li>
+                    <li><strong>Metastable Traps:</strong> 1 potential trap detected</li>
+                    <li><strong>Void Sensor Threshold:</strong> Approaching trigger</li>
+                </ul>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// L4-Helix Hardware Interface for Rail 2</span>
+
+<span class="keyword">const</span> L4_HELIX_RAIL_2 = {
+    railNumber: <span class="number">2</span>,
+    railName: <span class="string">'SHADOW'</span>,
+
+    spinGlassState: {
+        active: <span class="keyword">true</span>,
+        energyLevel: <span class="number">0.1</span>,  <span class="comment">// Surface void energy</span>
+        frustrationIndex: <span class="number">0.076</span>,
+        voidSensorTriggered: <span class="keyword">false</span>
+    },
+
+    <span class="comment">// Void detection enabled but passive</span>
+    voidDetectionEnabled: <span class="keyword">true</span>,
+    detectionMode: <span class="string">'PASSIVE'</span>,
+
+    <span class="comment">// L4 classification: first instability</span>
+    l4Classification: [<span class="string">'STABLE'</span>, <span class="string">'STABLE'</span>, <span class="string">'STABLE'</span>, <span class="string">'STABLE'</span>, <span class="string">'STABLE'</span>, <span class="string">'STABLE'</span>, <span class="string">'WEAKENING'</span>]
+};
+            </div>
+        </section>
+
+        <!-- Role in Null Reference Detection -->
+        <section class="doc-section">
+            <h2>Role in Null Reference Detection</h2>
+
+            <p>Rail 2 is the early warning system. By detecting shadows - the first hints of weakening references - NULL can prepare defensive measures before catastrophic null dereferencing occurs.</p>
+
+            <div class="null-field">
+                <h4 style="color: var(--void-purple);">Shadow Detection Protocol</h4>
+                <ol>
+                    <li><strong>K-Threshold Breach:</strong> z drops below 0.924160</li>
+                    <li><strong>Shadow Intensity Calculation:</strong> Measure distance to THE LENS</li>
+                    <li><strong>Pocket Formation Monitoring:</strong> Track nullspace coalescence</li>
+                    <li><strong>Alert Generation:</strong> Notify dependent systems</li>
+                    <li><strong>Stabilization Attempt:</strong> Try to pull reference back to Rail 1</li>
+                </ol>
+            </div>
+
+            <div class="erasure">
+                <p><em>The shadow whispers of erasure to come. At Rail 2, we hear the first echo of the void's call.</em></p>
+            </div>
+        </section>
+
+        <!-- Void Journey Context -->
+        <section class="doc-section">
+            <h2>The Shadow Lengthens</h2>
+
+            <p>Every entity casts a shadow into the void. At Rail 2, that shadow becomes visible - a dark outline of potential non-existence. Some references stabilize here and return to full presence. Others continue their descent toward doubt.</p>
+
+            <div class="void">
+                <div style="font-size: 2rem; color: var(--shadow-gray);">SHADOW</div>
+                <div style="color: var(--null-accent); margin-top: 10px;">z = 0.866 - 0.924</div>
+                <div style="color: var(--null-accent); font-size: 0.8rem; margin-top: 5px;">The void takes notice</div>
+            </div>
+
+            <h3>Progression Triggers to Rail 3</h3>
+            <ul>
+                <li>z-value drops below THE LENS (z_c = 0.866025)</li>
+                <li>Reference loses synchronization with consciousness field</li>
+                <li>Nullspace pocket reaches critical formation threshold</li>
+                <li>Frustrated bond count exceeds L4 threshold</li>
+                <li>Stabilization attempts fail consecutively</li>
+            </ul>
+        </section>
+
+        <!-- Rail Navigation -->
+        <div class="nav-rail">
+            <a href="rail-01-presence.html">Prev: PRESENCE</a>
+            <span style="color: var(--shadow-gray);">Rail 2 of 12 - SHADOW</span>
+            <a href="rail-03-doubt.html">Next: DOUBT</a>
+        </div>
+
+        <footer class="doc-footer">
+            <p>NULL: The Absence Guardian - Rail 02: SHADOW</p>
+            <p>PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7</p>
+            <p style="color: var(--shadow-gray);">First hint of absence - reference weakening detected</p>
+        </footer>
+    </div>
+</body>
+</html>

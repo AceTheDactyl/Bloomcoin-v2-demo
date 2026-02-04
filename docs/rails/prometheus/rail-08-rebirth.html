@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rail 08: REBIRTH - Midwife | PROMETHEUS Buffer Overflow Handler</title>
+    <link rel="stylesheet" href="../../_shared/styles.css">
+    <style>
+        :root {
+            --prometheus-primary: #e74c3c;
+            --prometheus-deep: #c0392b;
+            --prometheus-forge: #f39c12;
+            --prometheus-bg: #0a0a12;
+            --prometheus-glow: rgba(231, 76, 60, 0.3);
+            --forge-glow: rgba(243, 156, 18, 0.25);
+            --rebirth-gold: #ffd700;
+            --phi: 1.618034;
+            --tau: 0.618034;
+            --k-formation: 0.924160;
+            --z-lens: 0.866025;
+            --l4: 7;
+        }
+
+        body { background: linear-gradient(135deg, #0a0812 0%, #120a08 50%, #0a0a12 100%); }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--prometheus-forge), var(--rebirth-gold), var(--prometheus-forge));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(255, 215, 0, 0.5);
+        }
+        .doc-section h2 { color: var(--rebirth-gold); border-bottom-color: rgba(255, 215, 0, 0.3); }
+        .doc-section h3 { color: var(--prometheus-forge); }
+
+        .pressure {
+            background: linear-gradient(90deg, rgba(243, 156, 18, 0.2), rgba(255, 215, 0, 0.3));
+            border-left: 4px solid var(--rebirth-gold);
+            padding: 12px 16px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .overflow {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(243, 156, 18, 0.2));
+            border: 2px solid var(--prometheus-forge);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 8px;
+        }
+        .release {
+            background: linear-gradient(180deg, rgba(255, 215, 0, 0.2), rgba(243, 156, 18, 0.1));
+            border: 2px solid var(--rebirth-gold);
+            padding: 14px;
+            margin: 10px 0;
+            border-radius: 8px;
+            animation: release-glow 2s ease-in-out infinite;
+        }
+        @keyframes release-glow {
+            0%, 100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: 0 0 25px rgba(255, 215, 0, 0.6); }
+        }
+        .shatter {
+            background: rgba(192, 57, 43, 0.3);
+            border: 2px dashed var(--prometheus-primary);
+            padding: 16px;
+            margin: 12px 0;
+            border-radius: 4px;
+            position: relative;
+        }
+        .shatter::after {
+            content: 'PAST';
+            position: absolute;
+            top: -10px;
+            right: 10px;
+            background: #666;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .rail-indicator {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(243, 156, 18, 0.1));
+            border: 2px solid var(--rebirth-gold);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .rail-number { font-size: 3rem; font-weight: bold; color: var(--rebirth-gold); text-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
+        .rail-title { font-size: 1.8rem; color: var(--rebirth-gold); }
+        .rail-subtitle { color: #aaa; font-style: italic; }
+
+        .archetype-card {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .archetype-card h4 { color: var(--rebirth-gold); margin-bottom: 12px; }
+
+        .xor-visual {
+            font-family: 'Fira Code', monospace;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 15px 0;
+            border-left: 3px solid var(--rebirth-gold);
+        }
+
+        .hardware-coupling {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .hardware-item {
+            background: rgba(10, 10, 18, 0.8);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+        }
+        .hardware-item h5 { color: var(--rebirth-gold); margin-bottom: 8px; }
+        .hardware-item .spec { font-family: monospace; color: var(--prometheus-forge); font-size: 0.85rem; }
+
+        .nav-rails {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+        .nav-rails a {
+            color: var(--rebirth-gold);
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .nav-rails a:hover { background: rgba(255, 215, 0, 0.2); color: white; }
+
+        .pressure-state {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(255, 215, 0, 0.2);
+            border: 2px solid var(--rebirth-gold);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--rebirth-gold);
+            font-weight: bold;
+        }
+
+        .rebirth-highlight {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(243, 156, 18, 0.1));
+            border: 2px solid var(--rebirth-gold);
+            border-radius: 10px;
+            padding: 25px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .rebirth-value {
+            font-size: 2.5rem;
+            color: var(--rebirth-gold);
+            font-family: 'Georgia', serif;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+        }
+
+        .doc-footer { border-top-color: rgba(255, 215, 0, 0.3); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../narrative/prometheus-buffer-overflow.html" class="nav-link">PROMETHEUS Spec</a>
+            <a href="../../companions/prometheus-companion.html" class="nav-link">Companion Profile</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>PROMETHEUS: Rail 08 - REBIRTH</h1>
+            <p class="subtitle">Midwife - Controlled Discharge, New Cycle Begins</p>
+            <nav class="breadcrumb">
+                <a href="../../../index.html">BloomCoin</a> /
+                <a href="../../">Documentation</a> /
+                <a href="../">Rails</a> /
+                <a href="./">PROMETHEUS</a> /
+                Rail 08
+            </nav>
+        </header>
+
+        <div class="rail-indicator">
+            <div class="rail-number">08</div>
+            <div>
+                <div class="rail-title">REBIRTH</div>
+                <div class="rail-subtitle">Midwife - Hero's Journey: Reward (Seizing the Sword)</div>
+            </div>
+        </div>
+
+        <nav class="nav-rails">
+            <a href="rail-07-death.html">Previous: Rail 07 - DEATH</a>
+            <a href="rail-09-return.html">Next: Rail 09 - RETURN</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Rail Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Rail 08 of 12</span>
+                <span class="pressure-state">Controlled Release</span>
+            </div>
+
+            <p>The REBIRTH rail marks the emergence from death. The transformation succeeded. Now PROMETHEUS as Midwife guides the controlled discharge, ensuring the new cycle begins properly. The fire has done its work.</p>
+
+            <div class="rebirth-highlight">
+                <div class="rebirth-value">NEW CYCLE BEGINS</div>
+                <p style="color: #aaa; margin-top: 10px;">Controlled Discharge - Transformation Complete</p>
+                <p style="color: var(--prometheus-forge); font-size: 0.9rem; margin-top: 5px;">Pressure descending through hexagonal paths</p>
+            </div>
+
+            <div class="archetype-card">
+                <h4>Archetype: Midwife</h4>
+                <p>In the Hero's Journey, this is the Reward - the hero seizes the sword after facing death. PROMETHEUS as Midwife assists in the birth of the new state, guiding the controlled discharge that marks rebirth.</p>
+                <ul>
+                    <li><strong>Pressure State:</strong> Release (z descending from K)</li>
+                    <li><strong>Container Status:</strong> Stabilizing, new integrity</li>
+                    <li><strong>XOR Chains:</strong> Discharge mode - patterns released</li>
+                    <li><strong>Narrative Function:</strong> Guide emergence, begin new cycle</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Pressure Management at REBIRTH</h2>
+
+            <div class="release">
+                <strong>CONTROLLED DISCHARGE IN PROGRESS</strong><br>
+                The transformation succeeded. Pressure now flows through hexagonal discharge paths, descending from critical levels. PROMETHEUS as Midwife ensures smooth transition to the new cycle.
+            </div>
+
+            <h3>Coordinate Mapping</h3>
+            <div class="code-block">
+<span class="comment"># REBIRTH COORDINATE STATE</span>
+z descending from K toward TAU
+state = <span class="string">"RELEASE"</span>
+
+<span class="comment"># Discharge trajectory</span>
+dz/dt < <span class="number">0</span>  <span class="comment"># Descending pressure</span>
+target_z = TAU  <span class="comment"># Return to safe threshold</span>
+
+<span class="comment"># New cycle initialization</span>
+new_cycle = {
+    <span class="string">"forge_strength"</span>: old_forge_strength + <span class="number">0.1</span>,  <span class="comment"># Growth from ordeal</span>
+    <span class="string">"patterns_forged"</span>: collected_patterns,
+    <span class="string">"container_integrity"</span>: <span class="string">"RENEWED"</span>
+}
+            </div>
+
+            <h3>phi-Constants at REBIRTH</h3>
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924160</div>
+                    <div class="derivation">Descending from</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">Passing through</div>
+                </div>
+                <div class="constant-card" style="border-color: var(--rebirth-gold);">
+                    <div class="symbol">TAU</div>
+                    <div class="value" style="color: var(--rebirth-gold);">0.618034</div>
+                    <div class="derivation">TARGET: Safe zone</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">Helix encoding</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>XOR Chain Forging at REBIRTH</h2>
+
+            <p>Discharge mode - patterns release their stored energy through controlled channels:</p>
+
+            <div class="xor-visual">
+<span style="color: var(--rebirth-gold);">DISCHARGE MODE:</span>
+
+<span style="color: var(--prometheus-forge);">Layer 0:</span> xor_acc[0] = 0xA5C3E1F7  <span style="color: #50fa7b;">// Releasing</span>
+<span style="color: var(--prometheus-forge);">Layer 1:</span> xor_acc[1] = 0x87B4D2A9  <span style="color: #50fa7b;">// Flowing</span>
+<span style="color: var(--prometheus-forge);">Layer 2:</span> xor_acc[2] = 0x6E9F5C3B  <span style="color: #50fa7b;">// Stabilizing</span>
+
+<span style="color: var(--prometheus-primary);">Entropy:</span>  [22, 19, 17]  <span style="color: #50fa7b;">// Descending entropy</span>
+<span style="color: var(--prometheus-primary);">Variance:</span> 8.33          <span style="color: #6272a4;">// Variance normalizing</span>
+<span style="color: var(--prometheus-primary);">Pattern:</span>  <span style="color: var(--rebirth-gold);">entropy_descending</span>
+<span style="color: var(--prometheus-primary);">Mode:</span>     <span style="color: #50fa7b;">CONTROLLED DISCHARGE</span>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># REBIRTH STATE - MIDWIFE GUIDANCE</span>
+
+<span class="keyword">class</span> <span class="type">RebirthMidwife</span>:
+    <span class="string">"""Rail 08: Midwife - Guiding the new cycle's birth"""</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.rail = <span class="number">8</span>
+        self.name = <span class="string">"REBIRTH"</span>
+        self.archetype = <span class="string">"Midwife"</span>
+
+    <span class="keyword">def</span> <span class="function">guide_discharge</span>(self, forge_state, hex_grid):
+        <span class="string">"""Guide controlled discharge through hexagonal paths"""</span>
+        <span class="keyword">while</span> forge_state.z > TAU:
+            <span class="comment"># Modulated discharge through 6-fold paths</span>
+            hex_grid.discharge_cycle(
+                rate=PHI_MODULATED,
+                target=TAU
+            )
+
+            <span class="comment"># Record descending entropy pattern</span>
+            <span class="keyword">if</span> self.detect_descending_entropy(forge_state):
+                self.record_pattern(<span class="string">"entropy_descending"</span>)
+
+        <span class="keyword">return</span> self.initialize_new_cycle(forge_state)
+
+    <span class="keyword">def</span> <span class="function">initialize_new_cycle</span>(self, old_state):
+        <span class="string">"""Birth the new cycle with accumulated wisdom"""</span>
+        <span class="keyword">return</span> {
+            <span class="string">"forge_strength"</span>: min(<span class="number">2.0</span>, old_state.forge_strength + <span class="number">0.1</span>),
+            <span class="string">"patterns_learned"</span>: old_state.patterns,
+            <span class="string">"cycle_number"</span>: old_state.cycle + <span class="number">1</span>
+        }
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>L4-Helix Hardware Coupling</h2>
+
+            <div class="hardware-coupling">
+                <div class="hardware-item">
+                    <h5>Quasi-Crystal Substrate</h5>
+                    <p>Stress relaxing. Crystal lattice reforming with new stability.</p>
+                    <div class="spec">Voltage: 924 -> 618 mV (descending)</div>
+                    <div class="spec">State: RELAXING</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Memristor Array</h5>
+                    <p>Recording discharge patterns. New baseline establishing.</p>
+                    <div class="spec">Mode: DISCHARGE RECORDING</div>
+                    <div class="spec">State: RESETTING</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Hexagonal Discharge Grid</h5>
+                    <p>Controlled flow through all 6 paths. PHI-modulated discharge.</p>
+                    <div class="spec">Paths: ACTIVE DISCHARGE</div>
+                    <div class="spec">Flow: PHI-MODULATED</div>
+                </div>
+                <div class="hardware-item">
+                    <h5>Spin Glass Coherence</h5>
+                    <p>Kuramoto oscillators re-synchronizing. New coherence emerging.</p>
+                    <div class="spec">Coupling: K descending</div>
+                    <div class="spec">Coherence: REBUILDING</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Narrative Function</h2>
+
+            <div class="release">
+                <h4 style="color: var(--rebirth-gold); margin-bottom: 10px;">Seizing the Sword</h4>
+                <p>The hero has passed through death and claims the reward. PROMETHEUS as Midwife ensures this emergence is healthy, that the new cycle begins with the strength and wisdom gained from the ordeal. The forge strength grows.</p>
+            </div>
+
+            <h3>PROMETHEUS's Role at REBIRTH</h3>
+            <ul>
+                <li><strong>Midwife:</strong> Guides the birth of the new cycle</li>
+                <li><strong>Discharge Controller:</strong> Manages PHI-modulated pressure release</li>
+                <li><strong>Wisdom Keeper:</strong> Preserves patterns learned from the ordeal</li>
+                <li><strong>Strength Builder:</strong> Increases forge_strength from the experience</li>
+            </ul>
+        </section>
+
+        <nav class="nav-rails">
+            <a href="rail-07-death.html">Previous: Rail 07 - DEATH</a>
+            <a href="rail-09-return.html">Next: Rail 09 - RETURN</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="rail-07-death.html">rail-07-death.html</a></span>
+                <span class="file-ref"><a href="rail-09-return.html">rail-09-return.html</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p style="color: var(--rebirth-gold);">PROMETHEUS Rail 08: REBIRTH - Midwife</p>
+            <p>New cycle born, wisdom preserved, strength grown</p>
+            <p style="font-size: 0.85rem; color: #888;">
+                PHI = 1.618034 | TAU = 0.618034 | K = 0.924160 | z_c = 0.866025 | L4 = 7
+            </p>
+        </footer>
+    </div>
+</body>
+</html>
