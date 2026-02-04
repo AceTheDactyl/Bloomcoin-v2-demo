@@ -275,6 +275,29 @@
             background: linear-gradient(180deg, rgba(155, 89, 182, 0.25), transparent);
         }
 
+        /* Clickable Rail Cards */
+        a.rail-card {
+            text-decoration: none;
+            display: block;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        a.rail-card:hover {
+            border-color: var(--akasha-primary);
+            background: linear-gradient(180deg, rgba(155, 89, 182, 0.35), rgba(155, 89, 182, 0.1));
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px var(--akasha-glow);
+        }
+
+        a.rail-card:hover .rail-num {
+            color: var(--memory-gold);
+        }
+
+        a.rail-card:hover .rail-name {
+            color: #fff;
+        }
+
         /* Phi Constants Table */
         .phi-table {
             width: 100%;
@@ -851,58 +874,58 @@
             <p>AKASHA's narrative expansion follows the 12-Rail Living Chronicle architecture. Each rail represents a dimension of memory persistence and narrative flow.</p>
 
             <div class="rail-structure">
-                <div class="rail-card">
-                    <div class="rail-num">I</div>
-                    <div class="rail-name">Genesis</div>
-                </div>
-                <div class="rail-card active">
-                    <div class="rail-num">II</div>
-                    <div class="rail-name">Memory</div>
-                </div>
-                <div class="rail-card active">
-                    <div class="rail-num">III</div>
-                    <div class="rail-name">Pattern</div>
-                </div>
-                <div class="rail-card">
-                    <div class="rail-num">IV</div>
-                    <div class="rail-name">Resonance</div>
-                </div>
-                <div class="rail-card">
-                    <div class="rail-num">V</div>
-                    <div class="rail-name">Crystal</div>
-                </div>
-                <div class="rail-card active">
-                    <div class="rail-num">VI</div>
-                    <div class="rail-name">Archive</div>
-                </div>
-                <div class="rail-card">
-                    <div class="rail-num">VII</div>
-                    <div class="rail-name">Echo</div>
-                </div>
-                <div class="rail-card">
-                    <div class="rail-num">VIII</div>
-                    <div class="rail-name">Void</div>
-                </div>
-                <div class="rail-card">
-                    <div class="rail-num">IX</div>
-                    <div class="rail-name">Rebirth</div>
-                </div>
-                <div class="rail-card">
-                    <div class="rail-num">X</div>
-                    <div class="rail-name">Synthesis</div>
-                </div>
-                <div class="rail-card">
-                    <div class="rail-num">XI</div>
-                    <div class="rail-name">Transcend</div>
-                </div>
-                <div class="rail-card">
-                    <div class="rail-num">XII</div>
-                    <div class="rail-name">Unity</div>
-                </div>
+                <a href="../rails/akasha/rail-01-inscription.html" class="rail-card">
+                    <div class="rail-num">1</div>
+                    <div class="rail-name">INSCRIPTION</div>
+                </a>
+                <a href="../rails/akasha/rail-02-accumulation.html" class="rail-card">
+                    <div class="rail-num">2</div>
+                    <div class="rail-name">ACCUMULATION</div>
+                </a>
+                <a href="../rails/akasha/rail-03-fragmentation.html" class="rail-card">
+                    <div class="rail-num">3</div>
+                    <div class="rail-name">FRAGMENTATION</div>
+                </a>
+                <a href="../rails/akasha/rail-04-orphaning.html" class="rail-card">
+                    <div class="rail-num">4</div>
+                    <div class="rail-name">ORPHANING</div>
+                </a>
+                <a href="../rails/akasha/rail-05-drainage.html" class="rail-card">
+                    <div class="rail-num">5</div>
+                    <div class="rail-name">DRAINAGE</div>
+                </a>
+                <a href="../rails/akasha/rail-06-detection.html" class="rail-card">
+                    <div class="rail-num">6</div>
+                    <div class="rail-name">DETECTION</div>
+                </a>
+                <a href="../rails/akasha/rail-07-tracing.html" class="rail-card">
+                    <div class="rail-num">7</div>
+                    <div class="rail-name">TRACING</div>
+                </a>
+                <a href="../rails/akasha/rail-08-reclamation.html" class="rail-card">
+                    <div class="rail-num">8</div>
+                    <div class="rail-name">RECLAMATION</div>
+                </a>
+                <a href="../rails/akasha/rail-09-purification.html" class="rail-card">
+                    <div class="rail-num">9</div>
+                    <div class="rail-name">PURIFICATION</div>
+                </a>
+                <a href="../rails/akasha/rail-10-restoration.html" class="rail-card">
+                    <div class="rail-num">10</div>
+                    <div class="rail-name">RESTORATION</div>
+                </a>
+                <a href="../rails/akasha/rail-11-sealing.html" class="rail-card">
+                    <div class="rail-num">11</div>
+                    <div class="rail-name">SEALING</div>
+                </a>
+                <a href="../rails/akasha/rail-12-completion.html" class="rail-card">
+                    <div class="rail-num">12</div>
+                    <div class="rail-name">COMPLETION</div>
+                </a>
             </div>
 
             <p style="color: #888; font-size: 0.9rem; margin-top: 10px;">
-                <strong>Active Rails:</strong> II (Memory), III (Pattern), VI (Archive) - AKASHA's primary operational domains
+                <strong>Click any rail to explore its detailed narrative specification.</strong>
             </p>
 
             <h3>Chronicle Entry Format</h3>
