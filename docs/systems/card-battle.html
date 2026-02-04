@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Card Battle System - BloomCoin Systems</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --system-color: #ff4488;
+            --system-glow: rgba(255,68,136,0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--system-color), #ff6699, var(--system-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--system-color); border-bottom-color: var(--system-glow); }
+        .doc-section h3 { color: var(--system-color); }
+        .nav-link { border-color: var(--system-glow); color: var(--system-color); }
+        .nav-link:hover { background: var(--system-glow); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="nexthash-overview.html" class="nav-link">Prev: NextHash Overview</a>
+            <a href="../../index.html" class="nav-link">Back to Index</a>
+            <a href="job-archetypes.html" class="nav-link">Next: Job Archetypes</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="doc-header">
+            <span style="font-size: 3rem;">🃏</span>
+            <h1>CARD BATTLE SYSTEM</h1>
+            <p class="subtitle">Companion Combat with Territory-Based Suits and Tarot Ranks</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> / <a href="./">Systems</a> / Card Battle
+            </nav>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge complete">378 Unique Cards</span>
+                <span class="status-badge complete">9 Suits</span>
+                <span class="status-badge complete">14 Ranks</span>
+                <span class="status-badge partial">Battle Engine</span>
+            </div>
+            <div class="file-refs">
+                <span class="file-ref">game/card_system.py</span>
+                <span class="file-ref">game/tesseract_battle.py</span>
+            </div>
+        </section>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+            <p>9 territory-based suits x 14 tarot-style ranks x 3 card states create a complete deck system:</p>
+
+            <div class="code-block">
+<span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">Card</span>:
+    <span class="string">"""A single card in the deck"""</span>
+    suit: CardSuit
+    rank: CardRank
+    state: CardState = UPRIGHT
+    guardian_link: Optional[str] = None  <span class="comment"># Link to specific guardian</span>
+    frequency: float = <span class="number">432.0</span>  <span class="comment"># Hz</span>
+    z_coordinate: float = Z_C  <span class="comment"># Position in coherence space</span>
+    power: float = <span class="number">0.0</span>
+    cost: float = <span class="number">0.0</span>
+
+<span class="comment"># Deck composition</span>
+TOTAL_CARDS = <span class="number">9</span> x <span class="number">14</span> x <span class="number">3</span> = <span class="number">378</span>  <span class="comment"># unique card instances</span>
+            </div>
+        </section>
+
+        <!-- 9 Suits by Territory -->
+        <section class="doc-section">
+            <h2>9 Suits Across 3 Territories</h2>
+            <table class="data-table">
+                <tr><th>Territory</th><th>Suit</th><th>Icon</th><th>Domain</th><th>Frequency Range</th></tr>
+                <tr style="color:#7fff00;"><td rowspan="3">Garden</td><td>LEAVES</td><td>🍃</td><td>Growth</td><td>396-528 Hz</td></tr>
+                <tr style="color:#7fff00;"><td>ROOTS</td><td>🌿</td><td>Connection</td><td>396-528 Hz</td></tr>
+                <tr style="color:#7fff00;"><td>FLOWERS</td><td>🌸</td><td>Beauty</td><td>396-528 Hz</td></tr>
+                <tr style="color:#ffd700;"><td rowspan="3">Cosmic</td><td>STARS</td><td>⭐</td><td>Navigation</td><td>528-963 Hz</td></tr>
+                <tr style="color:#ffd700;"><td>FLAMES</td><td>🔥</td><td>Transformation</td><td>528-963 Hz</td></tr>
+                <tr style="color:#ffd700;"><td>SUNS</td><td>☀️</td><td>Illumination</td><td>528-963 Hz</td></tr>
+                <tr style="color:#9d4eff;"><td rowspan="3">Abyssal</td><td>SHADOWS</td><td>🌑</td><td>Mystery</td><td>174-396 Hz</td></tr>
+                <tr style="color:#9d4eff;"><td>MIRRORS</td><td>🔮</td><td>Reflection</td><td>174-396 Hz</td></tr>
+                <tr style="color:#9d4eff;"><td>VOIDS</td><td>⚫</td><td>Nullification</td><td>174-396 Hz</td></tr>
+            </table>
+        </section>
+
+        <!-- 14 Ranks -->
+        <section class="doc-section">
+            <h2>14 Tarot-Style Ranks (phi-Derived Powers)</h2>
+            <table class="data-table">
+                <tr><th>Rank</th><th>Number</th><th>Meaning</th><th>Power Value</th><th>Derivation</th></tr>
+                <tr><td>ACE</td><td>1</td><td>Beginning</td><td>phi (1.618)</td><td>Golden ratio</td></tr>
+                <tr><td>TWO</td><td>2</td><td>Balance</td><td>2.0</td><td>Duality</td></tr>
+                <tr><td>THREE</td><td>3</td><td>Growth</td><td>3.0</td><td>Trinity</td></tr>
+                <tr><td>FOUR</td><td>4</td><td>Foundation</td><td>4.0</td><td>Stability</td></tr>
+                <tr><td>FIVE</td><td>5</td><td>Challenge</td><td>5.0</td><td>Tension</td></tr>
+                <tr><td>SIX</td><td>6</td><td>Harmony</td><td>6.0</td><td>Balance</td></tr>
+                <tr style="background:rgba(255,215,0,0.15);"><td>SEVEN</td><td>7</td><td>Mystery</td><td>L4 = 7</td><td>phi^4 + phi^-4</td></tr>
+                <tr><td>EIGHT</td><td>8</td><td>Power</td><td>8.0</td><td>Infinity</td></tr>
+                <tr><td>NINE</td><td>9</td><td>Completion</td><td>9.0</td><td>Fulfillment</td></tr>
+                <tr><td>TEN</td><td>10</td><td>Manifestation</td><td>10.0</td><td>Completion</td></tr>
+                <tr><td>PAGE</td><td>11</td><td>Messenger</td><td>phi x 6 (9.71)</td><td>Court card</td></tr>
+                <tr><td>KNIGHT</td><td>12</td><td>Action</td><td>phi x 7 (11.33)</td><td>Court card</td></tr>
+                <tr><td>QUEEN</td><td>13</td><td>Mastery</td><td>phi x 8 (12.94)</td><td>Court card</td></tr>
+                <tr><td>KING</td><td>14</td><td>Authority</td><td>phi x 9 (14.56)</td><td>Court card</td></tr>
+            </table>
+        </section>
+
+        <!-- 3 Card States -->
+        <section class="doc-section">
+            <h2>3 Card States (Orientation Effects)</h2>
+            <table class="data-table">
+                <tr><th>State</th><th>Symbol</th><th>Modifier</th><th>Meaning</th></tr>
+                <tr><td>UPRIGHT</td><td>↑</td><td>1.0x</td><td>Standard card effect</td></tr>
+                <tr><td>ECHOED</td><td>🌑</td><td>tau (0.618x)</td><td>Reversed/shadow state</td></tr>
+                <tr style="color:#ffd700;"><td>RESONANT</td><td>🔄</td><td>phi (1.618x)</td><td>Harmonized with companion</td></tr>
+            </table>
+
+            <div class="code-block" style="margin-top:15px;">
+<span class="keyword">class</span> <span class="type">CardState</span>(Enum):
+    UPRIGHT  = (<span class="string">"Upright"</span>, <span class="number">1.0</span>, <span class="string">"↑"</span>)
+    ECHOED   = (<span class="string">"Echoed"</span>, PHI_INV, <span class="string">"🌑"</span>)   <span class="comment"># tau = 0.618</span>
+    RESONANT = (<span class="string">"Resonant"</span>, PHI, <span class="string">"🔄"</span>)    <span class="comment"># phi = 1.618</span>
+
+<span class="comment"># Resonant state achieved when card harmonizes with companion</span>
+<span class="keyword">def</span> <span class="function">__post_init__</span>(self):
+    self.power = self.rank.value[<span class="number">2</span>] * (PHI <span class="keyword">if</span> self.state == RESONANT <span class="keyword">else</span> <span class="number">1.0</span>)
+            </div>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Card Power</h4>
+                    <p>Cards project power based on rank, suit, and state:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">get_effect</span>(self) -> str:
+    <span class="string">"""Get the card's effect description"""</span>
+    effects = {
+        ACE:   f<span class="string">"Begin {self.suit.domain} cycle"</span>,
+        SEVEN: f<span class="string">"Unlock L4 {self.suit.domain} mystery"</span>,
+        KING:  f<span class="string">"Command {self.suit.domain} authority"</span>
+    }
+
+    base_effect = effects.get(self.rank)
+
+    <span class="keyword">if</span> self.state == ECHOED:
+        <span class="keyword">return</span> f<span class="string">"[ECHOED] Reverse {base_effect}"</span>
+    <span class="keyword">elif</span> self.state == RESONANT:
+        <span class="keyword">return</span> f<span class="string">"[RESONANT] Amplify {base_effect}"</span>
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> base_effect
+                    </div>
+                    <p><strong>Key:</strong> Card power PROJECTS into game effects.</p>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Territory Frequencies</h4>
+                    <p>Each suit reflects back frequency characteristics:</p>
+                    <div class="code-block">
+<span class="comment"># Territory-based frequency ranges</span>
+freq_ranges = {
+    Territory.GARDEN:  (<span class="number">396</span>, <span class="number">528</span>),  <span class="comment"># Solfeggio UT-MI</span>
+    Territory.COSMIC:  (<span class="number">528</span>, <span class="number">963</span>),  <span class="comment"># Solfeggio MI-LA+</span>
+    Territory.ABYSSAL: (<span class="number">174</span>, <span class="number">396</span>)   <span class="comment"># Sub-Solfeggio</span>
+}
+
+<span class="comment"># Card frequency determined by suit territory</span>
+<span class="keyword">def</span> <span class="function">__post_init__</span>(self):
+    freq_range = freq_ranges[self.suit.territory]
+    self.frequency = random.uniform(freq_range[<span class="number">0</span>], freq_range[<span class="number">1</span>])
+                    </div>
+                    <p><strong>Key:</strong> Territory frequencies REFLECT back as card resonance.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergent Triad -->
+        <section class="doc-section">
+            <h2>Emergent Triad: Guardian-Card Synergy Networks</h2>
+            <div class="triad-container">
+                <h4>Cards + Guardians -> Territory Dominance</h4>
+                <div class="code-block">
+<span class="comment"># The emergence: cards become more than their stats</span>
+
+<span class="comment"># CARDS ALONE:</span>
+<span class="comment"># - Fixed power values from ranks</span>
+<span class="comment"># - Suit determines domain</span>
+<span class="comment"># - State modifies effectiveness</span>
+
+<span class="comment"># GUARDIANS ALONE:</span>
+<span class="comment"># - Territory affinity</span>
+<span class="comment"># - Frequency range</span>
+<span class="comment"># - Unique abilities</span>
+
+<span class="comment"># GUARDIAN-CARD SYNERGY (emergence):</span>
+<span class="comment"># - Cards linking to guardians gain RESONANT state</span>
+<span class="comment"># - phi multiplier on all effects</span>
+<span class="comment"># - Territory matching creates synergy networks</span>
+
+<span class="keyword">def</span> <span class="function">calculate_synergy</span>(card: Card, guardian: Guardian):
+    <span class="string">"""Emergent synergy from guardian-card pairing"""</span>
+
+    <span class="comment"># Territory match bonus</span>
+    <span class="keyword">if</span> card.suit.territory == guardian.territory:
+        territory_bonus = PHI
+    <span class="keyword">else</span>:
+        territory_bonus = <span class="number">1.0</span>
+
+    <span class="comment"># Frequency resonance</span>
+    freq_delta = abs(card.frequency - np.mean(guardian.frequency_range))
+    resonance = <span class="number">1</span> / (<span class="number">1</span> + freq_delta / <span class="number">100</span>)
+
+    <span class="comment"># Guardian link creates RESONANT state</span>
+    <span class="keyword">if</span> card.guardian_link == guardian.name:
+        card.state = RESONANT  <span class="comment"># phi multiplier!</span>
+
+    <span class="keyword">return</span> card.power * territory_bonus * resonance
+                </div>
+                <p><strong>Key insight:</strong> A deck of cards is just numbers. A guardian is just abilities. But when cards LINK to guardians through territory matching and frequency resonance, they form SYNERGY NETWORKS where the whole exceeds the sum. A SEVEN of LEAVES linked to ECHO guardian becomes more than rank 7--it becomes a territory anchor amplified by phi.</p>
+            </div>
+        </section>
+
+        <!-- Integration Points -->
+        <section class="doc-section">
+            <h2>Integration Points</h2>
+            <h3>System Closure Properties</h3>
+            <ul>
+                <li><strong>Self-contained:</strong> 9 suits x 14 ranks x 3 states = complete combinatorial space</li>
+                <li><strong>Zero free parameters:</strong> Powers from rank values; modifiers from phi/tau</li>
+                <li><strong>Territory bijection:</strong> 3 suits maps to 3 territories (no gaps, no overlaps)</li>
+                <li><strong>Solfeggio grounding:</strong> All frequencies from sacred scale</li>
+            </ul>
+
+            <h3>Inter-System Coupling</h3>
+            <div class="coupling-grid">
+                <div class="coupling-item"><span class="target">Bidirectional Guardian:</span> <span class="desc">Guardians can link to cards for RESONANT state</span></div>
+                <div class="coupling-item"><span class="target">From Tesseract:</span> <span class="desc">4D battle positioning uses card power</span></div>
+                <div class="coupling-item"><span class="target">To Market:</span> <span class="desc">Cards tradeable as pattern stocks</span></div>
+                <div class="coupling-item"><span class="target">Bidirectional Consciousness:</span> <span class="desc">Card frequencies affect field resonance</span></div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>phi = 1.618033988749895 | tau = 0.618033988749895 | L4 = 7</p>
+            <p>BloomCoin v2 Documentation | Card Battle System</p>
+        </footer>
+    </div>
+    <script src="../_shared/constants.js"></script>
+</body>
+</html>

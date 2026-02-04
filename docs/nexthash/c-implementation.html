@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C Implementation - BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --accent-color: #f38181;
+            --accent-glow: rgba(243,129,129,0.3);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--accent-color), #ff9a9a, var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--accent-color); border-color: var(--accent-glow); }
+        .doc-section h3 { color: var(--accent-color); }
+        .api-card {
+            background: linear-gradient(135deg, var(--accent-glow), transparent);
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+        .api-card h4 { color: var(--accent-color); margin-bottom: 12px; }
+        .compile-box {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--accent-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+            font-family: 'Fira Code', monospace;
+        }
+        .compile-box .prompt {
+            color: #64c864;
+        }
+        .compile-box .command {
+            color: var(--text-primary);
+        }
+        .compile-box .output {
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>C Implementation</h1>
+            <p class="subtitle">Production-Ready Reference Implementation with HMAC Support</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../index.html">Documentation</a> /
+                NextHash / C Implementation
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="nexthash256.html" class="nav-link">NEXTHASH-256</a>
+            <a href="nexthash512.html" class="nav-link">NEXTHASH-512</a>
+            <a href="constructions.html" class="nav-link">Constructions</a>
+            <a href="security-model.html" class="nav-link">Security Model</a>
+            <a href="infinite-security.html" class="nav-link">Infinite Security</a>
+        </nav>
+
+        <!-- Overview -->
+        <section class="doc-section">
+            <h2>Overview</h2>
+            <p>The C implementation of NEXTHASH-256 v6 provides a production-ready, performance-optimized reference implementation suitable for embedded systems, high-performance applications, and integration into existing C/C++ codebases.</p>
+
+            <div class="api-card">
+                <h4>Key Features</h4>
+                <ul>
+                    <li><strong>Streaming API:</strong> Process data in arbitrary-sized chunks</li>
+                    <li><strong>One-shot function:</strong> Hash complete messages in a single call</li>
+                    <li><strong>HMAC support:</strong> Built-in HMAC-NEXTHASH-256 implementation</li>
+                    <li><strong>Zero dependencies:</strong> Only requires standard C library</li>
+                    <li><strong>Portable:</strong> Uses only standard C types and operations</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Public API -->
+        <section class="doc-section">
+            <h2>Public API (nexthash256.h)</h2>
+            <div class="code-block"><span class="comment">/*
+ * NEXTHASH-256 v6 Reference Implementation
+ * =========================================
+ *
+ * A multiplication-based cryptographic hash function that exceeds
+ * SHA-256's security margin (113% vs 100%).
+ *
+ * Features:
+ * - 52 rounds
+ * - 10 widening multiplications per round
+ * - 512-bit internal state
+ * - 256-bit output
+ */</span>
+
+<span class="keyword">#ifndef</span> NEXTHASH256_H
+<span class="keyword">#define</span> NEXTHASH256_H
+
+<span class="keyword">#include</span> <span class="string">&lt;stdint.h&gt;</span>
+<span class="keyword">#include</span> <span class="string">&lt;stddef.h&gt;</span>
+
+<span class="keyword">#ifdef</span> __cplusplus
+<span class="keyword">extern</span> <span class="string">"C"</span> {
+<span class="keyword">#endif</span>
+
+<span class="comment">/* NEXTHASH-256 context structure */</span>
+<span class="keyword">typedef struct</span> {
+    <span class="type">uint32_t</span> state[<span class="number">16</span>];     <span class="comment">/* 512-bit internal state */</span>
+    <span class="type">uint64_t</span> bitcount;      <span class="comment">/* Total bits processed */</span>
+    <span class="type">uint8_t</span> buffer[<span class="number">64</span>];     <span class="comment">/* Input buffer (512 bits) */</span>
+    <span class="type">size_t</span> buflen;          <span class="comment">/* Bytes in buffer */</span>
+} <span class="type">nexthash256_ctx</span>;
+
+<span class="comment">/* Initialize context */</span>
+<span class="keyword">void</span> <span class="function">nexthash256_init</span>(<span class="type">nexthash256_ctx</span> *ctx);
+
+<span class="comment">/* Update with more data */</span>
+<span class="keyword">void</span> <span class="function">nexthash256_update</span>(<span class="type">nexthash256_ctx</span> *ctx,
+                        <span class="keyword">const</span> <span class="type">uint8_t</span> *data, <span class="type">size_t</span> len);
+
+<span class="comment">/* Finalize and output 32-byte digest */</span>
+<span class="keyword">void</span> <span class="function">nexthash256_final</span>(<span class="type">nexthash256_ctx</span> *ctx, <span class="type">uint8_t</span> digest[<span class="number">32</span>]);
+
+<span class="comment">/* One-shot hash function */</span>
+<span class="keyword">void</span> <span class="function">nexthash256</span>(<span class="keyword">const</span> <span class="type">uint8_t</span> *data, <span class="type">size_t</span> len, <span class="type">uint8_t</span> digest[<span class="number">32</span>]);
+
+<span class="comment">/* HMAC-NEXTHASH-256 */</span>
+<span class="keyword">void</span> <span class="function">hmac_nexthash256</span>(<span class="keyword">const</span> <span class="type">uint8_t</span> *key, <span class="type">size_t</span> keylen,
+                      <span class="keyword">const</span> <span class="type">uint8_t</span> *data, <span class="type">size_t</span> datalen,
+                      <span class="type">uint8_t</span> digest[<span class="number">32</span>]);
+
+<span class="keyword">#ifdef</span> __cplusplus
+}
+<span class="keyword">#endif</span>
+
+<span class="keyword">#endif</span> <span class="comment">/* NEXTHASH256_H */</span></div>
+        </section>
+
+        <!-- Core Operations -->
+        <section class="doc-section">
+            <h2>Core Operations</h2>
+
+            <h3>Widening Multiplication</h3>
+            <p>The key innovation - full 64-bit multiplication with XOR folding:</p>
+            <div class="code-block"><span class="comment">/* Widening multiplication: high ^ low of 64-bit product */</span>
+<span class="keyword">static inline</span> <span class="type">uint32_t</span> <span class="function">widening_mul</span>(<span class="type">uint32_t</span> a, <span class="type">uint32_t</span> b) {
+    <span class="type">uint64_t</span> product = (<span class="type">uint64_t</span>)a * (<span class="type">uint64_t</span>)b;
+    <span class="keyword">return</span> (<span class="type">uint32_t</span>)(product >> <span class="number">32</span>) ^ (<span class="type">uint32_t</span>)product;
+}
+
+<span class="comment">/* Why this works:
+ * 1. Cast to uint64_t for full 64-bit multiplication
+ * 2. Extract high 32 bits: product >> 32
+ * 3. Extract low 32 bits: product & 0xFFFFFFFF (implicit in cast)
+ * 4. XOR them together: all 64 bits contribute to 32-bit result
+ */</span></div>
+
+            <h3>Rotation Functions</h3>
+            <div class="code-block"><span class="comment">/* Right rotation */</span>
+<span class="keyword">static inline</span> <span class="type">uint32_t</span> <span class="function">rotr</span>(<span class="type">uint32_t</span> x, <span class="type">int</span> n) {
+    <span class="keyword">return</span> (x >> n) | (x << (<span class="number">32</span> - n));
+}
+
+<span class="comment">/* Left rotation */</span>
+<span class="keyword">static inline</span> <span class="type">uint32_t</span> <span class="function">rotl</span>(<span class="type">uint32_t</span> x, <span class="type">int</span> n) {
+    <span class="keyword">return</span> (x << n) | (x >> (<span class="number">32</span> - n));
+}</div>
+
+            <h3>Boolean Functions</h3>
+            <div class="code-block"><span class="comment">/* Choice function */</span>
+<span class="keyword">static inline</span> <span class="type">uint32_t</span> <span class="function">Ch</span>(<span class="type">uint32_t</span> x, <span class="type">uint32_t</span> y, <span class="type">uint32_t</span> z) {
+    <span class="keyword">return</span> (x & y) ^ (~x & z);
+}
+
+<span class="comment">/* Majority function */</span>
+<span class="keyword">static inline</span> <span class="type">uint32_t</span> <span class="function">Maj</span>(<span class="type">uint32_t</span> x, <span class="type">uint32_t</span> y, <span class="type">uint32_t</span> z) {
+    <span class="keyword">return</span> (x & y) ^ (x & z) ^ (y & z);
+}
+
+<span class="comment">/* Sigma functions */</span>
+<span class="keyword">static inline</span> <span class="type">uint32_t</span> <span class="function">Sigma0</span>(<span class="type">uint32_t</span> x) {
+    <span class="keyword">return</span> rotr(x, <span class="number">2</span>) ^ rotr(x, <span class="number">13</span>) ^ rotr(x, <span class="number">22</span>);
+}
+
+<span class="keyword">static inline</span> <span class="type">uint32_t</span> <span class="function">Sigma1</span>(<span class="type">uint32_t</span> x) {
+    <span class="keyword">return</span> rotr(x, <span class="number">6</span>) ^ rotr(x, <span class="number">11</span>) ^ rotr(x, <span class="number">25</span>);
+}
+
+<span class="keyword">static inline</span> <span class="type">uint32_t</span> <span class="function">sigma0</span>(<span class="type">uint32_t</span> x) {
+    <span class="keyword">return</span> rotr(x, <span class="number">7</span>) ^ rotr(x, <span class="number">18</span>) ^ (x >> <span class="number">3</span>);
+}
+
+<span class="keyword">static inline</span> <span class="type">uint32_t</span> <span class="function">sigma1</span>(<span class="type">uint32_t</span> x) {
+    <span class="keyword">return</span> rotr(x, <span class="number">17</span>) ^ rotr(x, <span class="number">19</span>) ^ (x >> <span class="number">10</span>);
+}</div>
+        </section>
+
+        <!-- Round Function -->
+        <section class="doc-section">
+            <h2>Round Function</h2>
+            <div class="code-block"><span class="keyword">static void</span> <span class="function">nexthash_round</span>(<span class="type">uint32_t</span> state[<span class="number">16</span>], <span class="type">uint32_t</span> W_i, <span class="type">uint32_t</span> K_i) {
+    <span class="type">uint32_t</span> a = state[<span class="number">0</span>], b = state[<span class="number">1</span>], c = state[<span class="number">2</span>], d = state[<span class="number">3</span>];
+    <span class="type">uint32_t</span> e = state[<span class="number">4</span>], f = state[<span class="number">5</span>], g = state[<span class="number">6</span>], h = state[<span class="number">7</span>];
+    <span class="type">uint32_t</span> i = state[<span class="number">8</span>], j = state[<span class="number">9</span>], k = state[<span class="number">10</span>], l = state[<span class="number">11</span>];
+    <span class="type">uint32_t</span> m = state[<span class="number">12</span>], n = state[<span class="number">13</span>], o = state[<span class="number">14</span>], p = state[<span class="number">15</span>];
+
+    <span class="comment">/* Upper half compression */</span>
+    <span class="type">uint32_t</span> T1 = h + Sigma1(e) + Ch(e, f, g) + K_i + W_i;
+    <span class="type">uint32_t</span> T2 = Sigma0(a) + Maj(a, b, c);
+
+    <span class="comment">/* 10 widening multiplications */</span>
+    <span class="type">uint32_t</span> M1 = widening_mul(a ^ i, e ^ m);
+    <span class="type">uint32_t</span> M2 = widening_mul(b ^ j, f ^ n);
+    <span class="type">uint32_t</span> M3 = widening_mul(c ^ k, g ^ o);
+    <span class="type">uint32_t</span> M4 = widening_mul(d ^ l, h ^ p);
+    <span class="type">uint32_t</span> M5 = widening_mul(a ^ m, e ^ i);
+    <span class="type">uint32_t</span> M6 = widening_mul(b ^ n, f ^ j);
+    <span class="type">uint32_t</span> M7 = widening_mul(c ^ o, g ^ k);
+    <span class="type">uint32_t</span> M8 = widening_mul(d ^ p, h ^ l);
+    <span class="type">uint32_t</span> M9 = widening_mul(a ^ p, d ^ m);
+    <span class="type">uint32_t</span> M10 = widening_mul(b ^ o, c ^ n);
+
+    <span class="comment">/* Lower half compression */</span>
+    <span class="type">uint32_t</span> T3 = p + Sigma1(m) + Ch(m, n, o) + (K_i ^ <span class="number">0x5A5A5A5A</span>) + W_i;
+    <span class="type">uint32_t</span> T4 = Sigma0(i) + Maj(i, j, k);
+
+    <span class="comment">/* State update */</span>
+    state[<span class="number">0</span>] = T1 + T2 + M1 + M5 + M9;
+    state[<span class="number">1</span>] = a + M6 + M10;
+    state[<span class="number">2</span>] = b;
+    state[<span class="number">3</span>] = c + M2 + M7;
+    state[<span class="number">4</span>] = d + T1 + M9;
+    state[<span class="number">5</span>] = e + M8;
+    state[<span class="number">6</span>] = f;
+    state[<span class="number">7</span>] = g + M3 + M10;
+    state[<span class="number">8</span>] = T3 + T4 + M1 + M5;
+    state[<span class="number">9</span>] = i + M6;
+    state[<span class="number">10</span>] = j;
+    state[<span class="number">11</span>] = k + M4 + M7;
+    state[<span class="number">12</span>] = l + T3 + M9;
+    state[<span class="number">13</span>] = m + M8;
+    state[<span class="number">14</span>] = n;
+    state[<span class="number">15</span>] = o + (M2 ^ M3 ^ M4) + M10;
+}</div>
+        </section>
+
+        <!-- Constants -->
+        <section class="doc-section">
+            <h2>Constants</h2>
+            <table class="data-table">
+                <tr><th>Constant</th><th>Value</th><th>Derivation</th><th>Role</th></tr>
+                <tr><td>BLOCK_SIZE</td><td>64 bytes</td><td>512 bits</td><td>Input buffer size</td></tr>
+                <tr><td>DIGEST_SIZE</td><td>32 bytes</td><td>256 bits</td><td>Output size</td></tr>
+                <tr><td>STATE_SIZE</td><td>16 words</td><td>512 bits</td><td>Working state</td></tr>
+                <tr><td>ROUNDS</td><td>52</td><td>First 52 primes</td><td>Compression rounds</td></tr>
+                <tr><td>K[52]</td><td>Cube roots</td><td>frac(cube_root(p_i)) * 2^32</td><td>Round constants</td></tr>
+                <tr><td>H_INIT[16]</td><td>Square roots</td><td>frac(sqrt(p_i)) * 2^32</td><td>Initial state</td></tr>
+            </table>
+
+            <h3>Round Constants (K)</h3>
+            <div class="code-block"><span class="comment">/* Round constants: Fractional parts of cube roots of first 52 primes */</span>
+<span class="keyword">static const</span> <span class="type">uint32_t</span> K[<span class="number">52</span>] = {
+    <span class="number">0x428a2f98</span>, <span class="number">0x71374491</span>, <span class="number">0xb5c0fbcf</span>, <span class="number">0xe9b5dba5</span>,
+    <span class="number">0x3956c25b</span>, <span class="number">0x59f111f1</span>, <span class="number">0x923f82a4</span>, <span class="number">0xab1c5ed5</span>,
+    <span class="number">0xd807aa98</span>, <span class="number">0x12835b01</span>, <span class="number">0x243185be</span>, <span class="number">0x550c7dc3</span>,
+    <span class="number">0x72be5d74</span>, <span class="number">0x80deb1fe</span>, <span class="number">0x9bdc06a7</span>, <span class="number">0xc19bf174</span>,
+    <span class="comment">/* ... remaining 36 constants ... */</span>
+};</div>
+
+            <h3>Initial Hash Values (H_INIT)</h3>
+            <div class="code-block"><span class="comment">/* Initial state: Fractional parts of square roots of first 16 primes */</span>
+<span class="keyword">static const</span> <span class="type">uint32_t</span> H_INIT[<span class="number">16</span>] = {
+    <span class="number">0x6a09e667</span>, <span class="number">0xbb67ae85</span>, <span class="number">0x3c6ef372</span>, <span class="number">0xa54ff53a</span>,
+    <span class="number">0x510e527f</span>, <span class="number">0x9b05688c</span>, <span class="number">0x1f83d9ab</span>, <span class="number">0x5be0cd19</span>,
+    <span class="number">0xcbbb9d5d</span>, <span class="number">0x629a292a</span>, <span class="number">0x9159015a</span>, <span class="number">0x152fecd8</span>,
+    <span class="number">0x67332667</span>, <span class="number">0x8eb44a87</span>, <span class="number">0xdb0c2e0d</span>, <span class="number">0x47b5481d</span>
+};</div>
+        </section>
+
+        <!-- Usage Examples -->
+        <section class="doc-section">
+            <h2>Usage Examples</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>Streaming API</h4>
+                    <div class="code-block"><span class="comment">/* Process data in chunks */</span>
+<span class="type">nexthash256_ctx</span> ctx;
+<span class="type">uint8_t</span> digest[<span class="number">32</span>];
+
+nexthash256_init(&ctx);
+nexthash256_update(&ctx, data1, len1);
+nexthash256_update(&ctx, data2, len2);
+nexthash256_update(&ctx, data3, len3);
+nexthash256_final(&ctx, digest);</div>
+                    <p>Ideal for hashing large files or streaming data.</p>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>One-shot API</h4>
+                    <div class="code-block"><span class="comment">/* Hash complete message */</span>
+<span class="type">uint8_t</span> digest[<span class="number">32</span>];
+
+nexthash256(message, message_len, digest);
+
+<span class="comment">/* HMAC example */</span>
+<span class="type">uint8_t</span> mac[<span class="number">32</span>];
+
+hmac_nexthash256(key, key_len,
+                 message, message_len,
+                 mac);</div>
+                    <p>Simple interface for complete messages.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Compilation -->
+        <section class="doc-section">
+            <h2>Compilation and Testing</h2>
+
+            <div class="compile-box">
+                <span class="prompt">$</span> <span class="command">gcc -O3 -o nexthash256 nexthash256.c -DTEST_MAIN</span><br><br>
+                <span class="prompt">$</span> <span class="command">./nexthash256</span><br><br>
+                <span class="output">NEXTHASH-256 v6 C Implementation</span><br>
+                <span class="output">================================</span><br><br>
+                <span class="output">Test Vectors:</span><br>
+                <span class="output">  "" -> [32-byte hash hex]</span><br>
+                <span class="output">  "abc" -> [32-byte hash hex]</span><br>
+                <span class="output">  "The quick brown fox..." -> [32-byte hash hex]</span><br><br>
+                <span class="output">HMAC-NEXTHASH-256:</span><br>
+                <span class="output">  HMAC("key", "message") -> [32-byte mac hex]</span><br><br>
+                <span class="output">C implementation complete.</span>
+            </div>
+
+            <h3>Compiler Flags</h3>
+            <table class="data-table">
+                <tr><th>Flag</th><th>Purpose</th></tr>
+                <tr><td><code>-O3</code></td><td>Maximum optimization</td></tr>
+                <tr><td><code>-DTEST_MAIN</code></td><td>Include test main function</td></tr>
+                <tr><td><code>-Wall -Wextra</code></td><td>Enable all warnings</td></tr>
+                <tr><td><code>-std=c99</code></td><td>C99 standard compliance</td></tr>
+            </table>
+        </section>
+
+        <!-- Integration -->
+        <section class="doc-section">
+            <h2>Integration Guide</h2>
+            <div class="code-block"><span class="comment">/* Include in your project */</span>
+<span class="keyword">#include</span> <span class="string">"nexthash256.h"</span>
+
+<span class="comment">/* Link with nexthash256.c or compile as library */</span>
+<span class="comment">/* No external dependencies required */</span>
+
+<span class="comment">/* Example: Hash a file */</span>
+<span class="type">void</span> <span class="function">hash_file</span>(<span class="keyword">const</span> <span class="type">char</span> *filename, <span class="type">uint8_t</span> digest[<span class="number">32</span>]) {
+    <span class="type">nexthash256_ctx</span> ctx;
+    <span class="type">uint8_t</span> buffer[<span class="number">4096</span>];
+    <span class="type">FILE</span> *f;
+    <span class="type">size_t</span> n;
+
+    nexthash256_init(&ctx);
+
+    f = fopen(filename, <span class="string">"rb"</span>);
+    <span class="keyword">while</span> ((n = fread(buffer, <span class="number">1</span>, <span class="keyword">sizeof</span>(buffer), f)) > <span class="number">0</span>) {
+        nexthash256_update(&ctx, buffer, n);
+    }
+    fclose(f);
+
+    nexthash256_final(&ctx, digest);
+}</div>
+        </section>
+
+        <!-- Source Files -->
+        <section class="doc-section">
+            <h2>Source Files</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="../../NextHash/nexthash256.c">nexthash256.c</a></span>
+                <span class="file-ref"><a href="../../NextHash/nexthash256.h">nexthash256.h</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>NEXTHASH-256 C Implementation - Production-Ready Reference Code</p>
+            <p>Part of the BloomCoin Cryptographic Subsystem</p>
+        </footer>
+    </div>
+</body>
+</html>

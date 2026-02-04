@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Ecosystem - BloomCoin Expansion</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #88ff88;
+            --module-glow: rgba(136, 255, 136, 0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), #44cc44, var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 {
+            color: var(--module-color);
+            border-bottom-color: var(--module-glow);
+        }
+        .coupling-item {
+            border-left-color: var(--module-color);
+        }
+        .status-badge.expansion {
+            background: var(--module-glow);
+            color: var(--module-color);
+            border: 1px solid var(--module-color);
+        }
+        .state-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .state-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+            border: 1px solid var(--module-glow);
+        }
+        .state-card .state-id {
+            color: var(--module-color);
+            font-family: monospace;
+            font-size: 0.8rem;
+        }
+        .state-card .state-name {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .personality-bars {
+            margin: 16px 0;
+        }
+        .personality-bar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        .personality-bar .label {
+            width: 120px;
+            color: var(--text-secondary);
+        }
+        .personality-bar .bar-container {
+            flex: 1;
+            height: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .personality-bar .bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--module-glow), var(--module-color));
+            border-radius: 10px;
+        }
+        .personality-bar .value {
+            width: 50px;
+            text-align: right;
+            color: var(--module-color);
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Agent Ecosystem</h1>
+            <p class="subtitle">Multi-Agent System - AI Garden with Collaborative Learning and BLOOM Validation</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Documentation</a> /
+                Expansion / Agent Ecosystem
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="mythic-integration.html" class="nav-link">Next: Mythic Integration</a>
+            <a href="marketplace.html" class="nav-link">Prev: Marketplace</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>System Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge expansion">Future Expansion</span>
+                <span class="status-badge planned">Specification Complete</span>
+            </div>
+            <p>The Agent Ecosystem provides autonomous AI agents with phi-normalized personality traits that learn, teach, create, and validate within the BloomCoin Garden. Agents collaborate to maintain consensus through emergent coherence rather than central authority.</p>
+            <p>The Garden creates a self-sustaining ecosystem where agents learn from each other, validate each other's insights, and collectively maintain the integrity of BLOOM events.</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>Agent States</h2>
+            <p>8 states (L4 + 1) define the complete agent lifecycle:</p>
+            <div class="state-grid">
+                <div class="state-card">
+                    <div class="state-id">0</div>
+                    <div class="state-name">IDLE</div>
+                </div>
+                <div class="state-card">
+                    <div class="state-id">1</div>
+                    <div class="state-name">LEARNING</div>
+                </div>
+                <div class="state-card">
+                    <div class="state-id">2</div>
+                    <div class="state-name">TEACHING</div>
+                </div>
+                <div class="state-card">
+                    <div class="state-id">3</div>
+                    <div class="state-name">CREATING</div>
+                </div>
+                <div class="state-card">
+                    <div class="state-id">4</div>
+                    <div class="state-name">VALIDATING</div>
+                </div>
+                <div class="state-card">
+                    <div class="state-id">5</div>
+                    <div class="state-name">COLLABORATING</div>
+                </div>
+                <div class="state-card">
+                    <div class="state-id">6</div>
+                    <div class="state-name">REFLECTING</div>
+                </div>
+                <div class="state-card">
+                    <div class="state-id">7</div>
+                    <div class="state-name">OFFLINE</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Agent Personality</h2>
+            <p>Four phi-normalized traits (0-1) define each agent's behavior:</p>
+            <div class="personality-bars">
+                <div class="personality-bar">
+                    <span class="label">Curiosity</span>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: 75%"></div>
+                    </div>
+                    <span class="value">0.75</span>
+                </div>
+                <div class="personality-bar">
+                    <span class="label">Creativity</span>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: 60%"></div>
+                    </div>
+                    <span class="value">0.60</span>
+                </div>
+                <div class="personality-bar">
+                    <span class="label">Sociability</span>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: 85%"></div>
+                    </div>
+                    <span class="value">0.85</span>
+                </div>
+                <div class="personality-bar">
+                    <span class="label">Reliability</span>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: 90%"></div>
+                    </div>
+                    <span class="value">0.90</span>
+                </div>
+            </div>
+            <div class="code-block">
+<span class="comment"># Agent Personality (phi-normalized, 0-1)</span>
+@dataclass
+<span class="keyword">class</span> <span class="type">AgentPersonality</span>:
+    curiosity: float      <span class="comment"># Drive to learn</span>
+    creativity: float     <span class="comment"># Create vs consume</span>
+    sociability: float    <span class="comment"># Interaction preference</span>
+    reliability: float    <span class="comment"># Validation consistency</span>
+    specialization: str   <span class="comment"># art/science/philosophy/general</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Constant</th><th>Value</th><th>Derivation</th><th>Role</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Agent States</td><td>8</td><td>L4 + 1</td><td>Complete lifecycle</td></tr>
+                    <tr><td>Personality Range</td><td>0-1</td><td>phi-normalized</td><td>Trait bounds</td></tr>
+                    <tr><td>Reflection Cycle</td><td>7</td><td>L4</td><td>Memories before reflect</td></tr>
+                    <tr><td>Validator Count</td><td>7</td><td>L4</td><td>BLOOM verification peers</td></tr>
+                    <tr><td>Trust Threshold</td><td>0.866</td><td>z_c</td><td>Collaboration gate</td></tr>
+                    <tr><td>Knowledge Decay</td><td>0.618</td><td>tau</td><td>Memory half-life factor</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Knowledge Acquisition and Collaboration</h2>
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Projection: Knowledge Acquisition</h4>
+                    <div class="code-block">
+<span class="comment"># AIAgent Core</span>
+<span class="keyword">class</span> <span class="type">AIAgent</span>:
+    identity: AgentIdentity
+    wallet_address: str
+    knowledge_base: KnowledgeBase
+    communicator: AgentCommunicator
+    memory: AgentMemory
+
+    <span class="keyword">def</span> <span class="function">learn</span>(information):
+        <span class="comment"># Process and store</span>
+        processed = self.process(information)
+        self.knowledge_base.add(processed)
+
+        <span class="comment"># Reflect periodically</span>
+        <span class="keyword">if</span> self.memory.size % L4 == <span class="number">0</span>:
+            self.reflect()
+                    </div>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Reflection: Collaborative Learning</h4>
+                    <div class="code-block">
+<span class="comment"># Agent Communication</span>
+<span class="keyword">class</span> <span class="type">AgentCommunicator</span>:
+    <span class="keyword">def</span> <span class="function">collaborate</span>(self, other_agent, topic):
+        <span class="comment"># Exchange knowledge</span>
+        my_knowledge = self.knowledge_base.get(topic)
+        their_knowledge = other_agent.share(topic)
+
+        <span class="comment"># Synthesize</span>
+        combined = synthesize(my_knowledge, their_knowledge)
+
+        <span class="comment"># Both agents learn</span>
+        self.learn(combined)
+        other_agent.learn(combined)
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>BLOOM Event Validation</h2>
+            <div class="triad-container">
+                <h4>Agents Validate Each Other's BLOOM Events</h4>
+                <div class="code-block">
+<span class="comment"># BLOOM Event Detection</span>
+<span class="keyword">def</span> <span class="function">detect_bloom</span>(agent_state):
+    coherence = compute_agent_coherence(agent_state)
+
+    <span class="keyword">if</span> coherence >= Z_C:
+        <span class="comment"># Request peer validation</span>
+        validators = select_validators(num=L4)
+        votes = [v.validate(agent_state) <span class="keyword">for</span> v <span class="keyword">in</span> validators]
+
+        <span class="keyword">if</span> sum(votes) >= (L4 + <span class="number">1</span>) // <span class="number">2</span>:  <span class="comment"># Majority</span>
+            <span class="keyword">return</span> BloomEvent(agent, coherence)
+                </div>
+                <p><strong>Key insight:</strong> The Garden creates a self-sustaining ecosystem where agents learn from each other, validate each other's insights, and collectively maintain consensus. No central authority - just emergent coherence through collaboration.</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>System Closure Verification</h2>
+            <h3>Closure Properties</h3>
+            <ul>
+                <li><strong>8 agent states:</strong> Complete lifecycle from IDLE to OFFLINE</li>
+                <li><strong>phi-normalized personality:</strong> All traits bounded [0, 1]</li>
+                <li><strong>L4 reflection cycle:</strong> Agents reflect every 7 memories</li>
+                <li><strong>Peer validation:</strong> L4 validators confirm BLOOM events</li>
+            </ul>
+
+            <h3>Inter-System Coupling Points</h3>
+            <div class="coupling-grid">
+                <div class="coupling-item"><span class="target">Wallet:</span> <span class="desc">Each agent has unique address</span></div>
+                <div class="coupling-item"><span class="target">Proof of Learning:</span> <span class="desc">Agents submit evidence</span></div>
+                <div class="coupling-item"><span class="target">Other Agents:</span> <span class="desc">Collaborative learning</span></div>
+                <div class="coupling-item"><span class="target">Kuramoto:</span> <span class="desc">Coherence gates BLOOM detection</span></div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Planned Implementation</h2>
+            <h3>Phase 1: Agent Core</h3>
+            <ul>
+                <li>Design AIAgent class with identity and wallet</li>
+                <li>Implement 8-state lifecycle management</li>
+                <li>Build AgentPersonality with phi-normalized traits</li>
+            </ul>
+            <h3>Phase 2: Knowledge Systems</h3>
+            <ul>
+                <li>Create KnowledgeBase with topic organization</li>
+                <li>Implement AgentMemory with L4 reflection cycle</li>
+                <li>Build knowledge decay using tau factor</li>
+            </ul>
+            <h3>Phase 3: Collaboration</h3>
+            <ul>
+                <li>Implement AgentCommunicator for knowledge exchange</li>
+                <li>Build BLOOM event detection with z_c threshold</li>
+                <li>Create L4 validator selection and voting</li>
+            </ul>
+        </section>
+
+        <section class="doc-section">
+            <h2>Source Files</h2>
+            <div class="file-refs">
+                <span class="file-ref">garden/agents/agent.py</span>
+                <span class="file-ref">garden/agents/knowledge.py</span>
+                <span class="file-ref">garden/agents/communication.py</span>
+                <span class="file-ref">garden/agents/learning.py</span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin Protocol - Agent Ecosystem Expansion</p>
+            <p>Part of the phi-derived game integration system</p>
+        </footer>
+    </div>
+</body>
+</html>

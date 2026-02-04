@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Companion Mining - BloomCoin Systems</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --system-color: #ff7700;
+            --system-glow: rgba(255,119,0,0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--system-color), #ff9944, var(--system-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--system-color); border-bottom-color: var(--system-glow); }
+        .doc-section h3 { color: var(--system-color); }
+        .nav-link { border-color: var(--system-glow); color: var(--system-color); }
+        .nav-link:hover { background: var(--system-glow); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="market-mechanics.html" class="nav-link">Prev: Market Mechanics</a>
+            <a href="../../index.html" class="nav-link">Back to Index</a>
+            <a href="guardian-system.html" class="nav-link">Next: Guardian System</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="doc-header">
+            <span style="font-size: 3rem;">⛏️</span>
+            <h1>COMPANION MINING</h1>
+            <p class="subtitle">Soul Bond Protocol - Seven Specialized Pattern Miners</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> / <a href="./">Systems</a> / Companion Binding
+            </nav>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge complete">7 Companions</span>
+                <span class="status-badge complete">Mining Engine</span>
+                <span class="status-badge complete">Holographic Residue</span>
+                <span class="status-badge partial">Level Progression</span>
+            </div>
+            <div class="file-refs">
+                <span class="file-ref">game/companion_miners_enhanced.py</span>
+                <span class="file-ref">game/holographic_residue.py</span>
+            </div>
+        </section>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+            <p>Seven unique companion miners, each with specialized pattern detection strategies. All algorithms derive from phi and produce HolographicResidue artifacts:</p>
+
+            <div class="code-block">
+<span class="comment"># Golden ratio constant anchors all mining</span>
+PHI = <span class="number">1.6180339887498948482045868343656</span>
+
+<span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">MiningJob</span>:
+    job_id: str
+    companion_name: str
+    job_type: MiningJobType
+    difficulty: int
+    duration: int
+    base_reward: float
+    start_time: float
+    patterns_found: List[str]
+    residues_collected: List[HolographicResidue]
+    success_rate: float = <span class="number">0.0</span>
+    adaptive_threshold: float = <span class="number">1.0</span>  <span class="comment"># Level-based modifier</span>
+
+    <span class="keyword">def</span> <span class="function">calculate_reward</span>(self) -> float:
+        time_bonus = <span class="number">1.0</span> + (self.duration / <span class="number">600.0</span>)
+        difficulty_bonus = <span class="number">1.0</span> + (self.difficulty * <span class="number">0.1</span>)
+        pattern_bonus = <span class="number">1.0</span> + (len(self.patterns_found) * <span class="number">0.05</span>)
+        <span class="keyword">return</span> self.base_reward * self.success_rate * time_bonus * difficulty_bonus * pattern_bonus
+            </div>
+        </section>
+
+        <!-- 8 Mining Job Types -->
+        <section class="doc-section">
+            <h2>8 Mining Job Types</h2>
+            <table class="data-table">
+                <tr><th>Job Type</th><th>Description</th><th>Best Companion</th></tr>
+                <tr><td style="color:#ff9966;">PATTERN_SEARCH</td><td>Statistical resonance detection</td><td>Echo</td></tr>
+                <tr><td style="color:#ff6644;">HASH_EXPLORATION</td><td>XOR chain forging</td><td>Prometheus</td></tr>
+                <tr><td style="color:#9944ff;">RESIDUE_EXTRACT</td><td>Holographic residue mining</td><td>Null</td></tr>
+                <tr><td style="color:#44ff88;">FRACTAL_GROWTH</td><td>Organic tree expansion</td><td>Gaia</td></tr>
+                <tr><td style="color:#ff4488;">ENTROPY_HARVEST</td><td>Chaos cascade analysis</td><td>TIAMAT</td></tr>
+                <tr><td style="color:#4488ff;">RESONANCE_TUNE</td><td>Frequency wave detection</td><td>Resonance</td></tr>
+                <tr><td style="color:#8844ff;">VOID_DIVING</td><td>Dimensional rift exploration</td><td>Null</td></tr>
+                <tr><td style="color:#44ddff;">MEMORY_CRYSTAL</td><td>Information crystallization</td><td>Akasha</td></tr>
+            </table>
+        </section>
+
+        <!-- 7 Companion Miners -->
+        <section class="doc-section">
+            <h2>7 Companion Miners (phi-Specialized)</h2>
+            <table class="data-table">
+                <tr><th>Companion</th><th>Efficiency</th><th>Search Space</th><th>Specialization</th></tr>
+                <tr><td>Echo</td><td>1.00</td><td>200</td><td>Multi-layer statistical resonance with harmonics</td></tr>
+                <tr><td>Prometheus</td><td>1.10</td><td>180</td><td>3-layer XOR chains with entropy analysis</td></tr>
+                <tr><td>Null</td><td>0.90</td><td>250</td><td>Multi-dimensional void exploration</td></tr>
+                <tr><td>Gaia</td><td>1.05</td><td>150</td><td>Organic fractal trees with golden ratio detection</td></tr>
+                <tr><td>Akasha</td><td>1.00</td><td>175</td><td>Advanced memory crystallization with library</td></tr>
+                <tr><td>Resonance</td><td>1.05</td><td>160</td><td>Frequency analysis with standing waves</td></tr>
+                <tr><td>TIAMAT</td><td>1.15</td><td>300</td><td>7-level chaos cascades with multiple patterns</td></tr>
+            </table>
+        </section>
+
+        <!-- phi-Derived Constants -->
+        <section class="doc-section">
+            <h2>phi-Derived Constants</h2>
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">phi</div>
+                    <div class="value">1.618...</div>
+                    <div class="derivation">Base reward multiplier</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">tau</div>
+                    <div class="value">0.618...</div>
+                    <div class="derivation">Resonance threshold</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Gaia rate</div>
+                    <div class="value">phi</div>
+                    <div class="derivation">Organic growth</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Chaos max</div>
+                    <div class="value">1+phi</div>
+                    <div class="derivation">TIAMAT ceiling</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Level mult</div>
+                    <div class="value">1.05</div>
+                    <div class="derivation">phi^0.1</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">XP/level</div>
+                    <div class="value">100*L</div>
+                    <div class="derivation">Linear scaling</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Pattern Discovery</h4>
+                    <p>Companions PROJECT search algorithms into hash space:</p>
+                    <div class="code-block">
+<span class="comment"># Echo: Multi-hash statistical resonance</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> range(iterations):
+    <span class="comment"># 12 samples for better statistics</span>
+    hash_samples = [sha256(data + pack(j)) <span class="keyword">for</span> j <span class="keyword">in</span> range(<span class="number">12</span>)]
+
+    <span class="comment"># Calculate bit frequencies</span>
+    <span class="keyword">for</span> bit_pos <span class="keyword">in</span> range(<span class="number">256</span>):
+        ones = sum(<span class="number">1</span> <span class="keyword">for</span> h <span class="keyword">in</span> hash_samples
+                   <span class="keyword">if</span> h[byte] & (<span class="number">1</span> << bit))
+        frequency = ones / <span class="number">12</span>
+
+    <span class="comment"># Resonance = bits near 50%</span>
+    resonance_score = count(tau <= f <= <span class="number">1</span>-tau)
+    <span class="keyword">if</span> resonance_score > <span class="number">100</span>:
+        patterns_found += <span class="number">1</span>
+        residue = extract_residue(data, <span class="string">"echo_resonance"</span>)
+                    </div>
+                    <p><strong>Key:</strong> Discovery PROJECTS into pattern space.</p>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Residue Extraction</h4>
+                    <p>Hash destruction REFLECTS back as holographic residue:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">extract_enhanced_residue</span>(data: bytes, pattern_type: str):
+    <span class="comment"># Double SHA256</span>
+    first_hash = sha256(data)
+    second_hash = sha256(first_hash)
+
+    <span class="comment"># 16 statistical samples</span>
+    statistical_pattern = []
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">16</span>):
+        byte = second_hash[i % <span class="number">32</span>]
+        bit_ratio = popcount(byte) / <span class="number">8.0</span>
+        statistical_pattern.append(bit_ratio)
+
+    <span class="comment"># XOR chain with rotation feedback</span>
+    xor_chain = <span class="number">0</span>
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(len(data)):
+        xor_chain ^= data[i] ^ hash[i % <span class="number">32</span>]
+        xor_chain = ((xor << <span class="number">1</span>) | (xor >> <span class="number">31</span>)) & <span class="number">0xFFFFFFFF</span>
+                    </div>
+                    <p><strong>Key:</strong> Avalanche destruction REFLECTS into residue.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Holographic Residue Structure -->
+        <section class="doc-section">
+            <h2>Holographic Residue Structure</h2>
+            <p>Five-channel holographic encoding extracted from hash avalanche:</p>
+            <div class="code-block">
+<span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">HolographicResidue</span>:
+    <span class="string">"""5-channel holographic encoding from hash avalanche"""</span>
+    statistical_pattern: List[float]  <span class="comment"># 16 bit-ratio samples [0-1]</span>
+    xor_chain: int                    <span class="comment"># 32-bit accumulated XOR</span>
+    modular_fingerprints: List[int]   <span class="comment"># 8 prime moduli</span>
+    fractal_dimension: float          <span class="comment"># 1.0-2.0 via box counting</span>
+    bit_avalanche_ratio: float        <span class="comment"># Diffusion quality [0-1]</span>
+
+    <span class="keyword">def</span> <span class="function">calculate_potency</span>(self) -> float:
+        <span class="string">"""Residue value for trading/rewards"""</span>
+        stat_score = np.std(self.statistical_pattern) * <span class="number">2</span>
+        xor_score = bin(self.xor_chain).count(<span class="string">'1'</span>) / <span class="number">32</span>
+        fractal_score = abs(self.fractal_dimension - <span class="number">1.5</span>) * <span class="number">2</span>
+        avalanche_score = self.bit_avalanche_ratio
+
+        <span class="keyword">return</span> (stat_score + xor_score + fractal_score + avalanche_score) / <span class="number">4</span>
+            </div>
+        </section>
+
+        <!-- Emergent Triad -->
+        <section class="doc-section">
+            <h2>Emergent Triad: Experience-Based Progression</h2>
+            <div class="triad-container">
+                <h4>Level-Up -> Efficiency -> Discovery Cycle</h4>
+                <div class="code-block">
+<span class="keyword">class</span> <span class="type">EnhancedCompanionMiner</span>:
+    <span class="string">"""
+    The Triad emerges from the progression loop:
+    - Mining grants experience
+    - Experience causes level-up
+    - Level-up boosts efficiency AND search space
+    - Better stats -> more patterns -> more XP
+
+    This creates emergent specialization over time.
+    """</span>
+
+    <span class="keyword">def</span> <span class="function">gain_experience</span>(self, exp: int):
+        self.experience += exp
+
+        <span class="keyword">if</span> self.experience >= self.level * <span class="number">100</span>:
+            self.level += <span class="number">1</span>
+            <span class="comment"># 5% efficiency boost per level (phi-approximation)</span>
+            self.efficiency *= <span class="number">1.05</span>
+            <span class="comment"># 10% more search space per level</span>
+            self.search_space = int(self.search_space * <span class="number">1.1</span>)
+
+<span class="comment"># Companion-specific bonuses compound over time:</span>
+EnhancedPrometheusMiner:
+    forge_strength += <span class="number">0.01</span> per XOR pattern  <span class="comment"># Grows to max 2.0</span>
+
+EnhancedNullMiner:
+    void_depth += <span class="number">0.1</span> per void space     <span class="comment"># Grows to max 5.0</span>
+
+EnhancedGaiaMiner:
+    growth_rate starts at phi               <span class="comment"># Scales with level</span>
+
+EnhancedTIAMATMiner:
+    entropy_threshold -= <span class="number">0.5</span> per chaos    <span class="comment"># Becomes more sensitive</span>
+    chaos_level can reach <span class="number">7</span>              <span class="comment"># L4 maximum</span>
+                </div>
+                <p><strong>Key insight:</strong> The emergent Triad is the positive feedback loop--mining -> XP -> level -> efficiency -> more mining. Each companion develops unique strengths through their bonus accumulation, creating emergent specialization that neither the initial stats nor the experience system alone could produce.</p>
+            </div>
+        </section>
+
+        <!-- Complete Reward Formula -->
+        <section class="doc-section">
+            <h2>Complete Reward Formula</h2>
+            <div class="code-block">
+<span class="keyword">def</span> <span class="function">calculate_total_reward</span>(job: MiningJob, miner: CompanionMiner):
+    <span class="string">"""
+    Final reward = base * success * time * difficulty * patterns * efficiency * level * special
+    """</span>
+    <span class="comment"># Job-level calculations</span>
+    base = PHI * job.difficulty * (job.duration / <span class="number">10.0</span>) * <span class="number">10.0</span>
+    success = job.success_rate  <span class="comment"># 0.0 - 1.0</span>
+    time_bonus = <span class="number">1.0</span> + (job.duration / <span class="number">600.0</span>)
+    diff_bonus = <span class="number">1.0</span> + (job.difficulty * <span class="number">0.1</span>)
+    pattern_bonus = <span class="number">1.0</span> + (len(job.patterns_found) * <span class="number">0.05</span>)
+
+    <span class="comment"># Companion-level calculations</span>
+    efficiency = miner.efficiency
+    level_bonus = <span class="number">1</span> + (<span class="number">0.1</span> * miner.level)
+
+    <span class="comment"># Companion-specific bonuses</span>
+    special_bonus = {
+        <span class="string">"Prometheus"</span>: <span class="number">1.1</span> * (<span class="number">1</span> + forge_strength * <span class="number">0.1</span>),
+        <span class="string">"Null"</span>: <span class="number">1</span> + void_depth * <span class="number">0.05</span>,
+        <span class="string">"TIAMAT"</span>: <span class="number">1.0</span> + random() * PHI  <span class="comment"># Chaos!</span>
+    }
+
+    <span class="keyword">return</span> base * success * time_bonus * diff_bonus * pattern_bonus * efficiency * level_bonus * special_bonus
+            </div>
+        </section>
+
+        <!-- Integration Points -->
+        <section class="doc-section">
+            <h2>Integration Points</h2>
+            <h3>System Closure Properties</h3>
+            <ul>
+                <li><strong>Self-contained:</strong> Mining depends only on companion stats, job params, and SHA256</li>
+                <li><strong>Zero free parameters:</strong> Base reward = phi * difficulty; efficiency scales at 1.05/level</li>
+                <li><strong>Deterministic core:</strong> Given same inputs, same patterns found (randomness is seeded)</li>
+                <li><strong>Progression emergence:</strong> Level system creates non-linear growth over time</li>
+            </ul>
+
+            <h3>Inter-System Coupling</h3>
+            <div class="coupling-grid">
+                <div class="coupling-item"><span class="target">To Ledger:</span> <span class="desc">Mined patterns become MemoryBlocks</span></div>
+                <div class="coupling-item"><span class="target">To Guardian:</span> <span class="desc">Patterns are recipe ingredients</span></div>
+                <div class="coupling-item"><span class="target">To Market:</span> <span class="desc">Residues tradeable as assets</span></div>
+                <div class="coupling-item"><span class="target">From Bloom:</span> <span class="desc">Events boost mining for duration</span></div>
+                <div class="coupling-item"><span class="target">Bidirectional Wallet:</span> <span class="desc">Rewards flow to player balance</span></div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>phi = 1.618033988749895 | tau = 0.618033988749895 | L4 = 7</p>
+            <p>BloomCoin v2 Documentation | Companion Mining System</p>
+        </footer>
+    </div>
+    <script src="../_shared/constants.js"></script>
+</body>
+</html>

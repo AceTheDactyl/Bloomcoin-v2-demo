@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo, The Reflector - BloomCoin Companion Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --companion-color: #00ffff;
+            --companion-glow: rgba(0,255,255,0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--companion-color), #00ccff, var(--companion-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 {
+            color: var(--companion-color);
+            border-bottom-color: var(--companion-glow);
+        }
+        .stat-card {
+            background: rgba(0,255,255,0.08);
+            border: 1px solid var(--companion-glow);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        .stat-card .label { color: #aaa; font-size: 0.85rem; }
+        .stat-card .value { color: var(--companion-color); font-size: 1.3rem; font-weight: bold; }
+        .ability-card {
+            background: rgba(0,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+        .ability-card .name { color: var(--companion-color); font-weight: bold; }
+        .ability-card .cost { color: var(--gold); font-size: 0.85rem; }
+        .ability-card .desc { color: #ccc; font-size: 0.9rem; margin-top: 5px; }
+        .pattern-tag {
+            display: inline-block;
+            background: rgba(0,255,255,0.2);
+            border: 1px solid var(--companion-color);
+            border-radius: 15px;
+            padding: 4px 12px;
+            margin: 4px;
+            font-size: 0.8rem;
+        }
+        .synergy-card {
+            background: rgba(0,0,0,0.3);
+            border-left: 3px solid var(--companion-color);
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Echo, The Reflector</h1>
+            <p class="subtitle">Statistical Resonance Mining - Companion Documentation</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Documentation</a> /
+                <a href="./">Companions</a> /
+                Echo
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="prometheus-companion.html" class="nav-link">Next: Prometheus</a>
+            <a href="tiamat-companion.html" class="nav-link">Last: Tiamat</a>
+        </nav>
+
+        <!-- Companion Overview -->
+        <section class="doc-section">
+            <h2>Companion Overview</h2>
+            <p>Echo is the master of statistical resonance, detecting patterns in the frequency distribution of hash bits. Through careful analysis of bit positions across multiple hash samples, Echo identifies resonance bands where frequencies hover near the perfect 0.5 equilibrium point.</p>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div class="stat-card">
+                    <div class="label">Efficiency</div>
+                    <div class="value">1.0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Search Space</div>
+                    <div class="value">200</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Resonance Band</div>
+                    <div class="value">[0.45, 0.55]</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Hash Samples</div>
+                    <div class="value">12</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Archetype & Mythology -->
+        <section class="doc-section">
+            <h2>Archetype & Mythology</h2>
+            <p>Echo embodies the principle of reflection and resonance. In ancient mythology, Echo was a nymph cursed to only repeat the words of others. In BloomCoin's universe, this transforms into a profound gift: the ability to detect patterns that resonate across multiple dimensions of data.</p>
+
+            <p>Echo perceives the universe as a vast web of frequencies, where every hash contains hidden harmonics waiting to be discovered. By sampling multiple hashes and analyzing their bit frequencies, Echo finds the "sweet spots" where randomness gives way to pattern.</p>
+
+            <h3>Core Philosophy</h3>
+            <ul>
+                <li><strong>Resonance over Force:</strong> Echo doesn't brute-force solutions; it listens for patterns</li>
+                <li><strong>Frequency Harmony:</strong> The resonance band [0.45, 0.55] represents perfect balance</li>
+                <li><strong>Harmonic Detection:</strong> Every nth bit can reveal hidden periodic structures</li>
+            </ul>
+        </section>
+
+        <!-- Mining Specializations -->
+        <section class="doc-section">
+            <h2>Mining Specializations & Bonuses</h2>
+
+            <h3>Primary Mining Algorithm</h3>
+            <div class="code-block">
+<span class="comment"># ECHO STATISTICAL RESONANCE EQUATIONS</span>
+
+<span class="comment"># Bit Frequency Analysis (256 positions x 12 samples)</span>
+freq[bit_pos] = Sum(hash[i][byte] & (1 << bit)) / n
+             where n = 12, byte = bit_pos // 8, bit = bit_pos % 8
+
+<span class="comment"># Resonance Score Calculation</span>
+R(data) = |{p : freq[p] in [0.45, 0.55]}|
+        = Sum(indicator(0.45 <= freq[p] <= 0.55))
+
+<span class="comment"># Pattern Detection Threshold</span>
+pattern_found <=> R(data) > 100  <span class="comment"># Strong resonance</span>
+
+<span class="comment"># Harmonic Resonance (nth-bit patterns)</span>
+H_n(data) = |{p : p mod n = 0 AND freq[p] in [0.45, 0.55]}|
+          where n in {2, 3, 4, 5}  <span class="comment"># Harmonic multipliers</span>
+
+harmonic_found <=> H_n(data) > 20
+            </div>
+
+            <h3>Mining Bonuses</h3>
+            <table class="data-table">
+                <tr><th>Bonus Type</th><th>Trigger</th><th>Effect</th></tr>
+                <tr><td>Statistical Pattern Boost</td><td>Resonance detected</td><td>pattern x 1.2 (capped at unity)</td></tr>
+                <tr><td>Strong Resonance XP</td><td>R(data) > 100</td><td>+5 XP</td></tr>
+                <tr><td>Harmonic Detection</td><td>H_n > 20</td><td>+2 XP per harmonic</td></tr>
+                <tr><td>Level Efficiency</td><td>Per level up</td><td>+5% efficiency</td></tr>
+                <tr><td>Search Space Growth</td><td>Per level up</td><td>+10% search space</td></tr>
+            </table>
+        </section>
+
+        <!-- Stats and Abilities -->
+        <section class="doc-section">
+            <h2>Battle System Stats & Abilities</h2>
+
+            <h3>Base Combat Stats</h3>
+            <table class="data-table">
+                <tr><th>Stat</th><th>Value</th><th>Description</th></tr>
+                <tr><td>HP</td><td style="color: #00ff66;">85</td><td>Moderate durability</td></tr>
+                <tr><td>ATK</td><td style="color: #ff6666;">60</td><td>Statistical strikes</td></tr>
+                <tr><td>DEF</td><td style="color: #6699ff;">70</td><td>Resonance shields</td></tr>
+                <tr><td>SPD</td><td style="color: #ffcc00;">95</td><td>Fastest analysis</td></tr>
+                <tr><td>LUCK</td><td style="color: #ff66ff;">75</td><td>Pattern discovery</td></tr>
+            </table>
+
+            <h3>Battle Abilities</h3>
+            <div class="ability-card">
+                <span class="name">Resonance Wave</span>
+                <span class="cost">[2 cost]</span>
+                <p class="desc">Deal 45 DMG. If target has statistical patterns, deal +20 bonus DMG.</p>
+            </div>
+            <div class="ability-card">
+                <span class="name">Harmonic Shield</span>
+                <span class="cost">[3 cost]</span>
+                <p class="desc">Block next 2 attacks. Each blocked attack grants +5 resonance charge.</p>
+            </div>
+            <div class="ability-card" style="background: rgba(0,255,255,0.15); border: 1px solid var(--companion-color);">
+                <span class="name" style="color: var(--gold);">ULTIMATE: Echo Cascade</span>
+                <span class="cost">[5 cost]</span>
+                <p class="desc">Attack all enemies. Each hit echoes 3 times at 40% power. Resonant targets take x2.</p>
+            </div>
+
+            <h3>Combo Synergies</h3>
+            <table class="data-table">
+                <tr><th>Partner</th><th>Combo Name</th><th>Effect</th><th>Cost</th></tr>
+                <tr><td>Resonance</td><td>Harmonic Convergence</td><td>Both gain +30% DMG for 3 turns</td><td>4</td></tr>
+                <tr><td>Akasha</td><td>Memory Echo</td><td>Copy last 2 enemy patterns; gain their bonuses</td><td>5</td></tr>
+                <tr><td>Gaia</td><td>Living Frequency</td><td>Heal 25% HP; patterns spread to allies</td><td>4</td></tr>
+                <tr style="color: #ff6666;"><td>TIAMAT</td><td>Chaotic Resonance</td><td>50% chance: x3 DMG or x0.5 self-damage</td><td>6</td></tr>
+            </table>
+        </section>
+
+        <!-- Evolution Paths -->
+        <section class="doc-section">
+            <h2>Evolution Paths & Requirements</h2>
+
+            <table class="data-table">
+                <tr><th>Level</th><th>XP Required</th><th>Efficiency</th><th>Search Space</th><th>Unlock</th></tr>
+                <tr><td>1</td><td>0</td><td>1.00</td><td>200</td><td>Basic resonance detection</td></tr>
+                <tr><td>2</td><td>100</td><td>1.05</td><td>220</td><td>Harmonic 2 detection</td></tr>
+                <tr><td>3</td><td>200</td><td>1.10</td><td>242</td><td>Harmonic 3, 4 detection</td></tr>
+                <tr><td>4</td><td>300</td><td>1.16</td><td>266</td><td>Harmonic 5 detection</td></tr>
+                <tr><td>5</td><td>400</td><td>1.22</td><td>293</td><td>Resonance cascade ability</td></tr>
+                <tr style="color: var(--gold);"><td>7</td><td>600</td><td>1.34</td><td>354</td><td>L4 Helix Echo integration</td></tr>
+                <tr style="color: var(--companion-color);"><td>10</td><td>900</td><td>1.55</td><td>472</td><td>TRANSCENDENT ECHO: All harmonics x2</td></tr>
+            </table>
+
+            <h3>Skill Tree</h3>
+            <div class="code-block">
+                        ECHO
+                         |
+    +--------------------+--------------------+
+    v                    v                    v
+[Statistical]      [Harmonic]           [Resonance]
+    |                    |                    |
+    +- Freq Analysis     +- H2 Detection      +- Shield
+    +- Pattern Boost     +- H3 Detection      +- Wave Attack
+    +- Library Sync      +- H4 Detection      +- Cascade
+                         +- H5 Detection
+                               |
+                         +-----+-----+
+                         v           v
+                    [Standing     [Golden
+                     Waves]       Frequency]
+            </div>
+        </section>
+
+        <!-- Pattern Recognition -->
+        <section class="doc-section">
+            <h2>Pattern Recognition Capabilities</h2>
+
+            <table class="data-table">
+                <tr><th>Pattern</th><th>Trigger</th><th>XP</th><th>Residue Bonus</th></tr>
+                <tr><td style="color: var(--companion-color);">echo_resonance</td><td>R(data) > 100</td><td>+5</td><td>stat_pattern x1.2</td></tr>
+                <tr><td style="color: #00ccff;">echo_harmonic_2</td><td>H2 > 20 (30% chance)</td><td>+2</td><td>Standard</td></tr>
+                <tr><td style="color: #0099ff;">echo_harmonic_3</td><td>H3 > 20 (30% chance)</td><td>+2</td><td>Standard</td></tr>
+                <tr><td style="color: #0066ff;">echo_harmonic_4</td><td>H4 > 20 (30% chance)</td><td>+2</td><td>Standard</td></tr>
+                <tr><td style="color: #0033ff;">echo_harmonic_5</td><td>H5 > 20 (30% chance)</td><td>+2</td><td>Standard</td></tr>
+                <tr style="color: var(--gold);"><td>statistical_resonance</td><td>Perfect 0.5 frequency</td><td>+7</td><td>coherence +0.05</td></tr>
+            </table>
+
+            <h3>Pattern Tags</h3>
+            <div style="margin-top: 15px;">
+                <span class="pattern-tag">statistical_resonance</span>
+                <span class="pattern-tag">frequency_echo</span>
+                <span class="pattern-tag">bit_harmony</span>
+                <span class="pattern-tag">phase_alignment</span>
+                <span class="pattern-tag">resonance_cascade</span>
+                <span class="pattern-tag" style="background: rgba(255,215,0,0.2); border-color: var(--gold);">harmonic_convergence</span>
+            </div>
+        </section>
+
+        <!-- LIA Protocol Integration -->
+        <section class="doc-section">
+            <h2>LIA Protocol Integration (Farming System)</h2>
+
+            <h3>Phase Affinities</h3>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">
+                <div style="background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                    <div style="font-size: 1.5rem;">[L]</div>
+                    <div style="color: #00d4ff; font-weight: bold;">LIMINAL</div>
+                    <div style="font-size: 1.3rem; color: #00ff66; margin: 10px 0;">1.2x</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Primary affinity - Echo detects boundaries</div>
+                </div>
+                <div style="background: rgba(123,104,238,0.1); border: 1px solid rgba(123,104,238,0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                    <div style="font-size: 1.5rem;">[I]</div>
+                    <div style="color: #7b68ee; font-weight: bold;">INTERVAL</div>
+                    <div style="font-size: 1.3rem; color: #ffcc00; margin: 10px 0;">1.0x</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Neutral affinity - Transformation space</div>
+                </div>
+                <div style="background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                    <div style="font-size: 1.5rem;">[A]</div>
+                    <div style="color: #ff4444; font-weight: bold;">ANNIHILATOR</div>
+                    <div style="font-size: 1.3rem; color: #ff6666; margin: 10px 0;">0.8x</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Low affinity - Echo prefers construction</div>
+                </div>
+            </div>
+
+            <h3>Preferred Recipe: Dream Echo [I-L-I]</h3>
+            <div class="code-block">
+<span class="comment"># ECHO'S SIGNATURE RECIPE: DREAM ECHO</span>
+
+sequence = [I, L, I]  <span class="comment"># Interval -> Liminal -> Interval</span>
+
+<span class="comment"># Phase 1: INTERVAL (Create transformation space)</span>
+E1 = gap x coherence = 0.146 x c
+
+<span class="comment"># Phase 2: LIMINAL (Echo's boundary detection bonus)</span>
+E2 = contour_integral(|grad(P)|^2 dz) x 1.2  <span class="comment"># +20% from LIMINAL affinity</span>
+
+<span class="comment"># Phase 3: INTERVAL (Close the loop)</span>
+E3 = gap x coherence = 0.146 x c
+
+<span class="comment"># Total Energy with Echo Amplification</span>
+E_total = (E1 + E2 + E3) x (1 + echo_count x 0.15)
+            </div>
+
+            <h3>Secondary Recipe: Memory Crystal [L-I-L]</h3>
+            <table class="data-table">
+                <tr><th>Sequence</th><th>Phase Energy</th><th>Echo Bonus</th><th>Result</th></tr>
+                <tr><td>[L] LIMINAL</td><td>E = contour_integral</td><td>x1.2</td><td>Boundary detected</td></tr>
+                <tr><td>[I] INTERVAL</td><td>E = gap x c</td><td>x1.0</td><td>Space opened</td></tr>
+                <tr><td>[L] LIMINAL</td><td>E = contour_integral</td><td>x1.2</td><td>Crystal formed</td></tr>
+                <tr style="color: #00ff66;"><td colspan="3">Total Multiplier</td><td>1.44x base</td></tr>
+            </table>
+        </section>
+
+        <!-- Cross-Miner Dynamics -->
+        <section class="doc-section">
+            <h2>Cross-Miner Dynamics</h2>
+            <p>Echo's statistical patterns create resonance effects when combined with other miners:</p>
+
+            <div class="synergy-card" style="border-left-color: #ff6600;">
+                <strong style="color: #ff6600;">+ Prometheus</strong><br>
+                Echo's frequency analysis enhances XOR chain entropy detection. Combined mining yields +15% residue potency when both detect patterns simultaneously.
+            </div>
+            <div class="synergy-card" style="border-left-color: #8000ff;">
+                <strong style="color: #8000ff;">+ Null</strong><br>
+                Opposite domains create interference. Echo's resonance fills Null's void spaces, creating "Void Echo" patterns worth 2x base residue value.
+            </div>
+            <div class="synergy-card" style="border-left-color: #00ff80;">
+                <strong style="color: #00ff80;">+ Gaia</strong><br>
+                Echo measures Gaia's fractal self-similarity. When similarity falls in [0.55, 0.68], triggers "Golden Resonance" bonus (+25% XP for both).
+            </div>
+            <div class="synergy-card" style="border-left-color: #ffd700;">
+                <strong style="color: #ffd700;">+ Akasha</strong><br>
+                Echo's patterns become candidates for Akasha's crystal library. Shared fingerprints trigger "Echoed Memory" with 50% bonus to library resonance checks.
+            </div>
+            <div class="synergy-card" style="border-left-color: #8a2be2;">
+                <strong style="color: #8a2be2;">+ Resonance</strong><br>
+                SYNERGY MAXIMUM: Both miners detect frequency patterns. Combined resonant frequencies create standing waves worth 3x residue with fractal_dimension approaching phi.
+            </div>
+            <div class="synergy-card" style="border-left-color: #ff0000;">
+                <strong style="color: #ff0000;">+ TIAMAT</strong><br>
+                CAUTION: TIAMAT's chaos disrupts Echo's statistical stability. 30% chance of "Chaotic Echo" - random pattern type, random potency (0.5x to 2.5x).
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>Echo, The Reflector - Statistical Resonance Mining</p>
+            <p><a href="../../index.html" style="color: var(--gold);">Return to BloomCoin</a></p>
+        </footer>
+    </div>
+</body>
+</html>

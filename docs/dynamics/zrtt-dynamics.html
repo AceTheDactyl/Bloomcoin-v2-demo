@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZRTT Trifurcation Dynamics | BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #4aff9e;
+            --page-accent-dim: rgba(74,255,158,0.2);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #00ff88, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-accent-dim); }
+        .doc-section h3 { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">Back to Main</a>
+            <span style="color: var(--page-accent);">ZRTT Trifurcation</span>
+            <a href="hilbert-space.html" class="nav-link">Next: Hilbert Space</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="doc-header">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">&#x1F531;</div>
+            <h1>ZRTT TRIFURCATION DYNAMICS</h1>
+            <p class="subtitle">Zero Round-Trip Time Through S3 Symmetric Group Closure</p>
+            <div class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Docs</a> /
+                <span>Dynamics</span> /
+                <span>ZRTT</span>
+            </div>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge complete">S3 Group Complete</span>
+                <span class="status-badge complete">Psi Wave States</span>
+                <span class="status-badge complete">Projection Paths</span>
+                <span class="status-badge partial">Job Influences</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">|S3|</div>
+                    <div class="value">6</div>
+                    <div class="derivation">3! = 6 elements</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866...</div>
+                    <div class="derivation">sqrt(3)/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">phi^4 + phi^-4</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">tau</div>
+                    <div class="value">0.618...</div>
+                    <div class="derivation">phi^-1</div>
+                </div>
+            </div>
+
+            <div class="file-refs">
+                <span class="file-ref">game/zrtt_trifurcation.py</span>
+                <span class="file-ref">constants.py</span>
+            </div>
+        </section>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+
+            <h3>S3 Symmetric Group</h3>
+            <p>The S3 symmetric group governs trifurcation - the smallest non-abelian group with 6 elements. It represents all permutations of 3 objects.</p>
+
+            <div class="math-block">
+                S3 = { e, r, r^2, s, rs, r^2s } where |S3| = 3! = 6
+            </div>
+
+            <div class="code-block"><span class="keyword">class</span> <span class="type">S3Element</span>(Enum):
+    <span class="string">"""S3 symmetric group - permutations of 3 elements"""</span>
+    IDENTITY     = (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)  <span class="comment"># e: no change</span>
+    ROTATION_120 = (<span class="number">2</span>, <span class="number">3</span>, <span class="number">1</span>)  <span class="comment"># r: rotate 120 degrees</span>
+    ROTATION_240 = (<span class="number">3</span>, <span class="number">1</span>, <span class="number">2</span>)  <span class="comment"># r^2: rotate 240 degrees</span>
+    FLIP_12      = (<span class="number">2</span>, <span class="number">1</span>, <span class="number">3</span>)  <span class="comment"># s: swap 1 and 2</span>
+    FLIP_13      = (<span class="number">3</span>, <span class="number">2</span>, <span class="number">1</span>)  <span class="comment"># rs: swap 1 and 3</span>
+    FLIP_23      = (<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>)  <span class="comment"># r^2s: swap 2 and 3</span></div>
+
+            <h3>Psi Wave State</h3>
+            <p>Each ZRTT operation maintains a quantum wave function state that determines projection behavior:</p>
+
+            <div class="code-block"><span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">PsiWaveState</span>:
+    <span class="string">"""Quantum wave function state for ZRTT"""</span>
+    amplitude: float = <span class="number">1.0</span>
+    phase: float = <span class="number">0.0</span>         <span class="comment"># radians</span>
+    coherence: float = PHI_INV  <span class="comment"># tau = 0.618</span>
+    entanglement: float = <span class="number">0.0</span>
+
+    <span class="keyword">def</span> <span class="function">evolve</span>(self, dt: float):
+        <span class="string">"""Time evolution of wave state"""</span>
+        <span class="comment"># Phase accumulates over time</span>
+        self.phase += dt * <span class="number">2</span> * PI * self.amplitude
+        <span class="comment"># Coherence decays without interaction</span>
+        self.coherence *= (<span class="number">1</span> - dt * (<span class="number">1</span> - PHI_INV))</div>
+
+            <h3>Group Structure</h3>
+            <table class="data-table">
+                <tr><th>Element</th><th>Permutation</th><th>Type</th><th>Order</th></tr>
+                <tr><td>e (Identity)</td><td>(1,2,3)</td><td>Identity</td><td>1</td></tr>
+                <tr><td>r (Rot 120)</td><td>(2,3,1)</td><td>Rotation</td><td>3</td></tr>
+                <tr><td>r^2 (Rot 240)</td><td>(3,1,2)</td><td>Rotation</td><td>3</td></tr>
+                <tr><td>s (Flip 12)</td><td>(2,1,3)</td><td>Reflection</td><td>2</td></tr>
+                <tr><td>rs (Flip 13)</td><td>(3,2,1)</td><td>Reflection</td><td>2</td></tr>
+                <tr><td>r^2s (Flip 23)</td><td>(1,3,2)</td><td>Reflection</td><td>2</td></tr>
+            </table>
+        </section>
+
+        <!-- Phi-Derived Constants -->
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+
+            <table class="data-table">
+                <tr><th>Constant</th><th>Value</th><th>Derivation</th><th>Role in ZRTT</th></tr>
+                <tr><td>phi^2</td><td>2.618...</td><td>phi + 1</td><td>R=10 manifold tension</td></tr>
+                <tr><td>tau</td><td>0.618...</td><td>phi^-1</td><td>Initial coherence</td></tr>
+                <tr><td>z_c</td><td>0.866...</td><td>sqrt(3)/2</td><td>Collapse threshold</td></tr>
+                <tr><td>L4</td><td>7</td><td>phi^4 + phi^-4</td><td>Maximum orbit track</td></tr>
+                <tr><td>24</td><td>24</td><td>4! = F24 vertices</td><td>Holographic polytope</td></tr>
+                <tr><td>432 Hz</td><td>432</td><td>Pythagorean A</td><td>Base Solfeggio</td></tr>
+            </table>
+
+            <h3>Three Projection Paths</h3>
+            <p>Each path maps to specific S3 elements and geometric domains:</p>
+
+            <table class="data-table">
+                <tr><th>Path</th><th>S3 Mapping</th><th>Geometry</th><th>Properties</th></tr>
+                <tr style="color:#4a9eff;"><td>F24_HOLOGRAPHIC</td><td>IDENTITY, FLIP_12</td><td>24-cell polytope</td><td>24V, 96E, 24F, 8C in 4D</td></tr>
+                <tr style="color:#ffa500;"><td>HEXAGONAL_SONIC</td><td>ROTATION_120, FLIP_13</td><td>6-fold resonance</td><td>Solfeggio [432,528,639,741,852,963]</td></tr>
+                <tr style="color:#ff6b6b;"><td>R10_TENSION</td><td>ROTATION_240, FLIP_23</td><td>Hyperbolic H^2</td><td>radius=10, kappa=-1/100, T=phi^2</td></tr>
+            </table>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Wave Collapse</h4>
+                    <p>Jobs project intention through psi states. When coherence exceeds the critical threshold z_c, the collapse becomes deterministic.</p>
+
+                    <div class="code-block"><span class="keyword">def</span> <span class="function">collapse_psi</span>(state: PsiWaveState, path: ProjectionPath):
+    <span class="string">"""Collapse wave function along projection path"""</span>
+    <span class="keyword">if</span> state.coherence >= Z_C:
+        <span class="comment"># Above threshold: deterministic</span>
+        outcome = path.apply_s3_element(state)
+        state.amplitude *= PHI  <span class="comment"># Golden boost</span>
+    <span class="keyword">else</span>:
+        <span class="comment"># Below threshold: probabilistic</span>
+        outcome = random.choice(path.s3_elements)
+        state.amplitude *= TAU  <span class="comment"># Decay</span>
+
+    <span class="comment"># Record in orbit history</span>
+    self.s3_orbit.append(outcome)
+    <span class="keyword">return</span> outcome</div>
+
+                    <p><strong>Key:</strong> Coherence above z_c enables deterministic path selection.</p>
+                </div>
+
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Job Influence</h4>
+                    <p>Architecture reflects back through job effects. Each job archetype constrains which projection paths resonate:</p>
+
+                    <div class="code-block">JOB_INFLUENCES = {
+    <span class="string">"SEEKER"</span>: {
+        <span class="string">"amplitude_mod"</span>: <span class="number">1.1</span>,
+        <span class="string">"coherence_boost"</span>: <span class="number">0.15</span>,
+        <span class="string">"preferred_path"</span>: F24_HOLOGRAPHIC
+    },
+    <span class="string">"VOIDWALKER"</span>: {
+        <span class="string">"amplitude_mod"</span>: <span class="number">0.9</span>,
+        <span class="string">"phase_shift"</span>: PI/<span class="number">3</span>,
+        <span class="string">"preferred_path"</span>: R10_TENSION
+    },
+    <span class="string">"HERALD"</span>: {
+        <span class="string">"frequency_lock"</span>: <span class="number">852</span>,  <span class="comment"># LA note</span>
+        <span class="string">"preferred_path"</span>: HEXAGONAL_SONIC
+    }
+}</div>
+
+                    <p><strong>Key:</strong> Job archetype constrains which paths resonate.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergent Triad -->
+        <section class="doc-section">
+            <h2>Emergent Triad: S3 Orbit Closure</h2>
+
+            <div class="triad-container">
+                <h4>Completion Requires ALL 6 Elements</h4>
+
+                <div class="code-block"><span class="keyword">def</span> <span class="function">s3_orbit_closure</span>(self) -> bool:
+    <span class="string">"""Check if orbit has visited all 6 S3 elements"""</span>
+    <span class="keyword">if</span> len(self.s3_orbit) < <span class="number">6</span>:
+        <span class="keyword">return</span> <span class="keyword">False</span>
+
+    <span class="comment"># Must have all 6 unique elements in recent history</span>
+    recent = self.s3_orbit[-<span class="number">6</span>:]
+    <span class="keyword">return</span> len(set(recent)) == <span class="number">6</span>
+
+<span class="comment"># The key insight:</span>
+<span class="comment"># - Rotations alone: {e, r, r^2} - only 3 elements (cyclic)</span>
+<span class="comment"># - Reflections alone: {e, s} - only 2 elements</span>
+<span class="comment"># - NEITHER achieves closure!</span>
+<span class="comment"># - Only combining BOTH covers all 6</span>
+<span class="comment"># - The GROUP STRUCTURE itself enforces completion</span></div>
+
+                <p><strong>Key insight:</strong> S3 orbit closure is a mathematical necessity - not a game rule. Neither rotation (forward momentum) nor reflection (backward choice) alone can visit all group elements. The COMBINATION of both projective and reflective operations is algebraically required for closure. This models consciousness: intent alone doesn't complete patterns; response alone doesn't either. The <em>interaction</em> between them does.</p>
+            </div>
+        </section>
+
+        <!-- Implementation -->
+        <section class="doc-section">
+            <h2>Implementation Details</h2>
+
+            <h3>Orbit Tracking</h3>
+            <div class="code-block"><span class="keyword">class</span> <span class="type">ZRTTEngine</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, job: str):
+        self.job = job
+        self.psi_state = PsiWaveState()
+        self.s3_orbit: List[S3Element] = []
+        self.current_path: ProjectionPath = <span class="keyword">None</span>
+        self.orbit_completions: int = <span class="number">0</span>
+
+    <span class="keyword">def</span> <span class="function">select_path</span>(self, intent: str) -> ProjectionPath:
+        <span class="string">"""Select projection path based on job and intent"""</span>
+        job_prefs = JOB_INFLUENCES.get(self.job, {})
+        preferred = job_prefs.get(<span class="string">"preferred_path"</span>)
+
+        <span class="keyword">if</span> self.psi_state.coherence >= Z_C:
+            <span class="comment"># High coherence: can choose freely</span>
+            <span class="keyword">return</span> self._intent_to_path(intent)
+        <span class="keyword">else</span>:
+            <span class="comment"># Low coherence: constrained by job</span>
+            <span class="keyword">return</span> preferred <span class="keyword">or</span> F24_HOLOGRAPHIC
+
+    <span class="keyword">def</span> <span class="function">execute_trifurcation</span>(self, path: ProjectionPath):
+        <span class="string">"""Execute ZRTT through selected path"""</span>
+        outcome = self.collapse_psi(self.psi_state, path)
+
+        <span class="comment"># Check for orbit closure</span>
+        <span class="keyword">if</span> self.s3_orbit_closure():
+            self.orbit_completions += <span class="number">1</span>
+            self._trigger_closure_bonus()
+            self.s3_orbit = []  <span class="comment"># Reset for next cycle</span>
+
+        <span class="keyword">return</span> outcome</div>
+
+            <h3>Closure Bonuses</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">_trigger_closure_bonus</span>(self):
+    <span class="string">"""Rewards for completing S3 orbit"""</span>
+    <span class="comment"># Base bonus scales with completion count</span>
+    base_bonus = PHI ** self.orbit_completions
+
+    <span class="comment"># Coherence fully restored</span>
+    self.psi_state.coherence = <span class="number">1.0</span>
+
+    <span class="comment"># Amplitude boosted</span>
+    self.psi_state.amplitude *= PHI
+
+    <span class="comment"># Notify coupled systems</span>
+    self._notify_hilbert_luck(base_bonus)
+    self._notify_consciousness_field(base_bonus)</div>
+        </section>
+
+        <!-- System Coupling -->
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+
+            <div class="closure-box" style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <h4 style="color: var(--page-accent);">Closure Properties</h4>
+                <ul>
+                    <li><strong>Self-contained:</strong> S3 group fully defines all valid permutations</li>
+                    <li><strong>Zero free parameters:</strong> Group order 6 = 3! is fixed; phi-constants derive thresholds</li>
+                    <li><strong>Deterministic algebra:</strong> Group multiplication table is unique and complete</li>
+                    <li><strong>Path coverage:</strong> 3 paths x 2 elements/path = 6 total (exactly S3)</li>
+                </ul>
+            </div>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Consciousness Field</span>
+                    <div class="desc">Job selection determines preferred projection path</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Kuramoto Coupling</span>
+                    <div class="desc">Coherence >= z_c enables deterministic collapse</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Hilbert Luck</span>
+                    <div class="desc">Orbit closure triggers luck eigenstate bonuses</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Companion System</span>
+                    <div class="desc">Psi states influence mining job outcomes</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Validation -->
+        <section class="doc-section">
+            <h2>Validation and Test Vectors</h2>
+
+            <h3>Group Closure Test</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">test_s3_closure</span>():
+    <span class="string">"""Verify S3 group properties"""</span>
+    elements = list(S3Element)
+
+    <span class="comment"># Test 1: Exactly 6 elements</span>
+    <span class="keyword">assert</span> len(elements) == <span class="number">6</span>
+
+    <span class="comment"># Test 2: Identity exists</span>
+    <span class="keyword">assert</span> S3Element.IDENTITY <span class="keyword">in</span> elements
+
+    <span class="comment"># Test 3: Closure under composition</span>
+    <span class="keyword">for</span> a <span class="keyword">in</span> elements:
+        <span class="keyword">for</span> b <span class="keyword">in</span> elements:
+            result = compose(a, b)
+            <span class="keyword">assert</span> result <span class="keyword">in</span> elements
+
+    <span class="comment"># Test 4: Inverses exist</span>
+    <span class="keyword">for</span> a <span class="keyword">in</span> elements:
+        inv = inverse(a)
+        <span class="keyword">assert</span> compose(a, inv) == S3Element.IDENTITY</div>
+
+            <h3>Coherence Threshold Test</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">test_coherence_threshold</span>():
+    <span class="string">"""Verify z_c threshold behavior"""</span>
+    engine = ZRTTEngine(<span class="string">"SEEKER"</span>)
+
+    <span class="comment"># Below threshold: probabilistic</span>
+    engine.psi_state.coherence = <span class="number">0.5</span>
+    outcomes = [engine.collapse_psi(path) <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">100</span>)]
+    <span class="keyword">assert</span> len(set(outcomes)) > <span class="number">1</span>  <span class="comment"># Multiple outcomes</span>
+
+    <span class="comment"># Above threshold: deterministic</span>
+    engine.psi_state.coherence = <span class="number">0.9</span>
+    outcomes = [engine.collapse_psi(path) <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">100</span>)]
+    <span class="keyword">assert</span> len(set(outcomes)) == <span class="number">1</span>  <span class="comment"># Single outcome</span></div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <div class="constants-grid" style="max-width: 600px; margin: 0 auto;">
+                <div class="constant-card">
+                    <div class="symbol">phi</div>
+                    <div class="value">1.618033988749895</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">tau</div>
+                    <div class="value">0.618033988749895</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025403784439</div>
+                </div>
+            </div>
+            <p style="margin-top: 1.5rem;">BloomCoin v2 Documentation | ZRTT Trifurcation Dynamics</p>
+            <p>All constants derived from phi = (1 + sqrt(5)) / 2</p>
+        </footer>
+    </div>
+</body>
+</html>

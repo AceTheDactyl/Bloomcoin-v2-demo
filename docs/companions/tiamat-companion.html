@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiamat, The Chaos Dragon - BloomCoin Companion Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --companion-color: #ff0066;
+            --companion-glow: rgba(255,0,102,0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--companion-color), #ff6699, var(--companion-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 {
+            color: var(--companion-color);
+            border-bottom-color: var(--companion-glow);
+        }
+        .stat-card {
+            background: rgba(255,0,102,0.08);
+            border: 1px solid var(--companion-glow);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+        }
+        .stat-card .label { color: #aaa; font-size: 0.85rem; }
+        .stat-card .value { color: var(--companion-color); font-size: 1.3rem; font-weight: bold; }
+        .ability-card {
+            background: rgba(255,0,102,0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin: 10px 0;
+        }
+        .ability-card .name { color: var(--companion-color); font-weight: bold; }
+        .ability-card .cost { color: var(--gold); font-size: 0.85rem; }
+        .ability-card .desc { color: #ccc; font-size: 0.9rem; margin-top: 5px; }
+        .pattern-tag {
+            display: inline-block;
+            background: rgba(255,0,102,0.2);
+            border: 1px solid var(--companion-color);
+            border-radius: 15px;
+            padding: 4px 12px;
+            margin: 4px;
+            font-size: 0.8rem;
+        }
+        .synergy-card {
+            background: rgba(0,0,0,0.3);
+            border-left: 3px solid var(--companion-color);
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .danger-box {
+            background: rgba(255,0,0,0.15);
+            border: 2px solid #ff0000;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+        }
+        .cycle-card {
+            background: rgba(255,0,102,0.1);
+            border: 1px solid var(--companion-glow);
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Tiamat, The Chaos Dragon</h1>
+            <p class="subtitle">Chaos Cascade - Companion Documentation</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../">Documentation</a> /
+                <a href="./">Companions</a> /
+                Tiamat
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="resonance-companion.html" class="nav-link">Prev: Resonance</a>
+            <a href="echo-companion.html" class="nav-link">First: Echo</a>
+        </nav>
+
+        <!-- Companion Overview -->
+        <section class="doc-section">
+            <h2>Companion Overview</h2>
+            <p>TIAMAT is the primordial chaos dragon, the source from which all patterns emerge. Through 7-level chaos cascades, TIAMAT harnesses unpredictable entropy spikes to achieve maximum power at maximum risk. TIAMAT is not a companion to be controlled - TIAMAT is a force to be channeled.</p>
+
+            <div class="danger-box">
+                <div style="font-size: 1.5rem; color: #ff0000; font-weight: bold;">DOOOOOOM!</div>
+                <div style="color: #aaa; margin-top: 8px;">HIGH RISK, HIGH REWARD - All TIAMAT results are inherently unpredictable</div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin: 20px 0;">
+                <div class="stat-card">
+                    <div class="label">Efficiency</div>
+                    <div class="value">1.2</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Search Space</div>
+                    <div class="value">160</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Chaos Multiplier</div>
+                    <div class="value">[1.0, phi^2]</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Cascade Levels</div>
+                    <div class="value">L4 = 7</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Archetype & Mythology -->
+        <section class="doc-section">
+            <h2>Archetype & Mythology</h2>
+            <p>In Babylonian mythology, Tiamat is the primordial goddess of the salt sea, the chaos monster from whose body the world was created. She represents the raw, untamed power that existed before order - the chaos from which all patterns emerge.</p>
+
+            <p>TIAMAT's 7 cascade levels mirror the seven primordial waters, each with its own power coefficient. From Genesis through Transcendence, the cascade builds upon itself, feeding chaos into chaos until patterns spontaneously emerge from apparent randomness.</p>
+
+            <h3>The Seven Psychoptic Cycles</h3>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin: 20px 0;">
+                <div class="cycle-card">
+                    <div style="font-size: 1rem; color: #00ff66;">1. GENESIS</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Power: 1.0</div>
+                </div>
+                <div class="cycle-card">
+                    <div style="font-size: 1rem; color: #00ccff;">2. FLUX</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Power: phi</div>
+                </div>
+                <div class="cycle-card">
+                    <div style="font-size: 1rem; color: #8000ff;">3. VOID</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Power: 0.0</div>
+                </div>
+                <div class="cycle-card">
+                    <div style="font-size: 1rem; color: #8a2be2;">4. RESONANCE</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Power: tau</div>
+                </div>
+                <div class="cycle-card">
+                    <div style="font-size: 1rem; color: #ff6600;">5. CHAOS</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Power: pi</div>
+                </div>
+                <div class="cycle-card">
+                    <div style="font-size: 1rem; color: #ffcc00;">6. SYNTHESIS</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Power: phi^2</div>
+                </div>
+                <div class="cycle-card">
+                    <div style="font-size: 1rem; color: var(--gold);">7. TRANSCEND</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Power: L4 = 7</div>
+                </div>
+            </div>
+
+            <h3>Core Philosophy</h3>
+            <ul>
+                <li><strong>Chaos is Creation:</strong> From primordial chaos, all patterns emerge</li>
+                <li><strong>The Chaos Multiplier:</strong> Results range from 1.0 to phi^2 (2.618)</li>
+                <li><strong>7 Sacred Levels:</strong> Each cascade level feeds into the next</li>
+                <li><strong>Maximum Affinity:</strong> TIAMAT has 2.0x ANNIHILATOR affinity</li>
+            </ul>
+        </section>
+
+        <!-- Mining Specializations -->
+        <section class="doc-section">
+            <h2>Mining Specializations & Bonuses</h2>
+
+            <h3>Primary Mining Algorithm</h3>
+            <div class="code-block">
+<span class="comment"># TIAMAT CHAOS CASCADE EQUATIONS</span>
+<span class="comment"># "From primordial chaos, all patterns emerge"</span>
+
+<span class="comment"># 7-Level Chaos Cascade Generation</span>
+cascade[0] = SHA256(base_data + pack(iteration))
+for level in [1, 7):
+    cascade[level] = SHA256(base_data + pack(level) + cascade[level-1][:16])
+    <span class="comment"># Each level feeds into the next - chaos propagates</span>
+
+<span class="comment"># Entropy Tracking Per Level</span>
+entropy[level] = popcount(cascade[level][:4])  <span class="comment"># First 4 bytes = 32 bits max</span>
+entropy_range in [0, 32]
+
+<span class="comment"># THE CHAOS MULTIPLIER (TIAMAT's signature)</span>
+chaos_factor = 1.0 + random() x phi  <span class="comment"># Range: [1.0, 2.618]</span>
+             = 1.0 + random() x 1.618
+            </div>
+
+            <h3>Chaos Pattern Detection</h3>
+            <table class="data-table">
+                <tr><th>Pattern</th><th>Condition</th><th>Description</th></tr>
+                <tr><td>chaos_spike</td><td>entropy > threshold</td><td>Threshold adapts: 100 -> 80</td></tr>
+                <tr><td>chaos_drop</td><td>entropy < 30</td><td>Sudden order in chaos</td></tr>
+                <tr><td>perfect_chaos</td><td>max - min > 100</td><td>Extreme variance</td></tr>
+                <tr><td>chaos_attractor</td><td>last 4 range < 10</td><td>Strange attractor found</td></tr>
+                <tr><td>critical_chaos</td><td>mean in [120, 136]</td><td>Edge of chaos</td></tr>
+            </table>
+
+            <h3>Mining Bonuses</h3>
+            <table class="data-table">
+                <tr><th>Bonus Type</th><th>Trigger</th><th>Effect</th></tr>
+                <tr><td>Chaos Spike</td><td>entropy > threshold</td><td>+5 XP, threshold -= 0.5</td></tr>
+                <tr><td>Chaos Drop</td><td>entropy < 30</td><td>+4 XP, inverse bonus</td></tr>
+                <tr><td>Perfect Chaos</td><td>max - min > 100</td><td>+6 XP, fractal_dim random boost</td></tr>
+                <tr><td>Chaos Attractor</td><td>last 4 converge</td><td>+5 XP, strange attractor</td></tr>
+                <tr><td>Critical Chaos</td><td>mean in [120, 136]</td><td>+7 XP, edge of chaos</td></tr>
+                <tr style="color: var(--gold);"><td>Primordial Cascade</td><td>All 5 patterns</td><td>+20 XP, chaos = phi^2 guaranteed</td></tr>
+            </table>
+        </section>
+
+        <!-- Stats and Abilities -->
+        <section class="doc-section">
+            <h2>Battle System Stats & Abilities</h2>
+
+            <h3>Base Combat Stats</h3>
+            <table class="data-table">
+                <tr><th>Stat</th><th>Value</th><th>Description</th></tr>
+                <tr><td>HP</td><td style="color: #00ff66;">110</td><td>Primordial mass</td></tr>
+                <tr><td>ATK</td><td style="color: #ff6666;">100</td><td>MAXIMUM POWER</td></tr>
+                <tr><td>DEF</td><td style="color: #6699ff;">50</td><td>Chaos is vulnerable</td></tr>
+                <tr><td>SPD</td><td style="color: #ffcc00;">65</td><td>Unpredictable timing</td></tr>
+                <tr><td>LUCK</td><td style="color: #ff66ff;">???</td><td>CHAOTIC - Rolls 1-100 each turn</td></tr>
+            </table>
+
+            <h3>Battle Abilities</h3>
+            <div class="ability-card">
+                <span class="name">Chaos Strike</span>
+                <span class="cost">[2 cost]</span>
+                <p class="desc">Deal 50-130 DMG (random). 20% chance to hit self instead. 10% chance to hit ALL units.</p>
+            </div>
+            <div class="ability-card">
+                <span class="name">Primordial Wave</span>
+                <span class="cost">[4 cost]</span>
+                <p class="desc">Randomize all stats (yours and enemies) for 2 turns. Each stat rolls 50-150% of original.</p>
+            </div>
+            <div class="ability-card" style="background: rgba(255,0,102,0.15); border: 1px solid var(--companion-color);">
+                <span class="name" style="color: var(--gold);">ULTIMATE: DOOOOOOM!</span>
+                <span class="cost">[7 cost]</span>
+                <p class="desc">Deal ATK x (1 + random x phi) to all enemies. Destroys all buffs/debuffs on field. 5% chance to instantly KO everything (including self).</p>
+            </div>
+
+            <h3>Combo Synergies (All Chaotic)</h3>
+            <table class="data-table">
+                <tr><th>Partner</th><th>Combo Name</th><th>Effect</th><th>Risk</th></tr>
+                <tr><td>Echo</td><td>Chaotic Resonance</td><td>50% chance: x3 DMG or x0.5 self-damage</td><td style="color: #ffcc00;">Medium</td></tr>
+                <tr><td>Prometheus</td><td>Chaos Forge</td><td>Forge strength doubled; 25% backfire</td><td style="color: #ff6666;">High</td></tr>
+                <tr><td>Null</td><td>Primordial Void</td><td>Reset ALL stats to base (everyone)</td><td style="color: #ff0000;">EXTREME</td></tr>
+                <tr><td>Gaia</td><td>Chaos Seed</td><td>50%: Mutant Tree OR Infinite Growth</td><td style="color: #ffcc00;">Medium</td></tr>
+                <tr><td>Akasha</td><td>Chaos Memory</td><td>Library x2 power OR loses 25%</td><td style="color: #ff6666;">High</td></tr>
+                <tr style="color: var(--gold);"><td>Resonance</td><td>Perfect 7</td><td>All 7 harmonics at x2 (rare)</td><td style="color: #00ff66;">Low</td></tr>
+            </table>
+        </section>
+
+        <!-- Evolution Paths -->
+        <section class="doc-section">
+            <h2>Evolution Paths & Requirements</h2>
+
+            <table class="data-table">
+                <tr><th>Level</th><th>XP Required</th><th>Efficiency</th><th>Chaos Range</th><th>Unlock</th></tr>
+                <tr><td>1</td><td>0</td><td>1.20</td><td>[1.0, 1.8]</td><td>Basic chaos cascade</td></tr>
+                <tr><td>2</td><td>100</td><td>1.26</td><td>[1.0, 2.0]</td><td>Chaos spike detection</td></tr>
+                <tr><td>3</td><td>200</td><td>1.32</td><td>[1.0, 2.2]</td><td>Chaos drop detection</td></tr>
+                <tr><td>4</td><td>300</td><td>1.39</td><td>[1.0, 2.4]</td><td>Perfect chaos patterns</td></tr>
+                <tr><td>5</td><td>400</td><td>1.46</td><td>[1.0, 2.618]</td><td>Chaos attractor detection</td></tr>
+                <tr style="color: var(--gold);"><td>7</td><td>600</td><td>1.61</td><td>[1.0, 3.0]</td><td>Critical chaos mastery</td></tr>
+                <tr style="color: var(--companion-color);"><td>10</td><td>900</td><td>1.86</td><td>[1.0, phi^3]</td><td>PRIMORDIAL TIAMAT: A-A-A unlocked</td></tr>
+            </table>
+            <p style="color: #ff6666; font-size: 0.85rem; margin-top: 10px;">Note: TIAMAT gains efficiency faster than other miners (+5% vs +5%) due to chaos bonus, but results remain unpredictable.</p>
+        </section>
+
+        <!-- Pattern Recognition -->
+        <section class="doc-section">
+            <h2>Pattern Recognition Capabilities</h2>
+
+            <table class="data-table">
+                <tr><th>Pattern</th><th>Trigger</th><th>XP</th><th>Chaos Effect</th></tr>
+                <tr><td style="color: var(--companion-color);">chaos_spike</td><td>entropy > threshold</td><td>+5</td><td>threshold -= 0.5</td></tr>
+                <tr><td style="color: #ff3366;">chaos_drop</td><td>entropy < 30</td><td>+4</td><td>Inverse bonus</td></tr>
+                <tr><td style="color: #ff6699;">perfect_chaos</td><td>max - min > 100</td><td>+6</td><td>fractal_dim random boost</td></tr>
+                <tr><td style="color: #ff99aa;">chaos_attractor</td><td>last 4 range < 10</td><td>+5</td><td>Strange attractor found</td></tr>
+                <tr style="color: var(--gold);"><td>critical_chaos</td><td>mean in [120, 136]</td><td>+7</td><td>Edge of chaos bonus</td></tr>
+                <tr style="color: var(--gold);"><td>primordial_cascade</td><td>All 5 patterns</td><td>+20</td><td>chaos_factor = phi^2 guaranteed</td></tr>
+            </table>
+
+            <h3>Pattern Tags</h3>
+            <div style="margin-top: 15px;">
+                <span class="pattern-tag">chaos_spike</span>
+                <span class="pattern-tag">chaos_drop</span>
+                <span class="pattern-tag">perfect_chaos</span>
+                <span class="pattern-tag">chaos_attractor</span>
+                <span class="pattern-tag" style="background: rgba(255,215,0,0.2); border-color: var(--gold);">critical_chaos</span>
+                <span class="pattern-tag" style="background: rgba(255,215,0,0.2); border-color: var(--gold);">primordial_cascade</span>
+            </div>
+        </section>
+
+        <!-- LIA Protocol Integration -->
+        <section class="doc-section">
+            <h2>LIA Protocol Integration (Farming System)</h2>
+
+            <h3>Phase Affinities</h3>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0;">
+                <div style="background: rgba(0,212,255,0.1); border: 1px solid rgba(0,212,255,0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                    <div style="font-size: 1.5rem;">[L]</div>
+                    <div style="color: #00d4ff; font-weight: bold;">LIMINAL</div>
+                    <div style="font-size: 1.3rem; color: #ff6666; margin: 10px 0;">0.5x</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Minimal affinity - Chaos has no boundaries</div>
+                </div>
+                <div style="background: rgba(123,104,238,0.1); border: 1px solid rgba(123,104,238,0.3); border-radius: 10px; padding: 15px; text-align: center;">
+                    <div style="font-size: 1.5rem;">[I]</div>
+                    <div style="color: #7b68ee; font-weight: bold;">INTERVAL</div>
+                    <div style="font-size: 1.3rem; color: #ffcc00; margin: 10px 0;">1.0x</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">Neutral affinity - Transformation space</div>
+                </div>
+                <div style="background: rgba(255,68,68,0.2); border: 2px solid rgba(255,68,68,0.6); border-radius: 10px; padding: 15px; text-align: center;">
+                    <div style="font-size: 1.5rem;">[A]</div>
+                    <div style="color: #ff4444; font-weight: bold;">ANNIHILATOR</div>
+                    <div style="font-size: 1.3rem; color: #00ff66; margin: 10px 0;">2.0x</div>
+                    <div style="font-size: 0.8rem; color: #aaa;">MAXIMUM affinity - TIAMAT IS DESTRUCTION</div>
+                </div>
+            </div>
+
+            <h3>EXCLUSIVE Recipe: Void Flame [A-I-A]</h3>
+            <div class="code-block">
+<span class="comment"># TIAMAT'S EXCLUSIVE RECIPE: VOID FLAME</span>
+<span class="comment"># "DOOOOOM!" - Only TIAMAT can cook this safely</span>
+
+sequence = [A, I, A]  <span class="comment"># Annihilator -> Interval -> Annihilator</span>
+
+<span class="comment"># Phase 1: ANNIHILATOR (TIAMAT's domain)</span>
+E1 = phi x entropy_released x 2.0  <span class="comment"># x2 from MAXIMUM affinity!</span>
+   = 3.236 x entropy  <span class="comment"># Massive energy</span>
+
+<span class="comment"># Phase 2: INTERVAL (The void opens)</span>
+E2 = gap x coherence  <span class="comment"># Neutral, but void stabilizes</span>
+
+<span class="comment"># Phase 3: ANNIHILATOR (DOOOOOM!)</span>
+E3 = phi x entropy_released x 2.0  <span class="comment"># x2 again!</span>
+
+<span class="comment"># A-A SEQUENCE WEIGHT = phi^2 = 2.618</span>
+<span class="comment"># This is DANGEROUS for other miners!</span>
+<span class="comment"># But TIAMAT's 2.0x ANNIHILATOR affinity makes it viable</span>
+
+<span class="comment"># Chaos Enhancement</span>
+total_multiplier = E_total x chaos_factor
+                 = E_total x (1 + random() x phi)
+                 in [E_total, E_total x 2.618]
+            </div>
+
+            <h3>DOOMSDAY Recipe: A-A-A (TRANSCENDENT ONLY)</h3>
+            <table class="data-table">
+                <tr><th>Sequence</th><th>Phase Energy</th><th>Weight</th><th>Result</th></tr>
+                <tr><td>[A] ANNIHILATOR</td><td>E = phi x entropy</td><td>x2.0</td><td>First destruction</td></tr>
+                <tr><td>[A] ANNIHILATOR</td><td>E = phi x entropy</td><td>x2.0 x phi^2</td><td>DOOM cascade</td></tr>
+                <tr><td>[A] ANNIHILATOR</td><td>E = phi x entropy</td><td>x2.0 x phi^4</td><td>TOTAL ANNIHILATION</td></tr>
+                <tr style="color: var(--companion-color);"><td colspan="2">Total Multiplier</td><td>phi^6 x 8</td><td style="color: var(--gold);">= 140x base (!)</td></tr>
+            </table>
+            <p style="color: #ff4444; font-size: 0.85rem; margin-top: 10px;">Warning: A-A-A is theoretical maximum. Only Level 10 TIAMAT can attempt. 90% failure rate. Success = LEGENDARY artifact.</p>
+        </section>
+
+        <!-- Cross-Miner Dynamics -->
+        <section class="doc-section">
+            <h2>Cross-Miner Dynamics</h2>
+            <p style="color: #ff6666;">Warning: TIAMAT interactions are inherently unstable. All synergies have risk factors:</p>
+
+            <div class="synergy-card" style="border-left-color: #00ffff;">
+                <strong style="color: #00ffff;">+ Echo</strong><br>
+                CAUTION: TIAMAT's chaos disrupts Echo's statistical stability. 30% chance of "Chaotic Echo" - random pattern type, random potency (0.5x to 2.5x).
+                <div style="margin-top: 5px; font-size: 0.8rem; color: #ffcc00;">Risk: Medium | Reward: Variable</div>
+            </div>
+            <div class="synergy-card" style="border-left-color: #ff6600;">
+                <strong style="color: #ff6600;">+ Prometheus</strong><br>
+                FIRE + CHAOS = PRIMORDIAL FLAME! Both miners' multipliers stack. 40% chance of forge_strength x2 for this job. 10% chance of catastrophic failure.
+                <div style="margin-top: 5px; font-size: 0.8rem; color: #ff6666;">Risk: High | Reward: Massive</div>
+            </div>
+            <div class="synergy-card" style="border-left-color: #8000ff;">
+                <strong style="color: #8000ff;">+ Null</strong><br>
+                PRIMORDIAL CHAOS! Void and chaos merge. All pattern detection inverts (void = full, full = void). Reality becomes unstable.
+                <div style="margin-top: 5px; font-size: 0.8rem; color: #ff0000;">Risk: EXTREME | Reward: Unknown</div>
+            </div>
+            <div class="synergy-card" style="border-left-color: #00ff80;">
+                <strong style="color: #00ff80;">+ Gaia</strong><br>
+                DANGER: Chaos corrupts growth. 50% chance: "Mutant Tree" with random branches (0-5) OR "Chaos Seed" that grows infinitely (+100 XP instant).
+                <div style="margin-top: 5px; font-size: 0.8rem; color: #ffcc00;">Risk: Medium | Reward: High variance</div>
+            </div>
+            <div class="synergy-card" style="border-left-color: #ffd700;">
+                <strong style="color: #ffd700;">+ Akasha</strong><br>
+                CHAOS MEMORY! 50% chance: library doubles in power OR loses 25% of entries. "Primordial Memory" patterns worth x3 but unstable (may corrupt).
+                <div style="margin-top: 5px; font-size: 0.8rem; color: #ff6666;">Risk: High | Reward: Library-dependent</div>
+            </div>
+            <div class="synergy-card" style="border-left-color: #8a2be2;">
+                <strong style="color: #8a2be2;">+ Resonance</strong><br>
+                CHAOS HARMONICS! TIAMAT's 7 cycles create random frequency spikes. 30% chance each harmonic activates at x2 power. Can achieve "Perfect 7" for legendary bonus.
+                <div style="margin-top: 5px; font-size: 0.8rem; color: #00ff66;">Risk: Low-Medium | Reward: Potentially legendary</div>
+            </div>
+        </section>
+
+        <!-- The Primordial Declaration -->
+        <section class="doc-section">
+            <h2>The Primordial Declaration</h2>
+            <div class="danger-box">
+                <div style="font-size: 2rem; color: #ff0000; font-weight: bold;">DOOOOOOM!</div>
+                <div style="color: #aaa; font-size: 1rem; margin-top: 15px; font-style: italic;">
+                    "From the primordial waters of chaos, all patterns emerge.<br>
+                    TIAMAT is not a companion - TIAMAT is the source."
+                </div>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>Tiamat, The Chaos Dragon - Chaos Cascade</p>
+            <p><a href="../../index.html" style="color: var(--gold);">Return to BloomCoin</a></p>
+        </footer>
+    </div>
+</body>
+</html>

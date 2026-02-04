@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloom Events Mechanics | BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #ffdd00;
+            --page-accent-dim: rgba(255,221,0,0.2);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #ffe84a, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-accent-dim); }
+        .doc-section h3 { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="consciousness-field.html" class="nav-link">Prev: Consciousness</a>
+            <span style="color: var(--page-accent);">Bloom Events</span>
+            <a href="farm-system.html" class="nav-link">Next: Farm System</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="doc-header">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">&#x1F33C;</div>
+            <h1>BLOOM EVENTS MECHANICS</h1>
+            <p class="subtitle">Mining Synchronization and Achievement Crystallization</p>
+            <div class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Docs</a> /
+                <span>Dynamics</span> /
+                <span>Bloom Events</span>
+            </div>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge complete">8 Bloom Types</span>
+                <span class="status-badge complete">Phi-Weighted Rewards</span>
+                <span class="status-badge complete">Validation System</span>
+                <span class="status-badge complete">Crystallization</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">|B|</div>
+                    <div class="value">8</div>
+                    <div class="derivation">Bloom types</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">phi</div>
+                    <div class="value">1.618...</div>
+                    <div class="derivation">EMERGENCE reward</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">tau</div>
+                    <div class="value">0.618...</div>
+                    <div class="derivation">Coherence weight</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866...</div>
+                    <div class="derivation">Significance threshold</div>
+                </div>
+            </div>
+
+            <div class="file-refs">
+                <span class="file-ref">garden/bloom_events/bloom_event.py</span>
+                <span class="file-ref">garden/bloom_events/reward_system.py</span>
+                <span class="file-ref">constants.py</span>
+            </div>
+        </section>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+
+            <h3>Bloom Event Structure</h3>
+            <p>Bloom events are the fundamental units of progress - achievements that crystallize into permanent memories on the Crystal Ledger:</p>
+
+            <div class="math-block">
+                R_total = R_base + tau * C_coherence + tau^2 * N_novelty + tau^3 * B_collab
+            </div>
+
+            <div class="code-block"><span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">BloomEvent</span>:
+    <span class="string">"""Significant learning or achievement event"""</span>
+    event_id: str
+    bloom_type: BloomType
+    timestamp: float
+
+    <span class="comment"># Participants</span>
+    primary_agent: str
+    witness_agents: List[str]       <span class="comment"># Validators</span>
+    collaborators: List[str]        <span class="comment"># For collective events</span>
+
+    <span class="comment"># Quality metrics</span>
+    coherence_score: float = <span class="number">0.5</span>   <span class="comment"># Alignment [0,1]</span>
+    novelty_score: float = <span class="number">0.5</span>     <span class="comment"># Uniqueness [0,1]</span>
+    significance: float = <span class="number">0.5</span>      <span class="comment"># Overall importance</span>
+    complexity: float = <span class="number">0.5</span>        <span class="comment"># Content depth</span>
+
+    <span class="comment"># Validation</span>
+    validation_consensus: float     <span class="comment"># Agreement level</span>
+    is_validated: bool = <span class="keyword">False</span>
+
+    <span class="comment"># Rewards (phi-weighted)</span>
+    reward: BloomReward</div>
+
+            <h3>8 Bloom Types</h3>
+            <table class="data-table">
+                <tr><th>Type</th><th>Weight</th><th>Description</th><th>Base Reward</th></tr>
+                <tr style="background:rgba(255,215,0,0.15);color:#ffd700;"><td>EMERGENCE</td><td>1.0</td><td>Unexpected emergent behavior</td><td>phi</td></tr>
+                <tr><td>INSIGHT</td><td>0.9</td><td>Pattern/connection discovery</td><td>phi/2</td></tr>
+                <tr><td>CREATION</td><td>0.8</td><td>Original creative output</td><td>phi/3</td></tr>
+                <tr><td>COLLABORATION</td><td>0.7</td><td>Multi-agent cooperation</td><td>phi/2 (shared)</td></tr>
+                <tr><td>SKILL_ACQUISITION</td><td>0.6</td><td>New capability learned</td><td>1.0</td></tr>
+                <tr><td>LEARNING</td><td>0.5</td><td>New knowledge acquired</td><td>0.5</td></tr>
+                <tr><td>TEACHING</td><td>0.4</td><td>Successfully taught another</td><td>0.3</td></tr>
+                <tr><td>MILESTONE</td><td>0.3</td><td>Achievement threshold reached</td><td>0.8</td></tr>
+            </table>
+        </section>
+
+        <!-- Phi-Derived Constants -->
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+
+            <table class="data-table">
+                <tr><th>Constant</th><th>Value</th><th>Derivation</th><th>Role</th></tr>
+                <tr><td>phi</td><td>1.618...</td><td>(1+sqrt(5))/2</td><td>EMERGENCE base reward</td></tr>
+                <tr><td>1/phi</td><td>0.618...</td><td>tau</td><td>Coherence bonus weight</td></tr>
+                <tr><td>1/phi^2</td><td>0.382...</td><td>tau^2</td><td>Novelty bonus weight</td></tr>
+                <tr><td>1/phi^3</td><td>0.236...</td><td>tau^3</td><td>Collaboration bonus weight</td></tr>
+                <tr><td>z_c</td><td>0.866...</td><td>sqrt(3)/2</td><td>Significance threshold</td></tr>
+            </table>
+
+            <h3>Phi-Weighted Reward Formula</h3>
+            <div class="code-block"><span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">BloomReward</span>:
+    <span class="string">"""Golden ratio weighted reward structure"""</span>
+    base_amount: float
+    coherence_bonus: float
+    novelty_bonus: float
+    collaboration_bonus: float
+    total: float = field(init=<span class="keyword">False</span>)
+
+    <span class="keyword">def</span> <span class="function">__post_init__</span>(self):
+        <span class="string">"""Calculate total with phi-weighted bonuses"""</span>
+        phi = (<span class="number">1</span> + <span class="number">5</span>**<span class="number">0.5</span>) / <span class="number">2</span>
+
+        self.total = (
+            self.base_amount
+            + self.coherence_bonus * (<span class="number">1</span> / phi)      <span class="comment"># = 0.618</span>
+            + self.novelty_bonus * (<span class="number">1</span> / phi**<span class="number">2</span>)     <span class="comment"># = 0.382</span>
+            + self.collaboration_bonus * (<span class="number">1</span> / phi**<span class="number">3</span>) <span class="comment"># = 0.236</span>
+        )
+
+<span class="comment"># The phi-hierarchy ensures:</span>
+<span class="comment"># - Base amount dominates (1.0x weight)</span>
+<span class="comment"># - Coherence matters most among bonuses (tau weight)</span>
+<span class="comment"># - Novelty matters next (tau^2 weight)</span>
+<span class="comment"># - Collaboration matters least but still counts (tau^3)</span>
+<span class="comment"># - NO arbitrary weights - ALL from golden ratio!</span></div>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Achievement Trigger</h4>
+                    <p>Agent actions project bloom events into the system. Significance is calculated from multiple factors:</p>
+
+                    <div class="code-block"><span class="keyword">def</span> <span class="function">calculate_significance</span>(self) -> float:
+    <span class="string">"""Calculate overall significance of bloom"""</span>
+    z_critical = <span class="number">3</span>**<span class="number">0.5</span> / <span class="number">2</span>  <span class="comment"># z_c = 0.866</span>
+
+    <span class="comment"># Base from type weight</span>
+    base = TYPE_WEIGHTS[self.bloom_type]
+
+    <span class="comment"># Coherence factor (peaks at z_c)</span>
+    coherence_factor = <span class="number">1.0</span> - abs(
+        self.coherence_score - z_critical
+    ) / z_critical
+
+    <span class="comment"># Novelty contribution</span>
+    novelty_factor = self.novelty_score * <span class="number">0.5</span>
+
+    <span class="comment"># Complexity bonus</span>
+    complexity_factor = self.complexity * <span class="number">0.3</span>
+
+    <span class="comment"># Collaboration multiplier</span>
+    collab_multiplier = <span class="number">1.0</span> + len(self.collaborators) * <span class="number">0.1</span>
+
+    <span class="keyword">return</span> min(<span class="number">1.0</span>, (base * coherence_factor
+        + novelty_factor + complexity_factor) * collab_multiplier)</div>
+
+                    <p><strong>Key:</strong> Actions PROJECT achievements into significance scores.</p>
+                </div>
+
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Validation Witness</h4>
+                    <p>Network validates and reflects consensus back. Multiple witnesses must approve for crystallization:</p>
+
+                    <div class="code-block"><span class="keyword">def</span> <span class="function">add_validation</span>(self, validator_id: str,
+                   approved: bool, confidence: float):
+    <span class="string">"""Add validation vote from witness"""</span>
+    validation = {
+        <span class="string">"validator_id"</span>: validator_id,
+        <span class="string">"approved"</span>: approved,
+        <span class="string">"confidence"</span>: confidence,
+        <span class="string">"timestamp"</span>: time.time()
+    }
+    self.validations_received.append(validation)
+
+    <span class="comment"># Count approvals</span>
+    approvals = sum(<span class="number">1</span> <span class="keyword">for</span> v <span class="keyword">in</span> self.validations_received
+                    <span class="keyword">if</span> v[<span class="string">"approved"</span>])
+
+    <span class="comment"># Check if validated</span>
+    <span class="keyword">if</span> approvals >= self.validation_required:
+        self.is_validated = <span class="keyword">True</span>
+        <span class="comment"># Calculate consensus level</span>
+        total_conf = sum(v[<span class="string">"confidence"</span>] <span class="keyword">for</span> v <span class="keyword">in</span>
+                        self.validations_received <span class="keyword">if</span> v[<span class="string">"approved"</span>])
+        self.validation_consensus = total_conf / len(
+            self.validations_received)</div>
+
+                    <p><strong>Key:</strong> Validation REFLECTS network consensus back to agent.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergent Triad -->
+        <section class="doc-section">
+            <h2>Emergent Triad: Memory Crystallization</h2>
+
+            <div class="triad-container">
+                <h4>Validated Events Become Permanent Crystal Ledger Records</h4>
+
+                <div class="code-block"><span class="keyword">def</span> <span class="function">crystallize_to_ledger</span>(event: BloomEvent, ledger: CrystalLedger):
+    <span class="string">"""Validated bloom -> permanent memory block"""</span>
+
+    <span class="keyword">if not</span> event.is_validated:
+        <span class="keyword">raise</span> ValueError(<span class="string">"Cannot crystallize unvalidated event"</span>)
+
+    <span class="comment"># Convert to block data</span>
+    block_data = event.to_block_data()
+
+    <span class="comment"># Create memory block</span>
+    memory_block = MemoryBlock(
+        index=ledger.get_next_index(),
+        prev_hash=ledger.get_last_block().hash,
+        data=block_data,
+        bloom_reward=event.reward.total,
+        witnesses=event.witness_agents
+    )
+
+    <span class="comment"># Add to chain (PERMANENT)</span>
+    success, msg = ledger.add_block(memory_block)
+
+    <span class="comment"># Distribute rewards</span>
+    <span class="keyword">if</span> success:
+        ledger.wallets[event.primary_agent] += event.reward.total
+
+<span class="comment"># The emergence:</span>
+<span class="comment"># - Projection alone creates events (but ephemeral)</span>
+<span class="comment"># - Validation alone verifies (but doesn't create)</span>
+<span class="comment"># - CRYSTALLIZATION combines both into PERMANENT memory</span>
+<span class="comment"># - The ledger block IS the emergence - neither pole alone</span></div>
+
+                <p><strong>Key insight:</strong> Bloom events follow a projection->validation->crystallization cycle. The agent PROJECTS achievement, the network REFLECTS consensus through validation, and at z_c threshold the event CRYSTALLIZES into a permanent block on the Crystal Ledger. The phi-weighted rewards ensure harmonic distribution - no arbitrary weights anywhere in the system.</p>
+            </div>
+        </section>
+
+        <!-- Implementation -->
+        <section class="doc-section">
+            <h2>Implementation Details</h2>
+
+            <h3>Bloom Event Manager</h3>
+            <div class="code-block"><span class="keyword">class</span> <span class="type">BloomEventManager</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, ledger: CrystalLedger):
+        self.ledger = ledger
+        self.pending_events: List[BloomEvent] = []
+        self.validated_events: List[BloomEvent] = []
+
+    <span class="keyword">def</span> <span class="function">create_bloom</span>(self, agent_id: str, bloom_type: BloomType,
+                     metrics: Dict) -> BloomEvent:
+        <span class="string">"""Create new bloom event from agent action"""</span>
+        event = BloomEvent(
+            event_id=self._generate_id(),
+            bloom_type=bloom_type,
+            timestamp=time.time(),
+            primary_agent=agent_id,
+            witness_agents=[],
+            collaborators=metrics.get(<span class="string">"collaborators"</span>, []),
+            coherence_score=metrics.get(<span class="string">"coherence"</span>, <span class="number">0.5</span>),
+            novelty_score=metrics.get(<span class="string">"novelty"</span>, <span class="number">0.5</span>),
+            complexity=metrics.get(<span class="string">"complexity"</span>, <span class="number">0.5</span>)
+        )
+
+        <span class="comment"># Calculate significance and reward</span>
+        event.significance = event.calculate_significance()
+        event.reward = self._calculate_reward(event)
+
+        self.pending_events.append(event)
+        <span class="keyword">return</span> event
+
+    <span class="keyword">def</span> <span class="function">process_validations</span>(self):
+        <span class="string">"""Process pending events and crystallize validated ones"""</span>
+        <span class="keyword">for</span> event <span class="keyword">in</span> self.pending_events[:]:
+            <span class="keyword">if</span> event.is_validated:
+                crystallize_to_ledger(event, self.ledger)
+                self.validated_events.append(event)
+                self.pending_events.remove(event)</div>
+
+            <h3>Reward Calculation</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">_calculate_reward</span>(self, event: BloomEvent) -> BloomReward:
+    <span class="string">"""Calculate phi-weighted reward for bloom event"""</span>
+    phi = (<span class="number">1</span> + <span class="number">5</span>**<span class="number">0.5</span>) / <span class="number">2</span>
+
+    <span class="comment"># Base from type</span>
+    base_rewards = {
+        BloomType.EMERGENCE: phi,
+        BloomType.INSIGHT: phi / <span class="number">2</span>,
+        BloomType.CREATION: phi / <span class="number">3</span>,
+        BloomType.COLLABORATION: phi / <span class="number">2</span>,
+        BloomType.SKILL_ACQUISITION: <span class="number">1.0</span>,
+        BloomType.LEARNING: <span class="number">0.5</span>,
+        BloomType.TEACHING: <span class="number">0.3</span>,
+        BloomType.MILESTONE: <span class="number">0.8</span>
+    }
+
+    base = base_rewards.get(event.bloom_type, <span class="number">0.5</span>)
+
+    <span class="comment"># Bonuses from scores</span>
+    coherence_bonus = event.coherence_score * base
+    novelty_bonus = event.novelty_score * base
+    collab_bonus = len(event.collaborators) * <span class="number">0.1</span> * base
+
+    <span class="keyword">return</span> BloomReward(
+        base_amount=base,
+        coherence_bonus=coherence_bonus,
+        novelty_bonus=novelty_bonus,
+        collaboration_bonus=collab_bonus
+    )</div>
+        </section>
+
+        <!-- System Coupling -->
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+
+            <div class="closure-box" style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <h4 style="color: var(--page-accent);">Closure Properties</h4>
+                <ul>
+                    <li><strong>Self-contained:</strong> 8 types fully cover achievement space</li>
+                    <li><strong>Zero free parameters:</strong> All weights from phi-powers; threshold at z_c</li>
+                    <li><strong>Immutable once crystallized:</strong> Ledger blocks cannot be modified</li>
+                    <li><strong>Consensus required:</strong> Validation prevents spurious events</li>
+                </ul>
+            </div>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Consciousness Field</span>
+                    <div class="desc">BLOOM resonance state triggers event multipliers</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Companion System</span>
+                    <div class="desc">Companion actions can trigger SKILL events</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Crystal Ledger</span>
+                    <div class="desc">Validated events crystallize as permanent blocks</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Wallet System</span>
+                    <div class="desc">Rewards distributed on crystallization</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Validation -->
+        <section class="doc-section">
+            <h2>Validation and Test Vectors</h2>
+
+            <h3>Reward Hierarchy Test</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">test_phi_reward_hierarchy</span>():
+    <span class="string">"""Verify reward weights follow phi hierarchy"""</span>
+    phi = (<span class="number">1</span> + <span class="number">5</span>**<span class="number">0.5</span>) / <span class="number">2</span>
+
+    reward = BloomReward(
+        base_amount=<span class="number">1.0</span>,
+        coherence_bonus=<span class="number">1.0</span>,
+        novelty_bonus=<span class="number">1.0</span>,
+        collaboration_bonus=<span class="number">1.0</span>
+    )
+
+    <span class="comment"># Verify weights</span>
+    expected = <span class="number">1.0</span> + <span class="number">1</span>/phi + <span class="number">1</span>/phi**<span class="number">2</span> + <span class="number">1</span>/phi**<span class="number">3</span>
+    <span class="keyword">assert</span> abs(reward.total - expected) < <span class="number">1e-10</span>
+
+    <span class="comment"># Verify ordering: base > coherence > novelty > collab</span>
+    <span class="keyword">assert</span> <span class="number">1.0</span> > <span class="number">1</span>/phi > <span class="number">1</span>/phi**<span class="number">2</span> > <span class="number">1</span>/phi**<span class="number">3</span></div>
+
+            <h3>Crystallization Test</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">test_crystallization_requires_validation</span>():
+    <span class="string">"""Verify only validated events can crystallize"""</span>
+    ledger = CrystalLedger()
+    manager = BloomEventManager(ledger)
+
+    <span class="comment"># Create unvalidated event</span>
+    event = manager.create_bloom(
+        <span class="string">"agent_1"</span>,
+        BloomType.INSIGHT,
+        {<span class="string">"coherence"</span>: <span class="number">0.8</span>, <span class="string">"novelty"</span>: <span class="number">0.7</span>}
+    )
+
+    <span class="comment"># Should fail without validation</span>
+    <span class="keyword">try</span>:
+        crystallize_to_ledger(event, ledger)
+        <span class="keyword">assert</span> <span class="keyword">False</span>, <span class="string">"Should have raised"</span>
+    <span class="keyword">except</span> ValueError:
+        <span class="keyword">pass</span>
+
+    <span class="comment"># Add validations</span>
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):
+        event.add_validation(f<span class="string">"witness_{i}"</span>, <span class="keyword">True</span>, <span class="number">0.9</span>)
+
+    <span class="comment"># Should succeed after validation</span>
+    <span class="keyword">assert</span> event.is_validated
+    crystallize_to_ledger(event, ledger)
+    <span class="keyword">assert</span> ledger.get_block_count() > <span class="number">1</span></div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <div class="constants-grid" style="max-width: 600px; margin: 0 auto;">
+                <div class="constant-card">
+                    <div class="symbol">phi</div>
+                    <div class="value">1.618033988749895</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">tau</div>
+                    <div class="value">0.618033988749895</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">tau^2</div>
+                    <div class="value">0.381966011250105</div>
+                </div>
+            </div>
+            <p style="margin-top: 1.5rem;">BloomCoin v2 Documentation | Bloom Events Mechanics</p>
+            <p>All constants derived from phi = (1 + sqrt(5)) / 2</p>
+        </footer>
+    </div>
+</body>
+</html>

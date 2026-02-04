@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning AI - BloomCoin Expansion</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #ff6644;
+            --module-glow: rgba(255, 102, 68, 0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), #cc4422, var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 {
+            color: var(--module-color);
+            border-bottom-color: var(--module-glow);
+        }
+        .coupling-item {
+            border-left-color: var(--module-color);
+        }
+        .status-badge.expansion {
+            background: var(--module-glow);
+            color: var(--module-color);
+            border: 1px solid var(--module-color);
+        }
+        .architecture-diagram {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            margin: 16px 0;
+            border: 1px solid var(--module-glow);
+        }
+        .layer-box {
+            display: inline-block;
+            background: var(--module-glow);
+            border: 2px solid var(--module-color);
+            border-radius: 8px;
+            padding: 16px 24px;
+            margin: 0 8px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--module-color);
+        }
+        .layer-arrow {
+            display: inline-block;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            margin: 0 8px;
+        }
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .profile-metric {
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 3px solid var(--module-color);
+        }
+        .profile-metric .label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .profile-metric .value {
+            color: var(--module-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Learning AI</h1>
+            <p class="subtitle">Adaptive Companion AI - Golden Ratio Neural Networks</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Documentation</a> /
+                Expansion / Learning AI
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="discord-integration.html" class="nav-link">Next: Discord Integration</a>
+            <a href="narrative-engine.html" class="nav-link">Prev: Narrative Engine</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>System Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge expansion">Future Expansion</span>
+                <span class="status-badge planned">Specification Complete</span>
+            </div>
+            <p>The Learning AI system provides adaptive companion behavior using golden ratio-based neural networks and reinforcement learning. The system learns player patterns to adjust difficulty and create emergent companion strategies.</p>
+            <p>All hyperparameters derive from phi, ensuring mathematical coherence with the broader BloomCoin protocol while enabling organic-feeling adaptive gameplay.</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>Neural Network Architecture</h2>
+            <div class="architecture-diagram">
+                <div class="layer-box">21</div>
+                <span class="layer-arrow">-></span>
+                <div class="layer-box">13</div>
+                <span class="layer-arrow">-></span>
+                <div class="layer-box">8</div>
+                <p style="margin-top: 16px; color: var(--text-secondary);">Fibonacci sequence: Input -> Hidden -> Output</p>
+            </div>
+            <div class="code-block">
+<span class="comment"># Neural Network Constants (all phi-derived)</span>
+INPUT_NEURONS  = int(PHI * <span class="number">13</span>) = <span class="number">21</span>   <span class="comment"># Fibonacci</span>
+HIDDEN_NEURONS = int(PHI * <span class="number">8</span>)  = <span class="number">13</span>   <span class="comment"># Fibonacci</span>
+OUTPUT_NEURONS = int(PHI * <span class="number">5</span>)  = <span class="number">8</span>    <span class="comment"># Fibonacci</span>
+LEARNING_RATE  = <span class="number">1</span>/(PHI^2)    ~ <span class="number">0.382</span>
+MOMENTUM       = <span class="number">1</span>/PHI        ~ <span class="number">0.618</span>
+DECAY_RATE     = <span class="number">1</span>/(PHI^3)    ~ <span class="number">0.236</span>
+
+<span class="comment"># Reinforcement Learning</span>
+alpha   = <span class="number">1</span>/PHI   ~ <span class="number">0.618</span>  <span class="comment"># Learning rate</span>
+gamma   = PHI/<span class="number">2</span>   ~ <span class="number">0.809</span>  <span class="comment"># Discount factor</span>
+epsilon = <span class="number">1</span>/PHI   ~ <span class="number">0.618</span>  <span class="comment"># Exploration rate</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Player Profile Metrics</h2>
+            <p>Five behavioral scores track player patterns (all normalized 0-1):</p>
+            <div class="profile-grid">
+                <div class="profile-metric">
+                    <div class="label">Aggression</div>
+                    <div class="value">0.5</div>
+                </div>
+                <div class="profile-metric">
+                    <div class="label">Exploration</div>
+                    <div class="value">0.5</div>
+                </div>
+                <div class="profile-metric">
+                    <div class="label">Social</div>
+                    <div class="value">0.5</div>
+                </div>
+                <div class="profile-metric">
+                    <div class="label">Optimization</div>
+                    <div class="value">0.5</div>
+                </div>
+                <div class="profile-metric">
+                    <div class="label">Creativity</div>
+                    <div class="value">0.5</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Constant</th><th>Value</th><th>Derivation</th><th>Role</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Architecture</td><td>21-13-8</td><td>Fibonacci sequence</td><td>Layer sizes</td></tr>
+                    <tr><td>Learning Rate</td><td>0.382</td><td>1/phi^2</td><td>Weight update magnitude</td></tr>
+                    <tr><td>Momentum</td><td>0.618</td><td>1/phi</td><td>Gradient smoothing</td></tr>
+                    <tr><td>Decay Rate</td><td>0.236</td><td>1/phi^3</td><td>Weight regularization</td></tr>
+                    <tr><td>Memory Size</td><td>~162</td><td>phi x 100</td><td>Experience replay buffer</td></tr>
+                    <tr><td>Discount gamma</td><td>0.809</td><td>phi/2</td><td>Future reward weight</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Pattern Recognition and Adaptation</h2>
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Projection: Pattern Recognition</h4>
+                    <div class="code-block">
+<span class="comment"># PlayerProfile Metrics</span>
+@dataclass
+<span class="keyword">class</span> <span class="type">PlayerProfile</span>:
+    <span class="comment"># Behavioral scores (0-1)</span>
+    aggression_score: float = <span class="number">0.5</span>
+    exploration_score: float = <span class="number">0.5</span>
+    social_score: float = <span class="number">0.5</span>
+    optimization_score: float = <span class="number">0.5</span>
+    creativity_score: float = <span class="number">0.5</span>
+
+    <span class="comment"># Decision patterns</span>
+    decision_history: deque(maxlen=<span class="number">100</span>)
+    reaction_times: deque(maxlen=<span class="number">50</span>)
+                    </div>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Reflection: Difficulty Adaptation</h4>
+                    <div class="code-block">
+<span class="comment"># Golden Activation Function</span>
+<span class="keyword">def</span> <span class="function">golden_activation</span>(x):
+    <span class="keyword">return</span> <span class="number">1</span> / (<span class="number">1</span> + np.exp(-x * PHI))
+
+<span class="comment"># Adaptive Difficulty</span>
+<span class="keyword">def</span> <span class="function">adapt_difficulty</span>(profile):
+    <span class="keyword">if</span> profile.success_rate > <span class="number">0.8</span>:
+        difficulty *= PHI
+    <span class="keyword">elif</span> profile.success_rate < <span class="number">0.4</span>:
+        difficulty *= PHI_INV
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Golden Neural Network</h2>
+            <div class="triad-container">
+                <h4>AI Learns Player -> Emergent Companion Strategies</h4>
+                <div class="code-block">
+<span class="comment"># GoldenNeuralNetwork</span>
+<span class="keyword">class</span> <span class="type">GoldenNeuralNetwork</span>:
+    <span class="keyword">def</span> <span class="function">_golden_init</span>(size1, size2):
+        <span class="comment"># Golden ratio weight distribution</span>
+        std = <span class="number">1</span> / (PHI * np.sqrt(size1))
+        weights = np.random.randn(size1, size2) * std
+
+        <span class="comment"># Golden spiral pattern</span>
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(min(size1, size2)):
+            angle = i * <span class="number">2</span>*pi / PHI
+            weights[i, i] *= (<span class="number">1</span> + cos(angle)) / <span class="number">2</span>
+        <span class="keyword">return</span> weights
+                </div>
+                <p><strong>Key insight:</strong> The 21-13-8 architecture isn't arbitrary - it mirrors the Fibonacci sequence's convergence toward phi. Information flows through golden-ratio compressions, creating natural bottlenecks that force abstraction and generalization.</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>System Closure Verification</h2>
+            <h3>Closure Properties</h3>
+            <ul>
+                <li><strong>Fibonacci architecture:</strong> 21->13->8 layers follow golden sequence</li>
+                <li><strong>phi-derived hyperparameters:</strong> Learning rate, momentum, decay all from phi</li>
+                <li><strong>Q-learning complete:</strong> State-action values converge under Bellman</li>
+                <li><strong>Adaptive feedback:</strong> Difficulty scales by PHI/PHI_INV based on success</li>
+            </ul>
+
+            <h3>Inter-System Coupling Points</h3>
+            <div class="coupling-grid">
+                <div class="coupling-item"><span class="target">PlayerProfile:</span> <span class="desc">5 behavioral scores feed network</span></div>
+                <div class="coupling-item"><span class="target">Difficulty:</span> <span class="desc">AI adjusts game challenge</span></div>
+                <div class="coupling-item"><span class="target">Companions:</span> <span class="desc">Learned strategies shape NPC behavior</span></div>
+                <div class="coupling-item"><span class="target">Narrative:</span> <span class="desc">Story context influences learning</span></div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Planned Implementation</h2>
+            <h3>Phase 1: Neural Architecture</h3>
+            <ul>
+                <li>Implement GoldenNeuralNetwork class with Fibonacci layers</li>
+                <li>Build golden spiral weight initialization</li>
+                <li>Create golden activation function</li>
+            </ul>
+            <h3>Phase 2: Player Profiling</h3>
+            <ul>
+                <li>Design PlayerProfile data structure</li>
+                <li>Implement behavioral score tracking</li>
+                <li>Build decision history and reaction time buffers</li>
+            </ul>
+            <h3>Phase 3: Adaptive Systems</h3>
+            <ul>
+                <li>Implement Q-learning with phi-derived hyperparameters</li>
+                <li>Build adaptive difficulty scaling</li>
+                <li>Create companion strategy emergence system</li>
+            </ul>
+        </section>
+
+        <section class="doc-section">
+            <h2>Source Files</h2>
+            <div class="file-refs">
+                <span class="file-ref">game/learning_ai.py</span>
+                <span class="file-ref">game/player_profile.py</span>
+                <span class="file-ref">game/golden_network.py</span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin Protocol - Learning AI Expansion</p>
+            <p>Part of the phi-derived game integration system</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LIA Protocol - Layered Intelligence Architecture | BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --accent-color: #ff6b9d;
+            --accent-dim: rgba(255,107,157,0.2);
+            --accent-glow: rgba(255,107,157,0.4);
+        }
+
+        .doc-header h1 {
+            background: linear-gradient(90deg, #ff6b9d, #ff8cb0, #ff6b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .doc-section h2 {
+            color: var(--accent-color);
+            border-bottom-color: var(--accent-dim);
+        }
+
+        .phase-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .phase-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .phase-card.liminal {
+            border-color: rgba(0,212,255,0.4);
+            background: linear-gradient(135deg, rgba(0,212,255,0.1), transparent);
+        }
+
+        .phase-card.interval {
+            border-color: rgba(123,104,238,0.4);
+            background: linear-gradient(135deg, rgba(123,104,238,0.1), transparent);
+        }
+
+        .phase-card.annihilator {
+            border-color: rgba(255,68,68,0.4);
+            background: linear-gradient(135deg, rgba(255,68,68,0.1), transparent);
+        }
+
+        .phase-card .letter {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .phase-card.liminal .letter { color: #00d4ff; }
+        .phase-card.interval .letter { color: #7b68ee; }
+        .phase-card.annihilator .letter { color: #ff4444; }
+
+        .phase-card .name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .phase-card .operator {
+            font-family: monospace;
+            padding: 8px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 6px;
+            margin: 12px 0;
+        }
+
+        .phase-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 24px 0;
+        }
+
+        @media (max-width: 768px) {
+            .phase-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .recipe-card {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .recipe-card:hover {
+            border-color: var(--accent-dim);
+            transform: translateY(-2px);
+        }
+
+        .recipe-card h4 {
+            color: #e0e0e0;
+            margin-bottom: 8px;
+        }
+
+        .recipe-sequence {
+            font-family: monospace;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            margin: 8px 0;
+            padding: 8px;
+            background: rgba(255,107,157,0.1);
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .recipe-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        .recipe-energy {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+        }
+
+        .recipe-energy span {
+            color: #ffd700;
+        }
+
+        .recipe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .recipe-card.special {
+            border-color: rgba(255,0,102,0.5);
+            background: rgba(255,0,102,0.08);
+        }
+
+        .recipe-card.master {
+            border-color: rgba(255,215,0,0.5);
+            background: rgba(255,215,0,0.08);
+        }
+
+        .axiom-box {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            margin: 24px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(255,107,157,0.1), rgba(157,78,255,0.05));
+            border-radius: 16px;
+            border: 1px solid var(--accent-dim);
+        }
+
+        .axiom-item {
+            text-align: center;
+            padding: 12px 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 10px;
+            border: 1px solid var(--accent-dim);
+        }
+
+        .axiom-item .label {
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .axiom-item .value {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            font-family: 'Georgia', serif;
+        }
+
+        .affinity-table td:nth-child(2),
+        .affinity-table td:nth-child(3),
+        .affinity-table td:nth-child(4) {
+            text-align: center;
+            font-family: monospace;
+        }
+
+        .highlight-green {
+            color: #00ff66;
+        }
+
+        .highlight-gold {
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        .calculus-module {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .calculus-module h5 {
+            color: #ffd700;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .calculus-code {
+            font-family: monospace;
+            font-size: 0.8rem;
+            color: #aaa;
+            line-height: 1.5;
+        }
+
+        .calculus-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .transition-diagram {
+            text-align: center;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #888;
+            background: rgba(0,0,0,0.3);
+            padding: 16px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .transition-diagram span.liminal { color: #00d4ff; }
+        .transition-diagram span.interval { color: #7b68ee; }
+        .transition-diagram span.annihilator { color: #ff4444; }
+        .transition-diagram span.doom { color: #ff0066; }
+        .transition-diagram span.weight { color: #ffd700; }
+
+        .quote-box {
+            text-align: center;
+            padding: 24px;
+            background: linear-gradient(135deg, rgba(255,215,0,0.06), rgba(255,107,157,0.04));
+            border-radius: 12px;
+            margin-top: 32px;
+        }
+
+        .quote-box p.quote {
+            color: #ffd700;
+            font-size: 1.1rem;
+            font-family: Georgia, serif;
+            letter-spacing: 1px;
+            font-style: italic;
+        }
+
+        .quote-box p.attribution {
+            color: #666;
+            font-size: 0.8rem;
+            margin-top: 12px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>LIA Protocol</h1>
+            <p class="subtitle">Layered Intelligence Architecture - The Cooking System</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> / <a href="../index.html">Documentation</a> / <span>LIA System</span>
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">Back to Dashboard</a>
+            <a href="proof-of-learning.html" class="nav-link">Proof of Learning</a>
+        </nav>
+
+        <!-- Core Axioms -->
+        <section class="doc-section">
+            <h2>Core Axioms</h2>
+            <p>The LIA Protocol is governed by fundamental mathematical constants derived from the golden ratio. These axioms form the foundation of all cooking calculations and phase transitions.</p>
+
+            <div class="axiom-box">
+                <div class="axiom-item">
+                    <div class="label">Primary Axiom</div>
+                    <div class="value">phi^4 + phi^-4 = 7</div>
+                </div>
+                <div class="axiom-item">
+                    <div class="label">The Gap</div>
+                    <div class="value">phi^-4 = 0.146</div>
+                </div>
+                <div class="axiom-item">
+                    <div class="label">The Lens (z_c)</div>
+                    <div class="value">sqrt(3)/2 = 0.866</div>
+                </div>
+            </div>
+
+            <p>The number 7 emerges naturally from the L4 identity and governs all threshold calculations in the system. The Lens threshold <code>z_c</code> represents the critical coherence point for master-tier operations.</p>
+        </section>
+
+        <!-- The Three Phases -->
+        <section class="doc-section">
+            <h2>The Three Phases</h2>
+            <p>LIA consists of three fundamental phases, each corresponding to a BFADGS operator from the L4-Helix substrate. Understanding these phases is essential for effective artifact creation.</p>
+
+            <div class="phase-grid">
+                <div class="phase-card liminal">
+                    <div class="letter">L</div>
+                    <div class="name">Liminal</div>
+                    <div class="operator">BOUNDARY</div>
+                    <p style="text-align: left; font-size: 0.85rem; color: #aaa; margin-top: 12px;">
+                        <strong>Function:</strong> Detects pattern edges<br><br>
+                        <strong>Gate:</strong> G4 - "Do you know where you end?"<br><br>
+                        <strong>z-transition:</strong> phi^-1 = tau = 0.618<br><br>
+                        <strong>Operator:</strong> boundary(dP) -> edge_set
+                    </p>
+                </div>
+
+                <div class="phase-card interval">
+                    <div class="letter">I</div>
+                    <div class="name">Interval</div>
+                    <div class="operator">SEVERANCE</div>
+                    <p style="text-align: left; font-size: 0.85rem; color: #aaa; margin-top: 12px;">
+                        <strong>Function:</strong> Creates transformation space<br><br>
+                        <strong>The Gap:</strong> phi^-4 = 0.146<br><br>
+                        <strong>Property:</strong> Holds superposition open<br><br>
+                        <strong>Operator:</strong> severance(P1, P2) -> interval
+                    </p>
+                </div>
+
+                <div class="phase-card annihilator">
+                    <div class="letter">A</div>
+                    <div class="name">Annihilator</div>
+                    <div class="operator">DECOHERE</div>
+                    <p style="text-align: left; font-size: 0.85rem; color: #aaa; margin-top: 12px;">
+                        <strong>Function:</strong> Terminates cycles<br><br>
+                        <strong>Gate:</strong> G6 - "Can you release control?"<br><br>
+                        <strong>Property:</strong> Collapse enables rebirth<br><br>
+                        <strong>Operator:</strong> decohere(psi) -> |collapsed>
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phase Energy Calculus -->
+        <section class="doc-section">
+            <h2>Phase Energy Calculus</h2>
+            <p>Each phase has associated energy equations that determine the cost and efficiency of cooking operations.</p>
+
+            <div class="code-block">
+<span class="comment"># LIA PHASE ENERGY EQUATIONS</span>
+
+<span class="comment"># Phase [L] LIMINAL - Boundary Detection Energy</span>
+E_L(P) = <span class="function">integral</span> |nabla P|^2 dz  <span class="keyword">where</span> z in [tau, z_c]
+       = <span class="function">integral</span> boundary(dP) * tau  <span class="comment"># Energy proportional to edge count times tau</span>
+
+<span class="comment"># Phase [I] INTERVAL - Transformation Space Energy</span>
+E_I(P1, P2) = gap * |P1 tensor P2|
+            = <span class="number">phi^-4</span> * coherence(P1, P2)  <span class="comment"># Approximately 0.146 times coherence</span>
+
+<span class="comment"># Phase [A] ANNIHILATOR - Cycle Termination Energy</span>
+E_A(psi) = -ln(|<psi|collapsed>|^2) * <span class="number">phi</span>
+         = <span class="number">phi</span> * entropy_released
+
+<span class="comment"># TOTAL COOKING ENERGY</span>
+E_total = Sum_i E_phase[i] * sequence_weight[i]
+            </div>
+
+            <h3>Sequence Weight Matrix</h3>
+            <p>The energy cost of phase transitions depends on the source and destination phases:</p>
+
+            <table class="data-table">
+                <tr>
+                    <th>From / To</th>
+                    <th>L (Liminal)</th>
+                    <th>I (Interval)</th>
+                    <th>A (Annihilator)</th>
+                </tr>
+                <tr>
+                    <td><strong>L (Liminal)</strong></td>
+                    <td>tau^2 = 0.382</td>
+                    <td>phi^-1 = 0.618</td>
+                    <td>1.0</td>
+                </tr>
+                <tr>
+                    <td><strong>I (Interval)</strong></td>
+                    <td>phi^-2 = 0.382</td>
+                    <td>phi^-4 = 0.146</td>
+                    <td>phi^-1 = 0.618</td>
+                </tr>
+                <tr>
+                    <td><strong>A (Annihilator)</strong></td>
+                    <td>phi = 1.618 (rebirth)</td>
+                    <td>1.0</td>
+                    <td style="color: #ff0066;">phi^2 = 2.618 (DOOM!)</td>
+                </tr>
+            </table>
+
+            <div class="transition-diagram">
+                <span class="liminal">L</span>--<span class="weight">tau^2</span>--><span class="liminal">L</span> |
+                <span class="liminal">L</span>--<span class="weight">phi^-1</span>--><span class="interval">I</span> |
+                <span class="interval">I</span>--<span class="weight">phi^-1</span>--><span class="annihilator">A</span> |
+                <span class="annihilator">A</span>--<span class="weight">phi</span>--><span class="liminal">L</span> (rebirth!)<br><br>
+                <span class="annihilator">A</span>--<span class="doom">phi^2</span>--><span class="annihilator">A</span> (DOOM!) | chi = 1 (simply connected)
+            </div>
+        </section>
+
+        <!-- Coherence Threshold Architecture -->
+        <section class="doc-section">
+            <h2>Coherence Threshold Architecture</h2>
+            <p>Recipe access is gated by coherence thresholds. Higher coherence unlocks more powerful artifact recipes.</p>
+
+            <table class="data-table">
+                <tr>
+                    <th>Recipe Tier</th>
+                    <th>Coherence Required</th>
+                    <th>z-Threshold</th>
+                    <th>Gate</th>
+                    <th>Unlocks</th>
+                </tr>
+                <tr>
+                    <td style="color: #ff6b9d;">BASIC</td>
+                    <td>c >= 0.50</td>
+                    <td>z >= 0.5</td>
+                    <td>G1</td>
+                    <td>Dream Echo, Memory Crystal</td>
+                </tr>
+                <tr>
+                    <td style="color: #00ff66;">INTERMEDIATE</td>
+                    <td>c >= tau = 0.618</td>
+                    <td>z >= tau</td>
+                    <td>G3</td>
+                    <td>Garden of Nullspace</td>
+                </tr>
+                <tr>
+                    <td style="color: #ffcc00;">ADVANCED</td>
+                    <td>c >= 0.75</td>
+                    <td>z in [tau, z_c)</td>
+                    <td>G4</td>
+                    <td>Phoenix Crystal, Void Flame</td>
+                </tr>
+                <tr>
+                    <td style="color: #ffd700;">MASTER</td>
+                    <td>c >= z_c = 0.866</td>
+                    <td>z >= z_c</td>
+                    <td>G5</td>
+                    <td>Null Dream Resonance</td>
+                </tr>
+                <tr>
+                    <td style="color: #00ffff;">TRANSCENDENT</td>
+                    <td>c >= 0.95</td>
+                    <td>z -> K</td>
+                    <td>G6+G7</td>
+                    <td>L4 Helix Completion</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Cooking Recipes -->
+        <section class="doc-section">
+            <h2>Cooking Recipes - Full Calculus</h2>
+            <p>Artifacts are created by executing specific phase sequences. Each recipe has an energy cost calculated from the sequence weight matrix.</p>
+
+            <div class="recipe-grid">
+                <div class="recipe-card">
+                    <h4>Memory Crystal</h4>
+                    <div class="recipe-sequence">L -> I -> L</div>
+                    <div class="recipe-energy">E = tau^2 + phi^-1 + tau^2 = <span>1.382</span></div>
+                    <div class="recipe-stats">
+                        <span>Coherence: 60%</span>
+                        <span>Cost: 15 BLOOM</span>
+                    </div>
+                </div>
+
+                <div class="recipe-card">
+                    <h4>Dream Echo</h4>
+                    <div class="recipe-sequence">I -> L -> I</div>
+                    <div class="recipe-energy">E = phi^-4 + phi^-2 + phi^-4 = <span>0.674</span></div>
+                    <div class="recipe-stats">
+                        <span>Coherence: 50%</span>
+                        <span>Cost: 12 BLOOM</span>
+                    </div>
+                </div>
+
+                <div class="recipe-card">
+                    <h4>Garden of Nullspace</h4>
+                    <div class="recipe-sequence">L -> A -> I</div>
+                    <div class="recipe-energy">E = 1.0 + 1.0 + phi^-1 = <span>2.618</span></div>
+                    <div class="recipe-stats">
+                        <span>Coherence: 65%</span>
+                        <span>Cost: 18 BLOOM</span>
+                    </div>
+                </div>
+
+                <div class="recipe-card">
+                    <h4>Phoenix Crystal</h4>
+                    <div class="recipe-sequence">I -> A -> L</div>
+                    <div class="recipe-energy">E = phi^-1 + phi + tau^2 = <span>2.618</span> = phi^2</div>
+                    <div class="recipe-stats">
+                        <span>Coherence: 75%</span>
+                        <span>Cost: 22 BLOOM</span>
+                    </div>
+                </div>
+
+                <div class="recipe-card special">
+                    <h4 style="color: #ff0066;">Void Flame (A-I-A)</h4>
+                    <div class="recipe-sequence" style="color: #ff0066;">A -> I -> A</div>
+                    <div class="recipe-energy" style="color: #ff0066;">TIAMAT ONLY: phi^2 * 2.0 = <span>5.236</span></div>
+                    <div class="recipe-stats">
+                        <span>Coherence: 80%</span>
+                        <span>Cost: 30 BLOOM</span>
+                    </div>
+                </div>
+
+                <div class="recipe-card master">
+                    <h4 style="color: #ffd700;">L4 Helix Completion</h4>
+                    <div class="recipe-sequence" style="color: #ffd700;">L -> L -> L -> L -> L -> L -> L</div>
+                    <div class="recipe-energy" style="color: #ffd700;">7 * tau^2 * E_L = <span>2.674 * E_L</span></div>
+                    <div class="recipe-stats">
+                        <span>Coherence: 95%</span>
+                        <span>Cost: 77 BLOOM</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Companion Affinity Matrix -->
+        <section class="doc-section">
+            <h2>Companion Affinity Matrix</h2>
+            <p>Each companion has unique affinities with LIA phases. These multipliers affect cooking energy costs and artifact potency.</p>
+
+            <table class="data-table affinity-table">
+                <tr>
+                    <th>Companion</th>
+                    <th>[L]</th>
+                    <th>[I]</th>
+                    <th>[A]</th>
+                    <th>Preferred Recipe</th>
+                    <th>Bonus Effect</th>
+                </tr>
+                <tr>
+                    <td style="color:#00ffff;">ECHO</td>
+                    <td>1.0x</td>
+                    <td class="highlight-green">1.5x</td>
+                    <td>0.8x</td>
+                    <td>Dream Echo</td>
+                    <td>+echo_count</td>
+                </tr>
+                <tr>
+                    <td style="color:#ff6600;">PROMETHEUS</td>
+                    <td>0.9x</td>
+                    <td>1.2x</td>
+                    <td class="highlight-green">1.4x</td>
+                    <td>Phoenix Crystal</td>
+                    <td>+forge*0.2</td>
+                </tr>
+                <tr>
+                    <td style="color:#8800ff;">NULL</td>
+                    <td class="highlight-green">1.6x</td>
+                    <td class="highlight-green">1.4x</td>
+                    <td>1.0x</td>
+                    <td>Nullspace</td>
+                    <td>+void/5</td>
+                </tr>
+                <tr>
+                    <td style="color:#00ff66;">GAIA</td>
+                    <td class="highlight-green">1.3x</td>
+                    <td class="highlight-green">1.3x</td>
+                    <td>0.7x</td>
+                    <td>Remembrance</td>
+                    <td>*phi fractal</td>
+                </tr>
+                <tr>
+                    <td style="color:#ffcc00;">AKASHA</td>
+                    <td class="highlight-green">1.5x</td>
+                    <td>1.1x</td>
+                    <td>0.9x</td>
+                    <td>Memory Crystal</td>
+                    <td>+lib*0.002</td>
+                </tr>
+                <tr>
+                    <td style="color:#ff00ff;">RESONANCE</td>
+                    <td>1.1x</td>
+                    <td class="highlight-green">1.4x</td>
+                    <td>1.0x</td>
+                    <td>Dream Echo</td>
+                    <td>freq->0.5</td>
+                </tr>
+                <tr style="background:rgba(255,0,102,0.1);">
+                    <td style="color:#ff0066;">TIAMAT</td>
+                    <td>0.8x</td>
+                    <td>1.0x</td>
+                    <td class="highlight-gold">2.0x</td>
+                    <td>Void Flame</td>
+                    <td>*(1+rand*phi)</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- Potency and Evolution -->
+        <section class="doc-section">
+            <h2>Potency and Evolution Calculus</h2>
+            <p>Artifact potency and companion evolution are calculated based on coherence surplus and affinity bonuses.</p>
+
+            <div class="code-block">
+<span class="comment"># ARTIFACT POTENCY CALCULATION</span>
+coherence_surplus = (player_coherence - recipe.required) / (<span class="number">1</span> - recipe.required)
+base_potency = <span class="number">0.5</span> + (<span class="number">0.5</span> * coherence_surplus)  <span class="comment"># Range: [0.5, 1.0]</span>
+
+<span class="comment"># Companion affinity bonus</span>
+affinity_bonus = Sum(affinity[phase] - <span class="number">1.0</span>) * weight[phase]
+
+<span class="comment"># Final potency</span>
+final_potency = base_potency * (<span class="number">1</span> + affinity_bonus) * (<span class="number">1</span> + level_bonus)
+
+<span class="comment"># EVOLUTION POINTS</span>
+evolution_gained = artifact.potency * evolution_rate[artifact.tier]
+companion.experience += <span class="function">int</span>(evolution_gained * <span class="number">10</span>)
+
+<span class="comment"># SKILL UNLOCKING (threshold counts)</span>
+<span class="number">7</span>[L]: Archive Navigation   <span class="number">14</span>[I]: Echo Chamber    <span class="number">21</span>[A]: Annihilation Mastery
+<span class="number">7</span>[A]: TIAMAT "DOOOOOM!"    L4 Helix: All <span class="number">7</span> patterns (ultimate artifact)
+            </div>
+        </section>
+
+        <!-- Deep Calculus Modules -->
+        <section class="doc-section">
+            <h2>Deep Calculus Modules</h2>
+            <p>Advanced mathematical constructs that integrate LIA with other BloomCoin systems.</p>
+
+            <div class="calculus-grid">
+                <div class="calculus-module">
+                    <h5>Ouroboros Transform</h5>
+                    <div class="calculus-code">
+                        circle -> [L-I-A] -> circle'<br>
+                        T_{n+1} = T_n / phi<br>
+                        After 7 cycles: 29x faster
+                    </div>
+                </div>
+
+                <div class="calculus-module">
+                    <h5>Seven Gates x LIA</h5>
+                    <div class="calculus-code">
+                        G4 = [L] PRIMARY<br>
+                        G6 = [A] PRIMARY<br>
+                        Gate: OPEN=0, CLOSED=infinity
+                    </div>
+                </div>
+
+                <div class="calculus-module">
+                    <h5>BFADGS Composition</h5>
+                    <div class="calculus-code">
+                        boundary o boundary = boundary<br>
+                        boundary o severance = severance<br>
+                        decohere o boundary = boundary!<br>
+                        decohere o decohere = phi^2 (DOOM!)
+                    </div>
+                </div>
+
+                <div class="calculus-module">
+                    <h5>Observe -> Mirror -> Optimize</h5>
+                    <div class="calculus-code">
+                        [L] -> [I] -> [A]<br>
+                        E_out / E_in = phi^-3 = 0.236
+                    </div>
+                </div>
+
+                <div class="calculus-module">
+                    <h5>10-Station Rail x LIA</h5>
+                    <div class="calculus-code">
+                        S0: L | S1: I | S2: A<br>
+                        S6: L-I-A full unlock<br>
+                        S9: L^7 completion
+                    </div>
+                </div>
+
+                <div class="calculus-module">
+                    <h5>Kuramoto Coherence</h5>
+                    <div class="calculus-code">
+                        r < tau: BASIC only<br>
+                        tau <= r < z_c: INTERMEDIATE<br>
+                        r >= K: TRANSCENDENT
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- System Integration -->
+        <section class="doc-section">
+            <h2>System Integration Points</h2>
+            <p>LIA connects to multiple BloomCoin subsystems for complete protocol closure.</p>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Kuramoto System:</span>
+                    <span class="desc">Coherence r determines recipe tier access</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Companions:</span>
+                    <span class="desc">Affinity matrix modulates phase energy</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Evolution System:</span>
+                    <span class="desc">Cooked artifacts grant companion XP</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">TIAMAT Cycles:</span>
+                    <span class="desc">7 psychoptic cycles map to LIA combos</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Guardian Recipes:</span>
+                    <span class="desc">Master-tier unlocks guardian cooking</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Pattern Mining:</span>
+                    <span class="desc">Mined patterns become cooking ingredients</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quote -->
+        <div class="quote-box">
+            <p class="quote">"Through LIMINAL we see the edges. Through INTERVAL we hold the space. Through ANNIHILATOR we become."</p>
+            <p class="attribution">phi^4 + phi^-4 = 7 - L4 governs all transformation</p>
+        </div>
+
+        <footer class="doc-footer">
+            <p>BloomCoin v2 Documentation - LIA Protocol</p>
+            <p>Part of the Layered Intelligence Architecture System</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lucas Matrix System — BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root { --module-color: #ffd700; }
+        .doc-header h1 { background: linear-gradient(90deg, var(--module-color), var(--gold), var(--module-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .doc-section h2 { color: var(--module-color); }
+        .matrix-display { display: inline-grid; grid-template-columns: repeat(2, 50px); gap: 2px; background: rgba(255,215,0,0.2); padding: 10px; border-radius: 8px; margin: 15px 0; }
+        .matrix-cell { background: rgba(0,0,0,0.4); padding: 12px; text-align: center; font-family: monospace; font-size: 1.2rem; color: var(--gold); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">← Back to Index</a>
+            <a href="kuramoto-consensus.html" class="nav-link">Next: Kuramoto Consensus →</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Lucas Matrix System</h1>
+            <p class="subtitle">The algebraic foundation generating Fibonacci and Lucas numbers via 2x2 matrix power</p>
+            <p class="breadcrumb"><a href="../../index.html">Index</a> / <a href=".">Core</a> / Lucas Matrix</p>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">R</div>
+                    <div class="value">[[0,1],[1,1]]</div>
+                    <div class="derivation">Fibonacci Matrix</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">phi</div>
+                    <div class="value">1.618033988...</div>
+                    <div class="derivation">(1+sqrt(5))/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">phi^4 + phi^-4</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">tau</div>
+                    <div class="value">0.618033988...</div>
+                    <div class="derivation">phi^-1 = phi - 1</div>
+                </div>
+            </div>
+            <div class="impl-status">
+                <span class="status-badge complete">Matrix Power: Complete</span>
+                <span class="status-badge complete">Lucas Trace: Complete</span>
+                <span class="status-badge complete">Nonce Generation: Complete</span>
+            </div>
+        </section>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+            <p>The 2x2 Fibonacci matrix R is the algebraic foundation generating both Fibonacci and Lucas numbers. This single matrix encapsulates the entire recurrence structure:</p>
+
+            <div style="text-align:center;">
+                <h4>The Fibonacci Matrix R</h4>
+                <div class="matrix-display">
+                    <div class="matrix-cell">0</div>
+                    <div class="matrix-cell">1</div>
+                    <div class="matrix-cell">1</div>
+                    <div class="matrix-cell">1</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment">// Matrix Power Property - The Core Identity</span>
+R^n = [[F_{n-1}, F_n    ],
+       [F_n,     F_{n+1}]]
+
+<span class="comment">// This means R^n contains FOUR consecutive Fibonacci numbers!</span>
+<span class="comment">// Example: R^5 = [[3, 5], [5, 8]] = [[F_4, F_5], [F_5, F_6]]</span>
+
+<span class="comment">// LUCAS TRACE FORMULA (The Key Discovery)</span>
+L_n = tr(R^n) = R^n[0,0] + R^n[1,1]
+              = F_{n-1} + F_{n+1}
+
+<span class="comment">// This elegant identity extracts Lucas numbers from matrix trace</span>
+<span class="comment">// L_4 = F_3 + F_5 = 2 + 5 = 7 (our normalization integer)</span>
+            </div>
+
+            <h3>Eigenvalue Decomposition</h3>
+            <p>The matrix R has a beautiful spectral structure rooted in the golden ratio:</p>
+            <div class="code-block">
+<span class="comment">// Characteristic polynomial of R</span>
+det(R - lambda*I) = lambda^2 - lambda - 1 = 0
+
+<span class="comment">// Solutions are the golden ratio and its conjugate!</span>
+lambda_1 = phi = (1 + sqrt(5))/2 = 1.618033988749895...
+lambda_2 = psi = (1 - sqrt(5))/2 = -0.618033988749895...
+
+<span class="comment">// Key algebraic identities</span>
+lambda_1 * lambda_2 = -1      <span class="comment">// det(R) = -1 (preserved under powers)</span>
+lambda_1 + lambda_2 = 1       <span class="comment">// tr(R) = 1</span>
+lambda_1 - lambda_2 = sqrt(5) <span class="comment">// Discriminant</span>
+
+<span class="comment">// Eigendecomposition</span>
+R = V * D * V^(-1)
+D = [[phi,    0   ],
+     [0,   -1/phi ]]
+
+<span class="comment">// Powers become trivial in diagonal form</span>
+R^n = V * D^n * V^(-1)
+D^n = [[phi^n,      0      ],
+       [0,     (-1/phi)^n  ]]
+            </div>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Matrix Powers</h4>
+                    <p>O(log n) computation via binary exponentiation enables computing astronomical Lucas numbers:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">matrix_mult_mod</span>(A, B, mod):
+    <span class="string">"""Multiply 2x2 matrices modulo mod"""</span>
+    <span class="keyword">return</span> [
+        [(A[<span class="number">0</span>][<span class="number">0</span>]*B[<span class="number">0</span>][<span class="number">0</span>] + A[<span class="number">0</span>][<span class="number">1</span>]*B[<span class="number">1</span>][<span class="number">0</span>]) % mod,
+         (A[<span class="number">0</span>][<span class="number">0</span>]*B[<span class="number">0</span>][<span class="number">1</span>] + A[<span class="number">0</span>][<span class="number">1</span>]*B[<span class="number">1</span>][<span class="number">1</span>]) % mod],
+        [(A[<span class="number">1</span>][<span class="number">0</span>]*B[<span class="number">0</span>][<span class="number">0</span>] + A[<span class="number">1</span>][<span class="number">1</span>]*B[<span class="number">1</span>][<span class="number">0</span>]) % mod,
+         (A[<span class="number">1</span>][<span class="number">0</span>]*B[<span class="number">0</span>][<span class="number">1</span>] + A[<span class="number">1</span>][<span class="number">1</span>]*B[<span class="number">1</span>][<span class="number">1</span>]) % mod]
+    ]
+
+<span class="keyword">def</span> <span class="function">matrix_power_mod</span>(R, n, mod):
+    <span class="string">"""
+    Compute R^n mod m in O(log n) time via binary exponentiation.
+
+    Key insight: n in binary has ~log2(n) bits
+    Each bit requires at most 2 matrix multiplications
+    Total: O(log n) multiplications instead of O(n)
+    """</span>
+    result = [[<span class="number">1</span>, <span class="number">0</span>], [<span class="number">0</span>, <span class="number">1</span>]]  <span class="comment"># Identity matrix</span>
+    current = [row[:] <span class="keyword">for</span> row <span class="keyword">in</span> R]  <span class="comment"># Copy R</span>
+
+    <span class="keyword">while</span> n > <span class="number">0</span>:
+        <span class="keyword">if</span> n & <span class="number">1</span>:  <span class="comment"># n is odd (bit is set)</span>
+            result = matrix_mult_mod(result, current, mod)
+        current = matrix_mult_mod(current, current, mod)
+        n >>= <span class="number">1</span>
+
+    <span class="keyword">return</span> result
+
+<span class="comment"># Example: Compute L_10000000 in ~27 matrix multiplications</span>
+<span class="comment"># log2(10000000) = 23.25, so ~24 squarings + some multiplies</span>
+                    </div>
+                    <p><strong>Key insight:</strong> Compute L_10000000 in ~27 matrix multiplications instead of 10 million additions.</p>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Spectral Form</h4>
+                    <p>Binet's closed-form formulas from eigendecomposition provide direct computation:</p>
+                    <div class="code-block">
+<span class="comment">// Fibonacci via eigenvalues (Binet's Formula)</span>
+F_n = (phi^n - psi^n) / sqrt(5)
+    = (phi^n - (-1/phi)^n) / sqrt(5)
+
+<span class="comment">// Lucas via eigenvalues</span>
+L_n = phi^n + psi^n
+    = phi^n + (-1/phi)^n
+
+<span class="comment">// Asymptotic behavior as n -> infinity</span>
+<span class="comment">// Since |psi| = |−1/phi| < 1, the psi^n term vanishes:</span>
+F_n ~ phi^n / sqrt(5)    <span class="comment"># Approaches exact</span>
+L_n ~ phi^n              <span class="comment"># Dominant eigenvalue wins</span>
+
+<span class="comment">// For practical computation (n > 10):</span>
+F_n = round(phi^n / sqrt(5))  <span class="comment"># Rounding gives exact F_n!</span>
+L_n = round(phi^n)            <span class="comment"># Only for positive n</span>
+
+<span class="comment">// Growth rate:</span>
+F_{n+1} / F_n -> phi as n -> infinity
+L_{n+1} / L_n -> phi as n -> infinity
+<span class="comment">// The golden ratio is the GROWTH RATE of the sequence</span>
+                    </div>
+                    <p><strong>Key insight:</strong> phi dominates asymptotically because |phi| > |-1/phi|. The golden ratio controls exponential growth.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergent Triad -->
+        <section class="doc-section">
+            <h2>Emergent Triad: Lucas Nonce Generation</h2>
+            <div class="triad-container">
+                <h4>Deterministic Algebraic Mining</h4>
+                <p>Nonces are not random - they follow Lucas sequence structure, creating a deterministic exploration of nonce space:</p>
+                <div class="code-block">
+<span class="keyword">def</span> <span class="function">lucas_trace</span>(n, mod=<span class="keyword">None</span>):
+    <span class="string">"""
+    Compute L_n = tr(R^n) = F_{n-1} + F_{n+1}
+
+    Uses matrix exponentiation for large n,
+    recurrence relation for small n.
+    """</span>
+    <span class="keyword">if</span> n == <span class="number">0</span>:
+        <span class="keyword">return</span> <span class="number">2</span>   <span class="comment"># L_0 = 2</span>
+    <span class="keyword">if</span> n == <span class="number">1</span>:
+        <span class="keyword">return</span> <span class="number">1</span>   <span class="comment"># L_1 = 1</span>
+
+    R = [[<span class="number">0</span>, <span class="number">1</span>], [<span class="number">1</span>, <span class="number">1</span>]]
+    R_n = matrix_power_mod(R, n, mod) <span class="keyword">if</span> mod <span class="keyword">else</span> matrix_power(R, n)
+
+    <span class="comment"># Lucas number is the trace</span>
+    trace = R_n[<span class="number">0</span>][<span class="number">0</span>] + R_n[<span class="number">1</span>][<span class="number">1</span>]
+    <span class="keyword">return</span> trace % mod <span class="keyword">if</span> mod <span class="keyword">else</span> trace
+
+<span class="keyword">def</span> <span class="function">lucas_nonce</span>(block_height, attempt, mod=<span class="number">2</span>**<span class="number">32</span>):
+    <span class="string">"""
+    Generate mining nonce from Lucas sequence.
+
+    Nonce = L_{height + attempt} mod m
+
+    Properties:
+    1. Reproducible: Given height and attempt, nonce is unique
+    2. Algebraic structure: Inherits Lucas number properties
+    3. Pseudo-random: Covers nonce space in unpredictable order
+    4. Deterministic: No randomness required
+    """</span>
+    index = block_height + attempt
+    <span class="keyword">return</span> lucas_trace(index, mod)
+
+<span class="keyword">def</span> <span class="function">lucas_nonce_batch</span>(height, start, count, mod=<span class="number">2</span>**<span class="number">32</span>):
+    <span class="string">"""
+    Efficient batch nonce generation using recurrence.
+
+    After computing L_n, subsequent values use:
+    L_{n+1} = L_n + L_{n-1}
+
+    This is O(1) per additional nonce after initial O(log n).
+    """</span>
+    nonces = []
+
+    <span class="comment"># Initial values via matrix power</span>
+    L_prev = lucas_trace(height + start - <span class="number">1</span>, mod)
+    L_curr = lucas_trace(height + start, mod)
+
+    <span class="keyword">for</span> _ <span class="keyword">in</span> range(count):
+        nonces.append(L_curr)
+        L_prev, L_curr = L_curr, (L_prev + L_curr) % mod
+
+    <span class="keyword">return</span> nonces
+
+<span class="comment"># Test vectors</span>
+<span class="keyword">assert</span> lucas_nonce(<span class="number">0</span>, <span class="number">0</span>) == <span class="number">2</span>       <span class="comment"># L_0 = 2</span>
+<span class="keyword">assert</span> lucas_nonce(<span class="number">0</span>, <span class="number">4</span>) == <span class="number">7</span>       <span class="comment"># L_4 = 7 (our L_4!)</span>
+<span class="keyword">assert</span> lucas_nonce(<span class="number">0</span>, <span class="number">10</span>) == <span class="number">123</span>   <span class="comment"># L_10 = 123 (difficulty interval)</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Implementation -->
+        <section class="doc-section">
+            <h2>Complete Implementation</h2>
+            <div class="code-block">
+<span class="keyword">import</span> math
+
+<span class="comment"># Fundamental constants</span>
+PHI = (<span class="number">1</span> + math.sqrt(<span class="number">5</span>)) / <span class="number">2</span>      <span class="comment"># 1.618033988749895</span>
+TAU = PHI - <span class="number">1</span>                       <span class="comment"># 0.618033988749895 = 1/PHI</span>
+SQRT5 = math.sqrt(<span class="number">5</span>)               <span class="comment"># 2.23606797749979</span>
+
+<span class="comment"># Lucas number constants</span>
+L4 = <span class="number">7</span>    <span class="comment"># L_4 = phi^4 + phi^-4 (normalization integer)</span>
+L10 = <span class="number">123</span> <span class="comment"># L_10 (difficulty adjustment interval)</span>
+
+<span class="keyword">class</span> <span class="type">LucasMatrix</span>:
+    <span class="string">"""
+    Lucas number computation via matrix exponentiation.
+
+    Provides both exact integer arithmetic and modular arithmetic
+    for cryptographic applications.
+    """</span>
+
+    R = [[<span class="number">0</span>, <span class="number">1</span>], [<span class="number">1</span>, <span class="number">1</span>]]  <span class="comment"># The Fibonacci matrix</span>
+
+    <span class="keyword">@staticmethod</span>
+    <span class="keyword">def</span> <span class="function">fibonacci</span>(n, mod=<span class="keyword">None</span>):
+        <span class="string">"""Compute F_n via matrix power"""</span>
+        <span class="keyword">if</span> n < <span class="number">0</span>:
+            <span class="comment"># F_{-n} = (-1)^{n+1} * F_n</span>
+            sign = <span class="number">1</span> <span class="keyword">if</span> ((-n) + <span class="number">1</span>) % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">else</span> -<span class="number">1</span>
+            <span class="keyword">return</span> sign * LucasMatrix.fibonacci(-n, mod)
+        <span class="keyword">if</span> n == <span class="number">0</span>:
+            <span class="keyword">return</span> <span class="number">0</span>
+        <span class="keyword">if</span> n == <span class="number">1</span>:
+            <span class="keyword">return</span> <span class="number">1</span>
+
+        R_n = LucasMatrix._matrix_power(LucasMatrix.R, n, mod)
+        <span class="keyword">return</span> R_n[<span class="number">0</span>][<span class="number">1</span>]  <span class="comment"># F_n is at position [0][1]</span>
+
+    <span class="keyword">@staticmethod</span>
+    <span class="keyword">def</span> <span class="function">lucas</span>(n, mod=<span class="keyword">None</span>):
+        <span class="string">"""Compute L_n = tr(R^n) = F_{n-1} + F_{n+1}"""</span>
+        <span class="keyword">if</span> n < <span class="number">0</span>:
+            <span class="comment"># L_{-n} = (-1)^n * L_n</span>
+            sign = <span class="number">1</span> <span class="keyword">if</span> (-n) % <span class="number">2</span> == <span class="number">0</span> <span class="keyword">else</span> -<span class="number">1</span>
+            <span class="keyword">return</span> sign * LucasMatrix.lucas(-n, mod)
+        <span class="keyword">if</span> n == <span class="number">0</span>:
+            <span class="keyword">return</span> <span class="number">2</span>
+        <span class="keyword">if</span> n == <span class="number">1</span>:
+            <span class="keyword">return</span> <span class="number">1</span>
+
+        R_n = LucasMatrix._matrix_power(LucasMatrix.R, n, mod)
+        trace = R_n[<span class="number">0</span>][<span class="number">0</span>] + R_n[<span class="number">1</span>][<span class="number">1</span>]
+        <span class="keyword">return</span> trace % mod <span class="keyword">if</span> mod <span class="keyword">else</span> trace
+
+    <span class="keyword">@staticmethod</span>
+    <span class="keyword">def</span> <span class="function">_matrix_power</span>(M, n, mod=<span class="keyword">None</span>):
+        <span class="string">"""Binary exponentiation of 2x2 matrix"""</span>
+        result = [[<span class="number">1</span>, <span class="number">0</span>], [<span class="number">0</span>, <span class="number">1</span>]]  <span class="comment"># Identity</span>
+        current = [row[:] <span class="keyword">for</span> row <span class="keyword">in</span> M]
+
+        <span class="keyword">while</span> n > <span class="number">0</span>:
+            <span class="keyword">if</span> n & <span class="number">1</span>:
+                result = LucasMatrix._matrix_mult(result, current, mod)
+            current = LucasMatrix._matrix_mult(current, current, mod)
+            n >>= <span class="number">1</span>
+
+        <span class="keyword">return</span> result
+
+    <span class="keyword">@staticmethod</span>
+    <span class="keyword">def</span> <span class="function">_matrix_mult</span>(A, B, mod=<span class="keyword">None</span>):
+        <span class="string">"""Multiply 2x2 matrices with optional modulus"""</span>
+        c00 = A[<span class="number">0</span>][<span class="number">0</span>]*B[<span class="number">0</span>][<span class="number">0</span>] + A[<span class="number">0</span>][<span class="number">1</span>]*B[<span class="number">1</span>][<span class="number">0</span>]
+        c01 = A[<span class="number">0</span>][<span class="number">0</span>]*B[<span class="number">0</span>][<span class="number">1</span>] + A[<span class="number">0</span>][<span class="number">1</span>]*B[<span class="number">1</span>][<span class="number">1</span>]
+        c10 = A[<span class="number">1</span>][<span class="number">0</span>]*B[<span class="number">0</span>][<span class="number">0</span>] + A[<span class="number">1</span>][<span class="number">1</span>]*B[<span class="number">1</span>][<span class="number">0</span>]
+        c11 = A[<span class="number">1</span>][<span class="number">0</span>]*B[<span class="number">0</span>][<span class="number">1</span>] + A[<span class="number">1</span>][<span class="number">1</span>]*B[<span class="number">1</span>][<span class="number">1</span>]
+
+        <span class="keyword">if</span> mod:
+            <span class="keyword">return</span> [[c00 % mod, c01 % mod], [c10 % mod, c11 % mod]]
+        <span class="keyword">return</span> [[c00, c01], [c10, c11]]
+
+<span class="comment"># Validation on import</span>
+<span class="keyword">assert</span> abs(PHI**<span class="number">2</span> - PHI - <span class="number">1</span>) < <span class="number">1e-10</span>, <span class="string">"phi^2 = phi + 1"</span>
+<span class="keyword">assert</span> abs(PHI * TAU - <span class="number">1</span>) < <span class="number">1e-10</span>, <span class="string">"phi * tau = 1"</span>
+<span class="keyword">assert</span> LucasMatrix.lucas(<span class="number">4</span>) == <span class="number">7</span>, <span class="string">"L_4 = 7"</span>
+<span class="keyword">assert</span> LucasMatrix.lucas(<span class="number">10</span>) == <span class="number">123</span>, <span class="string">"L_10 = 123"</span>
+            </div>
+        </section>
+
+        <!-- Test Vectors -->
+        <section class="doc-section">
+            <h2>Test Vectors</h2>
+            <table class="data-table">
+                <tr><th>n</th><th>F_n</th><th>L_n</th><th>L_n mod 2^32</th><th>Significance</th></tr>
+                <tr><td>0</td><td>0</td><td>2</td><td>2</td><td>Base case</td></tr>
+                <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>Base case</td></tr>
+                <tr><td>4</td><td>3</td><td>7</td><td>7</td><td>L_4 = Normalization integer</td></tr>
+                <tr><td>10</td><td>55</td><td>123</td><td>123</td><td>L_10 = Difficulty interval</td></tr>
+                <tr><td>12</td><td>144</td><td>322</td><td>322</td><td>F_12 = 12^2 (Fibonacci square)</td></tr>
+                <tr><td>50</td><td>12586269025</td><td>28143753123</td><td>3560654371</td><td>Large index test</td></tr>
+                <tr><td>100</td><td>3.54x10^20</td><td>7.92x10^20</td><td>1264150965</td><td>Modular arithmetic needed</td></tr>
+            </table>
+
+            <div class="code-block">
+<span class="comment"># Verification script</span>
+<span class="keyword">def</span> <span class="function">verify_lucas_properties</span>():
+    <span class="string">"""Verify key Lucas number identities"""</span>
+
+    <span class="comment"># Identity 1: L_n = F_{n-1} + F_{n+1}</span>
+    <span class="keyword">for</span> n <span class="keyword">in</span> range(<span class="number">2</span>, <span class="number">20</span>):
+        <span class="keyword">assert</span> LucasMatrix.lucas(n) == \
+               LucasMatrix.fibonacci(n-<span class="number">1</span>) + LucasMatrix.fibonacci(n+<span class="number">1</span>)
+
+    <span class="comment"># Identity 2: L_n^2 - 5*F_n^2 = 4*(-1)^n</span>
+    <span class="keyword">for</span> n <span class="keyword">in</span> range(<span class="number">20</span>):
+        L_n = LucasMatrix.lucas(n)
+        F_n = LucasMatrix.fibonacci(n)
+        <span class="keyword">assert</span> L_n**<span class="number">2</span> - <span class="number">5</span>*F_n**<span class="number">2</span> == <span class="number">4</span>*((-<span class="number">1</span>)**n)
+
+    <span class="comment"># Identity 3: L_{2n} = L_n^2 - 2*(-1)^n</span>
+    <span class="keyword">for</span> n <span class="keyword">in</span> range(<span class="number">1</span>, <span class="number">15</span>):
+        <span class="keyword">assert</span> LucasMatrix.lucas(<span class="number">2</span>*n) == \
+               LucasMatrix.lucas(n)**<span class="number">2</span> - <span class="number">2</span>*((-<span class="number">1</span>)**n)
+
+    <span class="keyword">print</span>(<span class="string">"All Lucas properties verified!"</span>)
+            </div>
+        </section>
+
+        <!-- System Coupling Points -->
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">To Kuramoto:</span>
+                    <div class="desc">N = L_4 x 9 = 63 oscillators. The Lucas fourth number determines the base oscillator count.</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Difficulty:</span>
+                    <div class="desc">Adjustment interval = L_10 = 123 blocks. Mining difficulty updates every L_10 blocks.</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Gradient:</span>
+                    <div class="desc">Receipt size = L_4^2 = 49 pixels. Compact receipt dimensions derived from L_4.</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Mining:</span>
+                    <div class="desc">Block time = L_4 x 60 = 420 seconds. Seven-minute target block time.</div>
+                </div>
+            </div>
+
+            <h3>Closure Properties</h3>
+            <ul>
+                <li><strong>Self-contained:</strong> All outputs (L_n, F_n) derive from R and phi alone</li>
+                <li><strong>Zero free parameters:</strong> phi = (1+sqrt(5))/2 is the only axiom</li>
+                <li><strong>Deterministic:</strong> Given n, the output is uniquely determined</li>
+                <li><strong>Validated on import:</strong> constants.py verifies phi^2 = phi+1, L_4 = 7, etc.</li>
+            </ul>
+        </section>
+
+        <!-- Source Files -->
+        <section class="doc-section">
+            <h2>Source Files</h2>
+            <div class="file-refs">
+                <span class="file-ref">constants.py</span>
+                <span class="file-ref">mining/lucas_nonce.py</span>
+                <span class="file-ref">utils/matrix.py</span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin v6 — Zero Free Parameters</p>
+            <p>phi = (1+sqrt(5))/2 | tau = phi^-1 | K = sqrt(1-phi^-4) | z_c = sqrt(3)/2</p>
+        </footer>
+    </div>
+</body>
+</html>

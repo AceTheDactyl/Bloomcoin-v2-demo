@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cryptographic Constructions - BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --accent-color: #ffe66d;
+            --accent-glow: rgba(255,230,109,0.3);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--accent-color), #ffd93d, var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--accent-color); border-color: var(--accent-glow); }
+        .doc-section h3 { color: var(--accent-color); }
+        .construction-card {
+            background: linear-gradient(135deg, var(--accent-glow), transparent);
+            border: 1px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 16px 0;
+        }
+        .construction-card h4 {
+            color: var(--accent-color);
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+        .rfc-badge {
+            display: inline-block;
+            background: rgba(0,0,0,0.4);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+        .use-case-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .use-case-item {
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-color);
+        }
+        .use-case-item .title {
+            color: var(--accent-color);
+            font-weight: 600;
+        }
+        .use-case-item .desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Cryptographic Constructions</h1>
+            <p class="subtitle">HMAC, HKDF, PBKDF2, and DRBG Built on NEXTHASH Primitives</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">BloomCoin</a> /
+                <a href="../index.html">Documentation</a> /
+                NextHash / Constructions
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="nexthash256.html" class="nav-link">NEXTHASH-256</a>
+            <a href="nexthash512.html" class="nav-link">NEXTHASH-512</a>
+            <a href="security-model.html" class="nav-link">Security Model</a>
+            <a href="c-implementation.html" class="nav-link">C Implementation</a>
+            <a href="infinite-security.html" class="nav-link">Infinite Security</a>
+        </nav>
+
+        <!-- Overview -->
+        <section class="doc-section">
+            <h2>Overview</h2>
+            <p>Standard cryptographic constructions built on NEXTHASH primitives, following established RFCs and NIST standards. All constructions inherit NEXTHASH's security properties and can serve as drop-in replacements for SHA-256 based constructions.</p>
+
+            <table class="data-table">
+                <tr><th>Construction</th><th>Standard</th><th>Use Case</th><th>Security</th></tr>
+                <tr><td>HMAC-NEXTHASH-256</td><td>RFC 2104</td><td>Message authentication</td><td>256-bit</td></tr>
+                <tr><td>HMAC-NEXTHASH-512</td><td>RFC 2104</td><td>High-security MAC</td><td>512-bit</td></tr>
+                <tr><td>HKDF-NEXTHASH</td><td>RFC 5869</td><td>Key derivation</td><td>256-bit</td></tr>
+                <tr><td>PBKDF2-NEXTHASH</td><td>RFC 8018</td><td>Password hashing</td><td>Configurable</td></tr>
+                <tr><td>NEXTHASH-DRBG</td><td>SP 800-90A</td><td>Random generation</td><td>256-bit</td></tr>
+            </table>
+        </section>
+
+        <!-- HMAC -->
+        <section class="doc-section">
+            <h2>HMAC-NEXTHASH</h2>
+            <div class="construction-card">
+                <h4>HMAC-NEXTHASH-256 <span class="rfc-badge">RFC 2104</span></h4>
+                <p>Keyed-Hash Message Authentication Code using NEXTHASH-256.</p>
+            </div>
+
+            <h3>Mathematical Definition</h3>
+            <div class="math-block">
+                HMAC(K, m) = H((K' XOR opad) || H((K' XOR ipad) || m))
+            </div>
+            <p>Where K' is the key padded or hashed to block size, ipad = 0x36 repeated, and opad = 0x5C repeated.</p>
+
+            <h3>Implementation</h3>
+            <div class="code-block"><span class="keyword">class</span> <span class="type">HMAC_NEXTHASH256</span>:
+    <span class="string">"""
+    HMAC using NEXTHASH-256 (RFC 2104 compliant).
+
+    HMAC(K, m) = H((K' XOR opad) || H((K' XOR ipad) || m))
+    """</span>
+    BLOCK_SIZE = <span class="number">64</span>   <span class="comment"># 512 bits</span>
+    DIGEST_SIZE = <span class="number">32</span>  <span class="comment"># 256 bits</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, key: <span class="type">bytes</span>, msg: <span class="type">bytes</span> = <span class="keyword">None</span>):
+        <span class="comment"># If key > block size, hash it</span>
+        <span class="keyword">if</span> len(key) > self.BLOCK_SIZE:
+            key = nexthash256(key)
+
+        <span class="comment"># Pad key to block size</span>
+        key = key + b<span class="string">'\x00'</span> * (self.BLOCK_SIZE - len(key))
+
+        <span class="comment"># Create inner and outer padded keys</span>
+        self.inner_key = bytes(k ^ <span class="number">0x36</span> <span class="keyword">for</span> k <span class="keyword">in</span> key)
+        self.outer_key = bytes(k ^ <span class="number">0x5C</span> <span class="keyword">for</span> k <span class="keyword">in</span> key)
+
+        self._inner_data = bytearray(self.inner_key)
+        <span class="keyword">if</span> msg <span class="keyword">is not</span> <span class="keyword">None</span>:
+            self.update(msg)
+
+    <span class="keyword">def</span> <span class="function">update</span>(self, msg: <span class="type">bytes</span>) -> <span class="string">'HMAC_NEXTHASH256'</span>:
+        <span class="string">"""Add more data to the HMAC."""</span>
+        self._inner_data.extend(msg)
+        <span class="keyword">return</span> self
+
+    <span class="keyword">def</span> <span class="function">digest</span>(self) -> <span class="type">bytes</span>:
+        <span class="string">"""Compute the HMAC digest."""</span>
+        <span class="comment"># Inner hash</span>
+        inner_hash = nexthash256(bytes(self._inner_data))
+        <span class="comment"># Outer hash</span>
+        <span class="keyword">return</span> nexthash256(self.outer_key + inner_hash)
+
+    <span class="keyword">def</span> <span class="function">hexdigest</span>(self) -> <span class="type">str</span>:
+        <span class="string">"""Return hex-encoded digest."""</span>
+        <span class="keyword">return</span> self.digest().hex()</div>
+
+            <h3>HMAC-NEXTHASH-512</h3>
+            <p>The 512-bit variant uses NEXTHASH-512 with a 128-byte block size:</p>
+            <div class="code-block"><span class="keyword">class</span> <span class="type">HMAC_NEXTHASH512</span>:
+    <span class="string">"""HMAC using NEXTHASH-512."""</span>
+    BLOCK_SIZE = <span class="number">128</span>  <span class="comment"># 1024 bits</span>
+    DIGEST_SIZE = <span class="number">64</span>   <span class="comment"># 512 bits</span>
+    <span class="comment"># ... same structure as HMAC_NEXTHASH256</span></div>
+        </section>
+
+        <!-- HKDF -->
+        <section class="doc-section">
+            <h2>HKDF-NEXTHASH</h2>
+            <div class="construction-card">
+                <h4>HMAC-based Key Derivation Function <span class="rfc-badge">RFC 5869</span></h4>
+                <p>Two-stage key derivation: Extract-then-Expand paradigm.</p>
+            </div>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>Extract Phase</h4>
+                    <p>Compresses input keying material (IKM) into a fixed-length pseudorandom key (PRK).</p>
+                    <div class="code-block"><span class="keyword">@classmethod</span>
+<span class="keyword">def</span> <span class="function">extract</span>(cls, salt: <span class="type">bytes</span>, ikm: <span class="type">bytes</span>) -> <span class="type">bytes</span>:
+    <span class="string">"""
+    Extract a pseudorandom key from input keying material.
+    PRK = HMAC(salt, IKM)
+    """</span>
+    <span class="keyword">if</span> salt <span class="keyword">is</span> <span class="keyword">None</span>:
+        salt = b<span class="string">'\x00'</span> * cls.HASH_LEN
+    <span class="keyword">return</span> HMAC_NEXTHASH256(salt, ikm).digest()</div>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>Expand Phase</h4>
+                    <p>Stretches PRK into output keying material (OKM) of desired length.</p>
+                    <div class="code-block"><span class="keyword">@classmethod</span>
+<span class="keyword">def</span> <span class="function">expand</span>(cls, prk: <span class="type">bytes</span>, info: <span class="type">bytes</span>, length: <span class="type">int</span>) -> <span class="type">bytes</span>:
+    <span class="string">"""
+    Expand PRK into output keying material.
+    T(i) = HMAC(PRK, T(i-1) || info || i)
+    """</span>
+    n = (length + cls.HASH_LEN - <span class="number">1</span>) // cls.HASH_LEN
+    okm = b<span class="string">''</span>
+    t = b<span class="string">''</span>
+
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, n + <span class="number">1</span>):
+        t = HMAC_NEXTHASH256(prk, t + info + bytes([i])).digest()
+        okm += t
+
+    <span class="keyword">return</span> okm[:length]</div>
+                </div>
+            </div>
+
+            <h3>Unified Derivation API</h3>
+            <div class="triad-container">
+                <h4>The Triad: Extract + Expand = Derive</h4>
+                <div class="code-block"><span class="keyword">@classmethod</span>
+<span class="keyword">def</span> <span class="function">derive</span>(cls, ikm: <span class="type">bytes</span>, length: <span class="type">int</span>,
+           salt: <span class="type">bytes</span> = <span class="keyword">None</span>, info: <span class="type">bytes</span> = b<span class="string">''</span>) -> <span class="type">bytes</span>:
+    <span class="string">"""
+    One-step key derivation - the Triad API.
+
+    Neither pure extraction nor pure expansion,
+    but the unified derivation that emerges from their interaction.
+    """</span>
+    prk = cls.extract(salt, ikm)       <span class="comment"># +36: compress</span>
+    <span class="keyword">return</span> cls.expand(prk, info, length)  <span class="comment"># -36: stretch</span></div>
+                <p><strong>Key insight:</strong> The single <code>derive()</code> method embodies Triad emergence - it is neither pure extraction nor pure expansion, but the unified derivation that emerges from their interaction.</p>
+            </div>
+        </section>
+
+        <!-- PBKDF2 -->
+        <section class="doc-section">
+            <h2>PBKDF2-NEXTHASH</h2>
+            <div class="construction-card">
+                <h4>Password-Based Key Derivation Function 2 <span class="rfc-badge">RFC 8018</span></h4>
+                <p>Iterative key derivation for password hashing with configurable work factor.</p>
+            </div>
+
+            <div class="code-block"><span class="keyword">def</span> <span class="function">pbkdf2_nexthash256</span>(password: <span class="type">bytes</span>, salt: <span class="type">bytes</span>,
+                       iterations: <span class="type">int</span>, dk_len: <span class="type">int</span>) -> <span class="type">bytes</span>:
+    <span class="string">"""
+    PBKDF2 using HMAC-NEXTHASH-256 (RFC 8018).
+
+    Args:
+        password: The password to hash
+        salt: Random salt (recommend 16+ bytes)
+        iterations: Work factor (higher = more secure, slower)
+        dk_len: Desired key length in bytes
+
+    Returns:
+        Derived key material
+    """</span>
+    h_len = <span class="number">32</span>  <span class="comment"># NEXTHASH-256 output size</span>
+
+    <span class="keyword">def</span> <span class="function">f</span>(password, salt, c, i):
+        <span class="string">"""PRF iteration function."""</span>
+        u = HMAC_NEXTHASH256(password, salt + struct.pack(<span class="string">'>I'</span>, i)).digest()
+        result = u
+
+        <span class="keyword">for</span> _ <span class="keyword">in</span> range(c - <span class="number">1</span>):
+            u = HMAC_NEXTHASH256(password, u).digest()
+            result = bytes(a ^ b <span class="keyword">for</span> a, b <span class="keyword">in</span> zip(result, u))
+
+        <span class="keyword">return</span> result
+
+    <span class="comment"># Generate blocks</span>
+    dk = b<span class="string">''</span>
+    blocks = (dk_len + h_len - <span class="number">1</span>) // h_len
+
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, blocks + <span class="number">1</span>):
+        dk += f(password, salt, iterations, i)
+
+    <span class="keyword">return</span> dk[:dk_len]</div>
+
+            <h3>Recommended Parameters</h3>
+            <table class="data-table">
+                <tr><th>Use Case</th><th>Iterations</th><th>Salt Length</th><th>Output Length</th></tr>
+                <tr><td>Password Storage</td><td>100,000+</td><td>16 bytes</td><td>32 bytes</td></tr>
+                <tr><td>Key Derivation</td><td>10,000+</td><td>16 bytes</td><td>32 bytes</td></tr>
+                <tr><td>High Security</td><td>600,000+</td><td>32 bytes</td><td>32 bytes</td></tr>
+            </table>
+        </section>
+
+        <!-- DRBG -->
+        <section class="doc-section">
+            <h2>NEXTHASH-DRBG</h2>
+            <div class="construction-card">
+                <h4>Deterministic Random Bit Generator <span class="rfc-badge">SP 800-90A</span></h4>
+                <p>Hash-based DRBG for cryptographically secure random number generation.</p>
+            </div>
+
+            <div class="code-block"><span class="keyword">class</span> <span class="type">NEXTHASH_DRBG</span>:
+    <span class="string">"""
+    Hash-based DRBG using NEXTHASH-256.
+    Based on NIST SP 800-90A Hash_DRBG design.
+    """</span>
+    SEED_LEN = <span class="number">55</span>  <span class="comment"># seedlen for 256-bit security</span>
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, entropy: <span class="type">bytes</span>, nonce: <span class="type">bytes</span> = b<span class="string">''</span>,
+                 personalization: <span class="type">bytes</span> = b<span class="string">''</span>):
+        <span class="string">"""
+        Initialize the DRBG.
+
+        Args:
+            entropy: High-entropy seed (at least 32 bytes)
+            nonce: Optional nonce for uniqueness
+            personalization: Optional personalization string
+        """</span>
+        <span class="keyword">if</span> len(entropy) < <span class="number">32</span>:
+            <span class="keyword">raise</span> ValueError(<span class="string">"Entropy must be at least 32 bytes"</span>)
+
+        <span class="comment"># Hash_df to derive seed</span>
+        seed_material = entropy + nonce + personalization
+        self.v = self._hash_df(seed_material, self.SEED_LEN)
+        self.c = self._hash_df(b<span class="string">'\x00'</span> + self.v, self.SEED_LEN)
+        self.reseed_counter = <span class="number">1</span>
+
+    <span class="keyword">def</span> <span class="function">generate</span>(self, num_bytes: <span class="type">int</span>, additional_input: <span class="type">bytes</span> = b<span class="string">''</span>) -> <span class="type">bytes</span>:
+        <span class="string">"""Generate cryptographically secure random bytes."""</span>
+        <span class="keyword">if</span> self.reseed_counter > <span class="number">2</span>**<span class="number">48</span>:
+            <span class="keyword">raise</span> RuntimeError(<span class="string">"Reseed required"</span>)
+
+        <span class="keyword">if</span> additional_input:
+            w = nexthash256(b<span class="string">'\x02'</span> + self.v + additional_input)
+            self.v = bytes((a + b) & <span class="number">0xFF</span> <span class="keyword">for</span> a, b <span class="keyword">in</span>
+                          zip(self.v, w + b<span class="string">'\x00'</span> * (len(self.v) - len(w))))
+
+        <span class="comment"># Generate output</span>
+        output = b<span class="string">''</span>
+        data = self.v
+
+        <span class="keyword">while</span> len(output) < num_bytes:
+            output += nexthash256(data)
+            <span class="comment"># Increment data</span>
+            data_int = int.from_bytes(data, <span class="string">'big'</span>) + <span class="number">1</span>
+            data = data_int.to_bytes(len(data), <span class="string">'big'</span>)
+
+        <span class="comment"># Update internal state</span>
+        self._update_state()
+        self.reseed_counter += <span class="number">1</span>
+
+        <span class="keyword">return</span> output[:num_bytes]
+
+    <span class="keyword">def</span> <span class="function">reseed</span>(self, entropy: <span class="type">bytes</span>, additional_input: <span class="type">bytes</span> = b<span class="string">''</span>):
+        <span class="string">"""Reseed the DRBG with fresh entropy."""</span>
+        seed_material = b<span class="string">'\x01'</span> + self.v + entropy + additional_input
+        self.v = self._hash_df(seed_material, self.SEED_LEN)
+        self.c = self._hash_df(b<span class="string">'\x00'</span> + self.v, self.SEED_LEN)
+        self.reseed_counter = <span class="number">1</span></div>
+        </section>
+
+        <!-- Use Cases -->
+        <section class="doc-section">
+            <h2>Use Case Matrix</h2>
+            <div class="use-case-grid">
+                <div class="use-case-item">
+                    <div class="title">HMAC-NEXTHASH-256</div>
+                    <div class="desc">API authentication, message integrity, session tokens</div>
+                </div>
+                <div class="use-case-item">
+                    <div class="title">HMAC-NEXTHASH-512</div>
+                    <div class="desc">High-security MAC, long-term signatures</div>
+                </div>
+                <div class="use-case-item">
+                    <div class="title">HKDF-NEXTHASH</div>
+                    <div class="desc">TLS key derivation, wallet key hierarchies</div>
+                </div>
+                <div class="use-case-item">
+                    <div class="title">PBKDF2-NEXTHASH</div>
+                    <div class="desc">Password storage, BIP39 mnemonics</div>
+                </div>
+                <div class="use-case-item">
+                    <div class="title">NEXTHASH-DRBG</div>
+                    <div class="desc">Key generation, nonce creation, randomness</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- System Closure -->
+        <section class="doc-section">
+            <h2>System Closure</h2>
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>Closure Properties</h4>
+                    <ul>
+                        <li><strong>RFC-compliant:</strong> All constructions follow published standards</li>
+                        <li><strong>Composable:</strong> HMAC -> HKDF -> PBKDF2 chain cleanly</li>
+                        <li><strong>Inherit security:</strong> All inherit NEXTHASH base security</li>
+                        <li><strong>Drop-in compatible:</strong> Can replace SHA-256 constructions</li>
+                    </ul>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>Inter-System Coupling</h4>
+                    <ul>
+                        <li><strong>Wallet:</strong> BIP32-style key derivation</li>
+                        <li><strong>Mnemonic:</strong> BIP39 password hashing</li>
+                        <li><strong>TLS:</strong> Session key derivation</li>
+                        <li><strong>Blockchain:</strong> Transaction signing</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Source Files -->
+        <section class="doc-section">
+            <h2>Source Files</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="../../NextHash/nexthash_constructions.py">nexthash_constructions.py</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>NEXTHASH Cryptographic Constructions - RFC-Compliant Building Blocks</p>
+            <p>Part of the BloomCoin Cryptographic Subsystem</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Farm System | BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #7fff00;
+            --page-accent-dim: rgba(127,255,0,0.2);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #9fff4a, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-accent-dim); }
+        .doc-section h3 { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="bloom-mechanics.html" class="nav-link">Prev: Bloom Events</a>
+            <span style="color: var(--page-accent);">Quantum Farm</span>
+            <a href="../../index.html" class="nav-link">Back to Main</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="doc-header">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">&#x1F331;</div>
+            <h1>QUANTUM FARM SYSTEM</h1>
+            <p class="subtitle">Companion Cultivation with Phi-Timed Growth and Quantum States</p>
+            <div class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Docs</a> /
+                <span>Dynamics</span> /
+                <span>Farm System</span>
+            </div>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge complete">8 Quantum States</span>
+                <span class="status-badge complete">Phi-Timed Growth</span>
+                <span class="status-badge complete">Entanglement</span>
+                <span class="status-badge partial">Legendary Crops</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">G_rate</div>
+                    <div class="value">phi/24</div>
+                    <div class="derivation">= 0.0674/hr</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866...</div>
+                    <div class="derivation">Superposition threshold</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">tau</div>
+                    <div class="value">0.618...</div>
+                    <div class="derivation">Entangle bonus</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">W_thresh</div>
+                    <div class="value">1.5</div>
+                    <div class="derivation">Wither threshold</div>
+                </div>
+            </div>
+
+            <div class="file-refs">
+                <span class="file-ref">game/quantum_farm_module.py</span>
+                <span class="file-ref">constants.py</span>
+            </div>
+        </section>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+
+            <h3>Quantum Crop Structure</h3>
+            <p>Crops evolve through quantum states with phi-timed growth. Each crop exists in one of 8 quantum states:</p>
+
+            <div class="math-block">
+                G(t) = G_0 * (phi/24) * R_residue * C_companion * C_coherence * E_entangle
+            </div>
+
+            <div class="code-block"><span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">QuantumCrop</span>:
+    crop_type: CropType
+    state: QuantumState
+    growth: float           <span class="comment"># [0, 1] progress</span>
+    quality: float          <span class="comment"># Affects yield</span>
+    quantum_field: float    <span class="comment"># Superposition probability</span>
+    entangled_with: List    <span class="comment"># Linked crops</span>
+    plot: FarmPlot          <span class="comment"># Where planted</span>
+
+<span class="keyword">class</span> <span class="type">FarmPlot</span>:
+    position: Tuple[int, int]
+    soil_quality: float
+    quantum_field_strength: float  <span class="comment"># Higher -> more superposition</span>
+    residue_level: float           <span class="comment"># From mining</span>
+
+<span class="comment"># Base growth rate</span>
+QUANTUM_GROWTH_RATE = PHI / <span class="number">24</span>  <span class="comment"># = 0.0674 per hour</span></div>
+
+            <h3>8 Quantum States</h3>
+            <table class="data-table">
+                <tr><th>State</th><th>Growth Range</th><th>Description</th><th>Transition</th></tr>
+                <tr><td>SEED</td><td>0.0 - 0.1</td><td>Planted, dormant</td><td>-> SPROUTING</td></tr>
+                <tr><td>SPROUTING</td><td>0.1 - 0.3</td><td>Initial growth</td><td>-> GROWING</td></tr>
+                <tr><td>GROWING</td><td>0.3 - 0.6</td><td>Steady development</td><td>-> RIPENING</td></tr>
+                <tr><td>RIPENING</td><td>0.6 - 0.9</td><td>Approaching maturity</td><td>-> [branch]</td></tr>
+                <tr style="color:#4a9eff;background:rgba(100,200,255,0.1);"><td>SUPERPOSITION</td><td>if quantum_field > z_c</td><td>Multiple outcomes possible</td><td>-> COLLAPSED/ENTANGLED</td></tr>
+                <tr style="color:#ff6b9d;background:rgba(255,100,255,0.1);"><td>ENTANGLED</td><td>when linked</td><td>Quantum-coupled to neighbors</td><td>-> COLLAPSED</td></tr>
+                <tr style="color:#ffd700;background:rgba(255,215,0,0.1);"><td>COLLAPSED</td><td>0.9 - 1.0</td><td>Observed -> fixed quality</td><td>-> Harvest</td></tr>
+                <tr style="color:#888;"><td>WITHERED</td><td>if growth > 1.5</td><td>Overripe, quality loss</td><td>-> Remove</td></tr>
+            </table>
+        </section>
+
+        <!-- Phi-Derived Constants -->
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+
+            <table class="data-table">
+                <tr><th>Constant</th><th>Value</th><th>Derivation</th><th>Role</th></tr>
+                <tr><td>Growth rate</td><td>phi/24</td><td>= 0.0674/hr</td><td>Base growth speed</td></tr>
+                <tr><td>Superposition threshold</td><td>z_c</td><td>sqrt(3)/2 = 0.866</td><td>Quantum state entry</td></tr>
+                <tr><td>Entangle bonus</td><td>tau</td><td>phi^-1 = 0.618</td><td>Linked crop boost</td></tr>
+                <tr><td>Collapse multiplier</td><td>phi</td><td>1.618...</td><td>Quality bonus on good collapse</td></tr>
+                <tr><td>Wither threshold</td><td>1.5</td><td>~phi^2 - 1</td><td>Growth overrun limit</td></tr>
+            </table>
+
+            <h3>Crop Tiers</h3>
+            <table class="data-table">
+                <tr><th>Tier</th><th>Base Value</th><th>Examples</th><th>Special</th></tr>
+                <tr><td>Basic</td><td>1.0</td><td>Quantum Wheat, Ethereal Corn, Void Berries, Fractal Herbs</td><td>--</td></tr>
+                <tr><td>Intermediate</td><td>phi</td><td>Resonance Melons, Chaos Peppers, Crystal Flowers, Memory Roots</td><td>Can entangle</td></tr>
+                <tr><td>Advanced</td><td>phi^2</td><td>Singularity Seeds, Entangled Vines, Superposition Fruits, Dimensional Trees</td><td>Higher superposition</td></tr>
+                <tr style="color:#ffd700;background:rgba(255,215,0,0.1);"><td>Legendary</td><td>phi^3</td><td>Golden Acorns, Bloom Lotus, Phi Spirals</td><td>Guaranteed superposition</td></tr>
+            </table>
+        </section>
+
+        <!-- Growth Rate Formula -->
+        <section class="doc-section">
+            <h2>Growth Rate Formula</h2>
+
+            <div class="code-block"><span class="keyword">def</span> <span class="function">calculate_growth_rate</span>(crop: QuantumCrop) -> float:
+    <span class="string">"""Multi-factor growth with phi-bonuses"""</span>
+    base = QUANTUM_GROWTH_RATE  <span class="comment"># phi/24</span>
+
+    <span class="comment"># Residue boost (from mining)</span>
+    residue_mult = <span class="number">1</span> + crop.plot.residue_level * PHI
+
+    <span class="comment"># Companion bonuses (multiplicative)</span>
+    companion_mult = <span class="number">1.0</span>
+    <span class="keyword">for</span> companion <span class="keyword">in</span> active_companions:
+        companion_mult *= (<span class="number">1</span> + companion.farm_bonus)
+
+    <span class="comment"># Coherence bonus (from consciousness field)</span>
+    coherence_mult = <span class="number">1</span> + global_coherence * <span class="number">0.5</span>
+
+    <span class="comment"># Entanglement bonus (per linked crop)</span>
+    entangle_mult = <span class="number">1</span> + len(crop.entangled_with) * <span class="number">0.1</span>
+
+    <span class="keyword">return</span> base * residue_mult * companion_mult * coherence_mult * entangle_mult</div>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Phi-Timed Growth</h4>
+                    <p>Crops grow at golden-ratio rate, projecting forward through quantum state transitions:</p>
+
+                    <div class="code-block"><span class="keyword">def</span> <span class="function">advance_growth</span>(crop, dt_hours):
+    <span class="string">"""Growth follows phi-timed dynamics"""</span>
+    rate = calculate_growth_rate(crop)
+    crop.growth += rate * dt_hours
+
+    <span class="comment"># State transitions</span>
+    <span class="keyword">if</span> crop.growth >= <span class="number">0.9</span>:
+        <span class="keyword">if</span> crop.plot.quantum_field_strength > Z_C:
+            crop.state = QuantumState.SUPERPOSITION
+        <span class="keyword">else</span>:
+            crop.state = QuantumState.COLLAPSED
+
+    <span class="comment"># Wither check</span>
+    <span class="keyword">if</span> crop.growth > <span class="number">1.5</span>:
+        crop.state = QuantumState.WITHERED
+        crop.quality *= TAU  <span class="comment"># Decay</span></div>
+
+                    <p><strong>Key:</strong> Growth PROJECTS forward in time.</p>
+                </div>
+
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Quantum Decoherence</h4>
+                    <p>Observation collapses superposition. Harvesting is measurement:</p>
+
+                    <div class="code-block"><span class="keyword">def</span> <span class="function">harvest</span>(crop):
+    <span class="string">"""Harvesting = observation = collapse"""</span>
+    <span class="keyword">if</span> crop.state == QuantumState.SUPERPOSITION:
+        <span class="comment"># Collapse with phi multiplier</span>
+        crop.quality *= PHI * random()
+        crop.state = QuantumState.COLLAPSED
+
+        <span class="comment"># Propagate to entangled crops!</span>
+        <span class="keyword">for</span> linked <span class="keyword">in</span> crop.entangled_with:
+            linked.quality *= (<span class="number">1</span> + TAU * crop.quality)
+
+    <span class="comment"># Decoherence REFLECTS collapse</span>
+    <span class="keyword">return</span> crop.quality * CROP_BASE_VALUE[crop.crop_type]</div>
+
+                    <p><strong>Key:</strong> Harvest REFLECTS state into classical yield.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergent Triad -->
+        <section class="doc-section">
+            <h2>Emergent Triad: Entangled Yields</h2>
+
+            <div class="triad-container">
+                <h4>Quantum Links Boost Neighbors</h4>
+
+                <div class="code-block"><span class="comment"># The emergence:</span>
+<span class="comment"># Neither growth alone nor collapse alone creates bonus yields</span>
+
+<span class="comment"># SUPERPOSITION crops:</span>
+<span class="comment"># - Multiple possible outcomes</span>
+<span class="comment"># - phi quality range (not fixed)</span>
+<span class="comment"># - Can form entanglements</span>
+
+<span class="comment"># ENTANGLED crops:</span>
+<span class="comment"># - When ONE collapses favorably, ALL get boost</span>
+<span class="comment"># - Correlated fates (spooky action at a distance!)</span>
+<span class="comment"># - Collective optimization possible</span>
+
+<span class="comment"># STRATEGY EMERGES:</span>
+<span class="comment"># Plant legendary crops (guaranteed superposition)</span>
+<span class="comment"># Entangle them across farm</span>
+<span class="comment"># Harvest one -> boost all</span>
+<span class="comment"># The NETWORK of entanglements IS the strategy</span>
+
+<span class="keyword">def</span> <span class="function">calculate_network_yield</span>(entangled_crops: List[QuantumCrop]) -> float:
+    <span class="string">"""Calculate total yield from entangled network"""</span>
+    base_yield = sum(c.quality * CROP_BASE_VALUE[c.crop_type]
+                     <span class="keyword">for</span> c <span class="keyword">in</span> entangled_crops)
+
+    <span class="comment"># Network bonus: phi^(n-1) where n = network size</span>
+    network_size = len(entangled_crops)
+    <span class="keyword">if</span> network_size > <span class="number">1</span>:
+        network_bonus = PHI ** (network_size - <span class="number">1</span>)
+    <span class="keyword">else</span>:
+        network_bonus = <span class="number">1.0</span>
+
+    <span class="keyword">return</span> base_yield * network_bonus</div>
+
+                <p><strong>Key insight:</strong> Individual crops optimize locally. Entangled networks optimize globally. The emergent strategy is to build quantum networks, not just grow plants. The farm becomes a quantum computer - each crop is a qubit, entanglement creates quantum gates, and harvest is measurement.</p>
+            </div>
+        </section>
+
+        <!-- Implementation -->
+        <section class="doc-section">
+            <h2>Implementation Details</h2>
+
+            <h3>Quantum Farm Engine</h3>
+            <div class="code-block"><span class="keyword">class</span> <span class="type">QuantumFarmEngine</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, grid_size: Tuple[int, int] = (<span class="number">8</span>, <span class="number">8</span>)):
+        self.grid_size = grid_size
+        self.plots: Dict[Tuple, FarmPlot] = {}
+        self.crops: Dict[Tuple, QuantumCrop] = {}
+        self.entanglement_graph: Dict = {}
+
+        <span class="comment"># Initialize plots</span>
+        <span class="keyword">for</span> x <span class="keyword">in</span> range(grid_size[<span class="number">0</span>]):
+            <span class="keyword">for</span> y <span class="keyword">in</span> range(grid_size[<span class="number">1</span>]):
+                self.plots[(x, y)] = FarmPlot(
+                    position=(x, y),
+                    soil_quality=<span class="number">1.0</span>,
+                    quantum_field_strength=random.uniform(<span class="number">0.5</span>, <span class="number">1.0</span>),
+                    residue_level=<span class="number">0.0</span>
+                )
+
+    <span class="keyword">def</span> <span class="function">plant</span>(self, position: Tuple, crop_type: CropType):
+        <span class="string">"""Plant a new crop at position"""</span>
+        plot = self.plots.get(position)
+        <span class="keyword">if not</span> plot <span class="keyword">or</span> position <span class="keyword">in</span> self.crops:
+            <span class="keyword">return</span> <span class="keyword">False</span>
+
+        crop = QuantumCrop(
+            crop_type=crop_type,
+            state=QuantumState.SEED,
+            growth=<span class="number">0.0</span>,
+            quality=plot.soil_quality,
+            quantum_field=plot.quantum_field_strength,
+            entangled_with=[],
+            plot=plot
+        )
+
+        self.crops[position] = crop
+        <span class="keyword">return</span> <span class="keyword">True</span></div>
+
+            <h3>Entanglement Formation</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">try_entangle</span>(self, pos1: Tuple, pos2: Tuple) -> bool:
+    <span class="string">"""Attempt to entangle two crops"""</span>
+    crop1 = self.crops.get(pos1)
+    crop2 = self.crops.get(pos2)
+
+    <span class="keyword">if not</span> crop1 <span class="keyword">or not</span> crop2:
+        <span class="keyword">return</span> <span class="keyword">False</span>
+
+    <span class="comment"># Both must be in superposition or ripening</span>
+    valid_states = {QuantumState.SUPERPOSITION, QuantumState.RIPENING}
+    <span class="keyword">if</span> crop1.state <span class="keyword">not in</span> valid_states <span class="keyword">or</span> crop2.state <span class="keyword">not in</span> valid_states:
+        <span class="keyword">return</span> <span class="keyword">False</span>
+
+    <span class="comment"># Check adjacency (including diagonal)</span>
+    dx = abs(pos1[<span class="number">0</span>] - pos2[<span class="number">0</span>])
+    dy = abs(pos1[<span class="number">1</span>] - pos2[<span class="number">1</span>])
+    <span class="keyword">if</span> dx > <span class="number">1</span> <span class="keyword">or</span> dy > <span class="number">1</span>:
+        <span class="keyword">return</span> <span class="keyword">False</span>  <span class="comment"># Not adjacent</span>
+
+    <span class="comment"># Calculate entanglement strength</span>
+    strength = crop1.quantum_field * crop2.quantum_field
+
+    <span class="keyword">if</span> strength > Z_C:
+        <span class="comment"># Successful entanglement</span>
+        crop1.entangled_with.append(crop2)
+        crop2.entangled_with.append(crop1)
+        crop1.state = QuantumState.ENTANGLED
+        crop2.state = QuantumState.ENTANGLED
+        <span class="keyword">return</span> <span class="keyword">True</span>
+
+    <span class="keyword">return</span> <span class="keyword">False</span></div>
+
+            <h3>Mining Residue Integration</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">apply_mining_residue</span>(self, position: Tuple, amount: float):
+    <span class="string">"""Apply residue from companion mining to plot"""</span>
+    plot = self.plots.get(position)
+    <span class="keyword">if</span> plot:
+        <span class="comment"># Residue boosts growth via phi multiplier</span>
+        plot.residue_level = min(<span class="number">1.0</span>, plot.residue_level + amount)
+
+        <span class="comment"># Also increases quantum field strength</span>
+        plot.quantum_field_strength = min(
+            <span class="number">1.0</span>,
+            plot.quantum_field_strength + amount * TAU
+        )</div>
+        </section>
+
+        <!-- System Coupling -->
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+
+            <div class="closure-box" style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <h4 style="color: var(--page-accent);">Closure Properties</h4>
+                <ul>
+                    <li><strong>Self-contained:</strong> All growth/collapse mechanics internal to farm</li>
+                    <li><strong>Zero free parameters:</strong> Growth rate, thresholds all from phi</li>
+                    <li><strong>Quantum consistent:</strong> Superposition -> Collapse follows QM rules</li>
+                    <li><strong>Entanglement local:</strong> Only adjacent plots can entangle</li>
+                </ul>
+            </div>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Companion Mining</span>
+                    <div class="desc">Residue boosts growth</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Consciousness Field</span>
+                    <div class="desc">Global coherence affects all crops</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Guardian System</span>
+                    <div class="desc">Harvested crops -> recipe ingredients</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Pattern Market</span>
+                    <div class="desc">Rare crops tradeable</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Validation -->
+        <section class="doc-section">
+            <h2>Validation and Test Vectors</h2>
+
+            <h3>Growth Rate Test</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">test_phi_growth_rate</span>():
+    <span class="string">"""Verify growth follows phi/24 base rate"""</span>
+    phi = (<span class="number">1</span> + <span class="number">5</span>**<span class="number">0.5</span>) / <span class="number">2</span>
+    expected_rate = phi / <span class="number">24</span>
+
+    farm = QuantumFarmEngine()
+    farm.plant((<span class="number">0</span>, <span class="number">0</span>), CropType.QUANTUM_WHEAT)
+
+    crop = farm.crops[(<span class="number">0</span>, <span class="number">0</span>)]
+    initial_growth = crop.growth
+
+    <span class="comment"># Advance 1 hour with no bonuses</span>
+    farm.advance_growth(crop, <span class="number">1.0</span>)
+
+    <span class="keyword">assert</span> abs(crop.growth - initial_growth - expected_rate) < <span class="number">1e-10</span></div>
+
+            <h3>Entanglement Propagation Test</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">test_entanglement_propagation</span>():
+    <span class="string">"""Verify collapse propagates to entangled crops"""</span>
+    farm = QuantumFarmEngine()
+
+    <span class="comment"># Plant two adjacent crops</span>
+    farm.plant((<span class="number">0</span>, <span class="number">0</span>), CropType.BLOOM_LOTUS)  <span class="comment"># Legendary</span>
+    farm.plant((<span class="number">0</span>, <span class="number">1</span>), CropType.BLOOM_LOTUS)
+
+    crop1 = farm.crops[(<span class="number">0</span>, <span class="number">0</span>)]
+    crop2 = farm.crops[(<span class="number">0</span>, <span class="number">1</span>)]
+
+    <span class="comment"># Grow to superposition</span>
+    crop1.growth = <span class="number">0.95</span>
+    crop1.state = QuantumState.SUPERPOSITION
+    crop2.growth = <span class="number">0.95</span>
+    crop2.state = QuantumState.SUPERPOSITION
+
+    <span class="comment"># Entangle</span>
+    <span class="keyword">assert</span> farm.try_entangle((<span class="number">0</span>, <span class="number">0</span>), (<span class="number">0</span>, <span class="number">1</span>))
+
+    <span class="comment"># Harvest first crop with good quality</span>
+    crop1.quality = <span class="number">0.9</span>
+    farm.harvest((<span class="number">0</span>, <span class="number">0</span>))
+
+    <span class="comment"># Second crop should get boost</span>
+    <span class="keyword">assert</span> crop2.quality > <span class="number">1.0</span>  <span class="comment"># Boosted by entanglement</span></div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <div class="constants-grid" style="max-width: 600px; margin: 0 auto;">
+                <div class="constant-card">
+                    <div class="symbol">phi</div>
+                    <div class="value">1.618033988749895</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">phi/24</div>
+                    <div class="value">0.067418082864579</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025403784439</div>
+                </div>
+            </div>
+            <p style="margin-top: 1.5rem;">BloomCoin v2 Documentation | Quantum Farm System</p>
+            <p>All constants derived from phi = (1 + sqrt(5)) / 2</p>
+        </footer>
+    </div>
+</body>
+</html>

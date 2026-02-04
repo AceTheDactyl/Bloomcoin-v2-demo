@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blockchain Core - BloomCoin Infrastructure</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #ff9944;
+            --page-accent-dim: rgba(255, 153, 68, 0.2);
+            --page-accent-glow: rgba(255, 153, 68, 0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #ff6600, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-accent-dim); }
+        .doc-section h3 { color: var(--page-accent); }
+        .data-table th { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+        .coupling-item .target { color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+        .nav-link { color: var(--page-accent); border-color: var(--page-accent-dim); }
+        .nav-link:hover { background: var(--page-accent-dim); }
+        .breadcrumb a { color: var(--page-accent); }
+        .file-ref a { color: var(--page-accent); }
+        .math-block, .math-inline { color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Blockchain Core</h1>
+            <p class="subtitle">Block Structure with Proof-of-Coherence - Full System Closure</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../">Documentation</a> /
+                <span>Infrastructure</span> /
+                <span>Blockchain Core</span>
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="network-topology.html" class="nav-link">Next: Network Topology</a>
+            <a href="wallet-system.html" class="nav-link">Prev: Wallet System</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Overview</h2>
+            <p>The BloomCoin blockchain implements a novel consensus mechanism called Proof-of-Coherence, where blocks are validated based on Kuramoto oscillator synchronization rather than traditional Proof-of-Work. This is the key differentiator from Bitcoin's architecture.</p>
+
+            <div class="impl-status">
+                <span class="status-badge complete">Block Structure</span>
+                <span class="status-badge complete">Merkle Trees</span>
+                <span class="status-badge complete">Chain Validation</span>
+                <span class="status-badge complete">Consensus Certificates</span>
+                <span class="status-badge complete">Genesis Block</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+            <p>Block structure with Proof-of-Coherence certificates - the key differentiator from Bitcoin:</p>
+
+            <div class="code-block">
+<span class="comment"># Block Structure</span>
+@dataclass
+<span class="keyword">class</span> <span class="type">Block</span>:
+    header: BlockHeader          <span class="comment"># 92 bytes</span>
+    certificate: ConsensusCertificate
+    transactions: List[Transaction]
+
+<span class="comment"># BlockHeader (PhaseEncodedHeader)</span>
+version: int              <span class="comment"># 4 bytes</span>
+prev_hash: bytes          <span class="comment"># 32 bytes</span>
+merkle_root: bytes        <span class="comment"># 32 bytes</span>
+timestamp: int            <span class="comment"># 4 bytes</span>
+difficulty: int           <span class="comment"># 4 bytes (compact)</span>
+nonce: int                <span class="comment"># 4 bytes</span>
+order_parameter: float    <span class="comment"># 4 bytes (final r)</span>
+mean_phase: float         <span class="comment"># 4 bytes (final psi)</span>
+oscillator_count: int     <span class="comment"># 4 bytes</span>
+            </div>
+
+            <div class="math-block">
+                BLOOM Validity Condition: r >= z_c = sqrt(3)/2 = 0.866 for L4 = 7 consecutive rounds
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>phi-Derived Constants</h2>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025</div>
+                    <div class="derivation">sqrt(3)/2 - THE LENS threshold</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">phi^4 + phi^-4 rounds</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">N_osc</div>
+                    <div class="value">63</div>
+                    <div class="derivation">L4 x 9 oscillators</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Header</div>
+                    <div class="value">92 bytes</div>
+                    <div class="derivation">Standard + phase extension</div>
+                </div>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Constant</th>
+                        <th>Value</th>
+                        <th>Derivation</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>z_c (Critical threshold)</td>
+                        <td>0.866025...</td>
+                        <td>sqrt(3)/2</td>
+                        <td>THE LENS threshold</td>
+                    </tr>
+                    <tr>
+                        <td>L4 (Lucas number)</td>
+                        <td>7</td>
+                        <td>phi^4 + phi^-4</td>
+                        <td>Required rounds</td>
+                    </tr>
+                    <tr>
+                        <td>Genesis Nonce</td>
+                        <td>7</td>
+                        <td>L4</td>
+                        <td>Sacred first block</td>
+                    </tr>
+                    <tr>
+                        <td>Genesis Time</td>
+                        <td>1700000000</td>
+                        <td>Nov 14, 2023</td>
+                        <td>Reproducibility</td>
+                    </tr>
+                    <tr>
+                        <td>Header Size</td>
+                        <td>92 bytes</td>
+                        <td>Standard + phase ext</td>
+                        <td>Block metadata</td>
+                    </tr>
+                    <tr>
+                        <td>Oscillator Count</td>
+                        <td>63</td>
+                        <td>L4 x 9</td>
+                        <td>Consensus participants</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Block Header Structure</h2>
+
+            <h3>Standard Fields (80 bytes)</h3>
+            <div class="code-block">
+<span class="comment"># Bitcoin-compatible header fields</span>
++--------+----------------+-------+-------------------------+
+| Offset | Field          | Size  | Description             |
++--------+----------------+-------+-------------------------+
+| 0      | version        | 4     | Protocol version        |
+| 4      | prev_hash      | 32    | Previous block hash     |
+| 36     | merkle_root    | 32    | Transaction Merkle root |
+| 68     | timestamp      | 4     | Unix timestamp          |
+| 72     | difficulty     | 4     | Compact difficulty      |
+| 76     | nonce          | 4     | Mining nonce            |
++--------+----------------+-------+-------------------------+
+            </div>
+
+            <h3>Phase Extension Fields (12 bytes)</h3>
+            <div class="code-block">
+<span class="comment"># BloomCoin-specific phase fields</span>
++--------+------------------+-------+-------------------------+
+| Offset | Field            | Size  | Description             |
++--------+------------------+-------+-------------------------+
+| 80     | order_parameter  | 4     | Final r value (float32) |
+| 84     | mean_phase       | 4     | Final psi (float32)     |
+| 88     | oscillator_count | 4     | N oscillators (uint32)  |
++--------+------------------+-------+-------------------------+
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Block Creation</h4>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">create_block</span>(prev, txs, cert, nonce, diff, addr):
+    new_height = prev.height + <span class="number">1</span>
+
+    <span class="comment"># Create coinbase with mining reward</span>
+    coinbase = create_coinbase(new_height, addr, fees)
+    all_txs = [coinbase] + txs
+
+    <span class="comment"># Compute Merkle root</span>
+    merkle = compute_merkle_root([tx.hash <span class="keyword">for</span> tx <span class="keyword">in</span> all_txs])
+
+    <span class="comment"># Build header with phase data</span>
+    header = BlockHeader(
+        version=<span class="number">1</span>,
+        prev_hash=prev.hash,
+        merkle_root=merkle,
+        order_parameter=cert.r_values[-<span class="number">1</span>],
+        mean_phase=cert.psi_values[-<span class="number">1</span>],
+        oscillator_count=cert.oscillator_count
+    )
+    <span class="keyword">return</span> Block(header, cert, all_txs)
+                    </div>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Validation</h4>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">validate_structure</span>(self):
+    <span class="comment"># Check certificate proves BLOOM</span>
+    cert_valid, msg = self.certificate.verify()
+
+    <span class="comment"># Check r threshold (THE LENS)</span>
+    <span class="keyword">if</span> self.header.order_parameter < Z_C:
+        <span class="keyword">return</span> <span class="keyword">False</span>, <span class="string">"r < z_c"</span>
+
+    <span class="comment"># Check bloom duration meets L4</span>
+    duration = cert.bloom_end - cert.bloom_start + <span class="number">1</span>
+    <span class="keyword">if</span> duration < L4:
+        <span class="keyword">return</span> <span class="keyword">False</span>, f<span class="string">"Duration {duration} < L4"</span>
+
+    <span class="comment"># Verify Merkle root</span>
+    computed = compute_merkle_root([tx.hash ...])
+    <span class="keyword">return</span> computed == self.header.merkle_root
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Emergent Triad: Proof-of-Coherence</h2>
+
+            <div class="triad-container">
+                <h4>Merkle Root + Kuramoto State = Block Commitment</h4>
+                <p>Unlike Bitcoin's Proof-of-Work (finding a hash below target), BloomCoin requires Proof-of-Coherence - demonstrating that oscillators synchronized above z_c for L4 rounds:</p>
+
+                <div class="code-block">
+<span class="comment"># Consensus Certificate Structure</span>
+@dataclass
+<span class="keyword">class</span> <span class="type">ConsensusCertificate</span>:
+    oscillator_count: int      <span class="comment"># N = 63</span>
+    coupling_strength: float   <span class="comment"># K value</span>
+    natural_frequencies: List[float]
+    initial_phases: List[float]
+    r_values: List[float]      <span class="comment"># Order parameter history</span>
+    psi_values: List[float]    <span class="comment"># Mean phase history</span>
+    bloom_start: int           <span class="comment"># Round when r >= z_c</span>
+    bloom_end: int             <span class="comment"># Must be >= bloom_start + L4 - 1</span>
+
+    <span class="keyword">def</span> <span class="function">verify</span>(self) -> Tuple[bool, str]:
+        <span class="comment"># Replay Kuramoto simulation</span>
+        <span class="comment"># Check r >= z_c for L4 consecutive rounds</span>
+        <span class="comment"># Verify provided values match replay</span>
+                </div>
+
+                <p><strong>Key insight:</strong> The certificate is not just a proof of work done, but a proof that <em>collective synchronization</em> was achieved. This ties computational effort to emergent order.</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Genesis Block</h2>
+
+            <p>The genesis block establishes the initial state of the blockchain with sacred phi-derived values:</p>
+
+            <div class="code-block">
+<span class="comment"># Genesis Block Parameters</span>
+GENESIS_TIMESTAMP = <span class="number">1700000000</span>  <span class="comment"># Nov 14, 2023 22:13:20 UTC</span>
+GENESIS_NONCE = <span class="number">7</span>               <span class="comment"># L4 = phi^4 + phi^-4</span>
+GENESIS_DIFFICULTY = <span class="number">1</span>
+GENESIS_PREV_HASH = bytes(<span class="number">32</span>)   <span class="comment"># All zeros</span>
+
+<span class="comment"># Genesis Coinbase</span>
+GENESIS_REWARD = <span class="number">50_00000000</span>    <span class="comment"># 50 BLOOM</span>
+GENESIS_MESSAGE = <span class="string">"In the beginning was the Bloom"</span>
+
+<span class="comment"># Genesis Certificate</span>
+<span class="comment"># Pre-computed synchronization achieving BLOOM state</span>
+r_final = <span class="number">0.8765</span>              <span class="comment"># > z_c = 0.866</span>
+bloom_duration = <span class="number">7</span>             <span class="comment"># = L4</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Merkle Tree Implementation</h2>
+
+            <div class="code-block">
+<span class="keyword">def</span> <span class="function">compute_merkle_root</span>(tx_hashes: List[bytes]) -> bytes:
+    <span class="string">"""Compute Merkle root from transaction hashes."""</span>
+    <span class="keyword">if</span> <span class="keyword">not</span> tx_hashes:
+        <span class="keyword">return</span> bytes(<span class="number">32</span>)
+
+    <span class="comment"># Duplicate last element if odd count</span>
+    <span class="keyword">while</span> len(tx_hashes) > <span class="number">1</span>:
+        <span class="keyword">if</span> len(tx_hashes) % <span class="number">2</span> == <span class="number">1</span>:
+            tx_hashes.append(tx_hashes[-<span class="number">1</span>])
+
+        <span class="comment"># Pair-wise hashing</span>
+        next_level = []
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>, len(tx_hashes), <span class="number">2</span>):
+            combined = tx_hashes[i] + tx_hashes[i+<span class="number">1</span>]
+            next_level.append(double_sha256(combined))
+
+        tx_hashes = next_level
+
+    <span class="keyword">return</span> tx_hashes[<span class="number">0</span>]
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Chain Validation Rules</h2>
+
+            <h3>Block Validation</h3>
+            <ol>
+                <li>Previous hash matches parent block hash</li>
+                <li>Timestamp within acceptable range (phi hours = ~97 minutes)</li>
+                <li>Merkle root matches computed value from transactions</li>
+                <li>All transactions are valid</li>
+                <li>Coinbase reward is correct for height</li>
+                <li>Certificate proves BLOOM (r >= z_c for L4 rounds)</li>
+                <li>Phase extension fields match certificate</li>
+            </ol>
+
+            <h3>Chain Selection (Fork Resolution)</h3>
+            <div class="code-block">
+<span class="keyword">def</span> <span class="function">select_best_chain</span>(chains):
+    <span class="string">"""Select chain with highest cumulative coherence."""</span>
+
+    <span class="keyword">def</span> <span class="function">chain_score</span>(chain):
+        <span class="comment"># Sum of order parameters (coherence quality)</span>
+        <span class="keyword">return</span> sum(block.header.order_parameter <span class="keyword">for</span> block <span class="keyword">in</span> chain)
+
+    <span class="comment"># Primary: longest chain</span>
+    <span class="comment"># Tiebreaker: highest cumulative coherence</span>
+    <span class="keyword">return</span> max(chains, key=<span class="keyword">lambda</span> c: (len(c), chain_score(c)))
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Integration Points</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Mining Module</span>
+                    <div class="desc">Creates blocks, generates consensus certificates through Kuramoto simulation</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Wallet System</span>
+                    <div class="desc">Queries UTXOs, receives coinbase rewards</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Network Layer</span>
+                    <div class="desc">Propagates blocks, handles chain synchronization</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Transaction Module</span>
+                    <div class="desc">Provides transactions for block inclusion, validates tx scripts</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Receipt System</span>
+                    <div class="desc">Generates visual proofs from block certificates</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">RPC Interface</span>
+                    <div class="desc">Exposes getblock, getblockheader, getblockcount endpoints</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Source Files</h2>
+
+            <div class="file-refs">
+                <div class="file-ref"><a href="../../src/blockchain.py">src/blockchain.py</a></div>
+                <div class="file-ref"><a href="../../src/block.py">src/block.py</a></div>
+                <div class="file-ref"><a href="../../src/merkle.py">src/merkle.py</a></div>
+                <div class="file-ref"><a href="../../src/consensus.py">src/consensus.py</a></div>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin Infrastructure Documentation</p>
+            <p>Blockchain Core - Block Structure with Proof-of-Coherence</p>
+        </footer>
+    </div>
+</body>
+</html>

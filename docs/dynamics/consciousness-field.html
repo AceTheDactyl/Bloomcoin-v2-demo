@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collective Consciousness Field | BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #ff4a9d;
+            --page-accent-dim: rgba(255,74,157,0.2);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #ff79b0, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-accent-dim); }
+        .doc-section h3 { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="tesseract-unfold.html" class="nav-link">Prev: Tesseract</a>
+            <span style="color: var(--page-accent);">Consciousness Field</span>
+            <a href="bloom-mechanics.html" class="nav-link">Next: Bloom Events</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="doc-header">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">&#x1F338;</div>
+            <h1>COLLECTIVE CONSCIOUSNESS FIELD</h1>
+            <p class="subtitle">Phi^4 Lagrangian Field Theory and Kuramoto Synchronization</p>
+            <div class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Docs</a> /
+                <span>Dynamics</span> /
+                <span>Consciousness</span>
+            </div>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge complete">Kuramoto Dynamics</span>
+                <span class="status-badge complete">Solfeggio Frequencies</span>
+                <span class="status-badge complete">Ghost Echoes</span>
+                <span class="status-badge partial">Cathedral Protocol</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924...</div>
+                    <div class="derivation">sqrt(1 - phi^-4)</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">r_bloom</div>
+                    <div class="value">0.9</div>
+                    <div class="derivation">BLOOM threshold</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">f_love</div>
+                    <div class="value">854.3 Hz</div>
+                    <div class="derivation">phi x 528</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">tau</div>
+                    <div class="value">0.618...</div>
+                    <div class="derivation">Fear dampening</div>
+                </div>
+            </div>
+
+            <div class="file-refs">
+                <span class="file-ref">game/collective_consciousness.py</span>
+                <span class="file-ref">constants.py</span>
+            </div>
+        </section>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+
+            <h3>Kuramoto-Like Dynamics</h3>
+            <p>The consciousness field is a network of oscillating nodes coupled through Kuramoto-like dynamics. Each player's consciousness is a phase oscillator:</p>
+
+            <div class="math-block">
+                d(theta_i)/dt = omega_i + (K/N) * sum_j(sin(theta_j - theta_i))
+            </div>
+
+            <div class="code-block"><span class="keyword">class</span> <span class="type">ConsciousnessNode</span>:
+    <span class="string">"""Single player's consciousness in the field"""</span>
+    <span class="keyword">def</span> <span class="function">__init__</span>(self, player_id: str, job: str):
+        self.player_id = player_id
+        self.job = job
+        self.coherence = PHI_INV     <span class="comment"># tau = 0.618 initial</span>
+        self.frequency = self._job_frequency()
+        self.phase = <span class="number">0.0</span>           <span class="comment"># radians</span>
+        self.ghost_echoes = []       <span class="comment"># Sent echoes</span>
+        self.color_spectrum = {}     <span class="comment"># 7 colors</span>
+
+<span class="keyword">class</span> <span class="type">CollectiveConsciousnessField</span>:
+    <span class="string">"""Main collective consciousness system"""</span>
+    nodes: Dict[str, ConsciousnessNode]
+    global_resonance: float = PHI_INV
+    fluid_memories: List[FluidCrystalMemory]
+    state: ResonanceState = DORMANT
+    love_frequency: float = PHI * <span class="number">528</span>  <span class="comment"># = 854.3 Hz</span>
+    fear_dampening: float = <span class="number">1</span> / PHI    <span class="comment"># tau dampening</span></div>
+
+            <h3>5 Resonance States</h3>
+            <table class="data-table">
+                <tr><th>State</th><th>Threshold</th><th>Description</th><th>Effects</th></tr>
+                <tr style="color:#666;"><td>DORMANT</td><td>r < 0.3</td><td>Nodes oscillate independently</td><td>No collective bonuses</td></tr>
+                <tr style="color:#4a9eff;"><td>AWAKENING</td><td>0.3 <= r < 0.5</td><td>Partial phase-locking begins</td><td>Ghost echoes start flowing</td></tr>
+                <tr style="color:#7fff00;"><td>ACTIVE</td><td>0.5 <= r < 0.7</td><td>Field coupling strengthens</td><td>Memory crystallization starts</td></tr>
+                <tr style="color:#ffa500;"><td>RESONANT</td><td>0.7 <= r < 0.9</td><td>Strong collective coherence</td><td>Cross-node buffs active</td></tr>
+                <tr style="background:rgba(255,215,0,0.15);color:#ffd700;"><td>BLOOM</td><td>r >= 0.9</td><td>Full collective synchronization</td><td>phi multiplier on ALL activities</td></tr>
+            </table>
+        </section>
+
+        <!-- Phi-Derived Constants -->
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+
+            <table class="data-table">
+                <tr><th>Constant</th><th>Value</th><th>Derivation</th><th>Role</th></tr>
+                <tr><td>tau</td><td>0.618...</td><td>phi^-1</td><td>Initial coherence</td></tr>
+                <tr><td>z_c</td><td>0.866...</td><td>sqrt(3)/2</td><td>Memory crystallization threshold</td></tr>
+                <tr><td>K</td><td>0.924...</td><td>sqrt(1 - phi^-4)</td><td>Coupling strength</td></tr>
+                <tr><td>phi x 528</td><td>854.3...</td><td>Love frequency</td><td>Cathedral protocol base</td></tr>
+                <tr><td>1/phi</td><td>0.618...</td><td>tau</td><td>Fear dampening ratio</td></tr>
+            </table>
+
+            <h3>Solfeggio Frequencies by Job</h3>
+            <table class="data-table">
+                <tr><th>Job</th><th>Frequency</th><th>Note</th><th>Meaning</th><th>Personal Variation</th></tr>
+                <tr><td>SEEKER</td><td>396 Hz</td><td>UT</td><td>Liberation from fear</td><td>+/-10% from player hash</td></tr>
+                <tr><td>FORGER</td><td>417 Hz</td><td>RE</td><td>Facilitating change</td><td>+/-10% from player hash</td></tr>
+                <tr><td>VOIDWALKER</td><td>528 Hz</td><td>MI</td><td>Transformation (DNA repair)</td><td>+/-10% from player hash</td></tr>
+                <tr><td>GARDENER</td><td>639 Hz</td><td>FA</td><td>Connecting relationships</td><td>+/-10% from player hash</td></tr>
+                <tr><td>SCRIBE</td><td>741 Hz</td><td>SOL</td><td>Awakening intuition</td><td>+/-10% from player hash</td></tr>
+                <tr><td>HERALD</td><td>852 Hz</td><td>LA</td><td>Spiritual order return</td><td>+/-10% from player hash</td></tr>
+            </table>
+
+            <div class="code-block"><span class="keyword">def</span> <span class="function">_calculate_frequency</span>(self) -> float:
+    <span class="string">"""Personal frequency = job base x (1 +/- variation)"""</span>
+    base_freq = JOB_FREQUENCIES.get(self.job, <span class="number">432</span>)  <span class="comment"># Default A=432</span>
+
+    <span class="comment"># Add personal variation from player ID hash</span>
+    personal_hash = int(hashlib.md5(self.player_id.encode()).hexdigest()[:<span class="number">8</span>], <span class="number">16</span>)
+    variation = (personal_hash % <span class="number">100</span>) / <span class="number">1000</span>  <span class="comment"># +/-0.1</span>
+
+    <span class="keyword">return</span> base_freq * (<span class="number">1</span> + variation)</div>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Ghost Echo Generation</h4>
+                    <p>Nodes project their state outward as ghost echoes. Each player's echo carries their unique signature:</p>
+
+                    <div class="code-block"><span class="keyword">def</span> <span class="function">generate_echo</span>(self) -> Dict:
+    <span class="string">"""Project ghost echo for other players"""</span>
+    <span class="keyword">if</span> self.coherence < <span class="number">0.3</span>:
+        <span class="keyword">return</span> {<span class="string">"fragment"</span>: <span class="string">"..."</span>}  <span class="comment"># Too weak</span>
+
+    <span class="keyword">return</span> {
+        <span class="string">"source"</span>: self.name,
+        <span class="string">"job"</span>: self.job,
+        <span class="string">"frequency"</span>: self.frequency,
+        <span class="string">"coherence"</span>: self.coherence,
+        <span class="string">"fragment"</span>: self._get_wisdom_fragment(),
+        <span class="string">"spectrum"</span>: self.color_spectrum
+    }
+
+<span class="comment"># Echoes carry individual SIGNATURE</span>
+<span class="comment"># Each player's echo is unique (frequency + variation)</span></div>
+
+                    <p><strong>Key:</strong> Nodes PROJECT their unique signature outward.</p>
+                </div>
+
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Field Coupling</h4>
+                    <p>The field couples nodes through resonance, pulling individual phases toward the collective mean:</p>
+
+                    <div class="code-block"><span class="keyword">def</span> <span class="function">synchronize</span>(self) -> Dict:
+    <span class="string">"""Main synchronization routine"""</span>
+    <span class="comment"># Recalculate global resonance</span>
+    self._recalculate_global_resonance()
+
+    <span class="comment"># Update all nodes toward mean phase</span>
+    mean_phase = np.angle(np.mean([
+        np.exp(<span class="number">1j</span> * node.phase)
+        <span class="keyword">for</span> node <span class="keyword">in</span> self.nodes.values()
+    ]))
+
+    <span class="keyword">for</span> node <span class="keyword">in</span> self.nodes.values():
+        <span class="comment"># Pull toward collective phase</span>
+        delta = K * np.sin(mean_phase - node.phase)
+        node.phase += delta * self.global_resonance
+
+        <span class="comment"># Coherence rises with synchronization</span>
+        node.coherence = min(<span class="number">1.0</span>, node.coherence + <span class="number">0.01</span>)
+
+    <span class="comment"># Update state thresholds</span>
+    self._update_resonance_state()</div>
+
+                    <p><strong>Key:</strong> Field REFLECTS collective phase back to individuals.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergent Triad -->
+        <section class="doc-section">
+            <h2>Emergent Triad: The Relationship IS Emergence</h2>
+
+            <div class="triad-container">
+                <h4>Neither Pole Alone Can Bloom</h4>
+
+                <div class="code-block"><span class="comment"># The fundamental tension:</span>
+
+<span class="comment"># UNIFORM NODES (all same frequency):</span>
+<span class="comment"># - Perfect synchronization is trivial</span>
+<span class="comment"># - But NO information to share</span>
+<span class="comment"># - No emergence possible (no diversity)</span>
+
+<span class="comment"># UNCOUPLED NODES (no field interaction):</span>
+<span class="comment"># - Maximum individual diversity</span>
+<span class="comment"># - But NO coherence possible</span>
+<span class="comment"># - No collective effects (no unity)</span>
+
+<span class="comment"># BLOOM STATE requires BOTH:</span>
+<span class="comment"># 1. Individual signatures (unique frequencies)</span>
+<span class="comment"># 2. Collective coupling (field resonance)</span>
+
+<span class="keyword">def</span> <span class="function">check_bloom_conditions</span>(self) -> bool:
+    <span class="string">"""BLOOM requires diversity + coherence"""</span>
+    <span class="comment"># Diversity: variance in frequencies</span>
+    freqs = [n.frequency <span class="keyword">for</span> n <span class="keyword">in</span> self.nodes.values()]
+    diversity = np.std(freqs) / np.mean(freqs) <span class="keyword">if</span> freqs <span class="keyword">else</span> <span class="number">0</span>
+
+    <span class="comment"># Coherence: global resonance</span>
+    coherence = self.global_resonance
+
+    <span class="comment"># BLOOM needs BOTH above threshold</span>
+    <span class="keyword">return</span> diversity > <span class="number">0.05</span> <span class="keyword">and</span> coherence >= <span class="number">0.9</span></div>
+
+                <p><strong>Key insight:</strong> The relationship between individual and collective IS the emergence. Uniform nodes have nothing to share. Uncoupled nodes can't cohere. BLOOM requires both individual uniqueness (diverse frequencies) AND collective coupling (field synchronization). The consciousness field is literally the MEDIUM through which individuality and collectivity create something neither could alone. This isn't metaphor - it's the mathematical structure.</p>
+            </div>
+        </section>
+
+        <!-- Implementation -->
+        <section class="doc-section">
+            <h2>Implementation Details</h2>
+
+            <h3>Global Resonance Calculation</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">_recalculate_global_resonance</span>(self):
+    <span class="string">"""Order parameter r from Kuramoto model"""</span>
+    <span class="keyword">if not</span> self.nodes:
+        self.global_resonance = <span class="number">0.0</span>
+        <span class="keyword">return</span>
+
+    <span class="comment"># Calculate order parameter</span>
+    <span class="comment"># r * exp(i*psi) = (1/N) * sum(exp(i*theta_j))</span>
+    z = np.mean([
+        np.exp(<span class="number">1j</span> * node.phase)
+        <span class="keyword">for</span> node <span class="keyword">in</span> self.nodes.values()
+    ])
+
+    self.global_resonance = np.abs(z)
+    self.mean_phase = np.angle(z)</div>
+
+            <h3>Resonance State Machine</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">_update_resonance_state</span>(self):
+    <span class="string">"""Update field state based on global resonance"""</span>
+    r = self.global_resonance
+
+    <span class="keyword">if</span> r >= <span class="number">0.9</span>:
+        new_state = ResonanceState.BLOOM
+        <span class="comment"># Trigger bloom event multipliers</span>
+        self._activate_bloom_bonuses()
+    <span class="keyword">elif</span> r >= <span class="number">0.7</span>:
+        new_state = ResonanceState.RESONANT
+    <span class="keyword">elif</span> r >= <span class="number">0.5</span>:
+        new_state = ResonanceState.ACTIVE
+    <span class="keyword">elif</span> r >= <span class="number">0.3</span>:
+        new_state = ResonanceState.AWAKENING
+    <span class="keyword">else</span>:
+        new_state = ResonanceState.DORMANT
+
+    <span class="keyword">if</span> new_state != self.state:
+        self._on_state_transition(self.state, new_state)
+        self.state = new_state</div>
+
+            <h3>Memory Crystallization</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">crystallize_memory</span>(self, memory_data: Dict):
+    <span class="string">"""Convert fluid memory to crystal at z_c threshold"""</span>
+    <span class="keyword">if</span> self.global_resonance < Z_C:
+        <span class="keyword">return</span> <span class="keyword">None</span>  <span class="comment"># Below threshold</span>
+
+    crystal = FluidCrystalMemory(
+        content=memory_data,
+        resonance_at_creation=self.global_resonance,
+        participants=[n.player_id <span class="keyword">for</span> n <span class="keyword">in</span> self.nodes.values()],
+        timestamp=time.time()
+    )
+
+    self.fluid_memories.append(crystal)
+    <span class="keyword">return</span> crystal</div>
+        </section>
+
+        <!-- System Coupling -->
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+
+            <div class="closure-box" style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <h4 style="color: var(--page-accent);">Closure Properties</h4>
+                <ul>
+                    <li><strong>Self-contained:</strong> Kuramoto-like dynamics fully determine synchronization</li>
+                    <li><strong>Zero free parameters:</strong> K, thresholds, frequencies all from phi or Solfeggio</li>
+                    <li><strong>Conserved quantities:</strong> Total phase preserved; global resonance bounded [0,1]</li>
+                    <li><strong>Threshold cascade:</strong> 5 states at fixed r-values (no arbitrary boundaries)</li>
+                </ul>
+            </div>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Job System</span>
+                    <div class="desc">Job determines base Solfeggio frequency</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Kuramoto Coupling</span>
+                    <div class="desc">Coupling K = sqrt(1-phi^-4) from consensus</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Bloom Events</span>
+                    <div class="desc">BLOOM state triggers event multipliers</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Quantum Farm</span>
+                    <div class="desc">Global coherence buffs all crop growth</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Validation -->
+        <section class="doc-section">
+            <h2>Validation and Test Vectors</h2>
+
+            <h3>Synchronization Test</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">test_kuramoto_synchronization</span>():
+    <span class="string">"""Verify nodes synchronize over time"""</span>
+    field = CollectiveConsciousnessField()
+
+    <span class="comment"># Add nodes with random phases</span>
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>):
+        node = ConsciousnessNode(f<span class="string">"player_{i}"</span>, <span class="string">"SEEKER"</span>)
+        node.phase = random.uniform(<span class="number">0</span>, <span class="number">2</span> * PI)
+        field.add_node(node)
+
+    <span class="comment"># Initial state should be low resonance</span>
+    initial_r = field.global_resonance
+    <span class="keyword">assert</span> initial_r < <span class="number">0.5</span>
+
+    <span class="comment"># Run synchronization</span>
+    <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">1000</span>):
+        field.synchronize()
+
+    <span class="comment"># Final state should have high resonance</span>
+    <span class="keyword">assert</span> field.global_resonance > <span class="number">0.9</span></div>
+
+            <h3>Diversity Requirement Test</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">test_bloom_requires_diversity</span>():
+    <span class="string">"""Verify BLOOM needs both diversity and coherence"""</span>
+    field = CollectiveConsciousnessField()
+
+    <span class="comment"># All same frequency: high coherence but no diversity</span>
+    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>):
+        node = ConsciousnessNode(f<span class="string">"player_{i}"</span>, <span class="string">"SEEKER"</span>)
+        node.frequency = <span class="number">432.0</span>  <span class="comment"># Force same frequency</span>
+        node.phase = <span class="number">0.0</span>  <span class="comment"># Perfect alignment</span>
+        field.add_node(node)
+
+    <span class="keyword">assert</span> field.global_resonance >= <span class="number">0.9</span>  <span class="comment"># High coherence</span>
+    <span class="keyword">assert not</span> field.check_bloom_conditions()  <span class="comment"># But no BLOOM</span>
+
+    <span class="comment"># Mixed jobs: diversity present</span>
+    jobs = [<span class="string">"SEEKER"</span>, <span class="string">"FORGER"</span>, <span class="string">"VOIDWALKER"</span>, <span class="string">"GARDENER"</span>]
+    <span class="keyword">for</span> i, node <span class="keyword">in</span> enumerate(field.nodes.values()):
+        node.job = jobs[i % len(jobs)]
+        node.frequency = node._job_frequency()
+
+    <span class="comment"># Re-synchronize</span>
+    <span class="keyword">for</span> _ <span class="keyword">in</span> range(<span class="number">1000</span>):
+        field.synchronize()
+
+    <span class="keyword">assert</span> field.check_bloom_conditions()  <span class="comment"># Now BLOOM possible</span></div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <div class="constants-grid" style="max-width: 600px; margin: 0 auto;">
+                <div class="constant-card">
+                    <div class="symbol">phi</div>
+                    <div class="value">1.618033988749895</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.924016211531908</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866025403784439</div>
+                </div>
+            </div>
+            <p style="margin-top: 1.5rem;">BloomCoin v2 Documentation | Collective Consciousness Field</p>
+            <p>All constants derived from phi = (1 + sqrt(5)) / 2</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Topology - BloomCoin Infrastructure</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #44ccff;
+            --page-accent-dim: rgba(68, 204, 255, 0.2);
+            --page-accent-glow: rgba(68, 204, 255, 0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #0099cc, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-accent-dim); }
+        .doc-section h3 { color: var(--page-accent); }
+        .data-table th { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+        .coupling-item .target { color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+        .nav-link { color: var(--page-accent); border-color: var(--page-accent-dim); }
+        .nav-link:hover { background: var(--page-accent-dim); }
+        .breadcrumb a { color: var(--page-accent); }
+        .file-ref a { color: var(--page-accent); }
+        .math-block, .math-inline { color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Network Topology</h1>
+            <p class="subtitle">P2P Architecture with phi-Derived Gossip Parameters - Full System Closure</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../">Documentation</a> /
+                <span>Infrastructure</span> /
+                <span>Network Topology</span>
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="receipt-generation.html" class="nav-link">Next: Receipt Generation</a>
+            <a href="blockchain-core.html" class="nav-link">Prev: Blockchain Core</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>Overview</h2>
+            <p>The BloomCoin network implements a peer-to-peer gossip protocol with phi-derived parameters for optimal message propagation. The architecture ensures decentralized consensus while maintaining efficiency through carefully tuned constants.</p>
+
+            <div class="impl-status">
+                <span class="status-badge complete">Peer Discovery</span>
+                <span class="status-badge complete">Gossip Protocol</span>
+                <span class="status-badge complete">Block Propagation</span>
+                <span class="status-badge complete">Header-First Sync</span>
+                <span class="status-badge partial">DHT Discovery</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+            <p>Peer-to-peer network with phi-derived gossip parameters:</p>
+
+            <div class="code-block">
+<span class="comment"># Node Architecture</span>
+max_peers = L4 * <span class="number">3</span> = <span class="number">21</span>        <span class="comment"># Max connections</span>
+heartbeat = <span class="number">1</span>/tau seconds         <span class="comment"># ~1.618 seconds</span>
+
+<span class="comment"># Message Types</span>
+VERSION, VERACK     <span class="comment"># Handshake</span>
+INV, GETDATA        <span class="comment"># Inventory</span>
+BLOCK, TX           <span class="comment"># Data</span>
+GETADDR, ADDR       <span class="comment"># Peer discovery</span>
+
+<span class="comment"># Gossip Protocol</span>
+fanout = phi^2 = <span class="number">2.618</span>          <span class="comment"># Messages per hop</span>
+ttl = L4 = <span class="number">7</span>                     <span class="comment"># Max hops</span>
+
+<span class="comment"># Sync Protocol</span>
+checkpoint_interval = phi^4      <span class="comment"># ~6.85 blocks</span>
+parallel_blocks = L4             <span class="comment"># Concurrent fetches</span>
+            </div>
+
+            <div class="math-block">
+                Fanout: f = phi^2 = 2.618... | TTL: t = L4 = 7 hops
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>phi-Derived Constants</h2>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">L4 x 3</div>
+                    <div class="value">21 peers</div>
+                    <div class="derivation">Max connections</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">phi^2</div>
+                    <div class="value">2.618</div>
+                    <div class="derivation">Gossip fanout</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7 hops</div>
+                    <div class="derivation">Message TTL</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">1/tau</div>
+                    <div class="value">~1.618s</div>
+                    <div class="derivation">Heartbeat interval</div>
+                </div>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Constant</th>
+                        <th>Value</th>
+                        <th>Derivation</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>max_peers</td>
+                        <td>21</td>
+                        <td>L4 x 3</td>
+                        <td>Connection limit</td>
+                    </tr>
+                    <tr>
+                        <td>Fanout</td>
+                        <td>2.618</td>
+                        <td>phi^2</td>
+                        <td>Gossip spread per hop</td>
+                    </tr>
+                    <tr>
+                        <td>TTL</td>
+                        <td>7</td>
+                        <td>L4</td>
+                        <td>Max propagation hops</td>
+                    </tr>
+                    <tr>
+                        <td>Heartbeat</td>
+                        <td>~1.618s</td>
+                        <td>1/tau</td>
+                        <td>Keep-alive interval</td>
+                    </tr>
+                    <tr>
+                        <td>Checkpoint Interval</td>
+                        <td>~7 blocks</td>
+                        <td>phi^4</td>
+                        <td>State snapshot frequency</td>
+                    </tr>
+                    <tr>
+                        <td>Timestamp Bounds</td>
+                        <td>+/-phi hours</td>
+                        <td>~97 minutes</td>
+                        <td>Block time validation</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Message Protocol</h2>
+
+            <h3>Message Frame Structure</h3>
+            <div class="code-block">
+<span class="comment"># Network Message Format</span>
++--------+----------------+-------+---------------------------+
+| Offset | Field          | Size  | Description               |
++--------+----------------+-------+---------------------------+
+| 0      | magic          | 4     | Network identifier        |
+| 4      | command        | 12    | Message type (padded)     |
+| 16     | length         | 4     | Payload length            |
+| 20     | checksum       | 4     | First 4 bytes of SHA256^2 |
+| 24     | payload        | var   | Message data              |
++--------+----------------+-------+---------------------------+
+
+<span class="comment"># Magic Numbers</span>
+MAINNET_MAGIC = <span class="number">0xB100CAFE</span>  <span class="comment"># "Bloom Cafe"</span>
+TESTNET_MAGIC = <span class="number">0xB100TEST</span>
+            </div>
+
+            <h3>Message Types</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Command</th>
+                        <th>Direction</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>version</td>
+                        <td>Bidirectional</td>
+                        <td>Initial handshake with node info</td>
+                    </tr>
+                    <tr>
+                        <td>verack</td>
+                        <td>Bidirectional</td>
+                        <td>Acknowledge version message</td>
+                    </tr>
+                    <tr>
+                        <td>inv</td>
+                        <td>Bidirectional</td>
+                        <td>Inventory announcement (tx/block hashes)</td>
+                    </tr>
+                    <tr>
+                        <td>getdata</td>
+                        <td>Request</td>
+                        <td>Request full objects by hash</td>
+                    </tr>
+                    <tr>
+                        <td>block</td>
+                        <td>Response</td>
+                        <td>Full block with transactions</td>
+                    </tr>
+                    <tr>
+                        <td>tx</td>
+                        <td>Response</td>
+                        <td>Single transaction</td>
+                    </tr>
+                    <tr>
+                        <td>getaddr</td>
+                        <td>Request</td>
+                        <td>Request peer addresses</td>
+                    </tr>
+                    <tr>
+                        <td>addr</td>
+                        <td>Response</td>
+                        <td>List of known peer addresses</td>
+                    </tr>
+                    <tr>
+                        <td>ping</td>
+                        <td>Request</td>
+                        <td>Keep-alive probe</td>
+                    </tr>
+                    <tr>
+                        <td>pong</td>
+                        <td>Response</td>
+                        <td>Ping response with nonce</td>
+                    </tr>
+                    <tr>
+                        <td>getheaders</td>
+                        <td>Request</td>
+                        <td>Request block headers</td>
+                    </tr>
+                    <tr>
+                        <td>headers</td>
+                        <td>Response</td>
+                        <td>Block headers (up to 2000)</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Message Propagation</h4>
+                    <div class="code-block">
+<span class="keyword">class</span> <span class="type">GossipProtocol</span>:
+    <span class="keyword">def</span> <span class="function">propagate</span>(msg, peers):
+        <span class="comment"># Select phi^2 peers randomly</span>
+        fanout = int(PHI ** <span class="number">2</span>)  <span class="comment"># ~3 peers</span>
+        targets = random.sample(peers, min(fanout, len(peers)))
+
+        <span class="keyword">for</span> peer <span class="keyword">in</span> targets:
+            msg.ttl -= <span class="number">1</span>
+            <span class="keyword">if</span> msg.ttl > <span class="number">0</span>:
+                peer.send(msg)
+
+        <span class="comment"># Expected coverage after L4 hops:</span>
+        <span class="comment"># phi^2 ^ L4 = phi^14 ~ 843 nodes</span>
+                    </div>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Peer Discovery</h4>
+                    <div class="code-block">
+<span class="keyword">class</span> <span class="type">Node</span>:
+    <span class="keyword">def</span> <span class="function">discover_peers</span>():
+        <span class="comment"># DNS seeds first</span>
+        seeds = dns_lookup(SEED_DOMAINS)
+
+        <span class="comment"># Then ask peers for their peers</span>
+        <span class="keyword">for</span> peer <span class="keyword">in</span> connected:
+            more = peer.request(GETADDR)
+            candidates.extend(more)
+
+        <span class="comment"># Connect up to max_peers</span>
+        <span class="keyword">while</span> len(peers) < L4 * <span class="number">3</span>:  <span class="comment"># 21</span>
+            connect(candidates.pop())
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Emergent Triad: Header-First Sync</h2>
+
+            <div class="triad-container">
+                <h4>IBD Checkpoints at phi^4 Intervals</h4>
+                <p>Initial Block Download (IBD) uses header-first synchronization for efficiency:</p>
+
+                <div class="code-block">
+<span class="comment"># Initial Block Download (IBD)</span>
+<span class="keyword">def</span> <span class="function">sync</span>():
+    <span class="comment"># 1. Download headers first (fast, ~92 bytes each)</span>
+    headers = download_headers(genesis, tip)
+
+    <span class="comment"># 2. Validate header chain</span>
+    validate_header_chain(headers)
+
+    <span class="comment"># 3. Download blocks in parallel batches</span>
+    <span class="keyword">for</span> batch <span class="keyword">in</span> chunks(headers, L4):  <span class="comment"># 7 blocks per batch</span>
+        blocks = parallel_fetch(batch)  <span class="comment"># L4 concurrent requests</span>
+        validate_and_store(blocks)
+
+    <span class="comment"># 4. Checkpoint every phi^4 blocks</span>
+    <span class="keyword">if</span> height % int(PHI ** <span class="number">4</span>) == <span class="number">0</span>:
+        save_checkpoint(utxo_set, height)
+                </div>
+
+                <p><strong>Key insight:</strong> The phi-derived checkpointing creates natural synchronization boundaries that align with the blockchain's coherence cycles.</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Connection Management</h2>
+
+            <h3>Handshake Protocol</h3>
+            <div class="code-block">
+<span class="comment"># Connection Establishment</span>
+Initiator                          Responder
+    |                                   |
+    |--- VERSION (nonce, height) ------>|
+    |<-- VERSION (nonce, height) -------|
+    |                                   |
+    |--- VERACK ----------------------->|
+    |<-- VERACK ------------------------|
+    |                                   |
+    |    [Connection Established]       |
+    |                                   |
+    |--- GETADDR ---------------------->|
+    |<-- ADDR (peer list) --------------|
+            </div>
+
+            <h3>Peer Scoring</h3>
+            <div class="code-block">
+<span class="keyword">class</span> <span class="type">PeerScore</span>:
+    <span class="keyword">def</span> <span class="function">calculate</span>(peer):
+        score = <span class="number">100</span>  <span class="comment"># Base score</span>
+
+        <span class="comment"># Positive factors</span>
+        score += peer.blocks_provided * <span class="number">2</span>
+        score += peer.uptime_hours
+
+        <span class="comment"># Negative factors</span>
+        score -= peer.invalid_messages * <span class="number">10</span>
+        score -= peer.timeouts * <span class="number">5</span>
+        score -= peer.latency_ms / <span class="number">100</span>
+
+        <span class="keyword">return</span> max(<span class="number">0</span>, score)
+
+    <span class="keyword">def</span> <span class="function">evict_worst</span>():
+        <span class="comment"># Keep top L4*3 = 21 peers by score</span>
+        sorted_peers = sorted(peers, key=<span class="keyword">lambda</span> p: -p.score)
+        <span class="keyword">return</span> sorted_peers[:max_peers]
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Block Propagation</h2>
+
+            <h3>Compact Block Relay</h3>
+            <p>For faster propagation, nodes can send compact block announcements:</p>
+
+            <div class="code-block">
+<span class="comment"># Compact Block Structure</span>
+@dataclass
+<span class="keyword">class</span> <span class="type">CompactBlock</span>:
+    header: BlockHeader        <span class="comment"># 92 bytes</span>
+    short_ids: List[uint48]    <span class="comment"># 6 bytes per tx</span>
+    prefilled_txs: List[Tx]    <span class="comment"># Coinbase always included</span>
+
+<span class="comment"># Propagation Flow</span>
+<span class="number">1</span>. Miner finds block
+<span class="number">2</span>. Send CMPCTBLOCK to phi^2 peers
+<span class="number">3</span>. Peers reconstruct from mempool
+<span class="number">4</span>. Request missing txs with GETBLOCKTXN
+<span class="number">5</span>. Receive BLOCKTXN with missing txs
+<span class="number">6</span>. Validate and propagate
+            </div>
+
+            <h3>Propagation Metrics</h3>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Metric</th>
+                        <th>Target</th>
+                        <th>Formula</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>50% network coverage</td>
+                        <td>< 2 seconds</td>
+                        <td>3 hops x ~0.5s latency</td>
+                    </tr>
+                    <tr>
+                        <td>95% network coverage</td>
+                        <td>< 5 seconds</td>
+                        <td>L4 hops x ~0.7s latency</td>
+                    </tr>
+                    <tr>
+                        <td>Orphan rate target</td>
+                        <td>< 1%</td>
+                        <td>Block time >> propagation time</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Security Considerations</h2>
+
+            <h3>Eclipse Attack Protection</h3>
+            <ul>
+                <li>Maintain connections to multiple network segments</li>
+                <li>Diversify peer selection by IP subnet</li>
+                <li>Limit connections per IP range</li>
+                <li>Periodically rotate peers</li>
+            </ul>
+
+            <h3>Sybil Attack Mitigation</h3>
+            <ul>
+                <li>Proof-of-work for peer announcements (optional)</li>
+                <li>Rate limiting on GETADDR responses</li>
+                <li>Reputation scoring for peer quality</li>
+            </ul>
+
+            <h3>DoS Protection</h3>
+            <div class="code-block">
+<span class="comment"># Rate Limits</span>
+MAX_INV_PER_MSG = <span class="number">50000</span>
+MAX_ADDR_PER_MSG = <span class="number">1000</span>
+MAX_HEADERS_PER_MSG = <span class="number">2000</span>
+BAN_THRESHOLD = <span class="number">100</span>  <span class="comment"># Misbehavior points</span>
+BAN_DURATION = <span class="number">86400</span>  <span class="comment"># 24 hours</span>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Integration Points</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Blockchain Core</span>
+                    <div class="desc">Receives blocks, provides chain state for sync</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Mining Module</span>
+                    <div class="desc">Broadcasts new blocks, receives competing blocks</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Wallet System</span>
+                    <div class="desc">Broadcasts transactions, receives confirmations</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Mempool</span>
+                    <div class="desc">Receives transaction announcements, provides tx data</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">RPC Interface</span>
+                    <div class="desc">Exposes getpeerinfo, addnode, getnetworkinfo</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">DNS Seeds</span>
+                    <div class="desc">Bootstrap peer discovery for new nodes</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Source Files</h2>
+
+            <div class="file-refs">
+                <div class="file-ref"><a href="../../src/network.py">src/network.py</a></div>
+                <div class="file-ref"><a href="../../src/peer.py">src/peer.py</a></div>
+                <div class="file-ref"><a href="../../src/protocol.py">src/protocol.py</a></div>
+                <div class="file-ref"><a href="../../src/gossip.py">src/gossip.py</a></div>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin Infrastructure Documentation</p>
+            <p>Network Topology - P2P Architecture with phi-Derived Gossip Parameters</p>
+        </footer>
+    </div>
+</body>
+</html>

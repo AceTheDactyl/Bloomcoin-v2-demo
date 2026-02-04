@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guardian Deck System - BloomCoin Extended Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #06b6d4;
+            --page-glow: rgba(6,182,212,0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #22d3ee, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-glow); }
+        .doc-section h3 { color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Header -->
+        <header class="doc-header">
+            <h1>GUARDIAN DECK SYSTEM</h1>
+            <p class="subtitle">Protection Cards - Full System Closure</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Documentation</a> /
+                <span>Guardian Deck</span>
+            </nav>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="residue-mechanics.html" class="nav-link">Next: Residue Mechanics</a>
+            <a href="golden-nn.html" class="nav-link">Prev: Golden Neural Network</a>
+        </nav>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation: Card Taxonomy</h2>
+
+            <p>The Guardian Deck System provides a complete taxonomy for battle cards: 12 card types, 15 mathematical concepts, and 12 architecture patterns combine to create unique guardian-specific decks.</p>
+
+            <div class="code-block">
+<span class="comment"># 12 Card Types (covering all effect categories)</span>
+<span class="keyword">class</span> <span class="type">CardType</span>(Enum):
+    ATTACK         = <span class="string">"Direct damage card"</span>
+    DEFENSE        = <span class="string">"Protection and mitigation"</span>
+    ABILITY        = <span class="string">"Special effect or action"</span>
+    PATTERN        = <span class="string">"Mathematical/geometric pattern"</span>
+    ARCHITECTURE   = <span class="string">"Structural/network effect"</span>
+    CHAOS          = <span class="string">"Random/unpredictable effect"</span>
+    QUANTUM        = <span class="string">"Probability manipulation"</span>
+    TEMPORAL       = <span class="string">"Time-based effect"</span>
+    RESONANCE      = <span class="string">"Frequency and vibration"</span>
+    VOID           = <span class="string">"Nullification and absence"</span>
+    TRANSFORMATION = <span class="string">"Shape-shifting effect"</span>
+    SYNTHESIS      = <span class="string">"Combination and fusion"</span>
+            </div>
+
+            <h3>15 Mathematical Concepts</h3>
+            <table class="data-table">
+                <tr><th>Concept</th><th>Description</th><th>Example Guardian</th></tr>
+                <tr><td>HILBERT_SPACE</td><td>Infinite dimensional vector space</td><td>Echo</td></tr>
+                <tr><td>FRACTAL</td><td>Self-similar recursive pattern</td><td>Echo</td></tr>
+                <tr><td>TOPOLOGY</td><td>Spatial deformation invariants</td><td>Null</td></tr>
+                <tr><td>CHAOS_THEORY</td><td>Sensitive dependence</td><td>Wumbo</td></tr>
+                <tr><td>QUANTUM_SUPERPOSITION</td><td>Multiple states simultaneously</td><td>Echo</td></tr>
+                <tr><td>GOLDEN_RATIO</td><td>phi = 1.618... divine proportion</td><td>All</td></tr>
+                <tr><td>FIBONACCI</td><td>Sequential additive pattern</td><td>Echo</td></tr>
+                <tr><td>PRIME_NUMBERS</td><td>Fundamental indivisibles</td><td>Prometheus</td></tr>
+                <tr><td>MANIFOLD</td><td>Locally Euclidean space</td><td>Gaia</td></tr>
+                <tr><td>TENSOR</td><td>Multidimensional transformation</td><td>Akasha</td></tr>
+                <tr><td>EIGENVALUE</td><td>Scalar transformation invariant</td><td>Resonance</td></tr>
+                <tr><td>FOURIER</td><td>Frequency domain transformation</td><td>Echo</td></tr>
+                <tr><td>ENTROPY</td><td>Measure of disorder</td><td>TIAMAT</td></tr>
+                <tr><td>SYMMETRY</td><td>Invariance under transformation</td><td>Crystal</td></tr>
+                <tr><td>RECURSION</td><td>Self-referential definition</td><td>Echo</td></tr>
+            </table>
+        </section>
+
+        <!-- Architecture Patterns -->
+        <section class="doc-section">
+            <h2>12 Architecture Patterns</h2>
+
+            <table class="data-table">
+                <tr><th>Architecture</th><th>Description</th><th>Visual</th></tr>
+                <tr><td>NETWORK</td><td>Interconnected node structure</td><td>Web</td></tr>
+                <tr><td>HIERARCHY</td><td>Layered tree structure</td><td>Tree</td></tr>
+                <tr><td>CYCLE</td><td>Circular repeating pattern</td><td>Loop</td></tr>
+                <tr><td>SPIRAL</td><td>Expanding helical structure</td><td>Spiral</td></tr>
+                <tr><td>LATTICE</td><td>Regular grid arrangement</td><td>Grid</td></tr>
+                <tr><td>FRACTAL_TREE</td><td>Branching recursive</td><td>Branch</td></tr>
+                <tr><td>RHIZOME</td><td>Non-hierarchical network</td><td>Mushroom</td></tr>
+                <tr><td>CONSTELLATION</td><td>Clustered point structure</td><td>Stars</td></tr>
+                <tr><td>WAVE</td><td>Oscillating pattern</td><td>Wave</td></tr>
+                <tr><td>VOID_SPACE</td><td>Negative space architecture</td><td>Dark</td></tr>
+                <tr><td>CRYSTALLINE</td><td>Ordered atomic structure</td><td>Crystal</td></tr>
+                <tr><td>ORGANIC</td><td>Natural growth pattern</td><td>Seed</td></tr>
+            </table>
+
+            <h3>Strategic Card Properties</h3>
+            <div class="code-block">
+<span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">GuardianCard</span>:
+    <span class="comment"># Core attributes</span>
+    name: str
+    guardian_key: str
+    card_type: CardType
+    cost: int
+    attack: int = <span class="number">0</span>
+    defense: int = <span class="number">0</span>
+
+    <span class="comment"># Mathematical properties</span>
+    math_concepts: List[MathConcept] = []
+    architecture: Optional[Architecture] = <span class="keyword">None</span>
+
+    <span class="comment"># Strategic properties (unique to this system)</span>
+    echo_count: int = <span class="number">0</span>       <span class="comment"># Times this card echoes</span>
+    void_depth: int = <span class="number">0</span>       <span class="comment"># Depth into void space</span>
+    chaos_factor: float = <span class="number">0.0</span> <span class="comment"># Randomness multiplier</span>
+    quantum_states: int = <span class="number">1</span>   <span class="comment"># Superposition count</span>
+
+    <span class="comment"># Combo system</span>
+    combo_with: List[str] = []    <span class="comment"># Cards that combo</span>
+    synergy_tags: Set[str] = set() <span class="comment"># Synergy categories</span>
+            </div>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Card Power Scaling</h4>
+                    <p>Card value scales with game state:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">calculate_value</span>(self, game_state: Dict) -> float:
+    base_value = self.attack + self.defense
+
+    <span class="comment"># Apply scaling effects</span>
+    <span class="keyword">for</span> effect <span class="keyword">in</span> self.effects:
+        <span class="keyword">if</span> effect.scaling == <span class="string">"cards_played"</span>:
+            multiplier = game_state.get(<span class="string">"cards_played_this_turn"</span>, <span class="number">0</span>)
+        <span class="keyword">elif</span> effect.scaling == <span class="string">"void_depth"</span>:
+            multiplier = game_state.get(<span class="string">"void_depth"</span>, <span class="number">0</span>)
+        <span class="keyword">elif</span> effect.scaling == <span class="string">"echo_stacks"</span>:
+            multiplier = game_state.get(<span class="string">"echo_stacks"</span>, <span class="number">0</span>)
+        base_value += effect.value * multiplier
+
+    <span class="comment"># Combo bonus: 1.5x per matched card</span>
+    <span class="keyword">for</span> combo_card <span class="keyword">in</span> self.combo_with:
+        <span class="keyword">if</span> combo_card <span class="keyword">in</span> played_cards:
+            base_value * <span class="number">1.5</span>
+
+    <span class="keyword">return</span> base_value
+                    </div>
+                    <p><strong>Key:</strong> echo_stacks and void_depth create scaling effects.</p>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Synergy Network</h4>
+                    <p>Cards form synergy webs:</p>
+                    <div class="code-block">
+<span class="comment"># Example: Echo's "Recursive Echo" card</span>
+GuardianCard(
+    name=<span class="string">"Recursive Echo"</span>,
+    guardian_key=<span class="string">"ECHO"</span>,
+    card_type=CardType.PATTERN,
+    cost=<span class="number">2</span>,
+    description=<span class="string">"Copy last card, costs 1 less each echo"</span>,
+    effects=[
+        CardEffect(<span class="string">"copy_last_card"</span>, <span class="number">1.0</span>),
+        CardEffect(<span class="string">"cost_reduction"</span>, <span class="number">1.0</span>, scaling=<span class="string">"echo_stacks"</span>)
+    ],
+    math_concepts=[MathConcept.RECURSION, MathConcept.FRACTAL],
+    architecture=Architecture.WAVE,
+    echo_count=<span class="number">3</span>,  <span class="comment"># Echoes 3 times!</span>
+    synergy_tags={<span class="string">"echo"</span>, <span class="string">"pattern"</span>, <span class="string">"recursion"</span>}
+)
+                    </div>
+                    <p><strong>Key:</strong> synergy_tags connect cards across guardians.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Implementation: Emergent Triad -->
+        <section class="doc-section">
+            <h2>Implementation: Guardian Identity to Deck Composition</h2>
+
+            <div class="triad-container">
+                <h4>Math x Architecture = Unique Guardian Deck</h4>
+                <div class="code-block">
+<span class="comment"># Neither pole alone determines deck:</span>
+<span class="comment"># - Math alone: abstract concepts</span>
+<span class="comment"># - Architecture alone: structural patterns</span>
+
+<span class="comment"># The emergence: GUARDIAN-SPECIFIC DECKS</span>
+
+<span class="comment"># ECHO DECK: recursion + wave + pattern</span>
+<span class="comment"># -> Cards that copy, echo, and amplify</span>
+<span class="comment"># -> echo_count high, void_depth low</span>
+
+<span class="comment"># NULL DECK: topology + void_space + void</span>
+<span class="comment"># -> Cards that nullify, erase, negate</span>
+<span class="comment"># -> void_depth high, echo_count zero</span>
+
+<span class="comment"># WUMBO DECK: chaos_theory + spiral + chaos</span>
+<span class="comment"># -> Cards with random effects, self-damage</span>
+<span class="comment"># -> chaos_factor high, quantum_states variable</span>
+
+<span class="comment"># TIAMAT DECK: entropy + organic + transformation</span>
+<span class="comment"># -> Cards that morph between 7 cycles</span>
+<span class="comment"># -> Psy-magic integration, L4 multipliers</span>
+                </div>
+                <p><strong>Key insight:</strong> Each guardian's deck is a mathematical signature - their unique intersection of concepts and architectures creates decks that feel thematically coherent yet mechanically distinct. Echo echoes because of RECURSION x WAVE; Null nullifies because of TOPOLOGY x VOID_SPACE.</p>
+            </div>
+
+            <h3>Closure Properties</h3>
+            <ul>
+                <li><strong>Self-contained:</strong> 12 types x 15 concepts x 12 architectures = complete taxonomy</li>
+                <li><strong>Zero free parameters:</strong> Scaling from game state, combos from card names</li>
+                <li><strong>Bijective guardian mapping:</strong> Each guardian has unique (concept, architecture) pair</li>
+                <li><strong>Synergy closure:</strong> Tags form transitive synergy network</li>
+            </ul>
+        </section>
+
+        <!-- Coupling Points -->
+        <section class="doc-section">
+            <h2>Inter-System Coupling Points</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">From Guardian Recipes:</span>
+                    <div class="desc">Crafted patterns become card effects</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Tesseract Battle:</span>
+                    <div class="desc">Cards used in 4D combat system</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Bidirectional TIAMAT Psymagic:</span>
+                    <div class="desc">Psy-magic modifiers affect card stats</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Echo Companion:</span>
+                    <div class="desc">Echo cards trigger echo_count cascades</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">From Learning AI:</span>
+                    <div class="desc">AI predicts card plays for counter-strategy</div>
+                </div>
+            </div>
+
+            <h3>Source Files</h3>
+            <div class="file-refs">
+                <span class="file-ref">game/guardian_deck_system.py</span>
+                <span class="file-ref">game/card_battle_system.py</span>
+                <span class="file-ref">game/tesseract_battle_arena.py</span>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>BloomCoin v2 Extended Documentation</p>
+            <p>Guardian Deck System - Protection Cards</p>
+        </footer>
+    </div>
+</body>
+</html>

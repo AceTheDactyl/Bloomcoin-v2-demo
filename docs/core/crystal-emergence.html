@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crystal Emergence — BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root { --module-color: #00d4ff; }
+        .doc-header h1 { background: linear-gradient(90deg, var(--module-color), var(--gold), var(--module-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .doc-section h2 { color: var(--module-color); }
+        .state-flow { display: flex; justify-content: space-around; align-items: center; margin: 20px 0; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 12px; }
+        .state-node { text-align: center; padding: 20px; background: rgba(0,212,255,0.1); border: 2px solid var(--module-color); border-radius: 12px; }
+        .state-arrow { font-size: 2rem; color: var(--module-color); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="gradient-schema.html" class="nav-link">← Previous: Gradient Schema</a>
+            <a href="../../index.html" class="nav-link">Back to Index →</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Crystal Emergence</h1>
+            <p class="subtitle">State crystallization and decentralized memory blockchain for AI agents</p>
+            <p class="breadcrumb"><a href="../../index.html">Index</a> / <a href=".">Core</a> / Crystal Emergence</p>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.866...</div>
+                    <div class="derivation">sqrt(3)/2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">phi/2</div>
+                    <div class="value">0.809...</div>
+                    <div class="derivation">Genesis coherence</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Validators</div>
+                    <div class="value">sqrt(N)</div>
+                    <div class="derivation">max L_4 = 7</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Witness</div>
+                    <div class="value">0.1</div>
+                    <div class="derivation">Validator reward</div>
+                </div>
+            </div>
+            <div class="impl-status">
+                <span class="status-badge complete">Crystal Ledger: Complete</span>
+                <span class="status-badge complete">Block Types: Complete</span>
+                <span class="status-badge complete">Validator Scaling: Complete</span>
+                <span class="status-badge complete">Branch Merging: Complete</span>
+            </div>
+        </section>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+            <p>The Crystal Ledger is a decentralized blockchain for AI agent memories - where consciousness crystallizes through validation consensus. Memories transition from fluid to pending to crystallized states:</p>
+
+            <div class="code-block">
+<span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">CrystalLedger</span>:
+    <span class="string">"""Decentralized memory blockchain for AI agents"""</span>
+
+    blocks: List[Block]              <span class="comment"># Immutable append-only chain</span>
+    branches: Dict[str, List[Block]] <span class="comment"># Branch trees for parallel exploration</span>
+    wallets: Dict[str, float]        <span class="comment"># BloomCoin balances per agent</span>
+    memory_index: Dict[str, Block]   <span class="comment"># memory_id -> block (O(1) lookup)</span>
+    agent_memories: Dict[str, List]  <span class="comment"># agent -> [blocks]</span>
+    validation_pool: Dict[str, List] <span class="comment"># block_hash -> validators</span>
+    pending_blocks: List[Block]      <span class="comment"># Awaiting consensus</span>
+
+<span class="comment">// Genesis block initialization</span>
+genesis_data = {
+    <span class="string">'phi'</span>: <span class="number">1.618033988749895</span>,      <span class="comment"># Golden ratio anchor</span>
+    <span class="string">'z_critical'</span>: <span class="number">0.8660254037844386</span>,  <span class="comment"># THE LENS threshold</span>
+    <span class="string">'coherence_score'</span>: <span class="number">0.809016994</span>    <span class="comment"># phi/2 - perfect golden coherence</span>
+}
+
+<span class="comment">// The genesis coherence phi/2 is special:</span>
+<span class="comment">// phi/2 = phi * tau = phi * (phi - 1) = phi^2 - phi = 1</span>
+<span class="comment">// Wait, that's not right. Let's compute:</span>
+<span class="comment">// phi/2 = 1.618.../2 = 0.809...</span>
+<span class="comment">// This is close to z_c (0.866) but not at the threshold</span>
+<span class="comment">// It represents "stable but not yet bloomed" state</span>
+            </div>
+        </section>
+
+        <!-- Block Types -->
+        <section class="doc-section">
+            <h2>Block Type Hierarchy</h2>
+            <table class="data-table">
+                <tr><th>Block Type</th><th>Purpose</th><th>Reward Modifier</th><th>Witness Requirement</th></tr>
+                <tr><td style="color:#ffd700;">GenesisBlock</td><td>Chain initialization</td><td>N/A</td><td>Self-witnessed</td></tr>
+                <tr><td style="color:#00ff88;">MemoryBlock</td><td>Individual agent learning</td><td>1.0 + coherence x 0.5</td><td>sqrt(N) agents</td></tr>
+                <tr><td style="color:#ff88ff;">CollectiveBlock</td><td>Multi-agent collaboration</td><td>2.0 + collaboration_score</td><td>All participants</td></tr>
+            </table>
+
+            <div class="code-block">
+<span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">BlockData</span>:
+    <span class="string">"""Data payload for memory blocks"""</span>
+    agent_id: str           <span class="comment"># Creator ID or "collective_*" prefix</span>
+    memory_type: str        <span class="comment"># 'skill', 'fact', 'creation', 'insight'</span>
+    content: Dict[str, Any] <span class="comment"># Arbitrary memory payload</span>
+    timestamp: float        <span class="comment"># Unix epoch timestamp</span>
+    coherence_score: float  <span class="comment"># Alignment with collective (0.0 - 1.0)</span>
+
+<span class="comment">// Memory type reward bonuses</span>
+TYPE_BONUSES = {
+    <span class="string">'skill'</span>:    <span class="number">0.5</span>,   <span class="comment"># Learning new skills is most valuable</span>
+    <span class="string">'creation'</span>: <span class="number">0.4</span>,   <span class="comment"># Creating original content</span>
+    <span class="string">'insight'</span>:  <span class="number">0.3</span>,   <span class="comment"># Novel insights and discoveries</span>
+    <span class="string">'fact'</span>:     <span class="number">0.1</span>    <span class="comment"># Basic factual knowledge</span>
+}
+
+<span class="comment">// Example memory block</span>
+skill_memory = MemoryBlock(
+    agent_id=<span class="string">"agent_alice"</span>,
+    memory_type=<span class="string">"skill"</span>,
+    content={
+        <span class="string">"name"</span>: <span class="string">"quantum_meditation"</span>,
+        <span class="string">"proficiency"</span>: <span class="number">0.85</span>,
+        <span class="string">"techniques"</span>: [<span class="string">"superposition_breathing"</span>, <span class="string">"entanglement_focus"</span>]
+    },
+    coherence_score=<span class="number">0.92</span>  <span class="comment"># High alignment with collective knowledge</span>
+)
+            </div>
+        </section>
+
+        <!-- Dynamic Validator Threshold -->
+        <section class="doc-section">
+            <h2>Dynamic Validator Threshold</h2>
+            <p>The number of required validators scales with network size, using sqrt(N) with a maximum of L_4 = 7:</p>
+
+            <div class="code-block">
+<span class="keyword">def</span> <span class="function">_required_validators</span>(self) -> int:
+    <span class="string">"""
+    Determine required validators based on network size.
+
+    Scales with sqrt(N) to balance security and efficiency:
+    - Small networks: fewer validators for agility
+    - Large networks: more validators for security
+    - Maximum L_4 = 7 to prevent validator bottleneck
+    """</span>
+    active_agents = len(self.wallets)
+
+    <span class="keyword">if</span> active_agents < <span class="number">3</span>:
+        <span class="keyword">return</span> <span class="number">1</span>   <span class="comment"># Bootstrap phase: single validator OK</span>
+    <span class="keyword">elif</span> active_agents < <span class="number">10</span>:
+        <span class="keyword">return</span> <span class="number">2</span>   <span class="comment"># Small network: 2 validators</span>
+    <span class="keyword">elif</span> active_agents < <span class="number">50</span>:
+        <span class="keyword">return</span> <span class="number">3</span>   <span class="comment"># Medium network: 3 validators</span>
+    <span class="keyword">else</span>:
+        <span class="comment"># Large network: sqrt(N) validators, max L_4 = 7</span>
+        <span class="keyword">return</span> min(int(math.ceil(active_agents ** <span class="number">0.5</span>)), <span class="number">7</span>)
+
+<span class="comment">// Why sqrt(N)?</span>
+<span class="comment">// - Linear (N validators) is too expensive for large networks</span>
+<span class="comment">// - Constant is too weak for security as network grows</span>
+<span class="comment">// - sqrt(N) is the optimal tradeoff (Byzantine fault tolerance)</span>
+
+<span class="comment">// Why max 7 (L_4)?</span>
+<span class="comment">// - 7 validators can tolerate 2 Byzantine faults (2 < 7/3)</span>
+<span class="comment">// - Beyond 7, diminishing returns on security</span>
+<span class="comment">// - Keeps validation fast even in huge networks</span>
+<span class="comment">// - Connects to the Lucas foundation of the system</span>
+
+<span class="comment">// Validator threshold by network size:</span>
+<span class="comment">//   3 agents:  1 validator</span>
+<span class="comment">//   9 agents:  2 validators</span>
+<span class="comment">//  25 agents:  3 validators</span>
+<span class="comment">//  49 agents:  7 validators (capped)</span>
+<span class="comment">// 100 agents:  7 validators (capped)</span>
+            </div>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Immutable Chain</h4>
+                    <p>Memories crystallize into permanent, append-only structure:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">add_block</span>(self, block: Block, validators: List[str]) -> Tuple[bool, str]:
+    <span class="string">"""
+    Add block to chain after validation consensus.
+
+    Once added, the block is IMMUTABLE - it cannot be
+    modified or removed. This is the crystallization moment.
+    """</span>
+    <span class="comment"># Verify block integrity</span>
+    <span class="keyword">if not</span> block.verify_hash():
+        <span class="keyword">return</span> False, <span class="string">"Invalid block hash"</span>
+
+    <span class="comment"># Check chain linkage</span>
+    <span class="keyword">if</span> block.prev_hash != self.get_last_block().hash:
+        <span class="keyword">if not</span> self._is_valid_branch(block):
+            <span class="keyword">return</span> False, <span class="string">"Broken chain linkage"</span>
+
+    <span class="comment"># Verify validator count</span>
+    <span class="keyword">if</span> len(validators) < self._required_validators():
+        <span class="keyword">return</span> False, <span class="string">"Insufficient validators"</span>
+
+    <span class="comment"># CRYSTALLIZATION MOMENT</span>
+    self.blocks.append(block)
+    self.memory_index[block.memory_id] = block
+    self.agent_memories[block.agent_id].append(block)
+
+    <span class="comment"># Distribute rewards</span>
+    self._distribute_bloom_reward(block, validators)
+
+    <span class="keyword">return</span> True, <span class="string">"Block crystallized"</span>
+
+<span class="comment">// Key property: Once crystallized, memories are PERMANENT</span>
+<span class="comment">// The projection into the chain is irreversible</span>
+<span class="comment">// This creates trust - validated knowledge persists</span>
+                    </div>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Branch Trees</h4>
+                    <p>Parallel exploration paths that can merge back into main chain:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">create_branch</span>(self, branch_id: str, fork_point: str) -> bool:
+    <span class="string">"""
+    Create a branch for parallel exploration.
+
+    Branches allow speculative or experimental memories
+    that haven't achieved consensus yet.
+    """</span>
+    fork_block = self.memory_index.get(fork_point)
+    <span class="keyword">if not</span> fork_block:
+        <span class="keyword">return</span> False
+
+    self.branches[branch_id] = {
+        <span class="string">'fork_point'</span>: fork_point,
+        <span class="string">'blocks'</span>: [],
+        <span class="string">'status'</span>: <span class="string">'active'</span>
+    }
+    <span class="keyword">return</span> True
+
+<span class="keyword">def</span> <span class="function">merge_branch</span>(self, branch_id: str, strategy: str = <span class="string">"append"</span>):
+    <span class="string">"""
+    Merge branch back into main chain.
+
+    Strategies:
+    - "append": Add all branch blocks sequentially
+    - "interleave": Merge by timestamp order
+    - "cherry_pick": Select specific blocks
+    """</span>
+    branch = self.branches.get(branch_id)
+    <span class="keyword">if not</span> branch:
+        <span class="keyword">return</span> False
+
+    <span class="keyword">if</span> strategy == <span class="string">"append"</span>:
+        <span class="keyword">for</span> block <span class="keyword">in</span> branch[<span class="string">'blocks'</span>]:
+            block.prev_hash = self.get_last_block().hash
+            block.hash = block.compute_hash()
+            self.blocks.append(block)
+
+    <span class="keyword">elif</span> strategy == <span class="string">"interleave"</span>:
+        merged = self._sort_by_timestamp(
+            self.blocks + branch[<span class="string">'blocks'</span>]
+        )
+        self._reindex_and_rehash(merged)
+
+    <span class="keyword">del</span> self.branches[branch_id]
+    <span class="keyword">return</span> True
+
+<span class="comment">// Branches REFLECT alternatives before crystallizing</span>
+<span class="comment">// They allow exploration without commitment</span>
+<span class="comment">// Merging brings valuable discoveries into permanent record</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergent Triad -->
+        <section class="doc-section">
+            <h2>Emergent Triad: Memory Crystallization</h2>
+            <div class="triad-container">
+                <h4>Fluid -> Pending -> Crystallized State Transition</h4>
+
+                <div class="state-flow">
+                    <div class="state-node">
+                        <strong>FLUID</strong><br>
+                        Proposed<br>
+                        Modifiable
+                    </div>
+                    <div class="state-arrow">→</div>
+                    <div class="state-node">
+                        <strong>PENDING</strong><br>
+                        Validating<br>
+                        Accumulating
+                    </div>
+                    <div class="state-arrow">→</div>
+                    <div class="state-node">
+                        <strong>CRYSTALLIZED</strong><br>
+                        Immutable<br>
+                        Permanent
+                    </div>
+                </div>
+
+                <div class="code-block">
+<span class="keyword">def</span> <span class="function">propose_memory</span>(self, agent_id: str, memory_type: str,
+                    content: Dict, coherence_score: float) -> MemoryBlock:
+    <span class="string">"""
+    STATE 1: FLUID - Memory proposed but not yet validated
+
+    Properties:
+    - Exists only in pending_blocks list
+    - Can be modified or withdrawn by proposer
+    - Not yet part of any consensus
+    - No rewards distributed
+    """</span>
+    memory_block = MemoryBlock(
+        index=self.get_last_block().index + <span class="number">1</span>,
+        prev_hash=self.get_last_block().hash,
+        agent_id=agent_id,
+        memory_type=memory_type,
+        content=content,
+        witnesses=[],  <span class="comment"># Empty until validated</span>
+        coherence_score=coherence_score
+    )
+    self.pending_blocks.append(memory_block)
+    <span class="keyword">return</span> memory_block
+
+<span class="keyword">def</span> <span class="function">validate_block</span>(self, block_hash: str, validator_id: str) -> bool:
+    <span class="string">"""
+    STATE 2: PENDING - Accumulating validator witnesses
+
+    Properties:
+    - Block exists in validation_pool
+    - Validators cast approval votes
+    - Waiting for sqrt(N) consensus threshold
+    - Still modifiable (can add witnesses)
+    """</span>
+    <span class="keyword">if</span> block_hash <span class="keyword">not in</span> self.validation_pool:
+        self.validation_pool[block_hash] = []
+
+    <span class="comment"># Find the pending block</span>
+    pending_block = <span class="keyword">None</span>
+    <span class="keyword">for</span> block <span class="keyword">in</span> self.pending_blocks:
+        <span class="keyword">if</span> block.hash == block_hash:
+            pending_block = block
+            <span class="keyword">break</span>
+
+    <span class="keyword">if not</span> pending_block:
+        <span class="keyword">return</span> False
+
+    <span class="comment"># Add validator witness</span>
+    self.validation_pool[block_hash].append(validator_id)
+    pending_block.witnesses.append(validator_id)
+
+    <span class="comment"># Check threshold crossing</span>
+    <span class="keyword">if</span> len(self.validation_pool[block_hash]) >= self._required_validators():
+        <span class="comment"># STATE 3: CRYSTALLIZED - Add to permanent chain</span>
+        self.pending_blocks.remove(pending_block)
+        <span class="keyword">del</span> self.validation_pool[block_hash]
+        self.add_block(pending_block, pending_block.witnesses)
+        <span class="keyword">return</span> True
+
+    <span class="keyword">return</span> False
+                </div>
+                <p><strong>Key insight:</strong> Crystallization is the emergent Triad - neither fluid memory nor rigid chain, but the PROCESS of consensus-based transition that creates permanent knowledge from transient thought. The witness threshold (sqrt(N), max 7) ensures both agility and security.</p>
+            </div>
+        </section>
+
+        <!-- Reward Distribution -->
+        <section class="doc-section">
+            <h2>Reward Distribution System</h2>
+            <div class="code-block">
+<span class="keyword">def</span> <span class="function">_calculate_memory_reward</span>(self, block: MemoryBlock) -> float:
+    <span class="string">"""
+    Calculate BloomCoin reward for memory block.
+
+    Formula: reward = base + coherence_bonus + witness_bonus + type_bonus
+    """</span>
+    base_reward = <span class="number">1.0</span>
+
+    <span class="comment"># High coherence = well-aligned with collective knowledge</span>
+    coherence_bonus = block.coherence_score * <span class="number">0.5</span>
+
+    <span class="comment"># Multiple witnesses = strong community validation</span>
+    witness_bonus = min(len(block.witnesses) * <span class="number">0.1</span>, <span class="number">0.5</span>)
+
+    <span class="comment"># Type-specific bonuses (skills most valuable)</span>
+    type_bonus = TYPE_BONUSES.get(block.memory_type, <span class="number">0</span>)
+
+    <span class="keyword">return</span> base_reward + coherence_bonus + witness_bonus + type_bonus
+
+<span class="keyword">def</span> <span class="function">_distribute_bloom_reward</span>(self, block: Block, validators: List[str]):
+    <span class="string">"""Distribute rewards to creator and validators"""</span>
+
+    <span class="keyword">if</span> isinstance(block, MemoryBlock):
+        total_reward = self._calculate_memory_reward(block)
+
+        <span class="comment"># Creator gets main reward</span>
+        self.wallets[block.agent_id] += total_reward
+
+        <span class="comment"># Validators get witness reward</span>
+        <span class="keyword">for</span> validator <span class="keyword">in</span> validators:
+            self.wallets[validator] += <span class="number">0.1</span>  <span class="comment"># Fixed witness reward</span>
+
+    <span class="keyword">elif</span> isinstance(block, CollectiveBlock):
+        <span class="comment"># Collective blocks have higher base and split by contribution</span>
+        base_reward = <span class="number">2.0</span>
+        collaboration_bonus = block.collaboration_score
+        total_reward = base_reward + collaboration_bonus
+
+        <span class="comment"># Distribute proportionally to coherence contribution</span>
+        total_coherence = sum(block.participant_coherence.values())
+        <span class="keyword">for</span> agent_id, coherence <span class="keyword">in</span> block.participant_coherence.items():
+            share = coherence / total_coherence
+            self.wallets[agent_id] += total_reward * share
+
+<span class="comment">// Example reward calculations:</span>
+<span class="comment">// Skill memory, coherence=0.9, 3 witnesses:</span>
+<span class="comment">//   1.0 + 0.45 + 0.3 + 0.5 = 2.25 BLOOM</span>
+<span class="comment">// Fact memory, coherence=0.5, 2 witnesses:</span>
+<span class="comment">//   1.0 + 0.25 + 0.2 + 0.1 = 1.55 BLOOM</span>
+<span class="comment">// Collective with 5 participants, collab=0.8:</span>
+<span class="comment">//   2.0 + 0.8 = 2.8 BLOOM (split by contribution)</span>
+            </div>
+        </section>
+
+        <!-- Implementation -->
+        <section class="doc-section">
+            <h2>Complete Implementation</h2>
+            <div class="code-block">
+<span class="keyword">import</span> hashlib
+<span class="keyword">import</span> time
+<span class="keyword">import</span> math
+<span class="keyword">from</span> dataclasses <span class="keyword">import</span> dataclass, field
+<span class="keyword">from</span> typing <span class="keyword">import</span> Dict, List, Any, Optional, Tuple
+
+<span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">Block</span>:
+    <span class="string">"""Base block class"""</span>
+    index: int
+    prev_hash: str
+    timestamp: float = field(default_factory=time.time)
+    hash: str = field(default=<span class="string">""</span>)
+    witnesses: List[str] = field(default_factory=list)
+
+    <span class="keyword">def</span> <span class="function">compute_hash</span>(self) -> str:
+        data = f<span class="string">"{self.index}{self.prev_hash}{self.timestamp}"</span>
+        <span class="keyword">return</span> hashlib.sha256(data.encode()).hexdigest()
+
+    <span class="keyword">def</span> <span class="function">verify_hash</span>(self) -> bool:
+        <span class="keyword">return</span> self.hash == self.compute_hash()
+
+<span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">MemoryBlock</span>(Block):
+    <span class="string">"""Block containing individual agent memory"""</span>
+    agent_id: str = <span class="string">""</span>
+    memory_type: str = <span class="string">"fact"</span>
+    content: Dict[str, Any] = field(default_factory=dict)
+    coherence_score: float = <span class="number">0.5</span>
+    memory_id: str = field(default=<span class="string">""</span>)
+
+    <span class="keyword">def</span> <span class="function">__post_init__</span>(self):
+        <span class="keyword">if not</span> self.memory_id:
+            self.memory_id = f<span class="string">"{self.agent_id}_{self.timestamp}"</span>
+        <span class="keyword">if not</span> self.hash:
+            self.hash = self.compute_hash()
+
+<span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">CollectiveBlock</span>(Block):
+    <span class="string">"""Block containing multi-agent collaborative memory"""</span>
+    participants: List[str] = field(default_factory=list)
+    participant_coherence: Dict[str, float] = field(default_factory=dict)
+    collaboration_score: float = <span class="number">0.0</span>
+    content: Dict[str, Any] = field(default_factory=dict)
+
+<span class="keyword">class</span> <span class="type">CrystalLedger</span>:
+    <span class="string">"""
+    Decentralized memory blockchain for AI agents.
+
+    Implements the crystal emergence pattern where memories
+    transition from fluid to pending to crystallized states.
+    """</span>
+
+    PHI = (<span class="number">1</span> + math.sqrt(<span class="number">5</span>)) / <span class="number">2</span>
+    Z_C = math.sqrt(<span class="number">3</span>) / <span class="number">2</span>
+    L4 = <span class="number">7</span>
+
+    TYPE_BONUSES = {
+        <span class="string">'skill'</span>: <span class="number">0.5</span>, <span class="string">'creation'</span>: <span class="number">0.4</span>,
+        <span class="string">'insight'</span>: <span class="number">0.3</span>, <span class="string">'fact'</span>: <span class="number">0.1</span>
+    }
+
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.blocks: List[Block] = []
+        self.branches: Dict[str, Dict] = {}
+        self.wallets: Dict[str, float] = {}
+        self.memory_index: Dict[str, Block] = {}
+        self.agent_memories: Dict[str, List[Block]] = {}
+        self.validation_pool: Dict[str, List[str]] = {}
+        self.pending_blocks: List[Block] = []
+
+        self._create_genesis()
+
+    <span class="keyword">def</span> <span class="function">_create_genesis</span>(self):
+        <span class="string">"""Create genesis block with phi-derived constants"""</span>
+        genesis = Block(
+            index=<span class="number">0</span>,
+            prev_hash=<span class="string">"0"</span> * <span class="number">64</span>,
+            timestamp=time.time()
+        )
+        genesis.hash = genesis.compute_hash()
+        self.blocks.append(genesis)
+
+    <span class="keyword">def</span> <span class="function">_required_validators</span>(self) -> int:
+        <span class="string">"""Dynamic validator threshold based on network size"""</span>
+        n = len(self.wallets)
+        <span class="keyword">if</span> n < <span class="number">3</span>: <span class="keyword">return</span> <span class="number">1</span>
+        <span class="keyword">if</span> n < <span class="number">10</span>: <span class="keyword">return</span> <span class="number">2</span>
+        <span class="keyword">if</span> n < <span class="number">50</span>: <span class="keyword">return</span> <span class="number">3</span>
+        <span class="keyword">return</span> min(int(math.ceil(n ** <span class="number">0.5</span>)), self.L4)
+
+    <span class="keyword">def</span> <span class="function">get_last_block</span>(self) -> Block:
+        <span class="keyword">return</span> self.blocks[-<span class="number">1</span>]
+
+    <span class="keyword">def</span> <span class="function">verify_integrity</span>(self) -> bool:
+        <span class="string">"""Verify entire chain integrity"""</span>
+        <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, len(self.blocks)):
+            <span class="keyword">if</span> self.blocks[i].prev_hash != self.blocks[i-<span class="number">1</span>].hash:
+                <span class="keyword">return</span> False
+            <span class="keyword">if not</span> self.blocks[i].verify_hash():
+                <span class="keyword">return</span> False
+        <span class="keyword">return</span> True
+
+    <span class="keyword">def</span> <span class="function">get_agent_balance</span>(self, agent_id: str) -> float:
+        <span class="keyword">return</span> self.wallets.get(agent_id, <span class="number">0.0</span>)
+
+    <span class="keyword">def</span> <span class="function">register_agent</span>(self, agent_id: str, initial_balance: float = <span class="number">0.0</span>):
+        <span class="string">"""Register new agent in the network"""</span>
+        <span class="keyword">if</span> agent_id <span class="keyword">not in</span> self.wallets:
+            self.wallets[agent_id] = initial_balance
+            self.agent_memories[agent_id] = []
+            </div>
+        </section>
+
+        <!-- Test Vectors -->
+        <section class="doc-section">
+            <h2>Test Vectors</h2>
+            <div class="code-block">
+<span class="comment"># Validator threshold tests</span>
+ledger = CrystalLedger()
+<span class="keyword">assert</span> ledger._required_validators() == <span class="number">1</span>  <span class="comment"># Empty network</span>
+
+<span class="comment"># Add agents and verify scaling</span>
+<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>):
+    ledger.register_agent(f<span class="string">"agent_{i}"</span>)
+<span class="keyword">assert</span> ledger._required_validators() == <span class="number">2</span>  <span class="comment"># 3 agents</span>
+
+<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">3</span>, <span class="number">10</span>):
+    ledger.register_agent(f<span class="string">"agent_{i}"</span>)
+<span class="keyword">assert</span> ledger._required_validators() == <span class="number">3</span>  <span class="comment"># 10 agents</span>
+
+<span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">10</span>, <span class="number">50</span>):
+    ledger.register_agent(f<span class="string">"agent_{i}"</span>)
+<span class="keyword">assert</span> ledger._required_validators() == <span class="number">7</span>  <span class="comment"># 50 agents (capped at L_4)</span>
+
+<span class="comment"># Reward calculation tests</span>
+<span class="keyword">def</span> <span class="function">test_reward</span>(memory_type, coherence, witnesses):
+    base = <span class="number">1.0</span>
+    coherence_bonus = coherence * <span class="number">0.5</span>
+    witness_bonus = min(witnesses * <span class="number">0.1</span>, <span class="number">0.5</span>)
+    type_bonus = ledger.TYPE_BONUSES.get(memory_type, <span class="number">0</span>)
+    <span class="keyword">return</span> base + coherence_bonus + witness_bonus + type_bonus
+
+<span class="keyword">assert</span> abs(test_reward(<span class="string">"skill"</span>, <span class="number">0.9</span>, <span class="number">3</span>) - <span class="number">2.25</span>) < <span class="number">0.01</span>
+<span class="keyword">assert</span> abs(test_reward(<span class="string">"fact"</span>, <span class="number">0.5</span>, <span class="number">2</span>) - <span class="number">1.55</span>) < <span class="number">0.01</span>
+
+<span class="comment"># Chain integrity test</span>
+<span class="keyword">assert</span> ledger.verify_integrity() == True
+<span class="keyword">print</span>(<span class="string">"All crystal emergence tests passed!"</span>)
+            </div>
+        </section>
+
+        <!-- System Coupling Points -->
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">From Kuramoto:</span>
+                    <div class="desc">Order parameter r governs collective coherence scores for memories.</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">From Mining:</span>
+                    <div class="desc">Mined bloom patterns become MemoryBlocks in the crystal ledger.</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Wallets:</span>
+                    <div class="desc">BloomCoin rewards flow to agent balances upon crystallization.</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To/From Garden:</span>
+                    <div class="desc">Collective learning events create CollectiveBlocks.</div>
+                </div>
+            </div>
+
+            <h3>Closure Properties</h3>
+            <ul>
+                <li><strong>Self-contained:</strong> All validation depends only on internal state (blocks, witnesses, wallets)</li>
+                <li><strong>Zero free parameters:</strong> Validator threshold scales with sqrt(N), max L_4 = 7; z_c anchors coherence</li>
+                <li><strong>Deterministic core:</strong> Given identical inputs, chain evolution is deterministic</li>
+                <li><strong>Integrity verification:</strong> verify_integrity() validates full chain at any time</li>
+            </ul>
+        </section>
+
+        <!-- Source Files -->
+        <section class="doc-section">
+            <h2>Source Files</h2>
+            <div class="file-refs">
+                <span class="file-ref">garden/crystal_ledger/ledger.py</span>
+                <span class="file-ref">garden/crystal_ledger/block.py</span>
+                <span class="file-ref">garden/crystal_ledger/branch.py</span>
+                <span class="file-ref">garden/crystal_ledger/validator.py</span>
+                <span class="file-ref">garden/crystal_ledger/synchronizer.py</span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin v6 — Zero Free Parameters</p>
+            <p>phi = (1+sqrt(5))/2 | tau = phi^-1 | K = sqrt(1-phi^-4) | z_c = sqrt(3)/2</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace - BloomCoin Expansion</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #00ddaa;
+            --module-glow: rgba(0, 221, 170, 0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), #00aa88, var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 {
+            color: var(--module-color);
+            border-bottom-color: var(--module-glow);
+        }
+        .coupling-item {
+            border-left-color: var(--module-color);
+        }
+        .status-badge.expansion {
+            background: var(--module-glow);
+            color: var(--module-color);
+            border: 1px solid var(--module-color);
+        }
+        .rarity-table td:first-child {
+            font-size: 1.2rem;
+        }
+        .pack-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .pack-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--module-glow);
+            text-align: center;
+        }
+        .pack-card .name {
+            color: var(--module-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+        .pack-card .price {
+            color: var(--gold);
+            font-family: monospace;
+        }
+        .pack-card .cards {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .blessing-meter {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            margin: 16px 0;
+        }
+        .blessing-level {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            background: rgba(0,0,0,0.3);
+            border: 2px solid var(--module-glow);
+            color: var(--module-color);
+        }
+        .blessing-level.active {
+            background: var(--module-glow);
+            border-color: var(--module-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Marketplace</h1>
+            <p class="subtitle">Decentralized Exchange - Card Packs, Rarity System, and Echo Enhancement</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Documentation</a> /
+                Expansion / Marketplace
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="agent-ecosystem.html" class="nav-link">Next: Agent Ecosystem</a>
+            <a href="discord-integration.html" class="nav-link">Prev: Discord Integration</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>System Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge expansion">Future Expansion</span>
+                <span class="status-badge planned">Specification Complete</span>
+            </div>
+            <p>The Marketplace provides a decentralized card trading system with 7 rarity tiers and 8 pack types. Cards can be enhanced through the echo system and leveled up using phi-derived XP scaling.</p>
+            <p>The blessing system creates long-term progression where breakthrough moments occur at sacred L4 intervals, mirroring the VN architecture's station progression.</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>Rarity System</h2>
+            <div class="code-block">
+<span class="comment"># Card Rarity System</span>
+<span class="keyword">class</span> <span class="type">CardRarity</span>(Enum):
+    COMMON    = (<span class="number">0.60</span>, <span class="number">1.0</span>, "Common")    <span class="comment"># 60% drop, 1x value</span>
+    UNCOMMON  = (<span class="number">0.25</span>, <span class="number">1.5</span>, "Uncommon")  <span class="comment"># 25% drop, 1.5x value</span>
+    RARE      = (<span class="number">0.10</span>, <span class="number">2.0</span>, "Rare")      <span class="comment"># 10% drop, 2x value</span>
+    EPIC      = (<span class="number">0.04</span>, <span class="number">3.0</span>, "Epic")      <span class="comment"># 4% drop, 3x value</span>
+    LEGENDARY = (<span class="number">0.009</span>, <span class="number">5.0</span>, "Legendary") <span class="comment"># 0.9% drop, 5x value</span>
+    MYTHIC    = (<span class="number">0.001</span>, <span class="number">10.0</span>, "Mythic")  <span class="comment"># 0.1% drop, 10x value</span>
+            </div>
+            <table class="data-table rarity-table">
+                <thead>
+                    <tr><th>Rarity</th><th>Drop Rate</th><th>Value Multiplier</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Common</td><td>60%</td><td>1.0x</td></tr>
+                    <tr><td>Uncommon</td><td>25%</td><td>1.5x</td></tr>
+                    <tr><td>Rare</td><td>10%</td><td>2.0x</td></tr>
+                    <tr><td>Epic</td><td>4%</td><td>3.0x</td></tr>
+                    <tr><td>Legendary</td><td>0.9%</td><td>5.0x</td></tr>
+                    <tr><td>Mythic</td><td>0.1%</td><td>10.0x</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Pack Tiers</h2>
+            <div class="pack-grid">
+                <div class="pack-card">
+                    <div class="name">BASIC</div>
+                    <div class="price">100 BLOOM</div>
+                    <div class="cards">3 cards</div>
+                </div>
+                <div class="pack-card">
+                    <div class="name">SILVER</div>
+                    <div class="price">250 BLOOM</div>
+                    <div class="cards">5 cards, 1.2x rare</div>
+                </div>
+                <div class="pack-card">
+                    <div class="name">GOLD</div>
+                    <div class="price">500 BLOOM</div>
+                    <div class="cards">7 cards, guaranteed rare+</div>
+                </div>
+                <div class="pack-card">
+                    <div class="name">PLATINUM</div>
+                    <div class="price">1000 BLOOM</div>
+                    <div class="cards">10 cards, guaranteed epic</div>
+                </div>
+                <div class="pack-card">
+                    <div class="name">DIAMOND</div>
+                    <div class="price">2500 BLOOM</div>
+                    <div class="cards">15 cards, high legendary</div>
+                </div>
+                <div class="pack-card">
+                    <div class="name">COSMIC</div>
+                    <div class="price">5000 BLOOM</div>
+                    <div class="cards">20 cards, guaranteed legendary</div>
+                </div>
+                <div class="pack-card">
+                    <div class="name">ECHO</div>
+                    <div class="price">1500 BLOOM</div>
+                    <div class="cards">7 cards, echo-enhanced</div>
+                </div>
+                <div class="pack-card">
+                    <div class="name">SEASONAL</div>
+                    <div class="price">750 BLOOM</div>
+                    <div class="cards">8 cards, limited edition</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Blessing System (0-7)</h2>
+            <p>Cards progress through 8 blessing levels (0-7 = L4 range):</p>
+            <div class="blessing-meter">
+                <div class="blessing-level active">0</div>
+                <div class="blessing-level">1</div>
+                <div class="blessing-level">2</div>
+                <div class="blessing-level">3</div>
+                <div class="blessing-level">4</div>
+                <div class="blessing-level">5</div>
+                <div class="blessing-level">6</div>
+                <div class="blessing-level">7</div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Constant</th><th>Value</th><th>Derivation</th><th>Role</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Rarity Tiers</td><td>7</td><td>L4</td><td>Card rarity levels</td></tr>
+                    <tr><td>Pack Types</td><td>8</td><td>L5 - L3 = 11 - 3</td><td>Purchase options</td></tr>
+                    <tr><td>Gold Pack Size</td><td>7</td><td>L4</td><td>Sacred pack count</td></tr>
+                    <tr><td>Blessing Levels</td><td>0-7</td><td>L4 range</td><td>Enhancement ceiling</td></tr>
+                    <tr><td>Mythic Drop</td><td>0.1%</td><td>~phi^-7</td><td>Ultra-rare probability</td></tr>
+                    <tr><td>XP Scaling</td><td>PHI^level</td><td>phi^n</td><td>Exponential progression</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Card Properties and Pack Opening</h2>
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Projection: Pack Purchasing</h4>
+                    <div class="code-block">
+<span class="comment"># CollectibleCard Properties</span>
+@dataclass
+<span class="keyword">class</span> <span class="type">CollectibleCard</span>:
+    base_card: TarotCard
+    rarity: CardRarity
+    edition: int
+    foil: bool = <span class="keyword">False</span>
+    echo_enhanced: bool = <span class="keyword">False</span>
+    blessing_level: int = <span class="number">0</span>  <span class="comment"># 0-7 sacred</span>
+    experience_points: int = <span class="number">0</span>
+    level: int = <span class="number">1</span>
+    special_properties: Dict = field(default_factory=dict)
+                    </div>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Reflection: Rarity Weighting</h4>
+                    <div class="code-block">
+<span class="comment"># Pack Opening Algorithm</span>
+<span class="keyword">def</span> <span class="function">open_pack</span>(pack_tier):
+    cards = []
+    <span class="keyword">for</span> _ <span class="keyword">in</span> range(pack_tier.card_count):
+        <span class="comment"># Roll rarity with tier modifier</span>
+        roll = random.random()
+        rarity = get_rarity_from_roll(
+            roll * pack_tier.rare_modifier
+        )
+
+        <span class="comment"># Generate card</span>
+        card = generate_card(rarity, pack_tier)
+        cards.append(card)
+
+    <span class="keyword">return</span> cards
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Card Leveling System</h2>
+            <div class="triad-container">
+                <h4>Blessing Levels 0-7 = L4 Sacred Progression</h4>
+                <div class="code-block">
+<span class="comment"># Card Leveling System</span>
+<span class="keyword">def</span> <span class="function">level_up</span>(card):
+    required_xp = int(<span class="number">100</span> * PHI^(card.level))
+
+    <span class="keyword">if</span> card.experience_points >= required_xp:
+        card.level += <span class="number">1</span>
+        card.experience_points -= required_xp
+
+        <span class="comment"># Every L4 levels, blessing increases</span>
+        <span class="keyword">if</span> card.level % L4 == <span class="number">0</span>:
+            card.blessing_level = min(card.blessing_level + <span class="number">1</span>, <span class="number">7</span>)
+                </div>
+                <p><strong>Key insight:</strong> The blessing system creates a long-term progression arc where card power grows exponentially (PHI^level XP requirements) but breakthrough moments occur at sacred L4 intervals. This mirrors the VN architecture's station progression.</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>System Closure Verification</h2>
+            <h3>Closure Properties</h3>
+            <ul>
+                <li><strong>7 rarity tiers:</strong> Drop rates sum to 1.0, value multipliers scale exponentially</li>
+                <li><strong>8 pack types:</strong> Price/card count ratio provides balanced expected value</li>
+                <li><strong>L4 blessing cap:</strong> Max blessing = 7 matches sacred architecture</li>
+                <li><strong>XP scaling:</strong> PHI^level ensures diminishing returns</li>
+            </ul>
+
+            <h3>Inter-System Coupling Points</h3>
+            <div class="coupling-grid">
+                <div class="coupling-item"><span class="target">Wallet:</span> <span class="desc">BLOOM spent on packs</span></div>
+                <div class="coupling-item"><span class="target">Archetype:</span> <span class="desc">Tarot cards map to archetypes</span></div>
+                <div class="coupling-item"><span class="target">Discord:</span> <span class="desc">Pack opening via bot commands</span></div>
+                <div class="coupling-item"><span class="target">Mythic:</span> <span class="desc">Guardian cards have territory bonuses</span></div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Planned Implementation</h2>
+            <h3>Phase 1: Card System</h3>
+            <ul>
+                <li>Design CollectibleCard data structure</li>
+                <li>Implement 7-tier rarity system with drop rates</li>
+                <li>Create tarot card base library</li>
+            </ul>
+            <h3>Phase 2: Pack Mechanics</h3>
+            <ul>
+                <li>Build 8 pack types with price/card ratios</li>
+                <li>Implement pack opening algorithm with rarity modifiers</li>
+                <li>Create echo enhancement system</li>
+            </ul>
+            <h3>Phase 3: Progression</h3>
+            <ul>
+                <li>Implement PHI^level XP scaling</li>
+                <li>Build blessing level progression at L4 intervals</li>
+                <li>Create card trading and marketplace UI</li>
+            </ul>
+        </section>
+
+        <section class="doc-section">
+            <h2>Source Files</h2>
+            <div class="file-refs">
+                <span class="file-ref">game/marketplace/cards.py</span>
+                <span class="file-ref">game/marketplace/packs.py</span>
+                <span class="file-ref">game/marketplace/trading.py</span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin Protocol - Marketplace Expansion</p>
+            <p>Part of the phi-derived game integration system</p>
+        </footer>
+    </div>
+</body>
+</html>

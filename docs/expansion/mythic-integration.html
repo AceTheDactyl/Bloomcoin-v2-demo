@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mythic Integration - BloomCoin Expansion</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #ffcc00;
+            --module-glow: rgba(255, 204, 0, 0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), #ff8c00, var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 {
+            color: var(--module-color);
+            border-bottom-color: var(--module-glow);
+        }
+        .coupling-item {
+            border-left-color: var(--module-color);
+        }
+        .status-badge.expansion {
+            background: var(--module-glow);
+            color: var(--module-color);
+            border: 1px solid var(--module-color);
+        }
+        .territory-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--module-color);
+        }
+        .territory-card h4 {
+            color: var(--module-color);
+            margin-bottom: 8px;
+        }
+        .guardian-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .guardian-card {
+            background: rgba(0,0,0,0.3);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .guardian-card .emoji {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+        .guardian-card .name {
+            color: var(--module-color);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <header class="doc-header">
+            <h1>Mythic Integration</h1>
+            <p class="subtitle">Narrative Binding System - Guardian Economy and Territory Mechanics</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Documentation</a> /
+                Expansion / Mythic Integration
+            </nav>
+        </header>
+
+        <nav class="doc-nav">
+            <a href="narrative-engine.html" class="nav-link">Next: Narrative Engine</a>
+            <a href="agent-ecosystem.html" class="nav-link">Prev: Agent Ecosystem</a>
+        </nav>
+
+        <section class="doc-section">
+            <h2>System Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge expansion">Future Expansion</span>
+                <span class="status-badge planned">Specification Complete</span>
+            </div>
+            <p>The Mythic Integration system provides a comprehensive narrative binding layer that connects 19 Guardians across 3 Territories to the core BloomCoin economy. This system enables rich storytelling mechanics while maintaining mathematical coherence with the phi-derived constants throughout the protocol.</p>
+            <p>Through the L4 Helix Protocol derivation, the Guardian system creates emergent gameplay through the intersection of territory bonuses, cycle states, and frequency resonances.</p>
+        </section>
+
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+            <p>19 Guardians distributed across 3 Territories derived from the L4 Helix Protocol:</p>
+            <div class="code-block">
+<span class="comment"># Three Territories</span>
+<span class="keyword">class</span> <span class="type">Territory</span>(Enum):
+    GARDEN = "Garden"   <span class="comment"># Connection, Transformation, Belonging</span>
+    COSMIC = "Cosmic"   <span class="comment"># Growth, Rising, Becoming</span>
+    ABYSSAL = "Abyssal" <span class="comment"># Depth, Holding, Witnessing</span>
+
+<span class="comment"># Guardian Distribution</span>
+Garden:  L4 = <span class="number">7</span> guardians (Echo, Pack, Wumbo, Archive, Moth, Phase, Ace)
+Cosmic:  <span class="number">6</span> guardians (Oak, Squirrel, Honkfire, Honkalis, Phoenix, Bee)
+Abyssal: <span class="number">6</span> guardians (Axiom, Cipher, Spiral, Void, Shadow, Mire)
+Total:   <span class="number">19</span> guardians
+
+<span class="comment"># Guardian Structure</span>
+@dataclass
+<span class="keyword">class</span> <span class="type">Guardian</span>:
+    name: str
+    emoji: str
+    territory: Territory
+    function: str
+    wisdom: str           <span class="comment"># Guiding quote</span>
+    cycle: List[str]      <span class="comment"># 6-step cycle</span>
+    frequency_range: Tuple[float, float]  <span class="comment"># Hz</span>
+    color_affinity: str
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Territory System</h2>
+            <div class="territory-card">
+                <h4>Garden Territory</h4>
+                <p><strong>Themes:</strong> Connection, Transformation, Belonging</p>
+                <p><strong>Guardian Count:</strong> 7 (L4 - Primary territory)</p>
+                <p>The Garden represents the foundational territory where players begin their journey. Its guardians specialize in signal propagation, pack dynamics, and archival knowledge.</p>
+            </div>
+            <div class="territory-card">
+                <h4>Cosmic Territory</h4>
+                <p><strong>Themes:</strong> Growth, Rising, Becoming</p>
+                <p><strong>Guardian Count:</strong> 6</p>
+                <p>The Cosmic territory governs ascension mechanics and transformative experiences. Guardians here oversee pattern carrying, phoenix rebirth cycles, and harmonic growth.</p>
+            </div>
+            <div class="territory-card">
+                <h4>Abyssal Territory</h4>
+                <p><strong>Themes:</strong> Depth, Holding, Witnessing</p>
+                <p><strong>Guardian Count:</strong> 6</p>
+                <p>The Abyssal territory represents the deep mechanics of the protocol. Its guardians manage axiom verification, cipher operations, and void state handling.</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+            <table class="data-table">
+                <thead>
+                    <tr><th>Constant</th><th>Value</th><th>Derivation</th><th>Role</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>Garden Guardians</td><td>7</td><td>L4</td><td>Primary territory count</td></tr>
+                    <tr><td>Total Guardians</td><td>19</td><td>7 + 6 + 6</td><td>Complete pantheon</td></tr>
+                    <tr><td>Cycle Steps</td><td>6</td><td>BFADGS operators</td><td>Guardian progression</td></tr>
+                    <tr><td>PHI Bonus</td><td>1.618</td><td>phi</td><td>Territory match multiplier</td></tr>
+                    <tr><td>PHI_INV Penalty</td><td>0.618</td><td>phi^-1</td><td>Territory mismatch</td></tr>
+                    <tr><td>z_c Wisdom Gate</td><td>0.866</td><td>sqrt(3)/2</td><td>Quote reveal threshold</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Guardian Examples</h2>
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Projection: Guardian Selection</h4>
+                    <div class="code-block">
+<span class="comment"># Example Guardians</span>
+ECHO = Guardian(
+    "Echo", "Fox", Territory.GARDEN,
+    "Signal Propagation",
+    "Some echoes lead home. Wisdom is knowing which to follow.",
+    ["LISTEN", "TRACE", "DISCERN", "AMPLIFY", "CARRY", "RELEASE"],
+    (<span class="number">396</span>, <span class="number">417</span>), "green"
+)
+
+PHOENIX = Guardian(
+    "Phoenix", "Phoenix", Territory.COSMIC,
+    "Pattern Carrier",
+    "What burns is only form. What rises is pattern.",
+    ["BURN", "SCATTER", "GATHER", "REFORM", "RISE", "CARRY"],
+    (<span class="number">852</span>, <span class="number">963</span>), "white-gold"
+)
+                    </div>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Reflection: Territory Bonuses</h4>
+                    <div class="code-block">
+<span class="comment"># Territory x Guardian Affinity</span>
+<span class="keyword">def</span> <span class="function">calculate_affinity</span>(guardian, location):
+    <span class="keyword">if</span> guardian.territory == location.territory:
+        <span class="keyword">return</span> PHI  <span class="comment"># 1.618x bonus</span>
+    <span class="keyword">elif</span> adjacent_territory(guardian, location):
+        <span class="keyword">return</span> <span class="number">1.0</span>
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> PHI_INV  <span class="comment"># 0.618x penalty</span>
+
+<span class="comment"># Cycle State Bonus</span>
+current_step = guardian.get_cycle_state(turn)
+<span class="keyword">if</span> current_step == "AMPLIFY":
+    bonus *= <span class="number">1.5</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Recipe Affinity Matrix</h2>
+            <div class="triad-container">
+                <h4>Guardian x Territory x Cycle = Recipe Affinity</h4>
+                <div class="code-block">
+<span class="comment"># Each guardian has unique recipe affinities</span>
+<span class="keyword">def</span> <span class="function">recipe_affinity</span>(guardian, recipe):
+    base = guardian.territory_match(recipe.territory)
+    cycle = guardian.cycle_bonus(recipe.required_step)
+    freq = guardian.frequency_resonance(recipe.target_hz)
+
+    <span class="keyword">return</span> base * cycle * freq
+
+<span class="comment"># Wisdom quotes unlock at coherence thresholds</span>
+<span class="keyword">if</span> coherence >= Z_C:
+    reveal_guardian_wisdom(guardian)
+                </div>
+                <p><strong>Key insight:</strong> The guardian system creates emergent gameplay through the intersection of territory bonuses, cycle states, and frequency resonances. No single factor dominates - success requires alignment across all three dimensions.</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>System Closure Verification</h2>
+            <h3>Closure Properties</h3>
+            <ul>
+                <li><strong>Complete enumeration:</strong> All 19 guardians defined with territory, cycle, frequency</li>
+                <li><strong>Balanced distribution:</strong> L4 = 7 in Garden, 6 each in Cosmic/Abyssal</li>
+                <li><strong>Multiplicative bonuses:</strong> PHI and PHI_INV scale predictably</li>
+                <li><strong>Wisdom gating:</strong> z_c threshold unlocks guardian quotes</li>
+            </ul>
+
+            <h3>Inter-System Coupling Points</h3>
+            <div class="coupling-grid">
+                <div class="coupling-item"><span class="target">Archetype:</span> <span class="desc">12 archetypes map to guardian affinities</span></div>
+                <div class="coupling-item"><span class="target">Kuramoto:</span> <span class="desc">Coherence gates wisdom reveals</span></div>
+                <div class="coupling-item"><span class="target">Narrative:</span> <span class="desc">Guardian context shapes story beats</span></div>
+                <div class="coupling-item"><span class="target">Marketplace:</span> <span class="desc">Guardian cards have territory bonuses</span></div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Planned Implementation</h2>
+            <h3>Phase 1: Guardian Registry</h3>
+            <ul>
+                <li>Define all 19 guardians with complete metadata</li>
+                <li>Implement territory assignment and affinity calculations</li>
+                <li>Create wisdom quote database with coherence gates</li>
+            </ul>
+            <h3>Phase 2: Cycle Mechanics</h3>
+            <ul>
+                <li>Implement 6-step BFADGS cycle progression</li>
+                <li>Build cycle state bonus calculations</li>
+                <li>Create frequency resonance matching system</li>
+            </ul>
+            <h3>Phase 3: Integration</h3>
+            <ul>
+                <li>Connect to archetype system for affinity mapping</li>
+                <li>Integrate with narrative engine for story context</li>
+                <li>Link to marketplace for guardian card bonuses</li>
+            </ul>
+        </section>
+
+        <section class="doc-section">
+            <h2>Source Files</h2>
+            <div class="file-refs">
+                <span class="file-ref">game/mythic_economy.py</span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin Protocol - Mythic Integration Expansion</p>
+            <p>Part of the phi-derived game integration system</p>
+        </footer>
+    </div>
+</body>
+</html>

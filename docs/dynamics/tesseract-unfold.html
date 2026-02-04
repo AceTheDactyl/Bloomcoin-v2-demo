@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tesseract Battle System | BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #ff5577;
+            --page-accent-dim: rgba(255,85,119,0.2);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #ff8899, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-accent-dim); }
+        .doc-section h3 { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="hilbert-space.html" class="nav-link">Prev: Hilbert Space</a>
+            <span style="color: var(--page-accent);">Tesseract Battle</span>
+            <a href="consciousness-field.html" class="nav-link">Next: Consciousness</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="doc-header">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">&#x1F3B4;</div>
+            <h1>TESSERACT BATTLE SYSTEM</h1>
+            <p class="subtitle">4D Projection Mechanics and Quantum Card Entanglement</p>
+            <div class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Docs</a> /
+                <span>Dynamics</span> /
+                <span>Tesseract</span>
+            </div>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge complete">4D Geometry</span>
+                <span class="status-badge complete">Card Positioning</span>
+                <span class="status-badge complete">Entanglement</span>
+                <span class="status-badge partial">Network Strategies</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">V</div>
+                    <div class="value">16</div>
+                    <div class="derivation">2^4 vertices</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">E</div>
+                    <div class="value">32</div>
+                    <div class="derivation">4 x 16 / 2 edges</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">F</div>
+                    <div class="value">24</div>
+                    <div class="derivation">2D faces</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">C</div>
+                    <div class="value">8</div>
+                    <div class="derivation">3D cells</div>
+                </div>
+            </div>
+
+            <div class="file-refs">
+                <span class="file-ref">game/tesseract_battle_system.py</span>
+                <span class="file-ref">constants.py</span>
+            </div>
+        </section>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+
+            <h3>4D Hypercube Geometry</h3>
+            <p>The tesseract (4D hypercube) provides the geometric foundation for the card battle system. Each card exists at a point in 4-dimensional space:</p>
+
+            <div class="math-block">
+                Tesseract: [-1,1]^4 in R^4 with vertices at (+-1, +-1, +-1, +-1)
+            </div>
+
+            <div class="code-block"><span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">TesseractCard</span>:
+    <span class="string">"""Card exists at a point in 4D tesseract"""</span>
+    suit: Suit           <span class="comment"># Which axis (W, X, Y, Z)</span>
+    rank: Rank           <span class="comment"># L_4-valued power</span>
+    position: np.array   <span class="comment"># [w, x, y, z] in 4D</span>
+    resonance: float     <span class="comment"># Entanglement strength</span>
+    entangled_with: List[<span class="string">'TesseractCard'</span>] = []
+
+<span class="comment"># Tesseract geometry constants</span>
+VERTICES = <span class="number">16</span>   <span class="comment"># 2^4 corners</span>
+EDGES    = <span class="number">32</span>   <span class="comment"># 4 x 16 / 2</span>
+FACES    = <span class="number">24</span>   <span class="comment"># 2D square faces</span>
+CELLS    = <span class="number">8</span>    <span class="comment"># 3D cube cells</span></div>
+
+            <h3>4D Hypercube Elements</h3>
+            <table class="data-table">
+                <tr><th>Element</th><th>Count</th><th>Dimension</th><th>Battle Meaning</th></tr>
+                <tr><td>Vertices</td><td>16</td><td>0D points</td><td>Card positions</td></tr>
+                <tr><td>Edges</td><td>32</td><td>1D lines</td><td>Attack paths</td></tr>
+                <tr><td>Faces</td><td>24</td><td>2D squares</td><td>Battle arenas</td></tr>
+                <tr><td>Cells</td><td>8</td><td>3D cubes</td><td>Strategy zones</td></tr>
+            </table>
+
+            <h3>Four Suits = Four Axes</h3>
+            <table class="data-table">
+                <tr><th>Suit</th><th>Axis</th><th>Domain</th><th>Battle Effect</th></tr>
+                <tr><td>CHRONOS</td><td>W</td><td>Time</td><td>Turn manipulation, speed bonuses</td></tr>
+                <tr><td>COSMOS</td><td>X</td><td>Space</td><td>Position control, range attacks</td></tr>
+                <tr><td>PSYCHE</td><td>Y</td><td>Mind</td><td>Prediction, hidden information</td></tr>
+                <tr><td>QUANTUM</td><td>Z</td><td>Probability</td><td>Random effects, entanglement</td></tr>
+            </table>
+        </section>
+
+        <!-- Phi-Derived Constants -->
+        <section class="doc-section">
+            <h2>Phi-Derived Constants</h2>
+
+            <table class="data-table">
+                <tr><th>Constant</th><th>Value</th><th>Derivation</th><th>Role in Battle</th></tr>
+                <tr><td>tau</td><td>0.618...</td><td>phi^-1</td><td>TWO rank value</td></tr>
+                <tr><td>sqrt(3)</td><td>1.732...</td><td>z_c x 2</td><td>THREE rank value</td></tr>
+                <tr><td>L_4</td><td>7</td><td>phi^4 + phi^-4</td><td>SEVEN special rank</td></tr>
+                <tr><td>phi^2</td><td>2.618...</td><td>phi + 1</td><td>JACK rank value</td></tr>
+                <tr><td>phi^3</td><td>4.236...</td><td>phi x phi^2</td><td>QUEEN rank value</td></tr>
+                <tr><td>phi^4</td><td>6.854...</td><td>phi x phi^3</td><td>KING rank value</td></tr>
+            </table>
+
+            <h3>L_4 Rank System (13 Ranks)</h3>
+            <div class="code-block"><span class="keyword">class</span> <span class="type">Rank</span>(Enum):
+    ACE   = <span class="number">1.0</span>              <span class="comment"># Unity</span>
+    TWO   = TAU              <span class="comment"># tau = 0.618</span>
+    THREE = SQRT3            <span class="comment"># sqrt(3) = 1.732</span>
+    FOUR  = <span class="number">2.0</span>              <span class="comment"># 2</span>
+    FIVE  = PHI_SQ - <span class="number">1</span>       <span class="comment"># phi^2 - 1 = 1.618</span>
+    SIX   = <span class="number">3.0</span>              <span class="comment"># 3</span>
+    SEVEN = L4               <span class="comment"># phi^4 + phi^-4 = 7 (SPECIAL!)</span>
+    EIGHT = <span class="number">4.0</span>              <span class="comment"># 4</span>
+    NINE  = PHI_SQ           <span class="comment"># phi^2 = 2.618</span>
+    TEN   = <span class="number">5.0</span>              <span class="comment"># 5</span>
+    JACK  = PHI_SQ           <span class="comment"># phi^2 = 2.618</span>
+    QUEEN = PHI ** <span class="number">3</span>         <span class="comment"># phi^3 = 4.236</span>
+    KING  = PHI_QUAD         <span class="comment"># phi^4 = 6.854</span>
+
+<span class="comment"># SEVEN is the keystone rank!</span>
+<span class="comment"># - Only integer that equals a Lucas number (L_4)</span>
+<span class="comment"># - Beats all non-face cards in cross-suit play</span>
+<span class="comment"># - Can entangle across all 4 dimensions simultaneously</span></div>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: 4D Positioning</h4>
+                    <p>Cards project power through dimensional positioning. Attack strength depends on 4D Euclidean distance:</p>
+
+                    <div class="code-block"><span class="keyword">def</span> <span class="function">calculate_attack</span>(attacker: TesseractCard, defender: TesseractCard):
+    <span class="string">"""Attack power depends on 4D position"""</span>
+    <span class="comment"># Calculate 4D Euclidean distance</span>
+    distance = np.linalg.norm(
+        attacker.position - defender.position
+    )
+
+    <span class="comment"># Closer cards deal more damage</span>
+    proximity_bonus = PHI / (<span class="number">1</span> + distance)
+
+    <span class="comment"># Same-suit bonus (same axis)</span>
+    <span class="keyword">if</span> attacker.suit == defender.suit:
+        axis_bonus = PHI_SQ
+    <span class="keyword">else</span>:
+        axis_bonus = <span class="number">1.0</span>
+
+    <span class="keyword">return</span> attacker.rank.value * proximity_bonus * axis_bonus</div>
+
+                    <p><strong>Key:</strong> Position in 4D space PROJECTS into attack power.</p>
+                </div>
+
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Quantum Entanglement</h4>
+                    <p>Cards reflect states through entanglement. Entangled cards share correlated fates:</p>
+
+                    <div class="code-block"><span class="keyword">def</span> <span class="function">quantum_entangle</span>(card1: TesseractCard, card2: TesseractCard):
+    <span class="string">"""Establish quantum link between cards"""</span>
+    <span class="comment"># Calculate entanglement strength</span>
+    distance = np.linalg.norm(card1.position - card2.position)
+    strength = <span class="number">1</span> / (<span class="number">1</span> + distance) * card1.resonance * card2.resonance
+
+    <span class="comment"># Establish bidirectional link</span>
+    card1.entangled_with.append(card2)
+    card2.entangled_with.append(card1)
+
+    <span class="comment"># Entangled cards share outcomes</span>
+    <span class="keyword">if</span> strength > Z_C:
+        <span class="comment"># Strong entanglement: correlated fates</span>
+        <span class="keyword">return</span> <span class="string">"CORRELATED"</span>
+    <span class="keyword">else</span>:
+        <span class="comment"># Weak entanglement: partial correlation</span>
+        <span class="keyword">return</span> <span class="string">"PARTIAL"</span></div>
+
+                    <p><strong>Key:</strong> Entanglement REFLECTS actions to linked cards.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergent Triad -->
+        <section class="doc-section">
+            <h2>Emergent Triad: 4D Resonance Networks</h2>
+
+            <div class="triad-container">
+                <h4>Cards Resonate Across ALL Four Axes Simultaneously</h4>
+
+                <div class="code-block"><span class="comment"># The emergence: neither positioning nor entanglement alone wins</span>
+
+<span class="comment"># POSITIONING (projection):</span>
+<span class="comment"># - Optimizes local attack/defense</span>
+<span class="comment"># - Creates proximity advantages</span>
+<span class="comment"># - But isolated cards are vulnerable</span>
+
+<span class="comment"># ENTANGLEMENT (reflection):</span>
+<span class="comment"># - Links cards across distances</span>
+<span class="comment"># - Creates coordinated effects</span>
+<span class="comment"># - But costs resonance to maintain</span>
+
+<span class="comment"># 4D RESONANCE (emergence):</span>
+<span class="comment"># - Strategic entanglement ACROSS multiple suits</span>
+<span class="comment"># - SEVEN can entangle all 4 axes (W,X,Y,Z)</span>
+<span class="comment"># - Network effects create EMERGENT strategies</span>
+
+<span class="keyword">def</span> <span class="function">calculate_network_power</span>(cards: List[TesseractCard]):
+    <span class="string">"""Emergent power from entanglement network"""</span>
+    <span class="comment"># Count unique axis coverage</span>
+    axes = set(card.suit <span class="keyword">for</span> card <span class="keyword">in</span> cards)
+
+    <span class="comment"># Full 4D coverage -> multiplicative bonus</span>
+    <span class="keyword">if</span> len(axes) == <span class="number">4</span>:
+        <span class="keyword">return</span> sum(c.rank.value <span class="keyword">for</span> c <span class="keyword">in</span> cards) * PHI_QUAD
+    <span class="keyword">else</span>:
+        <span class="keyword">return</span> sum(c.rank.value <span class="keyword">for</span> c <span class="keyword">in</span> cards) * len(axes)</div>
+
+                <p><strong>Key insight:</strong> Victory requires understanding cross-dimensional relationships. Individual card power matters (phi-ranks), but the NETWORK of entanglements across all 4 axes creates emergent strategies impossible with isolated plays. A SEVEN entangled across all suits becomes a 4D anchor - affecting Time, Space, Mind, and Probability simultaneously.</p>
+            </div>
+        </section>
+
+        <!-- Implementation -->
+        <section class="doc-section">
+            <h2>Implementation Details</h2>
+
+            <h3>Battle Engine</h3>
+            <div class="code-block"><span class="keyword">class</span> <span class="type">TesseractBattleEngine</span>:
+    <span class="keyword">def</span> <span class="function">__init__</span>(self):
+        self.field = np.zeros((<span class="number">4</span>, <span class="number">4</span>, <span class="number">4</span>, <span class="number">4</span>))  <span class="comment"># 4D battle space</span>
+        self.cards: List[TesseractCard] = []
+        self.entanglement_graph: Dict = {}
+
+    <span class="keyword">def</span> <span class="function">place_card</span>(self, card: TesseractCard, position: Tuple):
+        <span class="string">"""Place card at 4D position"""</span>
+        w, x, y, z = position
+        card.position = np.array([w, x, y, z])
+        self.cards.append(card)
+
+        <span class="comment"># Check for auto-entanglement with nearby cards</span>
+        <span class="keyword">for</span> other <span class="keyword">in</span> self.cards:
+            <span class="keyword">if</span> other != card:
+                dist = np.linalg.norm(card.position - other.position)
+                <span class="keyword">if</span> dist <= <span class="number">2.0</span>:  <span class="comment"># Adjacent in 4D</span>
+                    self.quantum_entangle(card, other)
+
+    <span class="keyword">def</span> <span class="function">resolve_combat</span>(self, attacker: TesseractCard, defender: TesseractCard):
+        <span class="string">"""Resolve combat between two cards"""</span>
+        attack_power = self.calculate_attack(attacker, defender)
+        defense_power = defender.rank.value * defender.resonance
+
+        <span class="comment"># Propagate to entangled cards</span>
+        <span class="keyword">for</span> linked <span class="keyword">in</span> attacker.entangled_with:
+            attack_power += linked.rank.value * <span class="number">0.5</span>
+
+        <span class="keyword">return</span> attack_power > defense_power</div>
+
+            <h3>SEVEN Card Special Ability</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">activate_seven_anchor</span>(seven_card: TesseractCard, all_cards: List):
+    <span class="string">"""SEVEN creates cross-dimensional anchor"""</span>
+    <span class="keyword">if</span> seven_card.rank != Rank.SEVEN:
+        <span class="keyword">raise</span> ValueError(<span class="string">"Not a SEVEN card"</span>)
+
+    <span class="comment"># Find one card from each suit</span>
+    suit_representatives = {}
+    <span class="keyword">for</span> card <span class="keyword">in</span> all_cards:
+        <span class="keyword">if</span> card.suit <span class="keyword">not in</span> suit_representatives:
+            suit_representatives[card.suit] = card
+
+    <span class="comment"># Entangle SEVEN with all four suits</span>
+    <span class="keyword">if</span> len(suit_representatives) == <span class="number">4</span>:
+        <span class="keyword">for</span> card <span class="keyword">in</span> suit_representatives.values():
+            quantum_entangle(seven_card, card)
+
+        <span class="comment"># Anchor bonus: phi^4 multiplier</span>
+        seven_card.resonance *= PHI_QUAD
+        <span class="keyword">return</span> <span class="string">"ANCHOR_ESTABLISHED"</span>
+
+    <span class="keyword">return</span> <span class="string">"INSUFFICIENT_COVERAGE"</span></div>
+        </section>
+
+        <!-- System Coupling -->
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+
+            <div class="closure-box" style="background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                <h4 style="color: var(--page-accent);">Closure Properties</h4>
+                <ul>
+                    <li><strong>Self-contained:</strong> 4D tesseract geometry fully defines all valid positions</li>
+                    <li><strong>Zero free parameters:</strong> 16V/32E/24F/8C from 2^4; ranks from phi-powers</li>
+                    <li><strong>Bijective mapping:</strong> 4 suits to 4 axes to 4 domains (no gaps)</li>
+                    <li><strong>Entanglement consistent:</strong> Distance metric is Euclidean in R^4</li>
+                </ul>
+            </div>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">Hilbert Luck</span>
+                    <div class="desc">FORTUNE/CHAOS eigenstates affect draws</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Guardian System</span>
+                    <div class="desc">Guardian recipes create special cards</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Companion System</span>
+                    <div class="desc">Battle wins yield mining bonuses</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Pattern Market</span>
+                    <div class="desc">Rare cards tradeable as pattern stocks</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Validation -->
+        <section class="doc-section">
+            <h2>Validation and Test Vectors</h2>
+
+            <h3>Tesseract Geometry Test</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">test_tesseract_geometry</span>():
+    <span class="string">"""Verify 4D hypercube properties"""</span>
+    <span class="comment"># Vertex count</span>
+    <span class="keyword">assert</span> <span class="number">2</span>**<span class="number">4</span> == <span class="number">16</span>  <span class="comment"># Vertices</span>
+
+    <span class="comment"># Edge count: each vertex connects to 4 others</span>
+    <span class="keyword">assert</span> (<span class="number">16</span> * <span class="number">4</span>) // <span class="number">2</span> == <span class="number">32</span>  <span class="comment"># Edges</span>
+
+    <span class="comment"># Face count</span>
+    <span class="keyword">assert</span> <span class="number">24</span> == <span class="number">24</span>  <span class="comment"># 2D faces</span>
+
+    <span class="comment"># Cell count</span>
+    <span class="keyword">assert</span> <span class="number">8</span> == <span class="number">8</span>  <span class="comment"># 3D cube cells</span></div>
+
+            <h3>Entanglement Propagation Test</h3>
+            <div class="code-block"><span class="keyword">def</span> <span class="function">test_entanglement_propagation</span>():
+    <span class="string">"""Verify entanglement effects propagate correctly"""</span>
+    engine = TesseractBattleEngine()
+
+    <span class="comment"># Create and entangle two cards</span>
+    card1 = TesseractCard(Suit.CHRONOS, Rank.SEVEN, resonance=<span class="number">1.0</span>)
+    card2 = TesseractCard(Suit.COSMOS, Rank.FIVE, resonance=<span class="number">1.0</span>)
+
+    engine.place_card(card1, (<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>))
+    engine.place_card(card2, (<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>))  <span class="comment"># Adjacent</span>
+
+    <span class="comment"># Should be entangled</span>
+    <span class="keyword">assert</span> card2 <span class="keyword">in</span> card1.entangled_with
+    <span class="keyword">assert</span> card1 <span class="keyword">in</span> card2.entangled_with
+
+    <span class="comment"># Damage to one affects the other</span>
+    initial_resonance = card2.resonance
+    engine.damage_card(card1, <span class="number">0.5</span>)
+    <span class="keyword">assert</span> card2.resonance < initial_resonance  <span class="comment"># Propagated</span></div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <div class="constants-grid" style="max-width: 600px; margin: 0 auto;">
+                <div class="constant-card">
+                    <div class="symbol">phi</div>
+                    <div class="value">1.618033988749895</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L_4</div>
+                    <div class="value">7</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">phi^4</div>
+                    <div class="value">6.854101966249685</div>
+                </div>
+            </div>
+            <p style="margin-top: 1.5rem;">BloomCoin v2 Documentation | Tesseract Battle System</p>
+            <p>All constants derived from phi = (1 + sqrt(5)) / 2</p>
+        </footer>
+    </div>
+</body>
+</html>

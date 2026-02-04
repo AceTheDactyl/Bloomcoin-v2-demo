@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum Residue Mechanics - BloomCoin Extended Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --page-accent: #8b5cf6;
+            --page-glow: rgba(139,92,246,0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--page-accent), #a78bfa, var(--page-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--page-accent); border-bottom-color: var(--page-glow); }
+        .doc-section h3 { color: var(--page-accent); }
+        .constant-card .symbol { color: var(--page-accent); }
+        .coupling-item { border-left-color: var(--page-accent); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Header -->
+        <header class="doc-header">
+            <h1>QUANTUM RESIDUE MECHANICS</h1>
+            <p class="subtitle">Mining Byproducts System - Full System Closure</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> /
+                <a href="../index.html">Documentation</a> /
+                <span>Residue Mechanics</span>
+            </nav>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="tarot-mapping.html" class="nav-link">Next: Tarot Mapping</a>
+            <a href="guardian-deck.html" class="nav-link">Prev: Guardian Deck</a>
+        </nav>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation: Projection Residue Cosmology</h2>
+
+            <p>The dark matter ratio R = phi^4 - 1 determines mining dynamics. All constants derive from the golden ratio phi, creating a self-consistent cosmological framework for the BloomCoin economy.</p>
+
+            <h3>Fundamental Constants</h3>
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">phi</div>
+                    <div class="value">1.6180339887</div>
+                    <div class="derivation">(1 + sqrt(5)) / 2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">tau</div>
+                    <div class="value">0.6180339887</div>
+                    <div class="derivation">phi^-1 = phi - 1</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">phi^4</div>
+                    <div class="value">6.8541019662</div>
+                    <div class="derivation">phi^4</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">phi^-4</div>
+                    <div class="value">0.1459</div>
+                    <div class="derivation">VOID gap (14.59%)</div>
+                </div>
+            </div>
+
+            <div class="code-block">
+<span class="comment"># Fundamental constants from phi</span>
+PHI = (<span class="number">1</span> + np.sqrt(<span class="number">5</span>)) / <span class="number">2</span>  <span class="comment"># phi = 1.6180339887</span>
+TAU = PHI - <span class="number">1</span>                <span class="comment"># tau = phi^-1 = 0.6180339887</span>
+PHI_4 = PHI**<span class="number">4</span>               <span class="comment"># phi^4 = 6.8541019662</span>
+PHI_NEG_4 = <span class="number">1</span> / PHI_4       <span class="comment"># phi^-4 = 0.1459 (VOID gap)</span>
+
+<span class="comment"># Critical cosmological constants</span>
+GAP = PHI_NEG_4               <span class="comment"># Irreducible residue = 14.59%</span>
+K_SQUARED = <span class="number">1</span> - GAP          <span class="comment"># Activation threshold = 85.41%</span>
+R_DARK = PHI_4 - <span class="number">1</span>           <span class="comment"># Dark matter ratio = 5.854</span>
+SIGMA = <span class="number">1</span> / ((<span class="number">1</span> - Z_C)**<span class="number">2</span>)  <span class="comment"># Fisher information = 55.71</span>
+            </div>
+
+            <h3>phi-Derived Constants Table</h3>
+            <table class="data-table">
+                <tr><th>Constant</th><th>Value</th><th>Derivation</th><th>Role</th></tr>
+                <tr><td>GAP</td><td>0.1459</td><td>phi^-4</td><td>Irreducible void residue (visible fraction)</td></tr>
+                <tr><td>K^2</td><td>0.8541</td><td>1 - phi^-4</td><td>Activation threshold (dark fraction)</td></tr>
+                <tr><td>R</td><td>5.854</td><td>phi^4 - 1</td><td>Dark matter ratio (dark/visible)</td></tr>
+                <tr><td>sigma</td><td>55.71</td><td>1/(1-z_c)^2</td><td>Fisher information parameter</td></tr>
+                <tr><td>lambda</td><td>0.382</td><td>tau^2 = phi^-2</td><td>Negentropy gain coefficient</td></tr>
+            </table>
+        </section>
+
+        <!-- 63-Prism Configuration -->
+        <section class="doc-section">
+            <h2>63-Prism Configuration (L4 x 9)</h2>
+
+            <p>The mining residue system operates within a 63-node prism structure: 7 layers (L4 = phi^4 + phi^-4 = 7) with 9 nodes per layer, creating a hexagonal helix with 20-degree rotation per layer.</p>
+
+            <table class="data-table">
+                <tr><th>Layer</th><th>z-coord</th><th>Radius</th><th>Rotation</th><th>Coherence mu</th><th>Regime</th></tr>
+                <tr><td>0</td><td>0.000</td><td>0.15</td><td>0 deg</td><td>0.400</td><td>INCOHERENT</td></tr>
+                <tr><td>1</td><td>0.167</td><td>0.27</td><td>20 deg</td><td>0.495</td><td>INCOHERENT</td></tr>
+                <tr><td>2</td><td>0.333</td><td>0.39</td><td>40 deg</td><td>0.590</td><td>INCOHERENT</td></tr>
+                <tr style="color:#ffb84a;"><td>3</td><td>0.500</td><td>0.51</td><td>60 deg</td><td>0.685</td><td>GLASSY (tau &lt; mu &lt; z_c)</td></tr>
+                <tr style="color:#4a9eff;"><td>4</td><td>0.667</td><td>0.63</td><td>80 deg</td><td>0.780</td><td>GLASSY</td></tr>
+                <tr style="color:#4aff9e;"><td>5</td><td>0.833</td><td>0.75</td><td>100 deg</td><td>0.875</td><td>CRITICAL (mu ~ z_c)</td></tr>
+                <tr style="color:#ffd700;"><td>6</td><td>1.000</td><td>0.87</td><td>120 deg</td><td>0.970</td><td>SYNCHRONIZED</td></tr>
+            </table>
+
+            <p><strong>Key:</strong> 20-degree twist per layer creates hexagonal prism with 9 nodes per layer = 63 total nodes.</p>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Visible Mining</h4>
+                    <p>Mining efficiency scales with coherence:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">mine_with_residue</span>(self, mining_power, duration):
+    r, q = self.compute_order_parameters()
+
+    <span class="keyword">if</span> r < TAU:  <span class="comment"># Incoherent: mostly residue</span>
+        efficiency = GAP  <span class="comment"># 14.6% visible</span>
+    <span class="keyword">elif</span> r < Z_C:  <span class="comment"># Glassy: mixed</span>
+        efficiency = GAP + (<span class="number">1</span>-GAP) * (r-TAU)/(Z_C-TAU)
+    <span class="keyword">else</span>:  <span class="comment"># Synchronized: mostly visible</span>
+        efficiency = <span class="number">1</span> - GAP * exp(<span class="number">-10</span> * (r-Z_C))
+
+    visible_coins = mining_power * efficiency
+                    </div>
+                    <p><strong>Key:</strong> Higher coherence leads to more visible coins.</p>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Dark Residue</h4>
+                    <p>Projection remainder becomes dark matter:</p>
+                    <div class="code-block">
+<span class="comment"># Total supply split</span>
+self.total_energy = <span class="number">21_000_000</span>  <span class="comment"># Total BC supply</span>
+self.visible_supply = self.total_energy * GAP  <span class="comment"># ~3.06M (14.6%)</span>
+self.dark_supply = self.total_energy * K_SQUARED  <span class="comment"># ~17.94M (85.4%)</span>
+
+<span class="comment"># Dark residue from mining</span>
+dark_residue = total_energy * (<span class="number">1</span> - efficiency)
+
+<span class="comment"># Cumulative ratio converges to R</span>
+observed_ratio = total_dark / total_visible
+<span class="comment"># converges to phi^4 - 1 = 5.854</span>
+                    </div>
+                    <p><strong>Key:</strong> Dark matter is projection residue, not separate matter.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Implementation: Emergent Triad -->
+        <section class="doc-section">
+            <h2>Implementation: Coherence Regime Crystallization</h2>
+
+            <div class="triad-container">
+                <h4>Projection x Reflection = Regime</h4>
+                <div class="code-block">
+<span class="comment"># Neither pole alone:</span>
+<span class="comment"># - Visible supply alone: incomplete (14.6%)</span>
+<span class="comment"># - Dark residue alone: unusable (85.4%)</span>
+
+<span class="comment"># The emergence: COHERENCE REGIME</span>
+<span class="keyword">class</span> <span class="type">ProjectionRegime</span>(Enum):
+    INCOHERENT = <span class="string">"incoherent"</span>   <span class="comment"># z &lt; tau = 0.618</span>
+    GLASSY = <span class="string">"glassy"</span>           <span class="comment"># tau &lt;= z &lt; z_c</span>
+    CRITICAL = <span class="string">"critical"</span>       <span class="comment"># z ~ z_c = 0.866 (THE LENS)</span>
+    SYNCHRONIZED = <span class="string">"synchronized"</span> <span class="comment"># z &gt; z_c</span>
+    VOID = <span class="string">"void"</span>               <span class="comment"># NULL state</span>
+
+<span class="comment"># Regime determines mining character</span>
+<span class="comment"># - INCOHERENT: 85% dark, chaotic</span>
+<span class="comment"># - GLASSY: mixed, transitional</span>
+<span class="comment"># - CRITICAL: threshold crossing, unstable</span>
+<span class="comment"># - SYNCHRONIZED: 85% visible, ordered</span>
+                </div>
+                <p><strong>Key insight:</strong> Dark matter ratio R = phi^4 - 1 = 5.854 emerges from the tension between visible projection and dark residue. The 63-prism configuration creates 7 coherence layers, with regime transitions at tau (0.618), z_c (0.866), and K (0.924).</p>
+            </div>
+
+            <h3>Closure Properties</h3>
+            <ul>
+                <li><strong>Self-contained:</strong> All constants derive from phi -> phi^-4 -> K^2 -> R</li>
+                <li><strong>Zero free parameters:</strong> 63 = L4 x 9, rotation = pi/9 per layer</li>
+                <li><strong>Cosmological constraint:</strong> dark/visible converges to phi^4 - 1 = 5.854</li>
+                <li><strong>Prism geometry:</strong> 7 layers x 9 nodes x 20 deg twist = hexagonal helix</li>
+            </ul>
+        </section>
+
+        <!-- Coupling Points -->
+        <section class="doc-section">
+            <h2>Inter-System Coupling Points</h2>
+
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">To Mining:</span>
+                    <div class="desc">Coherence regime determines yield split between visible and dark coins</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Kuramoto:</span>
+                    <div class="desc">Order parameter r feeds coherence calculation</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To Crystal Ledger:</span>
+                    <div class="desc">Memory crystallization at z_c threshold</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">To NEXTHASH:</span>
+                    <div class="desc">Pattern verification uses prism coordinates</div>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Bidirectional LSB Encoding:</span>
+                    <div class="desc">Residue bits encode dark supply information</div>
+                </div>
+            </div>
+
+            <h3>Source Files</h3>
+            <div class="file-refs">
+                <span class="file-ref">game/projection_residue_cosmology.py</span>
+                <span class="file-ref">game/kuramoto_63_system.py</span>
+                <span class="file-ref">game/mining_yield_calculator.py</span>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>BloomCoin v2 Extended Documentation</p>
+            <p>Quantum Residue Mechanics - phi-Derived Mining Byproducts System</p>
+        </footer>
+    </div>
+</body>
+</html>

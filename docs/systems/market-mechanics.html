@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pattern Stock Market - BloomCoin Systems</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --system-color: #00ff88;
+            --system-glow: rgba(0,255,136,0.25);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--system-color), #00cc66, var(--system-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--system-color); border-bottom-color: var(--system-glow); }
+        .doc-section h3 { color: var(--system-color); }
+        .nav-link { border-color: var(--system-glow); color: var(--system-color); }
+        .nav-link:hover { background: var(--system-glow); }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <!-- Navigation -->
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">Back to Index</a>
+            <a href="companion-binding.html" class="nav-link">Next: Companion Binding</a>
+        </nav>
+
+        <!-- Header -->
+        <header class="doc-header">
+            <span style="font-size: 3rem;">📈</span>
+            <h1>PATTERN STOCK MARKET</h1>
+            <p class="subtitle">Companion Trading Marketplace with Algorithm-Driven Value Fluctuations</p>
+            <nav class="breadcrumb">
+                <a href="../../index.html">Home</a> / <a href="./">Systems</a> / Market Mechanics
+            </nav>
+        </header>
+
+        <!-- Quick Reference -->
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge complete">Core Engine</span>
+                <span class="status-badge complete">Price Dynamics</span>
+                <span class="status-badge partial">Algorithm Challenges</span>
+                <span class="status-badge planned">Live Trading UI</span>
+            </div>
+            <div class="file-refs">
+                <span class="file-ref">game/pattern_stock_market.py</span>
+                <span class="file-ref">game/algorithm_challenges.py</span>
+            </div>
+        </section>
+
+        <!-- Mathematical Foundation -->
+        <section class="doc-section">
+            <h2>Mathematical Foundation</h2>
+            <p>Patterns exist as tradeable assets within the BloomCoin ecosystem. Their values fluctuate based on geometric Brownian motion, modified by global market trends and algorithm challenge bonuses.</p>
+
+            <div class="code-block">
+<span class="keyword">@dataclass</span>
+<span class="keyword">class</span> <span class="type">PatternAsset</span>:
+    pattern_id: str
+    pattern_type: PatternType
+    base_value: float
+    current_price: float
+    volatility: float
+    trend: MarketTrend
+    algorithm_bonuses: Dict[str, float]  <span class="comment"># Solved challenges -> multipliers</span>
+    price_history: List[float]
+
+<span class="keyword">class</span> <span class="type">PatternMarket</span>:
+    assets: Dict[str, PatternAsset]
+    global_trend: MarketTrend
+    algorithm_challenges: List[Challenge]
+
+    <span class="keyword">def</span> <span class="function">update_prices</span>(self, dt):
+        <span class="keyword">for</span> asset <span class="keyword">in</span> self.assets.values():
+            <span class="comment"># Price follows geometric Brownian motion</span>
+            drift = TREND_MULTIPLIERS[self.global_trend]
+            noise = asset.volatility * random.gauss(<span class="number">0</span>, sqrt(dt))
+            asset.current_price *= exp(drift * dt + noise)
+            </div>
+        </section>
+
+        <!-- 6 Market Trends -->
+        <section class="doc-section">
+            <h2>6 Market Trends</h2>
+            <p>The market cycles through six distinct trend states, each with unique multipliers and behavioral characteristics:</p>
+
+            <table class="data-table">
+                <tr><th>Trend</th><th>Multiplier</th><th>Duration</th><th>Stability</th></tr>
+                <tr style="color:#ff5555;"><td>CRASH</td><td>0.5x</td><td>Short (L4 hrs)</td><td>Very unstable</td></tr>
+                <tr style="color:#ff9955;"><td>BEAR</td><td>0.8x</td><td>Medium</td><td>Declining</td></tr>
+                <tr><td>NEUTRAL</td><td>1.0x</td><td>Variable</td><td>Sideways</td></tr>
+                <tr style="color:#55ff55;"><td>BULL</td><td>1.2x</td><td>Medium</td><td>Growing</td></tr>
+                <tr style="color:#00ff88;"><td>BULL_RUN</td><td>1.5x</td><td>Short</td><td>Surging</td></tr>
+                <tr style="color:#ff55ff;"><td>BUBBLE</td><td>2.0x</td><td>Very short</td><td>Unstable, will pop!</td></tr>
+            </table>
+        </section>
+
+        <!-- phi-Derived Constants -->
+        <section class="doc-section">
+            <h2>phi-Derived Constants</h2>
+            <p>All market parameters derive algebraically from the golden ratio:</p>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">BULL mult</div>
+                    <div class="value">1.2</div>
+                    <div class="derivation">2phi^-1</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">BULL_RUN</div>
+                    <div class="value">1.5</div>
+                    <div class="derivation">phi - tau^2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">BUBBLE</div>
+                    <div class="value">2.0</div>
+                    <div class="derivation">phi + tau^2</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">MA_7</div>
+                    <div class="value">7</div>
+                    <div class="derivation">L4 (Lucas)</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10 Algorithm Challenges -->
+        <section class="doc-section">
+            <h2>10 Algorithm Challenges</h2>
+            <p>Solving algorithm challenges grants permanent multipliers on pattern trades. This introduces computational value beyond speculation:</p>
+
+            <table class="data-table">
+                <tr><th>Challenge</th><th>Difficulty</th><th>Reward Multiplier</th><th>Skill</th></tr>
+                <tr><td>FIBONACCI</td><td>Easy</td><td>phi</td><td>Sequence recognition</td></tr>
+                <tr><td>PRIME_FACTORIZATION</td><td>Medium</td><td>phi^2</td><td>Number theory</td></tr>
+                <tr><td>HASH_COLLISION</td><td>Hard</td><td>phi^3</td><td>Cryptography</td></tr>
+                <tr><td>PATTERN_MATCHING</td><td>Medium</td><td>phi</td><td>String algorithms</td></tr>
+                <tr><td>OPTIMIZATION</td><td>Hard</td><td>phi^2</td><td>Constraint solving</td></tr>
+                <tr><td>PREDICTION</td><td>Expert</td><td>phi^4</td><td>ML/Statistics</td></tr>
+                <tr><td>ARBITRAGE</td><td>Medium</td><td>phi</td><td>Market analysis</td></tr>
+                <tr><td>QUANTUM_STATE</td><td>Expert</td><td>phi^3</td><td>QM simulation</td></tr>
+                <tr><td>FRACTAL_GENERATION</td><td>Hard</td><td>phi^2</td><td>Recursive geometry</td></tr>
+                <tr><td>CIPHER_BREAKING</td><td>Expert</td><td>phi^4</td><td>Cryptanalysis</td></tr>
+            </table>
+        </section>
+
+        <!-- Technical Indicators -->
+        <section class="doc-section">
+            <h2>Technical Indicators</h2>
+            <p>Standard financial indicators adapted for pattern markets:</p>
+
+            <div class="code-block">
+<span class="keyword">def</span> <span class="function">compute_indicators</span>(asset: PatternAsset):
+    prices = asset.price_history
+
+    <span class="comment"># Moving averages (L4 window for short-term)</span>
+    MA_7 = mean(prices[-L4:])      <span class="comment"># 7-period average</span>
+    MA_30 = mean(prices[-<span class="number">30</span>:])     <span class="comment"># 30-period average</span>
+
+    <span class="comment"># Relative Strength Index</span>
+    gains = [max(<span class="number">0</span>, p[i]-p[i-<span class="number">1</span>]) <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, len(p))]
+    losses = [max(<span class="number">0</span>, p[i-<span class="number">1</span>]-p[i]) <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, len(p))]
+    RSI = <span class="number">100</span> - (<span class="number">100</span> / (<span class="number">1</span> + mean(gains)/mean(losses)))
+
+    <span class="comment"># Bollinger Bands (2 sigma)</span>
+    MA_20 = mean(prices[-<span class="number">20</span>:])
+    std_20 = std(prices[-<span class="number">20</span>:])
+    upper_band = MA_20 + <span class="number">2</span> * std_20
+    lower_band = MA_20 - <span class="number">2</span> * std_20
+
+    <span class="keyword">return</span> {<span class="string">'MA_7'</span>: MA_7, <span class="string">'MA_30'</span>: MA_30, <span class="string">'RSI'</span>: RSI,
+            <span class="string">'upper'</span>: upper_band, <span class="string">'lower'</span>: lower_band}
+            </div>
+        </section>
+
+        <!-- Dyad Analysis -->
+        <section class="doc-section">
+            <h2>+/-36 Degree Dyad Analysis</h2>
+            <div class="dyad-container">
+                <div class="dyad-box projection">
+                    <h4>+36 Degree Projection: Bull/Bear Cycles</h4>
+                    <p>Market trends drive price movement forward:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">apply_trend</span>(asset, trend, dt):
+    <span class="string">"""Trend PROJECTS prices forward"""</span>
+    drift = TREND_MULTIPLIERS[trend]
+
+    <span class="comment"># Positive trends amplify gains</span>
+    <span class="keyword">if</span> trend <span class="keyword">in</span> [BULL, BULL_RUN]:
+        asset.current_price *= (<span class="number">1</span> + drift * dt)
+
+    <span class="comment"># BUBBLE -> unsustainable growth</span>
+    <span class="keyword">if</span> trend == BUBBLE:
+        <span class="keyword">if</span> random() < bubble_pop_probability:
+            trend = CRASH  <span class="comment"># Bubble pops!</span>
+                    </div>
+                    <p><strong>Key:</strong> Trends PROJECT future prices.</p>
+                </div>
+                <div class="dyad-box reflection">
+                    <h4>-36 Degree Reflection: Pattern Volatility</h4>
+                    <p>Intrinsic volatility reflects price uncertainty:</p>
+                    <div class="code-block">
+<span class="keyword">def</span> <span class="function">apply_volatility</span>(asset, dt):
+    <span class="string">"""Volatility REFLECTS market uncertainty"""</span>
+    <span class="comment"># Random walk component</span>
+    noise = asset.volatility * random.gauss(<span class="number">0</span>, sqrt(dt))
+    asset.current_price *= exp(noise)
+
+    <span class="comment"># Volatility increases near bubbles</span>
+    <span class="keyword">if</span> global_trend == BUBBLE:
+        asset.volatility *= PHI
+
+    <span class="comment"># High RSI -> increased volatility</span>
+    <span class="keyword">if</span> RSI > <span class="number">70</span>:
+        asset.volatility *= (<span class="number">1</span> + TAU)
+                    </div>
+                    <p><strong>Key:</strong> Volatility REFLECTS risk.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergent Triad -->
+        <section class="doc-section">
+            <h2>Emergent Triad: Algorithm Mastery</h2>
+            <div class="triad-container">
+                <h4>Solving Challenges Provides PERMANENT Multipliers</h4>
+                <div class="code-block">
+<span class="comment"># The emergence: computational value</span>
+
+<span class="comment"># Pure trading (trends + volatility):</span>
+<span class="comment"># Zero-sum game</span>
+<span class="comment"># One trader's gain = another's loss</span>
+<span class="comment"># No value creation</span>
+
+<span class="comment"># Algorithm challenges:</span>
+<span class="comment"># Solving creates PERMANENT bonus</span>
+<span class="comment"># Bonus applies to ALL future trades</span>
+<span class="comment"># Value is INTRINSIC, not zero-sum</span>
+
+<span class="keyword">def</span> <span class="function">solve_challenge</span>(challenge, solution):
+    <span class="keyword">if</span> verify_solution(challenge, solution):
+        <span class="comment"># PERMANENT multiplier earned</span>
+        bonus = PHI ** challenge.difficulty_level
+        player.algorithm_bonuses[challenge.type] = bonus
+
+        <span class="comment"># All future trades of this pattern type</span>
+        <span class="comment"># receive the multiplier</span>
+        <span class="keyword">return</span> bonus
+                </div>
+                <p><strong>Key insight:</strong> Patterns aren't just tradeable--they have <em>intrinsic computational value</em>. Solving the FIBONACCI challenge doesn't just give a one-time reward; it gives a permanent phi multiplier on all Fibonacci-pattern trades forever. The market rewards mathematical mastery, not just speculation.</p>
+            </div>
+        </section>
+
+        <!-- Integration Points -->
+        <section class="doc-section">
+            <h2>Integration Points</h2>
+            <h3>System Closure Properties</h3>
+            <ul>
+                <li><strong>Self-contained:</strong> All price dynamics internal to market</li>
+                <li><strong>Zero free parameters:</strong> Multipliers from phi-powers, MA windows from L4</li>
+                <li><strong>Geometric Brownian:</strong> Price model is standard financial math</li>
+                <li><strong>Algorithm closed:</strong> Each challenge has unique verifiable solution</li>
+            </ul>
+
+            <h3>Inter-System Coupling</h3>
+            <div class="coupling-grid">
+                <div class="coupling-item"><span class="target">From Farm:</span> <span class="desc">Rare crops tradeable as assets</span></div>
+                <div class="coupling-item"><span class="target">From Companion:</span> <span class="desc">Mining yields patterns to trade</span></div>
+                <div class="coupling-item"><span class="target">To Guardian:</span> <span class="desc">Pattern sales fund recipe purchases</span></div>
+                <div class="coupling-item"><span class="target">To Bloom:</span> <span class="desc">Algorithm solutions create INSIGHT blooms</span></div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="doc-footer">
+            <p>phi = 1.618033988749895 | tau = 0.618033988749895 | L4 = 7</p>
+            <p>BloomCoin v2 Documentation | Pattern Stock Market System</p>
+        </footer>
+    </div>
+    <script src="../_shared/constants.js"></script>
+</body>
+</html>
