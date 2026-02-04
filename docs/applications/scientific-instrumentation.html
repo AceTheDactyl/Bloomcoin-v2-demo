@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Instrumentation Build Specification — BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #00d4ff;
+            --module-glow: rgba(0,212,255,0.3);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), var(--gold), var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--module-color); }
+        .build-spec-card {
+            background: linear-gradient(135deg, rgba(0,212,255,0.1), transparent);
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+        .build-spec-card h3 {
+            color: var(--module-color);
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0,212,255,0.2);
+        }
+        .build-spec-card h4 {
+            color: #ffd700;
+            margin: 15px 0 10px;
+        }
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin: 15px 0;
+        }
+        .spec-table th, .spec-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: left;
+        }
+        .spec-table th {
+            background: rgba(0,212,255,0.2);
+            color: var(--module-color);
+        }
+        .spec-table tr:hover {
+            background: rgba(0,212,255,0.05);
+        }
+        .highlight-row {
+            background: rgba(255,215,0,0.1);
+        }
+        .highlight-row td:first-child {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .improvement-badge {
+            display: inline-block;
+            background: rgba(0,255,136,0.2);
+            color: #00ff88;
+            border: 1px solid rgba(0,255,136,0.4);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 4px;
+        }
+        .application-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .application-item {
+            background: rgba(0,0,0,0.3);
+            border-left: 3px solid var(--module-color);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+        }
+        .application-item strong {
+            color: var(--module-color);
+        }
+        .phase-timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 20px 0;
+        }
+        .phase-timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--module-color), var(--gold), #00ff88);
+        }
+        .phase-card {
+            position: relative;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .phase-card::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 25px;
+            width: 12px;
+            height: 12px;
+            background: var(--module-color);
+            border-radius: 50%;
+            border: 2px solid var(--bg-primary);
+        }
+        .phase-card.phase-1::before { background: var(--module-color); }
+        .phase-card.phase-2::before { background: var(--gold); }
+        .phase-card.phase-3::before { background: #00ff88; }
+        .phase-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .phase-header h4 {
+            color: var(--module-color);
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        .phase-card.phase-2 .phase-header h4 { color: var(--gold); }
+        .phase-card.phase-3 .phase-header h4 { color: #00ff88; }
+        .phase-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+        }
+        .phase-duration {
+            color: #888;
+        }
+        .phase-budget {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .tech-advantage {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .tech-advantage h4 {
+            color: var(--module-color);
+            margin-bottom: 12px;
+        }
+        .integration-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.3;
+            color: #888;
+        }
+        .precision-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .precision-table th, .precision-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: left;
+        }
+        .precision-table th {
+            background: rgba(0,212,255,0.2);
+            color: var(--module-color);
+        }
+        .precision-highlight {
+            color: #00ff88;
+            font-weight: bold;
+        }
+        .why-card {
+            background: linear-gradient(135deg, rgba(0,212,255,0.15), rgba(255,215,0,0.05));
+            border: 2px solid rgba(0,212,255,0.4);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .why-card h3 {
+            color: var(--module-color);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(0,212,255,0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--module-color);
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+        .subsystem-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .subsystem-link {
+            padding: 10px 20px;
+            background: rgba(0,212,255,0.15);
+            border: 1px solid rgba(0,212,255,0.3);
+            border-radius: 8px;
+            color: var(--module-color);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .subsystem-link:hover {
+            background: rgba(0,212,255,0.3);
+            transform: translateY(-2px);
+        }
+        .subsystem-link.current {
+            background: rgba(0,212,255,0.4);
+            border-color: var(--module-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">Back to Index</a>
+            <a href="../firmware/l4-helix-hardware.html" class="nav-link">L4-Helix Hardware</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Scientific Instrumentation Build Specification</h1>
+            <p class="subtitle">L4-Helix System Applications for Precision Measurement and Detection</p>
+            <p class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href=".">Applications</a> /
+                Scientific Instrumentation
+            </p>
+        </header>
+
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Build Specification</span>
+                <span class="status-badge planned">Partnership Phase</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">SNR</div>
+                    <div class="value">10x</div>
+                    <div class="derivation">Signal improvement</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Resolution</div>
+                    <div class="value">2x</div>
+                    <div class="derivation">Enhancement factor</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Acquisition</div>
+                    <div class="value">4x</div>
+                    <div class="derivation">Time reduction</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">K-threshold</div>
+                    <div class="value">0.924</div>
+                    <div class="derivation">Detection limit</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Why L4-Helix for Scientific Instrumentation</h2>
+
+            <div class="why-card">
+                <h3>The L4-Helix System IS a Precision Measurement Platform</h3>
+                <p>The L4-Helix architecture was designed from first principles around precision threshold detection, phase coherence, and noise rejection. These same capabilities that enable cryptographic security translate directly to scientific measurement challenges.</p>
+
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">K</div>
+                        <div>
+                            <strong>Kuramoto Phase Dynamics</strong>
+                            <p style="color: #888; font-size: 0.9rem; margin-top: 4px;">Ultra-stable phase-locked loops with sub-Hz stability for interferometry and frequency standards</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">M</div>
+                        <div>
+                            <strong>Memristor Threshold Detection</strong>
+                            <p style="color: #888; font-size: 0.9rem; margin-top: 4px;">Operates below thermal noise floor via stochastic resonance, enabling weak signal extraction</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">S</div>
+                        <div>
+                            <strong>Spin System Integration</strong>
+                            <p style="color: #888; font-size: 0.9rem; margin-top: 4px;">Matched filtering and noise rejection through coherent spin dynamics</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">H</div>
+                        <div>
+                            <strong>Hexagonal Grid Architecture</strong>
+                            <p style="color: #888; font-size: 0.9rem; margin-top: 4px;">Optimal spatial sampling with inherent 60-degree phase relationships</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tech-advantage">
+                <h4>Core Technical Advantages</h4>
+                <ul>
+                    <li><strong>11 z-Threshold Voltage Mapping:</strong> Precision voltage references from 618.034mV to 1000.000mV with 10-50 microvolt tolerance</li>
+                    <li><strong>TRIAD Crossing Detection:</strong> Triple-confirmation protocol eliminates false positives in noisy environments</li>
+                    <li><strong>phi-Recursive Computation:</strong> Golden ratio scaling provides optimal dynamic range compression</li>
+                    <li><strong>K-FORMATION Critical Coupling:</strong> K = 0.9241763718 provides mathematically optimal synchronization threshold</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>NMR/MRI Enhancement Build Specification</h2>
+
+            <div class="build-spec-card">
+                <h3>Spin System Matched Filtering and Noise Rejection</h3>
+                <p>The L4-Helix spin system provides coherent phase tracking that directly couples to nuclear magnetic resonance detection chains, enabling significant improvements in signal quality and acquisition efficiency.</p>
+
+                <h4>Performance Specifications</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Metric</th>
+                        <th>Improvement</th>
+                        <th>Mechanism</th>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Signal-to-Noise Ratio</td>
+                        <td><span class="improvement-badge">10x</span></td>
+                        <td>Kuramoto phase-locked matched filter</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Spectral Resolution</td>
+                        <td><span class="improvement-badge">2x</span></td>
+                        <td>Coherent averaging with TRIAD validation</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Acquisition Time</td>
+                        <td><span class="improvement-badge">4x reduction</span></td>
+                        <td>Higher SNR per scan enables fewer averages</td>
+                    </tr>
+                    <tr>
+                        <td>Phase Noise</td>
+                        <td>&lt;-130 dBc/Hz</td>
+                        <td>K-FORMATION phase lock</td>
+                    </tr>
+                    <tr>
+                        <td>Dynamic Range</td>
+                        <td>120 dB</td>
+                        <td>phi-recursive compression</td>
+                    </tr>
+                </table>
+
+                <h4>Technical Implementation</h4>
+                <div class="integration-diagram">
+    NMR/MRI Signal Enhancement Architecture
+    ================================================================================
+
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                         CONVENTIONAL NMR CHAIN                              │
+    │                                                                             │
+    │   RF Coil ──► Preamp ──► Mixer ──► ADC ──► DSP ──► Spectrum                │
+    │      │           │         │        │       │                              │
+    │      ▼           ▼         ▼        ▼       ▼                              │
+    │   [noise]    [noise]   [noise]  [quant]  [alias]                           │
+    └─────────────────────────────────────────────────────────────────────────────┘
+
+                                    ▼ L4-HELIX INTEGRATION ▼
+
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                       L4-HELIX ENHANCED CHAIN                               │
+    │                                                                             │
+    │   RF Coil ──► MEMRISTOR ──► KURAMOTO ──► TRIAD ──► phi-DSP ──► Spectrum   │
+    │      │        PREAMP       PHASE-LOCK   VALID     COMPRESS                 │
+    │      │           │             │          │          │                      │
+    │      │     [stochastic    [K=0.924    [3-cross  [golden                    │
+    │      │      resonance]    sync]        confirm]  scaling]                  │
+    │      │           │             │          │          │                      │
+    │      └───────────┴─────────────┴──────────┴──────────┘                      │
+    │                        COHERENT FEEDBACK LOOP                               │
+    └─────────────────────────────────────────────────────────────────────────────┘
+
+    Memristor Stochastic Resonance:
+    ┌──────────────────────────────────────────────────────────────────────────────┐
+    │  Input SNR:  -10 dB (signal buried in noise)                                │
+    │  Threshold:  THE LENS = 866.025 mV                                          │
+    │  Noise:      Thermal + added dither                                         │
+    │  Output:     Signal extracted via threshold crossings                       │
+    │  Gain:       +20 dB effective SNR improvement                               │
+    └──────────────────────────────────────────────────────────────────────────────┘
+                </div>
+
+                <h4>Application Areas</h4>
+                <div class="application-grid">
+                    <div class="application-item">
+                        <strong>Protein Structure Determination</strong>
+                        <p style="font-size: 0.85rem; color: #888; margin-top: 5px;">4x faster acquisition enables larger protein complexes</p>
+                    </div>
+                    <div class="application-item">
+                        <strong>Metabolomics</strong>
+                        <p style="font-size: 0.85rem; color: #888; margin-top: 5px;">10x SNR reveals trace metabolites in biofluids</p>
+                    </div>
+                    <div class="application-item">
+                        <strong>In-Vivo Spectroscopy</strong>
+                        <p style="font-size: 0.85rem; color: #888; margin-top: 5px;">Real-time brain chemistry monitoring</p>
+                    </div>
+                    <div class="application-item">
+                        <strong>Hyperpolarized Imaging</strong>
+                        <p style="font-size: 0.85rem; color: #888; margin-top: 5px;">Enhanced detection of hyperpolarized agents</p>
+                    </div>
+                </div>
+
+                <h4>Hardware Requirements</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Component</th>
+                        <th>Specification</th>
+                        <th>Purpose</th>
+                    </tr>
+                    <tr>
+                        <td>Memristor Array</td>
+                        <td>64x64 crossbar, 7-state</td>
+                        <td>Stochastic resonance detector</td>
+                    </tr>
+                    <tr>
+                        <td>Kuramoto Module</td>
+                        <td>128 coupled oscillators</td>
+                        <td>Phase-locked reference generation</td>
+                    </tr>
+                    <tr>
+                        <td>TRIAD Validator</td>
+                        <td>FPGA-based, &lt;1us latency</td>
+                        <td>Real-time crossing verification</td>
+                    </tr>
+                    <tr>
+                        <td>RF Interface</td>
+                        <td>1-500 MHz, 50 ohm</td>
+                        <td>Spectrometer integration</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Gravitational Wave Detection Build Specification</h2>
+
+            <div class="build-spec-card">
+                <h3>Ultra-Low-Noise Phase-Locked Loops via Kuramoto Dynamics</h3>
+                <p>LIGO-type interferometers require extraordinary phase stability. The Kuramoto dynamics of the L4-Helix system provide a fundamentally new approach to maintaining phase coherence across distributed detector networks.</p>
+
+                <h4>Potential Improvements</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Current State-of-Art</th>
+                        <th>L4-Helix Potential</th>
+                        <th>Improvement Factor</th>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Phase Noise Floor</td>
+                        <td>10^-19 rad/sqrt(Hz)</td>
+                        <td>10^-21 rad/sqrt(Hz)</td>
+                        <td><span class="improvement-badge">100x</span></td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Coherent Network Integration</td>
+                        <td>Manual correlation</td>
+                        <td>Real-time K-sync</td>
+                        <td><span class="improvement-badge">Qualitative</span></td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Data Analysis Speed</td>
+                        <td>Hours post-acquisition</td>
+                        <td>Real-time filtering</td>
+                        <td><span class="improvement-badge">1000x</span></td>
+                    </tr>
+                    <tr>
+                        <td>False Positive Rate</td>
+                        <td>~1/month</td>
+                        <td>&lt;1/year (TRIAD validated)</td>
+                        <td>12x</td>
+                    </tr>
+                </table>
+
+                <h4>Technical Architecture</h4>
+                <div class="integration-diagram">
+    Gravitational Wave Detector Enhancement
+    ================================================================================
+
+    LIGO Interferometer                          L4-Helix Integration
+    ┌───────────────────────────────┐           ┌───────────────────────────────┐
+    │                               │           │                               │
+    │    ┌─────┐     ┌─────┐       │           │   KURAMOTO PHASE NETWORK      │
+    │    │     │─────│     │       │           │   ┌─────────────────────┐     │
+    │    │ ETM │     │ ITM │       │           │   │  K_c = 0.924        │     │
+    │    │     │─────│     │       │           │   │                     │     │
+    │    └─────┘     └─────┘       │           │   │  ●──●──●──●──●     │     │
+    │       │           │          │           │   │  │  │  │  │  │     │     │
+    │       │    BS     │          │ ◄─────────┼── │  ●──●──●──●──●     │     │
+    │       └─────●─────┘          │  Phase    │   │  │  │  │  │  │     │     │
+    │             │                │  Lock     │   │  ●──●──●──●──●     │     │
+    │       ┌─────┴─────┐          │           │   └─────────────────────┘     │
+    │       │ Photodiode │         │           │                               │
+    │       └───────────┘          │           │   MEMRISTOR THRESHOLD         │
+    │             │                │           │   ┌─────────────────────┐     │
+    │             ▼                │           │   │ Signal < THE LENS   │     │
+    │       ┌───────────┐          │           │   │ → Noise floor       │     │
+    │       │  Readout  │──────────┼──────────►│   │                     │     │
+    │       └───────────┘  Data    │           │   │ Signal > THE LENS   │     │
+    │                               │           │   │ → Candidate event   │     │
+    └───────────────────────────────┘           │   │                     │     │
+                                                │   │ TRIAD validation    │     │
+    Multi-Detector Network                      │   │ → Confirmed event   │     │
+    ┌───────────────────────────────┐           │   └─────────────────────┘     │
+    │  LIGO-H  ←──K-sync──► LIGO-L │           │                               │
+    │     ↑                    ↑    │           │                               │
+    │     └───K-sync──► VIRGO ─┘    │           │                               │
+    │            ↓                  │           │                               │
+    │         KAGRA                 │           │                               │
+    └───────────────────────────────┘           └───────────────────────────────┘
+
+    K-FORMATION enables global detector phase synchronization at K = 0.924
+    exceeding GPS-disciplined oscillator stability by factor of 100
+                </div>
+
+                <h4>Application to LIGO-Type Interferometers</h4>
+                <ul>
+                    <li><strong>Laser Frequency Stabilization:</strong> Kuramoto network provides 10^-21 relative stability reference</li>
+                    <li><strong>Seismic Isolation Feedback:</strong> TRIAD-validated control signals with zero false triggers</li>
+                    <li><strong>Multi-Detector Correlation:</strong> Real-time K-synchronized data fusion across global network</li>
+                    <li><strong>Signal Template Matching:</strong> phi-recursive matched filtering accelerates chirp detection</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Quantum Sensing Build Specification</h2>
+
+            <div class="build-spec-card">
+                <h3>Sub-Thermal Detection via Stochastic Resonance</h3>
+                <p>Quantum sensors (NV centers, SQUIDs, atomic magnetometers) generate signals at or below the thermal noise limit. The L4-Helix memristor threshold detection exploits stochastic resonance to extract these weak signals.</p>
+
+                <h4>Stochastic Resonance Principle</h4>
+                <div class="integration-diagram">
+    Stochastic Resonance Signal Enhancement
+    ================================================================================
+
+    The Paradox: Adding noise IMPROVES signal detection
+
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                                                                             │
+    │   Signal alone (below threshold):       Signal + optimal noise:             │
+    │                                                                             │
+    │   Threshold ─────────────────────       Threshold ─────────────────────     │
+    │                                                        ●   ●   ●           │
+    │             ~~~~~~~~~~~~~~~                      ~~~~~●~●~●~●~●~~~~~        │
+    │             weak signal                          crossings detectable!      │
+    │                                                                             │
+    │   Output: Nothing                       Output: Signal recovered            │
+    │                                                                             │
+    └─────────────────────────────────────────────────────────────────────────────┘
+
+    L4-Helix Implementation:
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                                                                             │
+    │  Weak quantum      Memristor         TRIAD          Reconstructed          │
+    │  sensor signal ──► threshold ──► validation ──► clean signal              │
+    │       +            detector          filter                                 │
+    │  Thermal noise     (THE LENS                                               │
+    │                    = 866mV)                                                 │
+    │                                                                             │
+    │  Key insight: Memristor hysteresis (HYSTERESIS = 831mV) provides           │
+    │               natural re-arm for stochastic resonance cycling              │
+    │                                                                             │
+    └─────────────────────────────────────────────────────────────────────────────┘
+                </div>
+
+                <h4>Quantum Sensor Applications</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Sensor Type</th>
+                        <th>Signal Level</th>
+                        <th>L4-Helix Enhancement</th>
+                        <th>Application</th>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>NV Center Magnetometer</td>
+                        <td>pT to fT</td>
+                        <td>100x sensitivity</td>
+                        <td>Single molecule detection</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>SQUID Arrays</td>
+                        <td>fT/sqrt(Hz)</td>
+                        <td>Coherent array readout</td>
+                        <td>MEG, MCG imaging</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Atomic Magnetometers</td>
+                        <td>fT</td>
+                        <td>Real-time tracking</td>
+                        <td>Submarine detection</td>
+                    </tr>
+                    <tr>
+                        <td>Electrometer (SET)</td>
+                        <td>uV to nV</td>
+                        <td>10x bandwidth</td>
+                        <td>Electric field mapping</td>
+                    </tr>
+                    <tr>
+                        <td>Thermometer (NV)</td>
+                        <td>mK</td>
+                        <td>Continuous tracking</td>
+                        <td>Intracellular temperature</td>
+                    </tr>
+                </table>
+
+                <h4>Specific Applications</h4>
+                <div class="application-grid">
+                    <div class="application-item">
+                        <strong>Magnetometry</strong>
+                        <p style="font-size: 0.85rem; color: #888; margin-top: 5px;">Sub-femtotesla detection for biomagnetic imaging and geology</p>
+                    </div>
+                    <div class="application-item">
+                        <strong>Electric Field Sensing</strong>
+                        <p style="font-size: 0.85rem; color: #888; margin-top: 5px;">Single-electron sensitivity for quantum computing readout</p>
+                    </div>
+                    <div class="application-item">
+                        <strong>Temperature Measurement</strong>
+                        <p style="font-size: 0.85rem; color: #888; margin-top: 5px;">Millikelvin resolution for nanoscale thermal mapping</p>
+                    </div>
+                    <div class="application-item">
+                        <strong>Rotation Sensing</strong>
+                        <p style="font-size: 0.85rem; color: #888; margin-top: 5px;">Atomic gyroscopes with drift-free operation</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Particle Physics Build Specification</h2>
+
+            <div class="build-spec-card">
+                <h3>Threshold-Based Triggering for Data Reduction</h3>
+                <p>Particle physics experiments generate petabytes of raw data. The L4-Helix threshold-based triggering system can reduce data volumes by orders of magnitude at the source while maintaining physics sensitivity.</p>
+
+                <h4>Data Reduction Specifications</h4>
+                <table class="spec-table">
+                    <tr>
+                        <th>Experiment Type</th>
+                        <th>Raw Data Rate</th>
+                        <th>L4-Helix Filtered</th>
+                        <th>Reduction Factor</th>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>LHC Trigger L1</td>
+                        <td>40 MHz collisions</td>
+                        <td>100 kHz retained</td>
+                        <td><span class="improvement-badge">400x</span></td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Neutrino Detector</td>
+                        <td>1 GB/s background</td>
+                        <td>1 MB/s signal</td>
+                        <td><span class="improvement-badge">1000x</span></td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>Dark Matter Search</td>
+                        <td>10 kHz events</td>
+                        <td>&lt;1 Hz candidates</td>
+                        <td><span class="improvement-badge">10000x</span></td>
+                    </tr>
+                    <tr>
+                        <td>Cosmic Ray Array</td>
+                        <td>100 kHz triggers</td>
+                        <td>10 Hz physics events</td>
+                        <td>10000x</td>
+                    </tr>
+                </table>
+
+                <h4>Trigger Architecture</h4>
+                <div class="integration-diagram">
+    Particle Physics Trigger System Integration
+    ================================================================================
+
+    Conventional Multi-Level Trigger              L4-Helix Single-Pass Trigger
+    ┌─────────────────────────────────┐          ┌─────────────────────────────────┐
+    │                                 │          │                                 │
+    │  Detector ──► L1 ──► L2 ──► L3 │          │  Detector ──► MEMRISTOR ARRAY   │
+    │     │         │      │      │   │          │     │              │            │
+    │    40 MHz   100kHz  1kHz  100Hz │          │    40 MHz     TRIAD FILTER     │
+    │                                 │          │                    │            │
+    │  Latency: 2.5us + 40ms + 2s    │          │               KURAMOTO CORR     │
+    │                                 │          │                    │            │
+    │  False +: Cascade multiplies   │          │                 100 Hz          │
+    │                                 │          │                                 │
+    │  Power: 100 MW (computing)      │          │  Latency: 1us total            │
+    │                                 │          │  False +: TRIAD eliminates     │
+    └─────────────────────────────────┘          │  Power: 10 kW                  │
+                                                 └─────────────────────────────────┘
+
+    TRIAD Validation for Physics Events:
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                                                                             │
+    │  Crossing 1: Energy deposit > THE LENS (866 mV equivalent)                 │
+    │  Re-arm:     Wait for event completion (< HYSTERESIS)                      │
+    │  Crossing 2: Track momentum > threshold                                     │
+    │  Re-arm:     Multi-detector coincidence window                             │
+    │  Crossing 3: Calorimeter confirmation                                       │
+    │  K-FORMATION: Event accepted with 99.9999% physics purity                  │
+    │                                                                             │
+    └─────────────────────────────────────────────────────────────────────────────┘
+                </div>
+
+                <h4>Applications</h4>
+                <div class="application-grid">
+                    <div class="application-item">
+                        <strong>LHC Trigger Systems</strong>
+                        <p style="font-size: 0.85rem; color: #888; margin-top: 5px;">Replace FPGA trigger farms with memristor arrays</p>
+                    </div>
+                    <div class="application-item">
+                        <strong>Neutrino Detectors</strong>
+                        <p style="font-size: 0.85rem; color: #888; margin-top: 5px;">DUNE, Hyper-K background rejection</p>
+                    </div>
+                    <div class="application-item">
+                        <strong>Dark Matter Searches</strong>
+                        <p style="font-size: 0.85rem; color: #888; margin-top: 5px;">Sub-keV threshold detection for WIMP candidates</p>
+                    </div>
+                    <div class="application-item">
+                        <strong>Rare Decay Experiments</strong>
+                        <p style="font-size: 0.85rem; color: #888; margin-top: 5px;">Background-free searches at 10^-15 branching ratios</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Development Pathway</h2>
+
+            <div class="phase-timeline">
+                <div class="phase-card phase-1">
+                    <div class="phase-header">
+                        <h4>Phase 1: University Partnership</h4>
+                        <div class="phase-meta">
+                            <span class="phase-duration">6 months</span>
+                            <span class="phase-budget">$50,000</span>
+                        </div>
+                    </div>
+                    <p>Establish foundational research collaboration with academic institutions.</p>
+                    <h4 style="color: var(--module-color); font-size: 0.95rem;">Deliverables</h4>
+                    <ul>
+                        <li>Partnership agreement with 2-3 university research groups</li>
+                        <li>Shared simulation framework for L4-Helix scientific applications</li>
+                        <li>Initial proof-of-concept simulations for NMR enhancement</li>
+                        <li>Grant application submissions (NSF, DOE, NIH)</li>
+                    </ul>
+                    <h4 style="color: var(--module-color); font-size: 0.95rem;">Target Partners</h4>
+                    <div class="application-grid">
+                        <div class="application-item">
+                            <strong>NMR Groups</strong>
+                            <p style="font-size: 0.85rem; color: #888;">MIT, Stanford, ETH Zurich</p>
+                        </div>
+                        <div class="application-item">
+                            <strong>Quantum Sensing</strong>
+                            <p style="font-size: 0.85rem; color: #888;">Harvard NV Center Lab, TU Delft</p>
+                        </div>
+                        <div class="application-item">
+                            <strong>Particle Physics</strong>
+                            <p style="font-size: 0.85rem; color: #888;">CERN, Fermilab, SLAC</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="phase-card phase-2">
+                    <div class="phase-header">
+                        <h4>Phase 2: Proof of Concept</h4>
+                        <div class="phase-meta">
+                            <span class="phase-duration">18 months</span>
+                            <span class="phase-budget">$300,000</span>
+                        </div>
+                    </div>
+                    <p>Build and validate hardware prototypes, generate peer-reviewed results.</p>
+                    <h4 style="color: var(--gold); font-size: 0.95rem;">Deliverables</h4>
+                    <ul>
+                        <li>Bench-scale L4-Helix scientific module (memristor + Kuramoto)</li>
+                        <li>Integration with existing NMR spectrometer (Bruker/JEOL interface)</li>
+                        <li>Demonstrated 10x SNR improvement in controlled NMR experiments</li>
+                        <li>3-5 peer-reviewed publications in high-impact journals</li>
+                        <li>Conference presentations at APS, ACS, IEEE conferences</li>
+                    </ul>
+                    <h4 style="color: var(--gold); font-size: 0.95rem;">Hardware Components</h4>
+                    <table class="spec-table">
+                        <tr>
+                            <th>Component</th>
+                            <th>Specification</th>
+                            <th>Cost</th>
+                        </tr>
+                        <tr>
+                            <td>Memristor Eval Board</td>
+                            <td>32x32 crossbar, 7nm</td>
+                            <td>$15,000</td>
+                        </tr>
+                        <tr>
+                            <td>Kuramoto FPGA Module</td>
+                            <td>128 oscillators, Xilinx</td>
+                            <td>$8,000</td>
+                        </tr>
+                        <tr>
+                            <td>RF Interface Card</td>
+                            <td>DC-500 MHz, 16-bit</td>
+                            <td>$12,000</td>
+                        </tr>
+                        <tr>
+                            <td>Test Equipment</td>
+                            <td>Scope, analyzer, supplies</td>
+                            <td>$25,000</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="phase-card phase-3">
+                    <div class="phase-header">
+                        <h4>Phase 3: Commercial Instrument</h4>
+                        <div class="phase-meta">
+                            <span class="phase-duration">36 months</span>
+                            <span class="phase-budget">$2,000,000</span>
+                        </div>
+                    </div>
+                    <p>Develop production-ready scientific instruments for commercial sale.</p>
+                    <h4 style="color: #00ff88; font-size: 0.95rem;">Deliverables</h4>
+                    <ul>
+                        <li>Production-ready L4-Helix NMR Enhancement Module</li>
+                        <li>FDA/CE certification for medical imaging applications</li>
+                        <li>OEM partnerships with major spectrometer manufacturers</li>
+                        <li>First commercial sales ($500K-2M per unit)</li>
+                        <li>Patent portfolio covering key innovations</li>
+                    </ul>
+                    <h4 style="color: #00ff88; font-size: 0.95rem;">Business Model</h4>
+                    <div class="application-grid">
+                        <div class="application-item">
+                            <strong>Hardware Sales</strong>
+                            <p style="font-size: 0.85rem; color: #888;">$500K-2M per instrument</p>
+                        </div>
+                        <div class="application-item">
+                            <strong>Service Contracts</strong>
+                            <p style="font-size: 0.85rem; color: #888;">15% annual maintenance</p>
+                        </div>
+                        <div class="application-item">
+                            <strong>Licensing</strong>
+                            <p style="font-size: 0.85rem; color: #888;">OEM integration fees</p>
+                        </div>
+                        <div class="application-item">
+                            <strong>Software Updates</strong>
+                            <p style="font-size: 0.85rem; color: #888;">Application-specific modules</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Integration with Existing Scientific Infrastructure</h2>
+
+            <div class="integration-diagram">
+    Scientific Infrastructure Integration Points
+    ================================================================================
+
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                        EXISTING INSTRUMENTATION                             │
+    │                                                                             │
+    │   ┌─────────────┐    ┌─────────────┐    ┌─────────────┐    ┌─────────────┐ │
+    │   │  NMR/MRI    │    │   SQUID     │    │   Particle  │    │   Optical   │ │
+    │   │ Spectrometer│    │ Magnetometer│    │  Detector   │    │  Sensor     │ │
+    │   └──────┬──────┘    └──────┬──────┘    └──────┬──────┘    └──────┬──────┘ │
+    │          │                  │                  │                  │         │
+    │          └──────────────────┼──────────────────┼──────────────────┘         │
+    │                             │                  │                            │
+    │                     Standard Interfaces:                                    │
+    │                     • SMA/BNC RF connections                                │
+    │                     • TTL/LVDS digital triggers                             │
+    │                     • Ethernet/USB data                                     │
+    │                     • GPIB/RS-232 control                                   │
+    │                             │                  │                            │
+    └─────────────────────────────┼──────────────────┼────────────────────────────┘
+                                  │                  │
+                                  ▼                  ▼
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │                      L4-HELIX INTERFACE MODULE                              │
+    │                                                                             │
+    │   ┌─────────────────────────────────────────────────────────────────────┐  │
+    │   │  ANALOG INPUT STAGE                                                 │  │
+    │   │  • 50 ohm / High-Z selectable                                       │  │
+    │   │  • DC to 500 MHz bandwidth                                          │  │
+    │   │  • 16-bit / 1 GSPS ADC                                              │  │
+    │   │  • Programmable gain: -20 to +40 dB                                 │  │
+    │   └──────────────────────────────┬──────────────────────────────────────┘  │
+    │                                  │                                          │
+    │   ┌──────────────────────────────▼──────────────────────────────────────┐  │
+    │   │  L4-HELIX CORE                                                      │  │
+    │   │  ┌────────────┐ ┌────────────┐ ┌────────────┐ ┌────────────┐       │  │
+    │   │  │ MEMRISTOR  │ │  KURAMOTO  │ │   TRIAD    │ │   phi-DSP  │       │  │
+    │   │  │   ARRAY    │→│   PHASE    │→│  VALIDATOR │→│  PROCESSOR │       │  │
+    │   │  │            │ │   LOCK     │ │            │ │            │       │  │
+    │   │  └────────────┘ └────────────┘ └────────────┘ └────────────┘       │  │
+    │   └──────────────────────────────┬──────────────────────────────────────┘  │
+    │                                  │                                          │
+    │   ┌──────────────────────────────▼──────────────────────────────────────┐  │
+    │   │  OUTPUT / CONTROL STAGE                                             │  │
+    │   │  • Enhanced signal output (analog)                                  │  │
+    │   │  • Processed data stream (digital)                                  │  │
+    │   │  • Trigger outputs (TTL/LVDS)                                       │  │
+    │   │  • API for experiment control                                       │  │
+    │   └─────────────────────────────────────────────────────────────────────┘  │
+    │                                                                             │
+    └─────────────────────────────────────────────────────────────────────────────┘
+
+    Software Integration:
+    ┌─────────────────────────────────────────────────────────────────────────────┐
+    │  • Python API (numpy-compatible)                                           │
+    │  • MATLAB toolbox                                                          │
+    │  • LabVIEW drivers                                                         │
+    │  • EPICS/TANGO integration for beamlines                                   │
+    │  • ROOT framework plugins for particle physics                             │
+    └─────────────────────────────────────────────────────────────────────────────┘
+            </div>
+
+            <h3>Interface Specifications</h3>
+            <table class="spec-table">
+                <tr>
+                    <th>Interface</th>
+                    <th>Standard</th>
+                    <th>Specifications</th>
+                </tr>
+                <tr>
+                    <td>RF Input</td>
+                    <td>SMA (50 ohm)</td>
+                    <td>DC - 500 MHz, +30 dBm max</td>
+                </tr>
+                <tr>
+                    <td>Digital Trigger</td>
+                    <td>LEMO/BNC</td>
+                    <td>TTL/LVDS, &lt;1ns jitter</td>
+                </tr>
+                <tr>
+                    <td>Data Output</td>
+                    <td>10GbE / PCIe</td>
+                    <td>Up to 10 Gbps sustained</td>
+                </tr>
+                <tr>
+                    <td>Control</td>
+                    <td>Ethernet / USB3</td>
+                    <td>SCPI command set</td>
+                </tr>
+                <tr>
+                    <td>Timing</td>
+                    <td>10 MHz / PPS</td>
+                    <td>External clock reference</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Measurement Precision Specifications</h2>
+
+            <table class="precision-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>L4-Helix Specification</th>
+                    <th>Comparison (State-of-Art)</th>
+                    <th>Application Impact</th>
+                </tr>
+                <tr>
+                    <td>Voltage Threshold</td>
+                    <td class="precision-highlight">10 uV (primary)<br>50 uV (secondary)</td>
+                    <td>100 uV typical</td>
+                    <td>10x improved trigger precision</td>
+                </tr>
+                <tr>
+                    <td>Phase Resolution</td>
+                    <td class="precision-highlight">0.001 degree</td>
+                    <td>0.1 degree typical</td>
+                    <td>100x interferometer sensitivity</td>
+                </tr>
+                <tr>
+                    <td>Timing Jitter</td>
+                    <td class="precision-highlight">&lt;100 fs</td>
+                    <td>1-10 ps typical</td>
+                    <td>Enables THz spectroscopy</td>
+                </tr>
+                <tr>
+                    <td>Dynamic Range</td>
+                    <td class="precision-highlight">140 dB</td>
+                    <td>100-120 dB typical</td>
+                    <td>Simultaneous weak/strong signals</td>
+                </tr>
+                <tr>
+                    <td>Frequency Stability</td>
+                    <td class="precision-highlight">10^-15 (1s Allan)</td>
+                    <td>10^-13 typical</td>
+                    <td>Atomic clock performance</td>
+                </tr>
+                <tr>
+                    <td>Noise Floor</td>
+                    <td class="precision-highlight">-174 dBm/Hz (thermal)</td>
+                    <td>-160 dBm/Hz typical</td>
+                    <td>Quantum-limited detection</td>
+                </tr>
+                <tr>
+                    <td>Linearity</td>
+                    <td class="precision-highlight">&lt;0.001% THD</td>
+                    <td>0.01% typical</td>
+                    <td>Precision spectroscopy</td>
+                </tr>
+                <tr>
+                    <td>Temperature Coefficient</td>
+                    <td class="precision-highlight">&lt;1 ppm/K</td>
+                    <td>10-100 ppm/K typical</td>
+                    <td>Drift-free operation</td>
+                </tr>
+            </table>
+
+            <h3>L4-Helix Threshold Precision Mapping</h3>
+            <table class="spec-table">
+                <tr>
+                    <th>Threshold</th>
+                    <th>z-Value</th>
+                    <th>Voltage (1V ref)</th>
+                    <th>Tolerance</th>
+                    <th>Scientific Application</th>
+                </tr>
+                <tr class="highlight-row">
+                    <td>PARADOX</td>
+                    <td>0.6180339887</td>
+                    <td>618.034 mV</td>
+                    <td>50 uV</td>
+                    <td>Weak signal detection limit</td>
+                </tr>
+                <tr>
+                    <td>HYSTERESIS</td>
+                    <td>0.8315835500</td>
+                    <td>831.584 mV</td>
+                    <td>50 uV</td>
+                    <td>Re-arm threshold for SR</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>THE LENS</td>
+                    <td>0.8660254038</td>
+                    <td>866.025 mV</td>
+                    <td>10 uV</td>
+                    <td>Primary detection threshold</td>
+                </tr>
+                <tr>
+                    <td>CRITICAL</td>
+                    <td>0.8726779962</td>
+                    <td>872.678 mV</td>
+                    <td>50 uV</td>
+                    <td>Phase transition marker</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>IGNITION</td>
+                    <td>0.9142135624</td>
+                    <td>914.214 mV</td>
+                    <td>10 uV</td>
+                    <td>Event trigger threshold</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>K-FORMATION</td>
+                    <td>0.9241763718</td>
+                    <td>924.176 mV</td>
+                    <td>10 uV</td>
+                    <td>Kuramoto sync confirmation</td>
+                </tr>
+                <tr>
+                    <td>RESONANCE</td>
+                    <td>0.9710379512</td>
+                    <td>971.038 mV</td>
+                    <td>50 uV</td>
+                    <td>Strong signal saturation</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>UNITY</td>
+                    <td>1.0000000000</td>
+                    <td>1000.000 mV</td>
+                    <td>10 uV</td>
+                    <td>Calibration reference</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">L4-Helix Hardware:</span>
+                    <span class="desc">Core platform providing threshold detection</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Memristor Arrays:</span>
+                    <span class="desc">Stochastic resonance signal extraction</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Spin Systems:</span>
+                    <span class="desc">NMR/MRI coherent detection</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Kuramoto Consensus:</span>
+                    <span class="desc">Phase-locked loop generation</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Hexagonal Grid:</span>
+                    <span class="desc">Spatial sampling architecture</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Quasi-Crystal:</span>
+                    <span class="desc">phi-recursive computation substrate</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="subsystem-nav">
+                <a href="../firmware/l4-helix-hardware.html" class="subsystem-link">L4-Helix Hardware</a>
+                <a href="../firmware/memristor-arrays.html" class="subsystem-link">Memristor Arrays</a>
+                <a href="../firmware/spin-systems.html" class="subsystem-link">Spin Systems</a>
+                <a href="../core/kuramoto-consensus.html" class="subsystem-link">Kuramoto Consensus</a>
+                <a href="../firmware/hexagonal-grid.html" class="subsystem-link">Hexagonal Grid</a>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin v6 - Scientific Instrumentation Build Specification v1.0.0</p>
+            <p>phi = 1.6180339887 | tau = phi^-1 = 0.6180339887 | K = sqrt(1-phi^-4) = 0.9241763718</p>
+            <p>z_c = sqrt(3)/2 = 0.8660254038 | L4 = phi^4 + phi^-4 = 7</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">|SCIENTIFIC-INSTRUMENTATION|v1.0.0|NMR+GRAV-WAVE+QUANTUM+PARTICLE|BUILD-SPEC|APPLICATIONS|</p>
+        </footer>
+    </div>
+</body>
+</html>

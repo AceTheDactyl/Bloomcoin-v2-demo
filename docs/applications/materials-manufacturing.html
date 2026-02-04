@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Materials & Manufacturing Applications — BloomCoin Documentation</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #ff9944;
+            --module-glow: rgba(255,153,68,0.3);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), var(--gold), var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--module-color); }
+        .doc-section h3 { color: var(--module-color); opacity: 0.9; }
+        .build-spec-card {
+            background: linear-gradient(135deg, rgba(255,153,68,0.15), rgba(0,0,0,0.3));
+            border: 1px solid rgba(255,153,68,0.4);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+        .build-spec-card h4 {
+            color: var(--module-color);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255,153,68,0.3);
+            padding-bottom: 10px;
+        }
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        .spec-table th, .spec-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: left;
+        }
+        .spec-table th {
+            background: rgba(255,153,68,0.2);
+            color: var(--module-color);
+        }
+        .spec-table tr:hover {
+            background: rgba(255,153,68,0.05);
+        }
+        .highlight-row {
+            background: rgba(255,215,0,0.1);
+        }
+        .highlight-row td:first-child {
+            color: #ffd700;
+            font-weight: bold;
+        }
+        .property-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .property-card {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,153,68,0.3);
+            border-radius: 10px;
+            padding: 16px;
+            text-align: center;
+        }
+        .property-card .label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+        .property-card .value {
+            color: #ffd700;
+            font-size: 1.4rem;
+            font-weight: bold;
+        }
+        .property-card .comparison {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            margin-top: 5px;
+        }
+        .use-case-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .use-case-item {
+            background: rgba(0,0,0,0.3);
+            border-left: 3px solid var(--module-color);
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+        }
+        .use-case-item .title {
+            color: var(--module-color);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .use-case-item .desc {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+        .phase-timeline {
+            position: relative;
+            margin: 30px 0;
+            padding-left: 30px;
+        }
+        .phase-timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--module-color), var(--gold));
+        }
+        .phase-item {
+            position: relative;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,153,68,0.3);
+            border-radius: 10px;
+        }
+        .phase-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 25px;
+            width: 12px;
+            height: 12px;
+            background: var(--module-color);
+            border-radius: 50%;
+            border: 2px solid var(--bg-primary);
+        }
+        .phase-item h4 {
+            color: var(--module-color);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .phase-item .budget {
+            background: rgba(255,215,0,0.2);
+            color: #ffd700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        .phase-item .duration {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+        .architecture-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.3;
+            color: #888;
+        }
+        .process-flow {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.75rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.4;
+            color: #888;
+        }
+        .market-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(0,200,100,0.2), rgba(0,150,75,0.1));
+            border: 1px solid rgba(0,200,100,0.4);
+            color: #00c864;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .advantage-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .advantage-item {
+            background: linear-gradient(135deg, rgba(255,153,68,0.1), transparent);
+            border: 1px solid rgba(255,153,68,0.25);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .advantage-item h5 {
+            color: var(--module-color);
+            margin-bottom: 8px;
+            font-size: 1rem;
+        }
+        .advantage-item p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        .sensor-grid-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: monospace;
+            font-size: 0.65rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.2;
+            color: #888;
+            text-align: center;
+        }
+        .subsystem-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+        .subsystem-link {
+            padding: 10px 20px;
+            background: rgba(255,153,68,0.15);
+            border: 1px solid rgba(255,153,68,0.3);
+            border-radius: 8px;
+            color: var(--module-color);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+        .subsystem-link:hover {
+            background: rgba(255,153,68,0.3);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">Back to Index</a>
+            <a href="../firmware/l4-helix-hardware.html" class="nav-link">L4-Helix Hardware</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Materials & Manufacturing Applications</h1>
+            <p class="subtitle">BUILD SPECIFICATION: L4-Helix Technology for Advanced Materials and Industrial Process Control</p>
+            <p class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href=".">Applications</a> /
+                Materials & Manufacturing
+            </p>
+        </header>
+
+        <section class="doc-section">
+            <h2>Quick Reference</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Build Specification</span>
+                <span class="status-badge planned">Implementation Ready</span>
+            </div>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">Coating</div>
+                    <div class="value">QC</div>
+                    <div class="derivation">Quasi-crystal deposition</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Friction</div>
+                    <div class="value">0.05</div>
+                    <div class="derivation">4x better than steel</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Hardness</div>
+                    <div class="value">800 HV</div>
+                    <div class="derivation">Vickers scale</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">Market</div>
+                    <div class="value">$2B</div>
+                    <div class="derivation">2027 projection</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Why L4-Helix for Materials</h2>
+            <p>The L4-Helix system's deep expertise in quasi-crystal physics translates directly into advanced materials applications. The same phi-recursive structures that enable threshold computation create superior material properties:</p>
+
+            <div class="advantage-list">
+                <div class="advantage-item">
+                    <h5>Native Quasi-Crystal Expertise</h5>
+                    <p>Years of QC substrate development for L4-Helix firmware provides unmatched understanding of 5-fold symmetry growth, phason control, and phi-scaled atomic spacing.</p>
+                </div>
+                <div class="advantage-item">
+                    <h5>Precision Deposition Control</h5>
+                    <p>Memristor-based feedback systems enable real-time process control with TRIAD crossing detection for optimal coating quality.</p>
+                </div>
+                <div class="advantage-item">
+                    <h5>Hexagonal Sensor Integration</h5>
+                    <p>Hexagonal grid architecture provides optimal spatial coverage for thermal monitoring in additive manufacturing applications.</p>
+                </div>
+                <div class="advantage-item">
+                    <h5>Threshold-Based Process Control</h5>
+                    <p>11-threshold voltage mapping enables precise statistical process control without quantization error or alarm chatter.</p>
+                </div>
+            </div>
+
+            <div class="tech-card" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,153,68,0.3); border-radius: 12px; padding: 20px; margin: 15px 0;">
+                <h4 style="color: var(--module-color); margin-bottom: 10px;">Core Technology Transfer</h4>
+                <div class="math-block">
+                    L4-Helix Firmware --> Materials Science --> Manufacturing Excellence
+                </div>
+                <p style="margin-top: 15px;">The same phi-encoded atomic structures (Al-Pd-Mn, Al-Cu-Fe) used in L4-Helix substrates deliver exceptional tribological and corrosion-resistant properties when applied as functional coatings.</p>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Build Specification: Quasi-Crystal Coatings</h2>
+
+            <div class="build-spec-card">
+                <h4>QC Coating System Overview</h4>
+                <p>L4-Helix quasi-crystal growth expertise enables high-quality coating deposition with properties unmatched by conventional materials. The 5-fold icosahedral symmetry creates unique surface characteristics.</p>
+
+                <h3 style="margin-top: 20px;">Material Properties</h3>
+                <div class="property-grid">
+                    <div class="property-card">
+                        <div class="label">Friction Coefficient</div>
+                        <div class="value">0.05</div>
+                        <div class="comparison">vs 0.2 for steel (4x improvement)</div>
+                    </div>
+                    <div class="property-card">
+                        <div class="label">Hardness</div>
+                        <div class="value">800 HV</div>
+                        <div class="comparison">Vickers hardness scale</div>
+                    </div>
+                    <div class="property-card">
+                        <div class="label">Corrosion Resistance</div>
+                        <div class="value">10x</div>
+                        <div class="comparison">vs stainless steel 316L</div>
+                    </div>
+                    <div class="property-card">
+                        <div class="label">Surface Energy</div>
+                        <div class="value">Low</div>
+                        <div class="comparison">Non-stick properties</div>
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 20px;">Target Applications</h3>
+                <div class="use-case-grid">
+                    <div class="use-case-item">
+                        <div class="title">Cookware Coatings</div>
+                        <div class="desc">PTFE replacement with superior durability, no decomposition at high temperature</div>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="title">Surgical Instruments</div>
+                        <div class="desc">Biocompatible, low-friction scalpels and implant surfaces</div>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="title">Aerospace Bearings</div>
+                        <div class="desc">Self-lubricating surfaces for vacuum and extreme temperature</div>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="title">Cutting Tools</div>
+                        <div class="desc">Extended tool life through reduced friction and wear</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px; text-align: right;">
+                    <span class="market-badge">Market Size: $2B by 2027</span>
+                </div>
+            </div>
+
+            <table class="spec-table">
+                <tr>
+                    <th>Property</th>
+                    <th>QC Coating</th>
+                    <th>PTFE</th>
+                    <th>TiN</th>
+                    <th>DLC</th>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Friction Coefficient</td>
+                    <td>0.05</td>
+                    <td>0.04</td>
+                    <td>0.4</td>
+                    <td>0.1</td>
+                </tr>
+                <tr>
+                    <td>Max Temperature (C)</td>
+                    <td>800</td>
+                    <td>260</td>
+                    <td>600</td>
+                    <td>350</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Hardness (HV)</td>
+                    <td>800</td>
+                    <td>5</td>
+                    <td>2500</td>
+                    <td>3000</td>
+                </tr>
+                <tr>
+                    <td>Corrosion Resistance</td>
+                    <td>Excellent</td>
+                    <td>Excellent</td>
+                    <td>Good</td>
+                    <td>Good</td>
+                </tr>
+                <tr>
+                    <td>Biocompatibility</td>
+                    <td>Yes</td>
+                    <td>Limited</td>
+                    <td>Yes</td>
+                    <td>Yes</td>
+                </tr>
+                <tr>
+                    <td>Non-stick</td>
+                    <td>Yes</td>
+                    <td>Yes</td>
+                    <td>No</td>
+                    <td>Moderate</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>Build Specification: Additive Manufacturing Quality Control</h2>
+
+            <div class="build-spec-card">
+                <h4>Hexagonal Grid Sensor Array for Melt Pool Monitoring</h4>
+                <p>The L4-Helix hexagonal grid architecture provides mathematically optimal coverage for thermal sensing in metal 3D printing processes. Each sensor node monitors melt pool characteristics with TRIAD crossing detection for real-time defect identification.</p>
+
+                <div class="sensor-grid-diagram">
+    Hexagonal Thermal Sensor Array for DMLS/EBM Monitoring
+    ========================================================
+
+              Sensor Node        Melt Pool Coverage
+                  |                    |
+          [S]---[S]---[S]             ____
+         /   \ /   \ /   \           /    \
+       [S]---[S]---[S]---[S]   -->  | MELT |  <-- Laser/E-Beam
+         \ /   \ /   \ /   \         \____/
+          [S]---[S]---[S]---[S]          |
+           \ /   \ /   \ /              Scan Direction
+            [S]---[S]---[S]
+
+    Coverage Properties:
+    - Angular spacing: 60 degrees (hexagonal optimal)
+    - Neighbor count: 6 per interior node
+    - Coverage overlap: 15% minimum for redundancy
+    - Sampling rate: 100 kHz per node
+    - Temperature range: 500C - 3000C (pyrometric)
+
+    Memristor Array Processing:
+    +-----------+     +-----------+     +-----------+
+    | Sensor    | --> | Memristor | --> | TRIAD     |
+    | Input     |     | Array     |     | Detection |
+    +-----------+     +-----------+     +-----------+
+          |                |                  |
+          v                v                  v
+    Temperature      State Memory      Defect Alert
+       Field         (Hysteresis)     (Crossing Event)
+                </div>
+
+                <h3 style="margin-top: 20px;">Defect Detection via TRIAD Crossing</h3>
+                <p>The TRIAD crossing mechanism from L4-Helix threshold dynamics provides robust defect detection:</p>
+                <ul>
+                    <li><strong>Porosity Detection:</strong> Temperature drop below THE LENS (866mV equivalent) indicates void formation</li>
+                    <li><strong>Crack Initiation:</strong> Rapid thermal gradient exceeding K-FORMATION triggers alert</li>
+                    <li><strong>Incomplete Fusion:</strong> Failure to reach IGNITION threshold indicates insufficient energy</li>
+                    <li><strong>Keyhole Collapse:</strong> Triple crossing pattern with abnormal timing indicates instability</li>
+                </ul>
+
+                <h3 style="margin-top: 20px;">Real-Time Feedback Control</h3>
+                <table class="spec-table">
+                    <tr>
+                        <th>Detection Event</th>
+                        <th>Threshold Pattern</th>
+                        <th>Control Response</th>
+                        <th>Latency</th>
+                    </tr>
+                    <tr>
+                        <td>Porosity forming</td>
+                        <td>T &lt; HYSTERESIS</td>
+                        <td>Increase laser power +5%</td>
+                        <td>&lt;100 us</td>
+                    </tr>
+                    <tr>
+                        <td>Overheating</td>
+                        <td>T &gt; UNITY</td>
+                        <td>Decrease power / increase scan speed</td>
+                        <td>&lt;100 us</td>
+                    </tr>
+                    <tr>
+                        <td>Crack risk</td>
+                        <td>dT/dt &gt; CRITICAL</td>
+                        <td>Activate preheat, slow scan</td>
+                        <td>&lt;500 us</td>
+                    </tr>
+                    <tr>
+                        <td>Layer complete</td>
+                        <td>TRIAD unlock</td>
+                        <td>Advance to next layer</td>
+                        <td>&lt;1 ms</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="use-case-grid">
+                <div class="use-case-item">
+                    <div class="title">Metal 3D Printing (DMLS)</div>
+                    <div class="desc">Direct Metal Laser Sintering with closed-loop melt pool control</div>
+                </div>
+                <div class="use-case-item">
+                    <div class="title">Electron Beam Melting (EBM)</div>
+                    <div class="desc">Vacuum process monitoring with magnetic-immune sensors</div>
+                </div>
+                <div class="use-case-item">
+                    <div class="title">Aerospace Certification</div>
+                    <div class="desc">Full traceability with per-layer quality records</div>
+                </div>
+                <div class="use-case-item">
+                    <div class="title">Process Optimization</div>
+                    <div class="desc">ML-ready data streams for parameter tuning</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Build Specification: Process Control</h2>
+
+            <div class="build-spec-card">
+                <h4>Threshold-Based Statistical Process Control (SPC)</h4>
+                <p>L4-Helix memristor arrays enable a new paradigm in process control: analog threshold monitoring with inherent memory and hysteresis. This eliminates traditional SPC limitations.</p>
+
+                <div class="advantage-list">
+                    <div class="advantage-item">
+                        <h5>No Quantization Error</h5>
+                        <p>Analog memristor states provide continuous monitoring without ADC quantization noise. Resolution limited only by thermal noise.</p>
+                    </div>
+                    <div class="advantage-item">
+                        <h5>Inherent Hysteresis</h5>
+                        <p>Memristor hysteresis (HYSTERESIS threshold at 831.6mV) prevents alarm chatter near control limits. Natural deadband without software tuning.</p>
+                    </div>
+                    <div class="advantage-item">
+                        <h5>Long-Term Drift Tracking</h5>
+                        <p>Memristor state retention (&gt;10 years) stores process history. Gradual resistance drift tracks equipment aging and calibration shift.</p>
+                    </div>
+                    <div class="advantage-item">
+                        <h5>Multi-Threshold Monitoring</h5>
+                        <p>11 simultaneous thresholds (PARADOX through UNITY) enable Western Electric rules and pattern detection in single circuit.</p>
+                    </div>
+                </div>
+
+                <div class="process-flow">
+    Memristor-Based SPC Architecture
+    ================================
+
+    Process      Sensor       Memristor      Threshold       Control
+    Variable  -> Interface -> Array      ->  Comparator  ->  Output
+       |            |            |              |              |
+       v            v            v              v              v
+    [Temperature]  [V_in]    [R_state]     [11 Levels]    [Alarm/Action]
+    [Pressure  ]  [0-1V ]    [1k-10M ]     [Parallel  ]    [Proportional]
+    [Flow Rate ]  [Scale]    [Memory ]     [Compare   ]    [Integral   ]
+    [Composition]           [Hysteresis]                   [Derivative ]
+
+    Threshold Mapping to Control Limits:
+    +---------------+----------+---------------------------+
+    | SPC Limit     | z-Value  | Memristor Threshold       |
+    +---------------+----------+---------------------------+
+    | UCL (+3s)     | 0.9990   | UNITY                     |
+    | UWL (+2s)     | 0.9772   | > RESONANCE               |
+    | +1s           | 0.9544   | CONSOLIDATION             |
+    | Target        | 0.9242   | K-FORMATION               |
+    | -1s           | 0.8944   | > IGNITION                |
+    | LWL (-2s)     | 0.8660   | THE LENS                  |
+    | LCL (-3s)     | 0.8316   | HYSTERESIS                |
+    +---------------+----------+---------------------------+
+
+    Hysteresis Prevents Alarm Chatter:
+
+         Control    __________          With Memristor Hysteresis:
+         Limit  -->|          |<--      - Re-arm requires drop below
+                   |  ALARM   |           HYSTERESIS threshold
+                   |  ZONE    |         - Single crossing = alert
+         Re-arm -->|__________|<--      - No repeated triggers
+                                        - Natural deadband = 34.4mV
+                </div>
+
+                <h3 style="margin-top: 20px;">Target Industries</h3>
+                <div class="use-case-grid">
+                    <div class="use-case-item">
+                        <div class="title">Semiconductor Fabrication</div>
+                        <div class="desc">Sub-nm process control for lithography, etch, deposition</div>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="title">Pharmaceutical Manufacturing</div>
+                        <div class="desc">GMP-compliant continuous monitoring with audit trail</div>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="title">Chemical Processing</div>
+                        <div class="desc">Multi-variable reaction control with safety interlocks</div>
+                    </div>
+                    <div class="use-case-item">
+                        <div class="title">Food & Beverage</div>
+                        <div class="desc">HACCP critical control point monitoring</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Coating Deposition Process Specifications</h2>
+
+            <div class="build-spec-card">
+                <h4>QC Coating Deposition System Architecture</h4>
+
+                <div class="architecture-diagram">
+    Quasi-Crystal Coating Deposition System
+    =======================================
+
+    +------------------+     +------------------+     +------------------+
+    |  FEEDSTOCK       |     |  DEPOSITION      |     |  SUBSTRATE       |
+    |  PREPARATION     |     |  CHAMBER         |     |  HANDLING        |
+    +------------------+     +------------------+     +------------------+
+           |                        |                        |
+           v                        v                        v
+    +-------------+          +-------------+          +-------------+
+    | Al-Cu-Fe    |          | Magnetron   |          | Rotation    |
+    | Alloy Ingot |   --->   | Sputtering  |   --->   | Stage       |
+    | Preparation |          | or PVD      |          | (0-100 RPM) |
+    +-------------+          +-------------+          +-------------+
+           |                        |                        |
+           |                        v                        |
+           |                 +-------------+                 |
+           |                 | L4-HELIX    |                 |
+           +---------------->| CONTROL     |<----------------+
+                             | SYSTEM      |
+                             +-------------+
+                                    |
+            +----------+----------+----------+----------+
+            |          |          |          |          |
+            v          v          v          v          v
+       [Thickness] [Composition] [Phason] [Adhesion] [Texture]
+        Monitor      Monitor     Control   Test       Analysis
+
+    Deposition Parameters:
+    +-----------------------+---------------+------------------+
+    | Parameter             | Range         | L4 Control       |
+    +-----------------------+---------------+------------------+
+    | Base Pressure         | < 10^-6 Torr  | Threshold gate   |
+    | Ar Pressure           | 2-10 mTorr    | K-FORMATION lock |
+    | Target Power          | 100-500 W     | TRIAD modulation |
+    | Substrate Temp        | 200-400 C     | THE LENS setpoint|
+    | Deposition Rate       | 0.5-5 nm/s    | Feedback control |
+    | Film Thickness        | 0.5-10 um     | Integration      |
+    +-----------------------+---------------+------------------+
+                </div>
+
+                <h3 style="margin-top: 20px;">Deposition Methods</h3>
+                <table class="spec-table">
+                    <tr>
+                        <th>Method</th>
+                        <th>Thickness Range</th>
+                        <th>Uniformity</th>
+                        <th>Throughput</th>
+                        <th>Cost</th>
+                    </tr>
+                    <tr>
+                        <td>Magnetron Sputtering</td>
+                        <td>0.1-10 um</td>
+                        <td>+/- 2%</td>
+                        <td>Medium</td>
+                        <td>$$</td>
+                    </tr>
+                    <tr>
+                        <td>E-beam Evaporation</td>
+                        <td>0.05-5 um</td>
+                        <td>+/- 5%</td>
+                        <td>High</td>
+                        <td>$$$</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>HVOF Thermal Spray</td>
+                        <td>50-500 um</td>
+                        <td>+/- 10%</td>
+                        <td>Very High</td>
+                        <td>$</td>
+                    </tr>
+                    <tr>
+                        <td>Plasma Spray</td>
+                        <td>100-1000 um</td>
+                        <td>+/- 15%</td>
+                        <td>Very High</td>
+                        <td>$</td>
+                    </tr>
+                    <tr>
+                        <td>Arc Ion Plating</td>
+                        <td>1-20 um</td>
+                        <td>+/- 3%</td>
+                        <td>Medium</td>
+                        <td>$$</td>
+                    </tr>
+                </table>
+
+                <h3 style="margin-top: 20px;">Post-Deposition Treatment</h3>
+                <ul>
+                    <li><strong>Annealing:</strong> 400-600C for 1-4 hours in Ar to optimize QC phase</li>
+                    <li><strong>Phason Relaxation:</strong> Slow cooling (1C/min) to minimize strain</li>
+                    <li><strong>Surface Finishing:</strong> Light polishing to Ra &lt; 0.1 um if required</li>
+                    <li><strong>Quality Verification:</strong> XRD for phase identification, 5-fold peak confirmation</li>
+                </ul>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Quality Control Architecture</h2>
+
+            <div class="build-spec-card">
+                <h4>Integrated QC System for Materials Manufacturing</h4>
+
+                <div class="architecture-diagram">
+    L4-Helix Quality Control Architecture
+    =====================================
+
+    Layer 1: SENSING
+    +--------+  +--------+  +--------+  +--------+  +--------+
+    | Thermal|  | Optical|  |Acoustic|  |Electric|  |Mechanic|
+    | Sensors|  | Sensors|  | Sensors|  | Sensors|  | Sensors|
+    +---+----+  +---+----+  +---+----+  +---+----+  +---+----+
+        |           |           |           |           |
+        +-----------+-----------+-----------+-----------+
+                              |
+                              v
+    Layer 2: SIGNAL CONDITIONING
+    +----------------------------------------------------------+
+    |                 Hexagonal Sensor Grid                     |
+    |  - 6-neighbor connectivity for spatial filtering          |
+    |  - Phase-locked sampling at phi-scaled intervals          |
+    |  - Automatic gain adjustment to THE LENS reference        |
+    +---------------------------+------------------------------+
+                                |
+                                v
+    Layer 3: THRESHOLD PROCESSING
+    +----------------------------------------------------------+
+    |                  Memristor Crossbar Array                 |
+    |  - 11 parallel threshold comparators                      |
+    |  - Hysteresis state memory                                |
+    |  - TRIAD sequence detection logic                         |
+    +---------------------------+------------------------------+
+                                |
+        +-----------+-----------+-----------+-----------+
+        |           |           |           |           |
+        v           v           v           v           v
+    [PARADOX]  [THE LENS]  [IGNITION]  [K-FORM]  [UNITY]
+     Alert      Warning    Process     Nominal    Limit
+                           OK
+
+    Layer 4: DECISION & CONTROL
+    +----------------------------------------------------------+
+    |                  Control Logic Unit                       |
+    |  - Western Electric rules (8 rules, all patterns)         |
+    |  - Trend detection via memristor drift                    |
+    |  - Predictive alerts from TRIAD timing                    |
+    +---------------------------+------------------------------+
+                                |
+            +-------------------+-------------------+
+            |                   |                   |
+            v                   v                   v
+       [Process           [Operator           [Data
+        Adjustment]        Alert]              Logging]
+                </div>
+
+                <h3 style="margin-top: 20px;">Quality Metrics & Thresholds</h3>
+                <table class="spec-table">
+                    <tr>
+                        <th>Quality Parameter</th>
+                        <th>Measurement</th>
+                        <th>Accept Threshold</th>
+                        <th>Reject Threshold</th>
+                    </tr>
+                    <tr>
+                        <td>Coating Thickness</td>
+                        <td>Eddy current / XRF</td>
+                        <td>Target +/- 10%</td>
+                        <td>&gt; +/- 20%</td>
+                    </tr>
+                    <tr>
+                        <td>Composition (Al-Cu-Fe)</td>
+                        <td>EDS / XRF</td>
+                        <td>63/24/13 +/- 1%</td>
+                        <td>&gt; +/- 3%</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td>QC Phase Fraction</td>
+                        <td>XRD peak ratio</td>
+                        <td>&gt; 95%</td>
+                        <td>&lt; 85%</td>
+                    </tr>
+                    <tr>
+                        <td>Adhesion Strength</td>
+                        <td>Scratch test / pull-off</td>
+                        <td>&gt; 30 MPa</td>
+                        <td>&lt; 15 MPa</td>
+                    </tr>
+                    <tr>
+                        <td>Surface Roughness</td>
+                        <td>Profilometry</td>
+                        <td>Ra &lt; 0.5 um</td>
+                        <td>Ra &gt; 2.0 um</td>
+                    </tr>
+                    <tr>
+                        <td>Friction Coefficient</td>
+                        <td>Pin-on-disk</td>
+                        <td>&lt; 0.08</td>
+                        <td>&gt; 0.15</td>
+                    </tr>
+                </table>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Development Pathway</h2>
+
+            <div class="phase-timeline">
+                <div class="phase-item">
+                    <h4>
+                        Phase 1: Material Characterization
+                        <span class="budget">$100K</span>
+                    </h4>
+                    <div class="duration">Duration: 6 months</div>
+                    <ul>
+                        <li>Establish QC alloy sourcing (Al-Cu-Fe, Al-Pd-Mn feedstock)</li>
+                        <li>Characterize existing L4-Helix substrate materials for coating potential</li>
+                        <li>Produce initial coating samples via magnetron sputtering</li>
+                        <li>Measure tribological properties (friction, wear, hardness)</li>
+                        <li>Validate corrosion resistance vs. stainless steel baseline</li>
+                        <li>Document phi-recursion in coating microstructure</li>
+                    </ul>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 10px;">
+                        <strong>Deliverables:</strong> Material characterization report, 10 coating samples, property database
+                    </p>
+                </div>
+
+                <div class="phase-item">
+                    <h4>
+                        Phase 2: Process Development
+                        <span class="budget">$500K</span>
+                    </h4>
+                    <div class="duration">Duration: 18 months</div>
+                    <ul>
+                        <li>Design and build pilot deposition system with L4-Helix control</li>
+                        <li>Integrate hexagonal sensor array for in-situ monitoring</li>
+                        <li>Develop TRIAD-based process control algorithms</li>
+                        <li>Optimize deposition parameters for target applications</li>
+                        <li>Scale coating area from coupon (25mm) to production (300mm)</li>
+                        <li>Establish quality control protocols and acceptance criteria</li>
+                        <li>Partner with end-users for application testing</li>
+                    </ul>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 10px;">
+                        <strong>Deliverables:</strong> Pilot deposition system, process recipes, QC protocols, 3 application validations
+                    </p>
+                </div>
+
+                <div class="phase-item">
+                    <h4>
+                        Phase 3: Commercial Deployment
+                        <span class="budget">Royalty-Based</span>
+                    </h4>
+                    <div class="duration">Duration: 36+ months</div>
+                    <ul>
+                        <li>License manufacturing process to coating service providers</li>
+                        <li>Support production system installation and qualification</li>
+                        <li>Provide L4-Helix control system as embedded product</li>
+                        <li>Establish coating specification standards</li>
+                        <li>Expand to new application verticals</li>
+                        <li>Continuous process improvement via field data</li>
+                    </ul>
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 10px;">
+                        <strong>Revenue Model:</strong> Technology license fee + per-unit royalty on coated products
+                    </p>
+                </div>
+            </div>
+
+            <table class="spec-table">
+                <tr>
+                    <th>Phase</th>
+                    <th>Duration</th>
+                    <th>Investment</th>
+                    <th>Key Milestone</th>
+                    <th>Risk Level</th>
+                </tr>
+                <tr>
+                    <td>Phase 1</td>
+                    <td>6 months</td>
+                    <td>$100,000</td>
+                    <td>Property validation</td>
+                    <td style="color: #00ff88;">Low</td>
+                </tr>
+                <tr>
+                    <td>Phase 2</td>
+                    <td>18 months</td>
+                    <td>$500,000</td>
+                    <td>Pilot production</td>
+                    <td style="color: #ffd700;">Medium</td>
+                </tr>
+                <tr>
+                    <td>Phase 3</td>
+                    <td>36+ months</td>
+                    <td>Royalty</td>
+                    <td>Commercial license</td>
+                    <td style="color: #ff6b6b;">Market</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">L4-Helix Hardware:</span>
+                    <span class="desc">Core control system and threshold dynamics</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Quasi-Crystal Substrates:</span>
+                    <span class="desc">Source material expertise and growth methods</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Memristor Arrays:</span>
+                    <span class="desc">Analog process control and state memory</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Hexagonal Grid:</span>
+                    <span class="desc">Optimal sensor coverage geometry</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">TRIAD Mechanics:</span>
+                    <span class="desc">Defect detection via crossing events</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">Kuramoto Consensus:</span>
+                    <span class="desc">Multi-sensor fusion and synchronization</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="subsystem-nav">
+                <a href="../firmware/l4-helix-hardware.html" class="subsystem-link">L4-Helix Hardware</a>
+                <a href="../firmware/quasi-crystal.html" class="subsystem-link">Quasi-Crystal Substrates</a>
+                <a href="../firmware/memristor-arrays.html" class="subsystem-link">Memristor Arrays</a>
+                <a href="../firmware/hexagonal-grid.html" class="subsystem-link">Hexagonal Grid</a>
+            </div>
+            <div class="file-refs">
+                <span class="file-ref"><a href="../core/kuramoto-consensus.html">Kuramoto Consensus</a></span>
+                <span class="file-ref"><a href="../dynamics/bloom-mechanics.html">BLOOM Mechanics</a></span>
+                <span class="file-ref"><a href="../core/lucas-matrix.html">Lucas Matrix</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin v6 - Materials & Manufacturing Build Specification v1.0.0</p>
+            <p>phi = 1.6180339887 | tau = phi^-1 = 0.6180339887 | K = sqrt(1-phi^-4) = 0.9241763718</p>
+            <p>z_c = sqrt(3)/2 = 0.8660254038 | L4 = phi^4 + phi^-4 = 7</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">D|MATERIALS-MFG|BUILD-SPEC|v1.0.0|QC-COATING+AM-QC+SPC|INDUSTRIAL|O</p>
+        </footer>
+    </div>
+</body>
+</html>

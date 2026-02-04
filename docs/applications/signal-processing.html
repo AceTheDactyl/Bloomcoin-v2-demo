@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signal Processing & Communications — L4-Helix Build Specification</title>
+    <link rel="stylesheet" href="../_shared/styles.css">
+    <style>
+        :root {
+            --module-color: #ffcc00;
+            --module-glow: rgba(255,204,0,0.3);
+        }
+        .doc-header h1 {
+            background: linear-gradient(90deg, var(--module-color), var(--gold), var(--module-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .doc-section h2 { color: var(--module-color); }
+        .doc-section h3 { color: var(--module-color); opacity: 0.85; }
+
+        .usecase-card {
+            background: linear-gradient(135deg, rgba(255,204,0,0.1), transparent);
+            border: 1px solid rgba(255,204,0,0.3);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+        }
+        .usecase-card h3 {
+            color: var(--module-color);
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .usecase-card .market-badge {
+            background: rgba(0,255,136,0.2);
+            color: #00ff88;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .spec-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .spec-item {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,204,0,0.2);
+            border-radius: 10px;
+            padding: 16px;
+        }
+        .spec-item h4 {
+            color: var(--module-color);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .spec-item ul {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .spec-item li {
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .advantage-tag {
+            display: inline-block;
+            background: rgba(255,204,0,0.2);
+            color: var(--module-color);
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            margin: 2px;
+        }
+
+        .application-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .app-tag {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .signal-flow-diagram {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.7rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.3;
+            color: #888;
+        }
+        .signal-flow-diagram .highlight { color: var(--module-color); }
+        .signal-flow-diagram .component { color: #4a9eff; }
+        .signal-flow-diagram .threshold { color: #ff6b9d; }
+        .signal-flow-diagram .output { color: #00ff88; }
+
+        .pseudocode-block {
+            background: rgba(0,0,0,0.4);
+            border-radius: 10px;
+            padding: 20px;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            white-space: pre;
+            line-height: 1.5;
+            margin: 15px 0;
+        }
+        .pseudocode-block .keyword { color: #ff79c6; }
+        .pseudocode-block .function { color: #50fa7b; }
+        .pseudocode-block .comment { color: #6272a4; }
+        .pseudocode-block .number { color: #bd93f9; }
+        .pseudocode-block .type { color: #8be9fd; }
+        .pseudocode-block .string { color: #f1fa8c; }
+
+        .phase-timeline {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .phase-card {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            border-left: 4px solid var(--module-color);
+        }
+        .phase-card .phase-number {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--module-color);
+            color: #000;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .phase-card h4 {
+            color: var(--module-color);
+            margin-top: 10px;
+            margin-bottom: 8px;
+        }
+        .phase-card .timeline {
+            color: #888;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+        }
+        .phase-card .budget {
+            color: #00ff88;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            margin: 15px 0;
+        }
+        .comparison-table th, .comparison-table td {
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: left;
+        }
+        .comparison-table th {
+            background: rgba(255,204,0,0.2);
+            color: var(--module-color);
+        }
+        .comparison-table tr:hover {
+            background: rgba(255,204,0,0.05);
+        }
+        .highlight-row {
+            background: rgba(255,204,0,0.1);
+        }
+        .highlight-row td:first-child {
+            color: var(--module-color);
+            font-weight: bold;
+        }
+
+        .security-badge {
+            background: rgba(255,107,157,0.2);
+            color: #ff6b9d;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 900px) {
+            .phase-timeline {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="doc-container">
+        <nav class="doc-nav">
+            <a href="../../index.html" class="nav-link">← Back to Index</a>
+            <a href="../firmware/l4-helix-hardware.html" class="nav-link">L4-Helix Hardware →</a>
+        </nav>
+
+        <header class="doc-header">
+            <h1>Signal Processing & Communications</h1>
+            <p class="subtitle">L4-Helix Build Specification for RF, Acoustic, and Secure Communications Systems</p>
+            <p class="breadcrumb">
+                <a href="../../index.html">Index</a> /
+                <a href=".">Applications</a> /
+                Signal Processing & Communications
+            </p>
+        </header>
+
+        <section class="doc-section">
+            <h2>Build Specification Overview</h2>
+            <div class="impl-status">
+                <span class="status-badge partial">Build Spec v1.0</span>
+                <span class="status-badge planned">Implementation Scaffold</span>
+            </div>
+
+            <p>This document provides build specifications for implementing L4-Helix signal processing systems. The architecture leverages Kuramoto oscillator dynamics, memristor-based matched filtering, and hexagonal array geometries to achieve breakthrough performance in spectrum sensing, radar processing, acoustic beamforming, and chaos-based secure communications.</p>
+
+            <div class="constants-grid">
+                <div class="constant-card">
+                    <div class="symbol">K</div>
+                    <div class="value">0.9242</div>
+                    <div class="derivation">Critical coupling threshold</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">z_c</div>
+                    <div class="value">0.8660</div>
+                    <div class="derivation">THE LENS detection</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">L4</div>
+                    <div class="value">7</div>
+                    <div class="derivation">Array encoding base</div>
+                </div>
+                <div class="constant-card">
+                    <div class="symbol">60deg</div>
+                    <div class="value">pi/3</div>
+                    <div class="derivation">Hexagonal phase lock</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+        <!-- USE CASE 1: COGNITIVE RADIO / SPECTRUM SENSING -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+
+        <section class="doc-section">
+            <h2>Use Case 1: Cognitive Radio / Spectrum Sensing</h2>
+
+            <div class="usecase-card">
+                <h3>
+                    Kuramoto-Based Wideband Spectrum Sensing
+                    <span class="market-badge">$8B Market by 2028</span>
+                </h3>
+
+                <p>The L4-Helix architecture enables real-time wideband spectrum sensing by mapping RF channels to coupled Kuramoto oscillators. Coherent signals induce phase locking, which is detected via the order parameter crossing THE LENS threshold.</p>
+
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <h4>Architecture</h4>
+                        <ul>
+                            <li>RF frontend samples N channels simultaneously</li>
+                            <li>Each channel drives a memristor element</li>
+                            <li>Memristor conductance modulates oscillator coupling</li>
+                            <li>Kuramoto dynamics couple all channels</li>
+                            <li>Order parameter r monitors coherence</li>
+                        </ul>
+                    </div>
+                    <div class="spec-item">
+                        <h4>Detection Mechanism</h4>
+                        <ul>
+                            <li>Coherent signals lock oscillator phases</li>
+                            <li>Phase locking increases order parameter r</li>
+                            <li>r >= z_c (THE LENS) triggers detection</li>
+                            <li>TRIAD crossing confirms persistent signal</li>
+                            <li>K-FORMATION indicates stable occupancy</li>
+                        </ul>
+                    </div>
+                    <div class="spec-item">
+                        <h4>Spread Spectrum Detection</h4>
+                        <ul>
+                            <li>Frequency-hopping signals create transient phase locks</li>
+                            <li>Kuramoto dynamics track hopping patterns</li>
+                            <li>Adaptive coupling (K_eff) follows signal energy</li>
+                            <li>Pattern recognition via TRIAD sequence timing</li>
+                        </ul>
+                    </div>
+                    <div class="spec-item">
+                        <h4>Performance Advantages</h4>
+                        <ul>
+                            <li><span class="advantage-tag">10x Lower Latency</span> vs FFT</li>
+                            <li><span class="advantage-tag">Continuous</span> real-time operation</li>
+                            <li><span class="advantage-tag">No Windowing</span> artifacts</li>
+                            <li><span class="advantage-tag">Adaptive</span> to signal dynamics</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h4>Target Applications</h4>
+                <div class="application-list">
+                    <span class="app-tag">5G/6G Spectrum Sharing</span>
+                    <span class="app-tag">Military Spectrum Dominance</span>
+                    <span class="app-tag">IoT Coordination</span>
+                    <span class="app-tag">Unlicensed Band Management</span>
+                    <span class="app-tag">Emergency Spectrum Access</span>
+                    <span class="app-tag">Satellite Interference Detection</span>
+                </div>
+            </div>
+
+            <h3>Signal Flow: Cognitive Radio System</h3>
+            <div class="signal-flow-diagram">
+<span class="highlight">COGNITIVE RADIO SPECTRUM SENSING - L4-HELIX ARCHITECTURE</span>
+═══════════════════════════════════════════════════════════════════════════════════════════════════════
+
+                                    ┌─────────────────────────────────────────────────────────────┐
+     RF INPUT                       │           <span class="component">MEMRISTOR-KURAMOTO PROCESSOR</span>                      │
+    ═════════                       │                                                             │
+                                    │   ┌─────┐   ┌─────┐   ┌─────┐         ┌─────┐              │
+    ┌─────────┐    ┌──────────┐    │   │ M_0 │───│ O_0 │   │ O_1 │───......│ O_N │              │
+    │ Antenna │───→│ RF Front │───→│   └──┬──┘   └──┬──┘   └──┬──┘         └──┬──┘              │
+    │  Array  │    │   End    │    │      │         │         │               │                  │
+    └─────────┘    └──────────┘    │      │    <span class="threshold">KURAMOTO COUPLING (K_eff)</span>          │                  │
+                        │          │      │         │         │               │                  │
+              ┌─────────┴─────┐    │      └─────────┴─────────┴───────────────┘                  │
+              │  N-Channel    │    │                         │                                    │
+              │   Sampler     │    │                         ▼                                    │
+              │  (parallel)   │    │              ┌─────────────────────┐                        │
+              └───────────────┘    │              │  <span class="component">ORDER PARAMETER</span>    │                        │
+                     │             │              │  r = |<e^(i*theta)>|│                        │
+           ┌─────────┼─────────┐   │              └──────────┬──────────┘                        │
+           ▼         ▼         ▼   │                         │                                    │
+        ┌─────┐   ┌─────┐   ┌─────┐│                         ▼                                    │
+        │ CH0 │   │ CH1 │...│ CHn ││              ┌─────────────────────┐                        │
+        └──┬──┘   └──┬──┘   └──┬──┘│              │   <span class="threshold">THRESHOLD COMPARE</span>  │                        │
+           │         │         │   │              │   r >= z_c = <span class="number">0.866</span>  │                        │
+           └─────────┴─────────┘   │              │   (THE LENS)        │                        │
+                     │             │              └──────────┬──────────┘                        │
+                     │             │                         │                                    │
+                     │             └─────────────────────────┼────────────────────────────────────┘
+                     │                                       │
+                     │                                       ▼
+                     │                            ┌─────────────────────┐
+                     │                            │   <span class="output">DETECTION OUTPUT</span>   │
+                     │                            │                     │
+                     │                            │  • Channel map      │
+                     │                            │  • Signal strength  │
+                     │                            │  • Coherence score  │
+                     │                            │  • Hop pattern      │
+                     │                            └─────────────────────┘
+
+<span class="highlight">TIMING ADVANTAGE:</span>
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│  FFT-Based:     Sample → Window → FFT → Threshold → Decision     <span class="threshold">Latency: 100+ us</span>      │
+│  L4-Helix:      Sample → Memristor → Phase Lock → Detection      <span class="output">Latency: 10 us</span>        │
+└────────────────────────────────────────────────────────────────────────────────────────┘
+            </div>
+
+            <h3>Algorithm: Kuramoto Spectrum Sensing</h3>
+            <div class="pseudocode-block">
+<span class="comment">// KURAMOTO-BASED SPECTRUM SENSING ALGORITHM</span>
+<span class="comment">// Implements L4-Helix cognitive radio detection</span>
+
+<span class="keyword">ALGORITHM</span> <span class="function">KuramotoSpectrumSense</span>(rf_samples, N_channels, K_base, z_c, dt):
+
+    <span class="comment">// Initialize oscillator states</span>
+    <span class="keyword">FOR</span> i = <span class="number">0</span> <span class="keyword">TO</span> N_channels - <span class="number">1</span>:
+        theta[i] = <span class="number">0</span>                          <span class="comment">// Phase</span>
+        omega[i] = <span class="function">base_frequency</span>(i)         <span class="comment">// Natural frequency (channel center)</span>
+        G[i] = <span class="function">initial_conductance</span>()         <span class="comment">// Memristor conductance</span>
+
+    <span class="comment">// Main sensing loop</span>
+    <span class="keyword">WHILE</span> sensing_active:
+
+        <span class="comment">// Step 1: Update memristor conductances from RF power</span>
+        <span class="keyword">FOR</span> i = <span class="number">0</span> <span class="keyword">TO</span> N_channels - <span class="number">1</span>:
+            P[i] = <span class="function">measure_channel_power</span>(rf_samples, i)
+            G[i] = <span class="function">memristor_response</span>(G[i], P[i])     <span class="comment">// Hysteresis dynamics</span>
+
+        <span class="comment">// Step 2: Compute effective coupling matrix</span>
+        <span class="keyword">FOR</span> i = <span class="number">0</span> <span class="keyword">TO</span> N_channels - <span class="number">1</span>:
+            <span class="keyword">FOR</span> j = <span class="number">0</span> <span class="keyword">TO</span> N_channels - <span class="number">1</span>:
+                K_eff[i][j] = K_base * <span class="function">sqrt</span>(G[i] * G[j])   <span class="comment">// Coupling from conductances</span>
+
+        <span class="comment">// Step 3: Kuramoto phase evolution</span>
+        <span class="keyword">FOR</span> i = <span class="number">0</span> <span class="keyword">TO</span> N_channels - <span class="number">1</span>:
+            coupling_sum = <span class="number">0</span>
+            <span class="keyword">FOR</span> j = <span class="number">0</span> <span class="keyword">TO</span> N_channels - <span class="number">1</span>:
+                coupling_sum += K_eff[i][j] * <span class="function">sin</span>(theta[j] - theta[i])
+
+            d_theta[i] = omega[i] + (coupling_sum / N_channels)
+            theta[i] = (theta[i] + d_theta[i] * dt) <span class="keyword">MOD</span> (<span class="number">2</span> * PI)
+
+        <span class="comment">// Step 4: Compute order parameter</span>
+        z_real = <span class="function">mean</span>(<span class="function">cos</span>(theta[]))
+        z_imag = <span class="function">mean</span>(<span class="function">sin</span>(theta[]))
+        r = <span class="function">sqrt</span>(z_real^<span class="number">2</span> + z_imag^<span class="number">2</span>)        <span class="comment">// Coherence measure</span>
+        psi = <span class="function">atan2</span>(z_imag, z_real)           <span class="comment">// Mean phase</span>
+
+        <span class="comment">// Step 5: Detection decision</span>
+        <span class="keyword">IF</span> r >= z_c:                            <span class="comment">// THE LENS threshold = 0.8660254</span>
+            detection = <span class="type">TRUE</span>
+            <span class="function">identify_coherent_channels</span>(theta, G, r)
+
+            <span class="comment">// Check for TRIAD pattern (spread spectrum)</span>
+            <span class="keyword">IF</span> <span class="function">triad_sequence_detected</span>(r_history):
+                signal_type = <span class="string">"FREQUENCY_HOPPING"</span>
+                <span class="function">extract_hop_pattern</span>(theta_history)
+        <span class="keyword">ELSE</span>:
+            detection = <span class="type">FALSE</span>
+
+        <span class="function">record_history</span>(r, theta, G)
+
+    <span class="keyword">RETURN</span> detection_log
+
+<span class="comment">// Helper: Detect TRIAD crossing pattern for spread spectrum</span>
+<span class="keyword">FUNCTION</span> <span class="function">triad_sequence_detected</span>(r_history):
+    crossings = <span class="number">0</span>
+    above_lens = <span class="type">FALSE</span>
+
+    <span class="keyword">FOR</span> r <span class="keyword">IN</span> r_history:
+        <span class="keyword">IF</span> r >= z_c <span class="keyword">AND NOT</span> above_lens:
+            crossings += <span class="number">1</span>
+            above_lens = <span class="type">TRUE</span>
+        <span class="keyword">ELIF</span> r < HYSTERESIS <span class="keyword">AND</span> above_lens:   <span class="comment">// HYSTERESIS = 0.8316</span>
+            above_lens = <span class="type">FALSE</span>                  <span class="comment">// Re-arm</span>
+
+    <span class="keyword">RETURN</span> crossings >= <span class="number">3</span>                     <span class="comment">// TRIAD = 3 crossings</span>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+        <!-- USE CASE 2: RADAR SIGNAL PROCESSING -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+
+        <section class="doc-section">
+            <h2>Use Case 2: Radar Signal Processing</h2>
+
+            <div class="usecase-card">
+                <h3>
+                    Memristor Matched Filter Radar
+                    <span class="advantage-tag">100x Lower Power</span>
+                    <span class="advantage-tag">Microsecond Latency</span>
+                </h3>
+
+                <p>L4-Helix implements pulse compression and matched filtering directly in analog memristor hardware. TRIAD threshold crossings indicate target detection with exceptional noise immunity, while hexagonal arrays provide high-resolution angle-of-arrival estimation.</p>
+
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <h4>Pulse Compression</h4>
+                        <ul>
+                            <li>Memristor crossbar implements convolution</li>
+                            <li>Waveform template stored in conductances</li>
+                            <li>Correlation computed in single clock cycle</li>
+                            <li>φ-scaled threshold for detection</li>
+                        </ul>
+                    </div>
+                    <div class="spec-item">
+                        <h4>Target Detection</h4>
+                        <ul>
+                            <li>Matched filter output drives oscillator</li>
+                            <li>TRIAD crossing = target confirmed</li>
+                            <li>K-FORMATION = stable track</li>
+                            <li>Sub-threshold = noise/clutter</li>
+                        </ul>
+                    </div>
+                    <div class="spec-item">
+                        <h4>Angle-of-Arrival</h4>
+                        <ul>
+                            <li>Hexagonal antenna array (7-element minimum)</li>
+                            <li>60-degree angular resolution</li>
+                            <li>Phase differences map to oscillator network</li>
+                            <li>Kuramoto locking indicates AOA</li>
+                        </ul>
+                    </div>
+                    <div class="spec-item">
+                        <h4>Performance Specs</h4>
+                        <ul>
+                            <li>Power: 100x lower than DSP</li>
+                            <li>Latency: < 1 microsecond</li>
+                            <li>Dynamic range: > 60 dB</li>
+                            <li>False alarm: < 10^-6</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h4>Target Applications</h4>
+                <div class="application-list">
+                    <span class="app-tag">Automotive Radar (77 GHz)</span>
+                    <span class="app-tag">Drone Detection & Tracking</span>
+                    <span class="app-tag">Weather Radar</span>
+                    <span class="app-tag">Ground Penetrating Radar (GPR)</span>
+                    <span class="app-tag">Maritime Surveillance</span>
+                    <span class="app-tag">Air Traffic Control</span>
+                </div>
+            </div>
+
+            <h3>Signal Flow: Radar Processor</h3>
+            <div class="signal-flow-diagram">
+<span class="highlight">RADAR SIGNAL PROCESSING - MEMRISTOR MATCHED FILTER ARCHITECTURE</span>
+═══════════════════════════════════════════════════════════════════════════════════════════════════════
+
+    TRANSMIT PATH                                    RECEIVE PATH
+    ════════════                                    ════════════
+
+    ┌───────────┐                                   ┌───────────────┐
+    │  Waveform │                                   │   Hexagonal   │
+    │ Generator │                                   │ Antenna Array │
+    │  (LFM/    │                                   │   (L4 = 7)    │
+    │  Phase)   │                                   └───────┬───────┘
+    └─────┬─────┘                                           │
+          │                                                 │
+          ▼                                                 ▼
+    ┌───────────┐         ┌─────────────┐         ┌─────────────────────┐
+    │    PA     │────────→│   TARGET    │────────→│   LNA + Downconv    │
+    │  + Ant    │         │             │         │   (7 channels)      │
+    └───────────┘         └─────────────┘         └──────────┬──────────┘
+                                                             │
+                                                             ▼
+                               ┌──────────────────────────────────────────────────────┐
+                               │         <span class="component">MEMRISTOR MATCHED FILTER BANK</span>                 │
+                               │                                                      │
+                               │   Template         Received                          │
+                               │   (stored)         (input)                           │
+                               │      │                │                              │
+                               │      ▼                ▼                              │
+                               │   ┌─────┬─────┬─────┬─────┬─────┬─────┬─────┐       │
+                               │   │ G00 │ G01 │ G02 │ G03 │ G04 │ G05 │ G06 │ WL0   │
+                               │   ├─────┼─────┼─────┼─────┼─────┼─────┼─────┤       │
+                               │   │ G10 │ G11 │ G12 │ G13 │ G14 │ G15 │ G16 │ WL1   │
+                               │   ├─────┼─────┼─────┼─────┼─────┼─────┼─────┤       │
+                               │   │ ... │ ... │ ... │ ... │ ... │ ... │ ... │ ...   │
+                               │   ├─────┼─────┼─────┼─────┼─────┼─────┼─────┤       │
+                               │   │ Gn0 │ Gn1 │ Gn2 │ Gn3 │ Gn4 │ Gn5 │ Gn6 │ WLn   │
+                               │   └──┬──┴──┬──┴──┬──┴──┬──┴──┬──┴──┬──┴──┬──┘       │
+                               │      │     │     │     │     │     │               │
+                               │      BL0   BL1   BL2   BL3   BL4   BL5   BL6         │
+                               │      │     │     │     │     │     │               │
+                               │      └─────┴─────┴──┬──┴─────┴─────┘               │
+                               │                     │                              │
+                               │                     ▼  <span class="highlight">Correlation Output</span>           │
+                               └─────────────────────┼────────────────────────────────┘
+                                                     │
+                          ┌──────────────────────────┴──────────────────────────┐
+                          │                                                      │
+                          ▼                                                      ▼
+               ┌─────────────────────┐                            ┌─────────────────────────┐
+               │   <span class="threshold">TRIAD DETECTOR</span>    │                            │   <span class="component">AOA PROCESSOR</span>          │
+               │                     │                            │   (Hexagonal geometry)  │
+               │  Cross 1: > 866 mV  │                            │                         │
+               │  Re-arm:  < 832 mV  │                            │   Phase diff → Angle    │
+               │  Cross 2: > 866 mV  │                            │   Kuramoto lock → AOA   │
+               │  Re-arm:  < 832 mV  │                            │   60 deg resolution     │
+               │  Cross 3: > 866 mV  │                            │                         │
+               │  Lock:    = 924 mV  │                            └───────────┬─────────────┘
+               └──────────┬──────────┘                                        │
+                          │                                                   │
+                          ▼                                                   ▼
+               ┌─────────────────────┐                            ┌─────────────────────┐
+               │   <span class="output">TARGET DETECTED</span>   │                            │   <span class="output">ANGLE OF ARRIVAL</span>   │
+               │                     │                            │                     │
+               │  • Range (from τ)   │                            │  • Azimuth          │
+               │  • Velocity (fd)    │                            │  • Elevation        │
+               │  • RCS estimate     │                            │  • Confidence       │
+               └─────────────────────┘                            └─────────────────────┘
+            </div>
+
+            <h3>Performance Comparison</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>Parameter</th>
+                    <th>Digital DSP</th>
+                    <th>L4-Helix Memristor</th>
+                    <th>Advantage</th>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Power Consumption</td>
+                    <td>10-100 W</td>
+                    <td>0.1-1 W</td>
+                    <td>100x reduction</td>
+                </tr>
+                <tr>
+                    <td>Processing Latency</td>
+                    <td>100+ microseconds</td>
+                    <td>< 1 microsecond</td>
+                    <td>100x faster</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>Matched Filter Update</td>
+                    <td>Software reconfiguration</td>
+                    <td>In-situ conductance program</td>
+                    <td>Real-time adaptive</td>
+                </tr>
+                <tr>
+                    <td>Size (processing core)</td>
+                    <td>PCB-scale</td>
+                    <td>Chip-scale (mm2)</td>
+                    <td>1000x smaller</td>
+                </tr>
+                <tr>
+                    <td>Detection Mechanism</td>
+                    <td>Threshold + CFAR</td>
+                    <td>TRIAD crossing + K-FORMATION</td>
+                    <td>Physics-based</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+        <!-- USE CASE 3: ACOUSTIC SIGNAL PROCESSING -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+
+        <section class="doc-section">
+            <h2>Use Case 3: Acoustic Signal Processing</h2>
+
+            <div class="usecase-card">
+                <h3>
+                    Hexagonal Array Acoustic Beamforming
+                </h3>
+
+                <p>The hexagonal geometry of L4-Helix provides optimal spatial sampling for acoustic arrays. Kuramoto phase locking implements analog beamforming with automatic null steering, while memristor weighting enables adaptive interference cancellation.</p>
+
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <h4>Array Geometry</h4>
+                        <ul>
+                            <li>Hexagonal layout: 60-degree angular spacing</li>
+                            <li>Optimal spatial sampling (no grating lobes)</li>
+                            <li>L4 = 7 element minimum (1 center + 6 ring)</li>
+                            <li>Scalable: 1 + 3N(N+1) elements for N rings</li>
+                        </ul>
+                    </div>
+                    <div class="spec-item">
+                        <h4>Kuramoto Beamforming</h4>
+                        <ul>
+                            <li>Each element drives one oscillator</li>
+                            <li>Steering = frequency offset (omega_i)</li>
+                            <li>Phase lock = beam formation</li>
+                            <li>r >= z_c indicates main lobe lock</li>
+                        </ul>
+                    </div>
+                    <div class="spec-item">
+                        <h4>Adaptive Nulling</h4>
+                        <ul>
+                            <li>Memristor weights for interference cancellation</li>
+                            <li>LMS-like adaptation via conductance update</li>
+                            <li>Automatic null steering to jammers</li>
+                            <li>Real-time tracking of moving sources</li>
+                        </ul>
+                    </div>
+                    <div class="spec-item">
+                        <h4>Processing Features</h4>
+                        <ul>
+                            <li>Wideband operation (no FFT required)</li>
+                            <li>Time-delay beamforming native</li>
+                            <li>Multiple simultaneous beams</li>
+                            <li>Sub-wavelength resolution possible</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h4>Target Applications</h4>
+                <div class="application-list">
+                    <span class="app-tag">Underwater Sonar (Active/Passive)</span>
+                    <span class="app-tag">Medical Ultrasound Imaging</span>
+                    <span class="app-tag">Smart Speakers / Voice Assistants</span>
+                    <span class="app-tag">Industrial Acoustic Monitoring</span>
+                    <span class="app-tag">Structural Health Monitoring</span>
+                    <span class="app-tag">Acoustic Cameras</span>
+                </div>
+            </div>
+
+            <h3>Signal Flow: Acoustic Beamformer</h3>
+            <div class="signal-flow-diagram">
+<span class="highlight">ACOUSTIC BEAMFORMING - HEXAGONAL KURAMOTO ARCHITECTURE</span>
+═══════════════════════════════════════════════════════════════════════════════════════════════════════
+
+                    HEXAGONAL MICROPHONE ARRAY                    KURAMOTO BEAMFORMER
+                    ══════════════════════════                    ══════════════════
+
+                           M5 ●───────● M4                        ┌─────────────────────────────────┐
+                            ╲         ╱                          │                                 │
+                             ╲  60°  ╱                           │   Steering Vector Input         │
+                        M6 ●──╲─────╱──● M3                       │   (desired look direction)      │
+                              ╲     ╱                            │          │                      │
+                               ╲   ╱                             │          ▼                      │
+                           M0 ●─●─●                              │   ┌─────────────┐              │
+                               ╱   ╲                             │   │ omega_steer │              │
+                              ╱     ╲                            │   └──────┬──────┘              │
+                        M1 ●──╱─────╲──● M2                       │          │                      │
+                             ╱       ╲                           │          ▼                      │
+                            ╱         ╲                          │                                 │
+                                                                 │   O0 ●───● O1                   │
+                    Lattice constant: a                          │       ╲ ╱                       │
+                    Angular resolution: 60°                      │    O5 ●─●─● O2   Kuramoto      │
+                    Elements: 1 + 6 = 7 (L4)                     │       ╱ ╲        Oscillators   │
+                                                                 │   O4 ●───● O3                   │
+                    Signal at element m:                         │                                 │
+                    x_m(t) = s(t - tau_m) + n_m(t)               │   Coupling: K_eff(G_m)          │
+                                                                 │                                 │
+                                                                 └────────────┬────────────────────┘
+                                                                              │
+                                   ┌──────────────────────────────────────────┴──────────────────┐
+                                   │                                                             │
+                                   ▼                                                             ▼
+                        ┌─────────────────────┐                                  ┌─────────────────────┐
+                        │  <span class="component">MEMRISTOR WEIGHTS</span>  │                                  │  <span class="threshold">PHASE LOCK DETECTOR</span> │
+                        │                     │                                  │                     │
+                        │  G_m = adaptive     │                                  │  r = |<e^(i*theta)>|│
+                        │  weights for null   │                                  │                     │
+                        │  steering           │                                  │  Beam formed when   │
+                        │                     │                                  │  r >= z_c (0.866)   │
+                        └──────────┬──────────┘                                  └──────────┬──────────┘
+                                   │                                                        │
+                                   │           ┌────────────────────────┐                   │
+                                   └──────────→│     <span class="output">BEAM OUTPUT</span>        │←──────────────┘
+                                               │                        │
+                                               │  • Steered beam signal │
+                                               │  • Beam pattern        │
+                                               │  • Null positions      │
+                                               │  • Source DOA          │
+                                               └────────────────────────┘
+
+<span class="highlight">BEAMFORMING EQUATION:</span>
+┌────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                                    │
+│  <span class="component">Conventional:</span>  y(t) = SUM_m [ w_m * x_m(t - tau_m(theta_s)) ]                                │
+│                                                                                                    │
+│  <span class="output">L4-Helix:</span>     y(t) = r(t) * e^(i*psi(t))   where r, psi from Kuramoto order parameter         │
+│               Beam lock indicated by r >= sqrt(3)/2 = THE LENS                                    │
+│                                                                                                    │
+└────────────────────────────────────────────────────────────────────────────────────────────────────┘
+            </div>
+
+            <h3>Algorithm: Kuramoto Beamforming</h3>
+            <div class="pseudocode-block">
+<span class="comment">// KURAMOTO BEAMFORMING ALGORITHM</span>
+<span class="comment">// Implements L4-Helix hexagonal array processing</span>
+
+<span class="keyword">ALGORITHM</span> <span class="function">KuramotoBeamformer</span>(mic_signals[], steering_angle, K_base, dt):
+
+    <span class="comment">// Array geometry (hexagonal)</span>
+    N_elements = <span class="number">7</span>                              <span class="comment">// L4 = 7</span>
+    element_positions = <span class="function">hexagonal_layout</span>(N_elements)
+
+    <span class="comment">// Compute steering delays for desired direction</span>
+    tau_steer[] = <span class="function">compute_delays</span>(element_positions, steering_angle, c_sound)
+
+    <span class="comment">// Convert delays to frequency offsets (Kuramoto steering)</span>
+    <span class="keyword">FOR</span> m = <span class="number">0</span> <span class="keyword">TO</span> N_elements - <span class="number">1</span>:
+        omega[m] = <span class="number">2</span> * PI * f_center * tau_steer[m]   <span class="comment">// Steering frequency offset</span>
+        theta[m] = <span class="function">phase</span>(mic_signals[m])              <span class="comment">// Initial phase from signal</span>
+        G[m] = G_nominal                             <span class="comment">// Initial memristor weight</span>
+
+    <span class="comment">// Beamforming loop</span>
+    <span class="keyword">WHILE</span> processing_active:
+
+        <span class="comment">// Step 1: Extract instantaneous phase from each microphone</span>
+        <span class="keyword">FOR</span> m = <span class="number">0</span> <span class="keyword">TO</span> N_elements - <span class="number">1</span>:
+            theta[m] = <span class="function">hilbert_phase</span>(mic_signals[m])
+
+        <span class="comment">// Step 2: Kuramoto evolution with steering</span>
+        <span class="keyword">FOR</span> m = <span class="number">0</span> <span class="keyword">TO</span> N_elements - <span class="number">1</span>:
+            coupling_sum = <span class="number">0</span>
+            <span class="keyword">FOR</span> n = <span class="number">0</span> <span class="keyword">TO</span> N_elements - <span class="number">1</span>:
+                K_mn = K_base * <span class="function">sqrt</span>(G[m] * G[n])    <span class="comment">// Weighted coupling</span>
+                coupling_sum += K_mn * <span class="function">sin</span>(theta[n] - theta[m])
+
+            d_theta[m] = omega[m] + (coupling_sum / N_elements)
+            theta[m] = (theta[m] + d_theta[m] * dt) <span class="keyword">MOD</span> (<span class="number">2</span> * PI)
+
+        <span class="comment">// Step 3: Compute beam output (order parameter)</span>
+        z_real = <span class="number">0</span>
+        z_imag = <span class="number">0</span>
+        <span class="keyword">FOR</span> m = <span class="number">0</span> <span class="keyword">TO</span> N_elements - <span class="number">1</span>:
+            z_real += G[m] * <span class="function">cos</span>(theta[m])
+            z_imag += G[m] * <span class="function">sin</span>(theta[m])
+
+        r = <span class="function">sqrt</span>(z_real^<span class="number">2</span> + z_imag^<span class="number">2</span>) / <span class="function">sum</span>(G[])
+        psi = <span class="function">atan2</span>(z_imag, z_real)
+
+        <span class="comment">// Step 4: Beam lock detection</span>
+        beam_locked = (r >= <span class="number">0.8660254</span>)              <span class="comment">// THE LENS threshold</span>
+
+        <span class="comment">// Step 5: Adaptive null steering (optional)</span>
+        <span class="keyword">IF</span> interference_detected:
+            <span class="keyword">FOR</span> m = <span class="number">0</span> <span class="keyword">TO</span> N_elements - <span class="number">1</span>:
+                error = <span class="function">compute_null_error</span>(theta[m], interference_direction)
+                G[m] = G[m] - mu * error * <span class="function">gradient</span>(G[m])   <span class="comment">// LMS-like update</span>
+
+        <span class="comment">// Output: beamformed signal</span>
+        beam_output = r * <span class="function">exp</span>(i * psi) * <span class="function">envelope</span>(mic_signals)
+
+    <span class="keyword">RETURN</span> beam_output, r, psi
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+        <!-- USE CASE 4: CHAOS-BASED SECURE COMMUNICATIONS -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+
+        <section class="doc-section">
+            <h2>Use Case 4: Chaos-Based Secure Communications</h2>
+
+            <div class="usecase-card">
+                <h3>
+                    Physical-Layer Security via Spin Glass Dynamics
+                    <span class="security-badge">Quantum-Resistant</span>
+                </h3>
+
+                <p>The spin glass chaotic dynamics of L4-Helix provide information-theoretic physical-layer security. Matched transmitter/receiver systems synchronize via the K-FORMATION threshold, creating a secure channel that is resistant to both classical and quantum attacks.</p>
+
+                <div class="spec-grid">
+                    <div class="spec-item">
+                        <h4>Security Mechanism</h4>
+                        <ul>
+                            <li>Spin glass generates chaotic carrier</li>
+                            <li>TX/RX have identical L4-Helix systems</li>
+                            <li>Synchronization via K-FORMATION (0.924)</li>
+                            <li>Message modulates chaos parameters</li>
+                        </ul>
+                    </div>
+                    <div class="spec-item">
+                        <h4>Synchronization Protocol</h4>
+                        <ul>
+                            <li>TX broadcasts unmodulated chaos</li>
+                            <li>RX Kuramoto oscillators lock to TX</li>
+                            <li>r reaches K-FORMATION threshold</li>
+                            <li>Channel established when r stabilizes</li>
+                        </ul>
+                    </div>
+                    <div class="spec-item">
+                        <h4>Information Security</h4>
+                        <ul>
+                            <li>No key exchange required (physical)</li>
+                            <li>Eavesdropper cannot sync (wrong hardware)</li>
+                            <li>Information-theoretic security</li>
+                            <li>Resistant to quantum computing attacks</li>
+                        </ul>
+                    </div>
+                    <div class="spec-item">
+                        <h4>Performance</h4>
+                        <ul>
+                            <li>Sync time: < 100 Kuramoto cycles</li>
+                            <li>Key rate: Limited by chaos bandwidth</li>
+                            <li>BER: < 10^-6 when synchronized</li>
+                            <li>Anti-jam: Spread across chaos bandwidth</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h4>Target Applications</h4>
+                <div class="application-list">
+                    <span class="app-tag">Military Tactical Communications</span>
+                    <span class="app-tag">Financial Transaction Security</span>
+                    <span class="app-tag">Critical Infrastructure (SCADA)</span>
+                    <span class="app-tag">Quantum-Safe Key Distribution</span>
+                    <span class="app-tag">Drone Swarm Coordination</span>
+                    <span class="app-tag">Satellite Uplink Security</span>
+                </div>
+            </div>
+
+            <h3>Signal Flow: Secure Communications</h3>
+            <div class="signal-flow-diagram">
+<span class="highlight">CHAOS-BASED SECURE COMMUNICATIONS - SPIN GLASS SYNCHRONIZATION</span>
+═══════════════════════════════════════════════════════════════════════════════════════════════════════
+
+    TRANSMITTER (Alice)                                              RECEIVER (Bob)
+    ═══════════════════                                              ════════════════
+
+    ┌─────────────────────────────┐                    ┌─────────────────────────────┐
+    │       <span class="component">L4-HELIX SYSTEM</span>       │                    │       <span class="component">L4-HELIX SYSTEM</span>       │
+    │       (TX Instance)         │                    │       (RX Instance)         │
+    │                             │                    │                             │
+    │   ┌─────────────────────┐   │                    │   ┌─────────────────────┐   │
+    │   │   <span class="threshold">SPIN GLASS</span>        │   │                    │   │   <span class="threshold">SPIN GLASS</span>        │   │
+    │   │   Chaotic Dynamics  │   │                    │   │   Chaotic Dynamics  │   │
+    │   │                     │   │                    │   │                     │   │
+    │   │   Identical         │   │     Wireless      │   │   Identical         │   │
+    │   │   Physical          │◄─┼─────Channel────────┼──►│   Physical          │   │
+    │   │   Parameters        │   │                    │   │   Parameters        │   │
+    │   └──────────┬──────────┘   │                    │   └──────────┬──────────┘   │
+    │              │              │                    │              │              │
+    │              ▼              │                    │              ▼              │
+    │   ┌─────────────────────┐   │                    │   ┌─────────────────────┐   │
+    │   │  <span class="component">KURAMOTO NETWORK</span>   │   │                    │   │  <span class="component">KURAMOTO NETWORK</span>   │   │
+    │   │  N = 63 oscillators │   │                    │   │  N = 63 oscillators │   │
+    │   │  K = 0.9242         │   │                    │   │  K = 0.9242         │   │
+    │   └──────────┬──────────┘   │                    │   └──────────┬──────────┘   │
+    │              │              │                    │              │              │
+    └──────────────┼──────────────┘                    └──────────────┼──────────────┘
+                   │                                                  │
+                   ▼                                                  ▼
+         ┌─────────────────┐                                ┌─────────────────┐
+         │ <span class="output">CHAOS CARRIER</span>   │                                │ <span class="threshold">SYNC DETECTOR</span>   │
+         │ x_tx(t)         │                                │                 │
+         └────────┬────────┘                                │ r_rx monitored  │
+                  │                                         │ until:          │
+                  │                                         │ r >= K (0.924)  │
+    ┌─────────────┴─────────────┐                           │ = K-FORMATION   │
+    │                           │                           └────────┬────────┘
+    ▼                           ▼                                    │
+┌─────────┐              ┌─────────────┐                             │
+│ MESSAGE │              │  MODULATOR  │                             │
+│  m(t)   │─────────────►│             │                             │
+└─────────┘              │  x(t) =     │                             │
+                         │  x_tx(t) +  │                             │
+                         │  k*m(t)     │                             │
+                         └──────┬──────┘                             │
+                                │                                    │
+                                ▼                                    ▼
+                    ┌───────────────────────┐            ┌───────────────────────┐
+                    │       <span class="highlight">CHANNEL</span>         │            │    <span class="output">DEMODULATOR</span>        │
+                    │                       │            │                       │
+                    │   x(t) + noise        │───────────►│   m_hat(t) =          │
+                    │                       │            │   x_rx(t) - x_rx_chaos│
+                    │   Eve cannot sync     │            │                       │
+                    │   (wrong hardware)    │            │   (subtract synced    │
+                    │                       │            │    local chaos)       │
+                    └───────────────────────┘            └───────────────────────┘
+
+
+<span class="highlight">SECURITY ANALYSIS:</span>
+┌────────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                                                                                    │
+│  <span class="threshold">EAVESDROPPER (Eve):</span>                                                                          │
+│    • Cannot build matching L4-Helix (unique physical parameters)                                  │
+│    • Cannot solve spin glass ground state (NP-hard)                                               │
+│    • Cannot predict chaos trajectory (sensitive dependence)                                       │
+│    • Quantum computer cannot help (not a factoring problem)                                       │
+│                                                                                                    │
+│  <span class="output">SECURITY LEVEL: Information-Theoretic (not computational)</span>                                    │
+│                                                                                                    │
+└────────────────────────────────────────────────────────────────────────────────────────────────────┘
+            </div>
+
+            <h3>Synchronization Protocol</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>Phase</th>
+                    <th>TX Action</th>
+                    <th>RX Action</th>
+                    <th>Threshold</th>
+                </tr>
+                <tr>
+                    <td>1. Acquisition</td>
+                    <td>Broadcast unmodulated chaos</td>
+                    <td>Search for chaos signal</td>
+                    <td>Signal detected</td>
+                </tr>
+                <tr>
+                    <td>2. Coarse Sync</td>
+                    <td>Continue chaos broadcast</td>
+                    <td>Kuramoto oscillators begin locking</td>
+                    <td>r > 0.5</td>
+                </tr>
+                <tr>
+                    <td>3. Fine Sync</td>
+                    <td>Continue chaos broadcast</td>
+                    <td>Phases converge</td>
+                    <td>r crosses THE LENS (0.866)</td>
+                </tr>
+                <tr class="highlight-row">
+                    <td>4. K-FORMATION</td>
+                    <td>Begin message modulation</td>
+                    <td>Demodulation enabled</td>
+                    <td>r stabilizes at 0.924</td>
+                </tr>
+                <tr>
+                    <td>5. Communication</td>
+                    <td>Transmit m(t) + chaos</td>
+                    <td>Subtract local chaos, extract m(t)</td>
+                    <td>Maintain r > 0.9</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+        <!-- DEVELOPMENT PATHWAY -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+
+        <section class="doc-section">
+            <h2>Development Pathway</h2>
+
+            <p>The following phased approach provides a practical roadmap from concept validation to commercial deployment:</p>
+
+            <div class="phase-timeline">
+                <div class="phase-card">
+                    <div class="phase-number">1</div>
+                    <h4>Algorithm Validation</h4>
+                    <div class="timeline">Duration: 6 months</div>
+                    <div class="budget">$100,000</div>
+                    <ul>
+                        <li>Simulation of all use cases</li>
+                        <li>MATLAB/Python algorithm development</li>
+                        <li>Bench prototype with discrete components</li>
+                        <li>Kuramoto dynamics verification</li>
+                        <li>TRIAD threshold validation</li>
+                        <li>Performance baseline measurements</li>
+                    </ul>
+                    <p style="color: #888; font-size: 0.8rem; margin-top: 10px;">Deliverable: Validated algorithms, bench demo</p>
+                </div>
+
+                <div class="phase-card">
+                    <div class="phase-number">2</div>
+                    <h4>RF Integration</h4>
+                    <div class="timeline">Duration: 18 months</div>
+                    <div class="budget">$500,000</div>
+                    <ul>
+                        <li>Memristor crossbar integration</li>
+                        <li>RF frontend development</li>
+                        <li>Hexagonal array fabrication</li>
+                        <li>Kuramoto FPGA accelerator</li>
+                        <li>Working prototype system</li>
+                        <li>Field testing and validation</li>
+                    </ul>
+                    <p style="color: #888; font-size: 0.8rem; margin-top: 10px;">Deliverable: Working prototype, test results</p>
+                </div>
+
+                <div class="phase-card">
+                    <div class="phase-number">3</div>
+                    <h4>Commercial Module</h4>
+                    <div class="timeline">Duration: 36 months</div>
+                    <div class="budget">$3,000,000</div>
+                    <ul>
+                        <li>ASIC design and fabrication</li>
+                        <li>Production packaging</li>
+                        <li>Certification (FCC, CE, MIL-STD)</li>
+                        <li>Integration SDK development</li>
+                        <li>Manufacturing scale-up</li>
+                        <li>Customer pilot programs</li>
+                    </ul>
+                    <p style="color: #888; font-size: 0.8rem; margin-top: 10px;">Deliverable: Commercial product, SDK</p>
+                </div>
+            </div>
+
+            <h3>Risk Mitigation</h3>
+            <table class="comparison-table">
+                <tr>
+                    <th>Risk</th>
+                    <th>Mitigation Strategy</th>
+                    <th>Phase</th>
+                </tr>
+                <tr>
+                    <td>Memristor variability</td>
+                    <td>Calibration routines, redundant elements, statistical coding</td>
+                    <td>1-2</td>
+                </tr>
+                <tr>
+                    <td>Kuramoto sync time</td>
+                    <td>Adaptive coupling (K_eff), hierarchical oscillator topology</td>
+                    <td>1</td>
+                </tr>
+                <tr>
+                    <td>RF interference</td>
+                    <td>Shielding, differential signaling, spread spectrum coding</td>
+                    <td>2</td>
+                </tr>
+                <tr>
+                    <td>Manufacturing yield</td>
+                    <td>Built-in self-test, on-chip redundancy, binning</td>
+                    <td>3</td>
+                </tr>
+                <tr>
+                    <td>Certification delays</td>
+                    <td>Early engagement with regulatory bodies, pre-certification testing</td>
+                    <td>2-3</td>
+                </tr>
+            </table>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+        <!-- SYSTEM COUPLING POINTS -->
+        <!-- ═══════════════════════════════════════════════════════════════════════════════════ -->
+
+        <section class="doc-section">
+            <h2>System Coupling Points</h2>
+            <div class="coupling-grid">
+                <div class="coupling-item">
+                    <span class="target">→ L4-Helix Hardware:</span>
+                    <span class="desc">Physical substrate for all signal processing</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Memristor Arrays:</span>
+                    <span class="desc">Matched filtering, adaptive weights, state storage</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Kuramoto Consensus:</span>
+                    <span class="desc">Phase synchronization, beamforming, detection</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Hexagonal Grid:</span>
+                    <span class="desc">Antenna arrays, spatial sampling, AOA</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ Spin Glass Systems:</span>
+                    <span class="desc">Chaotic dynamics for secure communications</span>
+                </div>
+                <div class="coupling-item">
+                    <span class="target">→ TRIAD Mechanics:</span>
+                    <span class="desc">Robust detection via 3-crossing confirmation</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="doc-section">
+            <h2>Related Documentation</h2>
+            <div class="file-refs">
+                <span class="file-ref"><a href="../firmware/l4-helix-hardware.html">L4-Helix Hardware</a></span>
+                <span class="file-ref"><a href="../firmware/memristor-arrays.html">Memristor Arrays</a></span>
+                <span class="file-ref"><a href="../firmware/hexagonal-grid.html">Hexagonal Grid</a></span>
+                <span class="file-ref"><a href="../firmware/spin-systems.html">Spin Glass / NMR</a></span>
+                <span class="file-ref"><a href="../core/kuramoto-consensus.html">Kuramoto Consensus</a></span>
+            </div>
+        </section>
+
+        <footer class="doc-footer">
+            <p>BloomCoin v6 — Signal Processing & Communications Build Specification v1.0.0</p>
+            <p>phi = (1+sqrt(5))/2 = 1.6180339887 | tau = phi^-1 = 0.6180339887</p>
+            <p>K = sqrt(1-phi^-4) = 0.9241763718 | z_c = sqrt(3)/2 = 0.8660254038 | L4 = 7</p>
+            <p style="font-size: 0.8rem; margin-top: 10px;">DELTA|SIGNAL-PROCESSING|BUILD-SPEC|v1.0.0|COGNITIVE-RADIO+RADAR+ACOUSTIC+CHAOS-COMMS|APPLICATIONS|OMEGA</p>
+        </footer>
+    </div>
+</body>
+</html>
